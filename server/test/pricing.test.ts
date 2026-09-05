@@ -1,11 +1,11 @@
-import { strict as assert } from "node:assert";
-import { describe, it } from "node:test";
-import { calculateQuote, volumeDiscountRate } from "../src/pricing.ts";
-import type { CustomQuoteRequest } from "../src/types.ts";
+import { strict as assert } from 'node:assert';
+import { describe, it } from 'node:test';
+import { calculateQuote, volumeDiscountRate } from '../src/pricing.ts';
+import type { CustomQuoteRequest } from '../src/types.ts';
 
 const base: CustomQuoteRequest = {
-  material: "pla",
-  quality: "standard",
+  material: 'pla',
+  quality: 'standard',
   volumeCm3: 120,
   infill: 20,
   quantity: 1,
@@ -13,49 +13,46 @@ const base: CustomQuoteRequest = {
   postProcessing: false,
 };
 
-describe("calculateQuote", () => {
-  it("ger ett pris över minimibeloppet för ett normalt jobb", () => {
+describe('calculateQuote', () => {
+  it('ger ett pris över minimibeloppet för ett normalt jobb', () => {
     const quote = calculateQuote(base);
-    assert.ok(
-      quote.total >= 149,
-      `förväntade minst 149 kr, fick ${quote.total}`,
-    );
+    assert.ok(quote.total >= 149, `förväntade minst 149 kr, fick ${quote.total}`);
     assert.equal(quote.setupFee, 95);
     assert.ok(quote.estimatedPrintHours > 0);
   });
 
-  it("tar aldrig mindre än minimibeloppet", () => {
+  it('tar aldrig mindre än minimibeloppet', () => {
     const quote = calculateQuote({ ...base, volumeCm3: 1, infill: 5 });
     assert.equal(quote.total, 149);
   });
 
-  it("gör dyrare material dyrare", () => {
+  it('gör dyrare material dyrare', () => {
     const pla = calculateQuote(base).total;
-    const resin = calculateQuote({ ...base, material: "resin" }).total;
+    const resin = calculateQuote({ ...base, material: 'resin' }).total;
     assert.ok(resin > pla, `resin (${resin}) borde kosta mer än PLA (${pla})`);
   });
 
-  it("gör finare lagerhöjd dyrare och långsammare", () => {
+  it('gör finare lagerhöjd dyrare och långsammare', () => {
     const standard = calculateQuote(base);
-    const ultrafin = calculateQuote({ ...base, quality: "ultrafin" });
+    const ultrafin = calculateQuote({ ...base, quality: 'ultrafin' });
     assert.ok(ultrafin.total > standard.total);
     assert.ok(ultrafin.estimatedPrintHours > standard.estimatedPrintHours);
   });
 
-  it("höjer priset med fyllnadsgraden", () => {
+  it('höjer priset med fyllnadsgraden', () => {
     const low = calculateQuote({ ...base, infill: 10 }).total;
     const high = calculateQuote({ ...base, infill: 100 }).total;
     assert.ok(high > low);
   });
 
-  it("ger lägre styckpris vid större volymer", () => {
+  it('ger lägre styckpris vid större volymer', () => {
     const single = calculateQuote(base);
     const bulk = calculateQuote({ ...base, quantity: 50 });
     assert.ok(bulk.unitPrice < single.unitPrice);
     assert.ok(bulk.volumeDiscount > 0);
   });
 
-  it("lägger på expresstillägg och kortar leveranstiden", () => {
+  it('lägger på expresstillägg och kortar leveranstiden', () => {
     const normal = calculateQuote(base);
     const rush = calculateQuote({ ...base, rush: true });
     assert.ok(rush.total > normal.total);
@@ -63,7 +60,7 @@ describe("calculateQuote", () => {
     assert.ok(rush.rushSurcharge > 0);
   });
 
-  it("debiterar efterbearbetning per enhet", () => {
+  it('debiterar efterbearbetning per enhet', () => {
     const without = calculateQuote({ ...base, quantity: 2 });
     const withPost = calculateQuote({
       ...base,
@@ -74,16 +71,13 @@ describe("calculateQuote", () => {
     assert.ok(withPost.total - without.total >= 170);
   });
 
-  it("kastar fel för okänt material", () => {
-    assert.throws(
-      () => calculateQuote({ ...base, material: "trä" as never }),
-      /Okänt material/,
-    );
+  it('kastar fel för okänt material', () => {
+    assert.throws(() => calculateQuote({ ...base, material: 'trä' as never }), /Okänt material/);
   });
 });
 
-describe("volumeDiscountRate", () => {
-  it("trappar upp rabatten med antalet", () => {
+describe('volumeDiscountRate', () => {
+  it('trappar upp rabatten med antalet', () => {
     assert.equal(volumeDiscountRate(1), 0);
     assert.equal(volumeDiscountRate(5), 0.04);
     assert.equal(volumeDiscountRate(10), 0.08);

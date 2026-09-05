@@ -1,5 +1,5 @@
-import { useId } from "react";
-import type { ArtShape } from "../types";
+import { useId } from 'react';
+import type { ArtShape } from '../types';
 
 interface Props {
   shape: ArtShape;
@@ -77,7 +77,7 @@ const shapes: Record<ArtShape, () => JSX.Element> = {
 };
 
 export function ProductArt({ shape, accent, className, title }: Props) {
-  const id = useId().replace(/:/g, "");
+  const id = useId().replace(/:/g, '');
   const gradientId = `bg-${id}`;
   const linesId = `lines-${id}`;
   const clipId = `clip-${id}`;
@@ -87,7 +87,7 @@ export function ProductArt({ shape, accent, className, title }: Props) {
       className={className}
       viewBox="0 0 200 200"
       role="img"
-      aria-label={title ?? "Produktillustration"}
+      aria-label={title ?? 'Produktillustration'}
       preserveAspectRatio="xMidYMid meet"
     >
       <defs>
@@ -95,12 +95,7 @@ export function ProductArt({ shape, accent, className, title }: Props) {
           <stop offset="0%" stopColor={accent} stopOpacity="0.22" />
           <stop offset="100%" stopColor={accent} stopOpacity="0.04" />
         </linearGradient>
-        <pattern
-          id={linesId}
-          width="6"
-          height="6"
-          patternUnits="userSpaceOnUse"
-        >
+        <pattern id={linesId} width="6" height="6" patternUnits="userSpaceOnUse">
           <rect width="6" height="6" fill={accent} />
           <rect width="6" height="1.4" fill="#000" opacity="0.16" />
         </pattern>

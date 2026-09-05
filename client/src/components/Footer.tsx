@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { Logo } from "./Logo";
+import { Link } from 'react-router-dom';
+import { Logo } from './Logo';
 
 export function Footer() {
   return (
@@ -11,10 +11,9 @@ export function Footer() {
               <Logo />
               Formlabb
             </Link>
-            <p style={{ maxWidth: "32ch" }}>
-              Vi designar och printar i egen verkstad i Göteborg. Åtta maskiner,
-              ingen mellanhand och produktion som startar samma dag du
-              beställer.
+            <p style={{ maxWidth: '32ch' }}>
+              Vi designar och printar i egen verkstad i Göteborg. Åtta maskiner, ingen mellanhand
+              och produktion som startar samma dag du beställer.
             </p>
           </div>
           <div>
@@ -55,9 +54,7 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-bottom spread">
-          <span>
-            © {new Date().getFullYear()} Formlabb AB · Org.nr 559xxx-xxxx
-          </span>
+          <span>© {new Date().getFullYear()} Formlabb AB · Org.nr 559xxx-xxxx</span>
           <span>Priser inkl. moms · Fri frakt över 599 kr</span>
         </div>
       </div>

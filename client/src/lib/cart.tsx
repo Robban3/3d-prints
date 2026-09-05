@@ -1,13 +1,6 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import type { ReactNode } from "react";
-import type { Product } from "../types";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import type { Product } from '../types';
 
 export interface CartItem {
   key: string;
@@ -19,20 +12,20 @@ export interface CartItem {
   color: string;
   size?: string;
   sizeName?: string;
-  art: Product["art"];
+  art: Product['art'];
 }
 
 interface CartContextValue {
   items: CartItem[];
   itemCount: number;
   subtotal: number;
-  add: (item: Omit<CartItem, "key">) => void;
+  add: (item: Omit<CartItem, 'key'>) => void;
   setQuantity: (key: string, quantity: number) => void;
   remove: (key: string) => void;
   clear: () => void;
 }
 
-const STORAGE_KEY = "formlabb.cart.v1";
+const STORAGE_KEY = 'formlabb.cart.v1';
 const CartContext = createContext<CartContextValue | null>(null);
 
 function readStorage(): CartItem[] {
@@ -56,9 +49,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items]);
 
-  const add = useCallback((item: Omit<CartItem, "key">) => {
+  const add = useCallback((item: Omit<CartItem, 'key'>) => {
     // Samma produkt i samma färg och storlek slås ihop till en rad.
-    const key = [item.productId, item.color, item.size ?? "-"].join("|");
+    const key = [item.productId, item.color, item.size ?? '-'].join('|');
     setItems((current) => {
       const existing = current.find((entry) => entry.key === key);
       if (existing) {
@@ -80,9 +73,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       quantity <= 0
         ? current.filter((entry) => entry.key !== key)
         : current.map((entry) =>
-            entry.key === key
-              ? { ...entry, quantity: Math.min(99, quantity) }
-              : entry,
+            entry.key === key ? { ...entry, quantity: Math.min(99, quantity) } : entry,
           ),
     );
   }, []);
@@ -95,10 +86,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-    const subtotal = items.reduce(
-      (sum, item) => sum + item.unitPrice * item.quantity,
-      0,
-    );
+    const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
     return { items, itemCount, subtotal, add, setQuantity, remove, clear };
   }, [items, add, setQuantity, remove, clear]);
 
@@ -107,6 +95,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 export function useCart(): CartContextValue {
   const context = useContext(CartContext);
-  if (!context) throw new Error("useCart måste användas inuti CartProvider");
+  if (!context) throw new Error('useCart måste användas inuti CartProvider');
   return context;
 }

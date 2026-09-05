@@ -1,24 +1,15 @@
-import { Link } from "react-router-dom";
-import { ProductArt } from "./ProductArt";
-import { Rating } from "./Rating";
-import { formatPrice } from "../lib/format";
-import type { Product } from "../types";
+import { Link } from 'react-router-dom';
+import { ProductArt } from './ProductArt';
+import { Rating } from './Rating';
+import { formatPrice } from '../lib/format';
+import type { Product } from '../types';
 
 export function ProductCard({ product }: { product: Product }) {
   const lowStock = product.stock <= 20;
   return (
     <article className="product-card">
-      <Link
-        to={`/produkter/${product.slug}`}
-        className="art"
-        aria-hidden="true"
-        tabIndex={-1}
-      >
-        <ProductArt
-          shape={product.art.shape}
-          accent={product.art.accent}
-          title={product.name}
-        />
+      <Link to={`/produkter/${product.slug}`} className="art" aria-hidden="true" tabIndex={-1}>
+        <ProductArt shape={product.art.shape} accent={product.art.accent} title={product.name} />
       </Link>
       <div className="body">
         <div className="row" style={{ gap: 8 }}>

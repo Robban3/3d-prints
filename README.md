@@ -6,7 +6,8 @@ får pris direkt.
 
 - **Frontend:** React 18 + TypeScript + Vite + React Router
 - **Backend:** Node + Express (TypeScript, körs med Nodes inbyggda type stripping)
-- **Datalagring:** filbaserad orderlagring (`server/data/orders.json`)
+- **Datalagring:** filbaserad orderlagring (`server/data/orders.json`) och uppladdade
+  modellfiler på disk (`server/uploads/`)
 
 ## Kom igång
 
@@ -53,6 +54,7 @@ npm start          # http://localhost:4000
 - Reglage för volym och fyllnadsgrad, antal, efterbearbetning och express
 - Prisförslag som räknas om löpande mot servern, med full specifikation av
   materialkostnad, maskintid, startavgift, volymrabatt och leveranstid
+- Nedladdningslänk till modellfilen på orderbekräftelsen och i orderspårningen
 
 ## Prismodellen
 
@@ -87,6 +89,39 @@ accepteras rakt av, varken för butiksorder eller egna jobb.
 Valideringsfel besvaras med `400` och ett `fields`-objekt som pekar ut de fält som
 behöver rättas, vilket formulären visar direkt vid respektive fält.
 
+## Filuppladdning
+
+Modellfilen laddas upp i ett eget steg innan beställningen skickas, så att kunden ser
+förloppet direkt och slipper ladda upp igen om något annat fält behöver rättas.
+`POST /api/uploads` svarar med ett id som beställningen sedan refererar till:
+
+```
+POST /api/uploads        -> { upload: { id, fileName, size, url } }
+POST /api/custom-orders  <- { ..., fileId: "<id>" }
+```
+
+Så här hanteras filerna:
+
+- **Filnamnet på disk sätts av servern**, inte av kunden. Varje fil får ett slumpat id på
+  128 bitar och sparas som `<id><ändelse>`, med kundens ursprungliga filnamn i en
+  metadatafil bredvid. Ett filnamn från klienten kan därför aldrig peka ut en sökväg.
+- **Endast printbara format tas emot** (STL, OBJ, 3MF, STEP, STP, F3D). Ändelsen
+  kontrolleras både vid uppladdningen och när metadatan läses tillbaka.
+- **Storleksgränsen är 100 MB.** Överskrids den avbryts uppladdningen och den påbörjade
+  filen tas bort från disken.
+- **Nedladdning kräver id:t**, som fungerar som en oåtkomlig länk – det går inte att
+  gissa och listas ingenstans. Filen skickas alltid som `attachment` med
+  `application/octet-stream` och `nosniff`, aldrig för visning i webbläsaren.
+- **En fil kan bara kopplas till en order.** När beställningen läggs märks filen med
+  ordernumret, och därefter går den varken att återanvända eller radera via API:et.
+- **Uppladdningar som aldrig blir en order städas bort** efter ett dygn av en
+  bakgrundsstädning som körs varje timme.
+- **Takgräns per IP** på 20 filer eller 500 MB per timme, eftersom uppladdningen inte
+  kräver inloggning.
+
+Byt lagringen mot S3 eller motsvarande genom att ersätta `server/src/uploads.ts` –
+resten av koden går bara via funktionerna där.
+
 ## Miljövariabler
 
 | Variabel      | Standard            | Beskrivning                     |
@@ -102,6 +137,7 @@ server/
   src/data/       produktkatalog och materialdata
   src/pricing.ts  prismodellen för egna printjobb
   src/validation.ts  indatavalidering
+  src/uploads.ts  lagring av uppladdade modellfiler
   src/routes.ts   API-rutter
   test/           enhetstester
 client/

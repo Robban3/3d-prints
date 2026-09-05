@@ -1,12 +1,6 @@
 export function Logo({ size = 30 }: { size?: number }) {
   return (
-    <svg
-      className="brand-mark"
-      width={size}
-      height={size}
-      viewBox="0 0 32 32"
-      aria-hidden="true"
-    >
+    <svg className="brand-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
       <rect width="32" height="32" rx="7" fill="#171c26" stroke="#242b39" />
       <path
         d="M16 5 27 11v10l-11 6-11-6V11z"

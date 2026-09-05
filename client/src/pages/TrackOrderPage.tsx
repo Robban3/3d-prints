@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { OrderSummary } from "../components/OrderSummary";
-import { ApiError, fetchOrder } from "../lib/api";
-import type { AnyOrder } from "../types";
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { OrderSummary } from '../components/OrderSummary';
+import { ApiError, fetchOrder } from '../lib/api';
+import type { AnyOrder } from '../types';
 
 export function TrackOrderPage() {
   const [params] = useSearchParams();
-  const [id, setId] = useState(params.get("id") ?? "");
+  const [id, setId] = useState(params.get('id') ?? '');
   const [order, setOrder] = useState<AnyOrder | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,8 +23,8 @@ export function TrackOrderPage() {
     } catch (caught) {
       setError(
         caught instanceof ApiError && caught.status === 404
-          ? "Vi hittar ingen order med det numret. Kontrollera stavningen."
-          : "Kunde inte hämta ordern just nu. Försök igen om en stund.",
+          ? 'Vi hittar ingen order med det numret. Kontrollera stavningen.'
+          : 'Kunde inte hämta ordern just nu. Försök igen om en stund.',
       );
     } finally {
       setLoading(false);
@@ -36,8 +36,8 @@ export function TrackOrderPage() {
       <div className="container receipt">
         <h1>Spåra din order</h1>
         <p className="muted">
-          Ordernumret står i bekräftelsemejlet och börjar med S för butiksorder
-          eller C för egna printjobb.
+          Ordernumret står i bekräftelsemejlet och börjar med S för butiksorder eller C för egna
+          printjobb.
         </p>
 
         <form className="panel" onSubmit={submit}>
@@ -57,7 +57,7 @@ export function TrackOrderPage() {
             style={{ marginTop: 16 }}
             disabled={loading || !id.trim()}
           >
-            {loading ? "Söker…" : "Hämta order"}
+            {loading ? 'Söker…' : 'Hämta order'}
           </button>
         </form>
 

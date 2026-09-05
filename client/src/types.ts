@@ -1,20 +1,15 @@
-export type MaterialId = "pla" | "petg" | "abs" | "tpu" | "resin";
-export type PrintQuality = "utkast" | "standard" | "fin" | "ultrafin";
-export type CategoryId =
-  | "inredning"
-  | "kontor"
-  | "kok"
-  | "prylar"
-  | "tillbehor";
+export type MaterialId = 'pla' | 'petg' | 'abs' | 'tpu' | 'resin';
+export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
+export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
 export type ArtShape =
-  | "vase"
-  | "arch"
-  | "grid"
-  | "tower"
-  | "hook"
-  | "creature"
-  | "sphere"
-  | "stand";
+  | 'vase'
+  | 'arch'
+  | 'grid'
+  | 'tower'
+  | 'hook'
+  | 'creature'
+  | 'sphere'
+  | 'stand';
 
 export interface Material {
   id: MaterialId;
@@ -76,6 +71,14 @@ export interface ShopConfig {
     quantity: { min: number; max: number };
   };
   shipping: { fee: number; freeThreshold: number };
+  upload: { maxBytes: number; extensions: string[] };
+}
+
+export interface UploadedFile {
+  id: string;
+  fileName: string;
+  size: number;
+  url: string;
 }
 
 export interface QuoteRequest {
@@ -120,11 +123,11 @@ export interface OrderLine {
   size?: string;
 }
 
-export type OrderStatus = "mottagen" | "i_produktion" | "skickad" | "levererad";
+export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad';
 
 export interface ShopOrder {
   id: string;
-  type: "shop";
+  type: 'shop';
   createdAt: string;
   status: OrderStatus;
   customer: CustomerDetails;
@@ -136,13 +139,16 @@ export interface ShopOrder {
 
 export interface CustomOrder {
   id: string;
-  type: "custom";
+  type: 'custom';
   createdAt: string;
   status: OrderStatus;
   customer: CustomerDetails;
   request: QuoteRequest;
   projectName: string;
+  fileId?: string;
   fileName?: string;
+  fileUrl?: string;
+  fileSize?: number;
   description: string;
   quote: QuoteBreakdown;
   total: number;

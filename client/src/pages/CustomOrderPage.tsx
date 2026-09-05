@@ -1,33 +1,38 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { CustomerForm } from "../components/CustomerForm";
-import { TextAreaField, TextField } from "../components/Field";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { CustomerForm } from '../components/CustomerForm';
+import { TextAreaField, TextField } from '../components/Field';
 import {
   ApiError,
+  deleteUpload,
   fetchConfig,
   fetchQuote,
   placeCustomOrder,
-} from "../lib/api";
-import { useAsync } from "../lib/useAsync";
-import { formatHours, formatPrice } from "../lib/format";
+  uploadModelFile,
+} from '../lib/api';
+import { useAsync } from '../lib/useAsync';
+import { formatBytes, formatHours, formatPrice } from '../lib/format';
 import type {
   CustomerDetails,
   MaterialId,
   PrintQuality,
   QuoteBreakdown,
   QuoteRequest,
-} from "../types";
+  UploadedFile,
+} from '../types';
 
-const ACCEPTED = [".stl", ".obj", ".3mf", ".step", ".stp", ".f3d"];
+/** Fallback tills /api/config svarat – servern är källan för de riktiga gränserna. */
+const DEFAULT_ACCEPTED = ['.stl', '.obj', '.3mf', '.step', '.stp', '.f3d'];
+const DEFAULT_MAX_BYTES = 100 * 1024 * 1024;
 
 const emptyCustomer: CustomerDetails = {
-  name: "",
-  email: "",
-  phone: "",
-  address: "",
-  postalCode: "",
-  city: "",
-  note: "",
+  name: '',
+  email: '',
+  phone: '',
+  address: '',
+  postalCode: '',
+  city: '',
+  note: '',
 };
 
 /**
@@ -35,10 +40,10 @@ const emptyCustomer: CustomerDetails = {
  * modells volym i cm³. De här referenserna gör siffran begriplig.
  */
 const volumePresets = [
-  { label: "Nyckelring", volume: 8 },
-  { label: "Reservdel", volume: 45 },
-  { label: "Kaffekopp", volume: 120 },
-  { label: "Hjälmstorlek", volume: 900 },
+  { label: 'Nyckelring', volume: 8 },
+  { label: 'Reservdel', volume: 45 },
+  { label: 'Kaffekopp', volume: 120 },
+  { label: 'Hjälmstorlek', volume: 900 },
 ];
 
 export function CustomOrderPage() {
@@ -47,19 +52,21 @@ export function CustomOrderPage() {
   const fileInput = useRef<HTMLInputElement>(null);
 
   const [request, setRequest] = useState<QuoteRequest>({
-    material: "pla",
-    quality: "standard",
+    material: 'pla',
+    quality: 'standard',
     volumeCm3: 120,
     infill: 20,
     quantity: 1,
     rush: false,
     postProcessing: false,
   });
-  const [projectName, setProjectName] = useState("");
-  const [description, setDescription] = useState("");
-  const [fileName, setFileName] = useState("");
-  const [fileError, setFileError] = useState("");
+  const [projectName, setProjectName] = useState('');
+  const [description, setDescription] = useState('');
+  const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [fileError, setFileError] = useState('');
   const [dragging, setDragging] = useState(false);
+  const abortUpload = useRef<(() => void) | null>(null);
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
 
   const [quote, setQuote] = useState<QuoteBreakdown | null>(null);
@@ -81,11 +88,7 @@ export function CustomOrderPage() {
         .catch((error: unknown) => {
           if (!active) return;
           setQuote(null);
-          setQuoteError(
-            error instanceof ApiError
-              ? error.message
-              : "Kunde inte räkna ut priset",
-          );
+          setQuoteError(error instanceof ApiError ? error.message : 'Kunde inte räkna ut priset');
         });
     }, 250);
     return () => {
@@ -94,6 +97,8 @@ export function CustomOrderPage() {
     };
   }, [request]);
 
+  const accepted = config.data?.upload.extensions ?? DEFAULT_ACCEPTED;
+  const maxBytes = config.data?.upload.maxBytes ?? DEFAULT_MAX_BYTES;
   const materials = config.data?.materials ?? [];
   const qualities = config.data?.qualities ?? [];
   const limits = config.data?.quoteLimits;
@@ -107,21 +112,47 @@ export function CustomOrderPage() {
     setRequest((current) => ({ ...current, ...update }));
   }
 
-  function selectFile(file: File | undefined) {
+  async function selectFile(file: File | undefined) {
     if (!file) return;
     const lower = file.name.toLowerCase();
-    if (!ACCEPTED.some((extension) => lower.endsWith(extension))) {
-      setFileError(`Filformatet stöds inte. Ladda upp ${ACCEPTED.join(", ")}.`);
+    if (!accepted.some((extension) => lower.endsWith(extension))) {
+      setFileError(`Filformatet stöds inte. Ladda upp ${accepted.join(', ')}.`);
       return;
     }
-    if (file.size > 100 * 1024 * 1024) {
+    if (file.size > maxBytes) {
       setFileError(
-        "Filen är större än 100 MB. Hör av dig så löser vi överföringen manuellt.",
+        `Filen är större än ${formatBytes(maxBytes)}. Hör av dig så löser vi överföringen manuellt.`,
       );
       return;
     }
-    setFileError("");
-    setFileName(file.name);
+
+    setFileError('');
+    setUploadProgress(0);
+    const upload = uploadModelFile(file, setUploadProgress);
+    abortUpload.current = upload.abort;
+    try {
+      setUploaded(await upload.promise);
+    } catch (error) {
+      setUploaded(null);
+      setFileError(
+        error instanceof ApiError ? error.message : 'Uppladdningen misslyckades. Försök igen.',
+      );
+    } finally {
+      abortUpload.current = null;
+      setUploadProgress(null);
+      // Samma fil ska gå att välja igen efter ett misslyckat försök.
+      if (fileInput.current) fileInput.current.value = '';
+    }
+  }
+
+  function removeFile() {
+    if (uploadProgress !== null) {
+      abortUpload.current?.();
+      return;
+    }
+    if (uploaded) void deleteUpload(uploaded.id);
+    setUploaded(null);
+    setFileError('');
   }
 
   async function submit(event: React.FormEvent) {
@@ -135,7 +166,7 @@ export function CustomOrderPage() {
         request,
         projectName,
         description,
-        fileName: fileName || undefined,
+        fileId: uploaded?.id,
       });
       navigate(`/order/${result.order.id}`, { state: { order: result.order } });
     } catch (error) {
@@ -143,7 +174,7 @@ export function CustomOrderPage() {
         setErrors(error.fields);
         setSubmitError(error.message);
       } else {
-        setSubmitError("Något gick fel. Försök igen.");
+        setSubmitError('Något gick fel. Försök igen.');
       }
       setSubmitting(false);
     }
@@ -156,9 +187,8 @@ export function CustomOrderPage() {
           <span className="eyebrow">Egen print</span>
           <h1>Beställ ditt eget printjobb</h1>
           <p>
-            Fyll i vad du vill ha printat så räknar vi fram pris och leveranstid
-            direkt. Vi tar emot allt från en enda reservdel till serier på
-            hundratals delar.
+            Fyll i vad du vill ha printat så räknar vi fram pris och leveranstid direkt. Vi tar emot
+            allt från en enda reservdel till serier på hundratals delar.
           </p>
         </div>
 
@@ -181,36 +211,49 @@ export function CustomOrderPage() {
                   <input
                     ref={fileInput}
                     type="file"
-                    accept={ACCEPTED.join(",")}
+                    accept={accepted.join(',')}
                     hidden
-                    onChange={(event) => selectFile(event.target.files?.[0])}
+                    onChange={(event) => void selectFile(event.target.files?.[0])}
                   />
-                  {fileName ? (
+                  {uploadProgress !== null ? (
                     <div className="file-chip">
-                      <span>
-                        <strong>{fileName}</strong>
-                        <br />
-                        <span className="dim" style={{ fontSize: "0.84rem" }}>
-                          Filen skickas när vi bekräftar din beställning.
+                      <span style={{ flex: 1 }}>
+                        <strong>Laddar upp… {uploadProgress} %</strong>
+                        <span
+                          className="progress"
+                          role="progressbar"
+                          aria-valuenow={uploadProgress}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        >
+                          <span style={{ width: `${uploadProgress}%` }} />
                         </span>
                       </span>
-                      <button
-                        type="button"
-                        className="btn-quiet"
-                        onClick={() => setFileName("")}
-                      >
+                      <button type="button" className="btn-quiet" onClick={removeFile}>
+                        Avbryt
+                      </button>
+                    </div>
+                  ) : uploaded ? (
+                    <div className="file-chip">
+                      <span>
+                        <strong>{uploaded.fileName}</strong>
+                        <br />
+                        <span className="dim" style={{ fontSize: '0.84rem' }}>
+                          {formatBytes(uploaded.size)} · uppladdad och sparad hos oss
+                        </span>
+                      </span>
+                      <button type="button" className="btn-quiet" onClick={removeFile}>
                         Ta bort
                       </button>
                     </div>
                   ) : (
                     <div
-                      className={dragging ? "dropzone dragging" : "dropzone"}
+                      className={dragging ? 'dropzone dragging' : 'dropzone'}
                       role="button"
                       tabIndex={0}
                       onClick={() => fileInput.current?.click()}
                       onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ")
-                          fileInput.current?.click();
+                        if (event.key === 'Enter' || event.key === ' ') fileInput.current?.click();
                       }}
                       onDragOver={(event) => {
                         event.preventDefault();
@@ -220,19 +263,17 @@ export function CustomOrderPage() {
                       onDrop={(event) => {
                         event.preventDefault();
                         setDragging(false);
-                        selectFile(event.dataTransfer.files[0]);
+                        void selectFile(event.dataTransfer.files[0]);
                       }}
                     >
-                      <strong>
-                        Dra hit din fil eller klicka för att välja
-                      </strong>
-                      <span>STL, OBJ, 3MF, STEP eller F3D · max 100 MB</span>
+                      <strong>Dra hit din fil eller klicka för att välja</strong>
+                      <span>
+                        {accepted.join(', ').toUpperCase()} · max {formatBytes(maxBytes)}
+                      </span>
                     </div>
                   )}
                   {fileError && <span className="error">{fileError}</span>}
-                  {errors.fileName && (
-                    <span className="error">{errors.fileName}</span>
-                  )}
+                  {errors.fileId && <span className="error">{errors.fileId}</span>}
                 </div>
 
                 <TextAreaField
@@ -258,23 +299,20 @@ export function CustomOrderPage() {
                         type="button"
                         className="option-card"
                         aria-pressed={request.material === material.id}
-                        onClick={() =>
-                          patch({ material: material.id as MaterialId })
-                        }
+                        onClick={() => patch({ material: material.id as MaterialId })}
                       >
                         <strong>{material.name}</strong>
                         <span>
                           {material.priceFactor === 1
-                            ? "Grundpris"
-                            : `×${material.priceFactor.toString().replace(".", ",")} materialpris`}
+                            ? 'Grundpris'
+                            : `×${material.priceFactor.toString().replace('.', ',')} materialpris`}
                         </span>
                       </button>
                     ))}
                   </div>
                   {selectedMaterial && (
                     <p className="field-hint" style={{ marginTop: 10 }}>
-                      {selectedMaterial.description} ·{" "}
-                      {selectedMaterial.traits.join(" · ")}
+                      {selectedMaterial.description} · {selectedMaterial.traits.join(' · ')}
                     </p>
                   )}
                 </div>
@@ -288,14 +326,12 @@ export function CustomOrderPage() {
                         type="button"
                         className="option-card"
                         aria-pressed={request.quality === quality.id}
-                        onClick={() =>
-                          patch({ quality: quality.id as PrintQuality })
-                        }
+                        onClick={() => patch({ quality: quality.id as PrintQuality })}
                       >
                         <strong>{quality.name}</strong>
                         <span>
-                          {quality.layerHeightMm.toString().replace(".", ",")}{" "}
-                          mm lager · {quality.description}
+                          {quality.layerHeightMm.toString().replace('.', ',')} mm lager ·{' '}
+                          {quality.description}
                         </span>
                       </button>
                     ))}
@@ -318,9 +354,7 @@ export function CustomOrderPage() {
                     max={1500}
                     step={1}
                     value={request.volumeCm3}
-                    onChange={(event) =>
-                      patch({ volumeCm3: Number(event.target.value) })
-                    }
+                    onChange={(event) => patch({ volumeCm3: Number(event.target.value) })}
                   />
                   <div className="chip-row">
                     {volumePresets.map((preset) => (
@@ -336,12 +370,10 @@ export function CustomOrderPage() {
                     ))}
                   </div>
                   <span className="field-hint">
-                    Vet du inte volymen? Välj ungefär rätt storlek – vi mäter
-                    filen och hör av oss innan produktion om priset ändras.
+                    Vet du inte volymen? Välj ungefär rätt storlek – vi mäter filen och hör av oss
+                    innan produktion om priset ändras.
                   </span>
-                  {errors.volumeCm3 && (
-                    <span className="error">{errors.volumeCm3}</span>
-                  )}
+                  {errors.volumeCm3 && <span className="error">{errors.volumeCm3}</span>}
                 </div>
 
                 <div className="field">
@@ -355,13 +387,10 @@ export function CustomOrderPage() {
                     max={limits?.infill.max ?? 100}
                     step={5}
                     value={request.infill}
-                    onChange={(event) =>
-                      patch({ infill: Number(event.target.value) })
-                    }
+                    onChange={(event) => patch({ infill: Number(event.target.value) })}
                   />
                   <span className="field-hint">
-                    15–25 % räcker för dekor. Välj 60 % eller mer för delar som
-                    ska bära last.
+                    15–25 % räcker för dekor. Välj 60 % eller mer för delar som ska bära last.
                   </span>
                 </div>
 
@@ -387,15 +416,11 @@ export function CustomOrderPage() {
                   <input
                     type="checkbox"
                     checked={request.postProcessing}
-                    onChange={(event) =>
-                      patch({ postProcessing: event.target.checked })
-                    }
+                    onChange={(event) => patch({ postProcessing: event.target.checked })}
                   />
                   <span>
                     <strong>Efterbearbetning (+85 kr/st)</strong>
-                    <span>
-                      Stödmaterial bort, slipning och polering av synliga ytor.
-                    </span>
+                    <span>Stödmaterial bort, slipning och polering av synliga ytor.</span>
                   </span>
                 </label>
 
@@ -407,10 +432,7 @@ export function CustomOrderPage() {
                   />
                   <span>
                     <strong>Express (+40 %)</strong>
-                    <span>
-                      Ditt jobb går först i kön och skickas så snart det är
-                      klart.
-                    </span>
+                    <span>Ditt jobb går först i kön och skickas så snart det är klart.</span>
                   </span>
                 </label>
               </div>
@@ -421,9 +443,7 @@ export function CustomOrderPage() {
               <CustomerForm
                 value={customer}
                 errors={errors}
-                onChange={(update) =>
-                  setCustomer((current) => ({ ...current, ...update }))
-                }
+                onChange={(update) => setCustomer((current) => ({ ...current, ...update }))}
                 noteLabel="Övrigt att tänka på (valfritt)"
                 notePlaceholder="Deadline, leveransadress som avviker, faktureringsuppgifter…"
               />
@@ -435,18 +455,14 @@ export function CustomOrderPage() {
             {quoteError && <p className="notice notice-error">{quoteError}</p>}
             {quote && (
               <>
-                <div
-                  className="price"
-                  style={{ fontSize: "2.4rem", margin: "8px 0 4px" }}
-                >
+                <div className="price" style={{ fontSize: '2.4rem', margin: '8px 0 4px' }}>
                   {formatPrice(quote.total)}
                 </div>
-                <p className="dim" style={{ fontSize: "0.86rem" }}>
-                  {request.quantity} st · {formatPrice(quote.unitPrice)} per
-                  styck inkl. moms
+                <p className="dim" style={{ fontSize: '0.86rem' }}>
+                  {request.quantity} st · {formatPrice(quote.unitPrice)} per styck inkl. moms
                 </p>
 
-                <div style={{ margin: "18px 0" }}>
+                <div style={{ margin: '18px 0' }}>
                   <div className="summary-row">
                     <span>Material ({selectedMaterial?.name})</span>
                     <span>{formatPrice(quote.materialCost)}/st</span>
@@ -484,11 +500,9 @@ export function CustomOrderPage() {
                 </div>
 
                 <div className="notice">
-                  <strong>Beräknad printtid:</strong>{" "}
-                  {formatHours(quote.estimatedPrintHours)}
+                  <strong>Beräknad printtid:</strong> {formatHours(quote.estimatedPrintHours)}
                   <br />
-                  <strong>Leverans:</strong> {quote.estimatedDeliveryDays}{" "}
-                  arbetsdagar
+                  <strong>Leverans:</strong> {quote.estimatedDeliveryDays} arbetsdagar
                 </div>
               </>
             )}
@@ -503,16 +517,17 @@ export function CustomOrderPage() {
               type="submit"
               className="btn btn-block btn-lg"
               style={{ marginTop: 18 }}
-              disabled={submitting}
+              disabled={submitting || uploadProgress !== null}
             >
-              {submitting ? "Skickar…" : "Skicka beställning"}
+              {submitting
+                ? 'Skickar…'
+                : uploadProgress !== null
+                  ? 'Väntar på filen…'
+                  : 'Skicka beställning'}
             </button>
-            <p
-              className="dim"
-              style={{ fontSize: "0.82rem", marginTop: 12, marginBottom: 0 }}
-            >
-              Du binder dig inte förrän vi bekräftat filen. Vi hör av oss inom
-              en arbetsdag om något behöver justeras innan print.
+            <p className="dim" style={{ fontSize: '0.82rem', marginTop: 12, marginBottom: 0 }}>
+              Du binder dig inte förrän vi bekräftat filen. Vi hör av oss inom en arbetsdag om något
+              behöver justeras innan print.
             </p>
           </aside>
         </form>
