@@ -1,12 +1,6 @@
 import { formatBytes, formatDate, formatHours, formatPrice } from '../lib/format';
+import { statusLabels } from '../lib/status';
 import type { AnyOrder } from '../types';
-
-const statusLabels: Record<string, string> = {
-  mottagen: 'Mottagen',
-  i_produktion: 'I produktion',
-  skickad: 'Skickad',
-  levererad: 'Levererad',
-};
 
 /** Visar en order både på bekräftelsesidan och i orderspårningen. */
 export function OrderSummary({ order }: { order: AnyOrder }) {

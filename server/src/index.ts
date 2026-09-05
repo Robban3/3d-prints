@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import { api } from './routes.ts';
 import { uploads } from './uploadRoutes.ts';
+import { admin } from './adminRoutes.ts';
 import { ORPHAN_MAX_AGE_MS, sweepOrphans } from './uploads.ts';
 import { ValidationError } from './validation.ts';
 import { KlarnaError } from './klarna.ts';
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(express.json({ limit: '256kb' }));
 
 app.use('/api', uploads);
+app.use('/api', admin);
 app.use('/api', api);
 
 // I produktion serveras den byggda React-appen från samma process.

@@ -46,6 +46,27 @@ export async function saveOrder<T extends AnyOrder>(order: T): Promise<T> {
   });
 }
 
+/**
+ * Uppdaterar en order på plats. Läsningen och skrivningen ligger i samma
+ * serialiserade steg, så att två samtidiga statusändringar inte skriver över
+ * varandra.
+ */
+export async function updateOrder<T extends AnyOrder>(
+  id: string,
+  change: (order: AnyOrder) => T,
+): Promise<T | undefined> {
+  return serialize(async () => {
+    const orders = await readAll();
+    const index = orders.findIndex((order) => order.id.toLowerCase() === id.toLowerCase());
+    if (index === -1) return undefined;
+    const updated = change(orders[index]!);
+    orders[index] = updated;
+    await mkdir(dirname(DATA_FILE), { recursive: true });
+    await writeFile(DATA_FILE, JSON.stringify(orders, null, 2), 'utf8');
+    return updated;
+  });
+}
+
 export async function findOrder(id: string): Promise<AnyOrder | undefined> {
   const orders = await readAll();
   return orders.find((order) => order.id.toLowerCase() === id.toLowerCase());

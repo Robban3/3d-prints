@@ -46,7 +46,8 @@ npm start          # http://localhost:4000
 - Varukorg som sparas i `localStorage` och överlever omladdning
 - Lagersaldo som dras av vid köp och hindrar överförsäljning
 - Kassa med validering, fri frakt över 599 kr, Klarna-betalning och orderbekräftelse
-- Orderspårning på ordernummer
+- Orderspårning på ordernummer med tidslinje över var ordern befinner sig
+- Bekräftelse- och statusmejl till kunden
 
 **Egna printjobb**
 
@@ -158,6 +159,41 @@ Playground är standard. Nycklarna läses bara på servern och skickas aldrig ti
 webbläsaren; klienten får enbart det kortlivade `client_token` som Klarnas SDK
 behöver.
 
+## Orderns livscykel
+
+En order rör sig `mottagen → i produktion → skickad → levererad`, och kan
+avbrytas fram tills den skickats. Övergångarna är strikta, så en order kan inte
+hoppa över ett steg eller gå bakåt. Varje byte sparas i orderns historik, som
+kunden ser som en tidslinje under **Spåra order**. Avbryts en butiksorder
+lämnas exemplaren tillbaka till lagret.
+
+Verkstaden flyttar ordrar i vyn på `/verkstad`. Den är **avstängd tills
+`ADMIN_TOKEN` sätts** – ett saknat värde ger ingen åtkomst alls i stället för
+en gissningsbar standardnyckel. Nyckeln måste vara minst 16 tecken och jämförs
+i konstant tid.
+
+```bash
+export ADMIN_TOKEN=$(openssl rand -hex 24)
+```
+
+## E-post
+
+Kunden får ett bekräftelsemejl när ordern läggs, och ett brev vid varje
+statusbyte som rör hen (i produktion, skickad, levererad).
+
+**Utan SMTP-uppgifter skrivs breven till `data/utkorg` som `.eml`-filer** i
+stället för att skickas. Då syns exakt vad kunden skulle ha fått, utan att
+något lämnar maskinen – och löftet i gränssnittet motsvaras av något verkligt.
+Ett misslyckat utskick fäller aldrig en order som redan är betald och sparad.
+
+```bash
+export SMTP_HOST=smtp.example.com
+export SMTP_PORT=587
+export SMTP_USER=...
+export SMTP_PASSWORD=...
+export MAIL_FROM='Formlabb <hej@formlabb.se>'
+```
+
 ## Miljövariabler
 
 | Variabel      | Standard            | Beskrivning                     |
@@ -175,6 +211,9 @@ server/
   src/validation.ts  indatavalidering
   src/uploads.ts  lagring av uppladdade modellfiler
   src/klarna.ts   betalsessioner och orderväxling mot Klarna
+  src/lifecycle.ts orderns tillåtna statusövergångar
+  src/mailer.ts   bekräftelse- och statusmejl
+  src/stock.ts    lagersaldo med reservation
   src/routes.ts   API-rutter
   test/           enhetstester
 client/

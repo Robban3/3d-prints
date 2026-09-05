@@ -15,6 +15,7 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { MaterialPage } from './pages/MaterialPage';
 import { HowItWorksPage } from './pages/HowItWorksPage';
 import { ContactPage } from './pages/ContactPage';
+import { AdminPage } from './pages/AdminPage';
 import { TopBar } from './components/TopBar';
 
 export function App() {
@@ -37,6 +38,7 @@ export function App() {
           <Route path="/sa-funkar-det" element={<HowItWorksPage />} />
           <Route path="/om-oss" element={<AboutPage />} />
           <Route path="/kontakt" element={<ContactPage />} />
+          <Route path="/verkstad" element={<AdminPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { OrderSummary } from '../components/OrderSummary';
+import { OrderTimeline } from '../components/OrderTimeline';
 import { ApiError, fetchOrder } from '../lib/api';
 import { PageHeader } from '../components/PageHeader';
 import type { AnyOrder } from '../types';
@@ -68,7 +69,11 @@ export function TrackOrderPage() {
             </p>
           )}
           {order && (
-            <div style={{ marginTop: 24 }}>
+            <div className="stack" style={{ marginTop: 24, gap: 20 }}>
+              <div className="panel">
+                <h2>Var är ordern nu?</h2>
+                <OrderTimeline order={order} />
+              </div>
               <OrderSummary order={order} />
             </div>
           )}

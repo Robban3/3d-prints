@@ -90,7 +90,14 @@ export interface CustomerDetails {
   note?: string;
 }
 
-export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad';
+export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad' | 'avbruten';
+
+export interface StatusEvent {
+  status: OrderStatus;
+  at: string;
+  /** Fritext från verkstaden, t.ex. ett spårningsnummer. */
+  note?: string;
+}
 
 export interface PaymentDetails {
   provider: 'klarna';
@@ -113,6 +120,7 @@ export interface Order {
   subtotal: number;
   total: number;
   payment?: PaymentDetails;
+  history: StatusEvent[];
 }
 
 export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
@@ -159,6 +167,7 @@ export interface CustomOrder {
   quote: QuoteBreakdown;
   total: number;
   payment?: PaymentDetails;
+  history: StatusEvent[];
 }
 
 export type AnyOrder = Order | CustomOrder;
