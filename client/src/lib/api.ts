@@ -6,6 +6,7 @@ import type {
   QuoteBreakdown,
   QuoteRequest,
   ShopConfig,
+  OrderStatus,
   PaymentSession,
   ShopOrder,
   UploadedFile,
@@ -157,6 +158,29 @@ export function uploadModelFile(
   });
 
   return { promise, abort: () => request.abort() };
+}
+
+export function fetchAdminStatus(): Promise<{ enabled: boolean }> {
+  return request('/admin/status');
+}
+
+export function fetchAdminOrders(
+  token: string,
+): Promise<{ orders: Array<AnyOrder & { next: OrderStatus[] }>; total: number }> {
+  return request('/admin/orders', { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function setOrderStatus(
+  token: string,
+  id: string,
+  status: OrderStatus,
+  note?: string,
+): Promise<{ order: AnyOrder; next: OrderStatus[]; mail?: { delivered: boolean; path?: string } }> {
+  return request(`/admin/orders/${encodeURIComponent(id)}/status`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ status, note }),
+  });
 }
 
 export async function deleteUpload(id: string): Promise<void> {

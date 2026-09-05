@@ -946,6 +946,69 @@ textarea {
   color: var(--accent-strong);
 }
 
+/* ---------- Tidslinje ---------- */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.timeline-step {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  padding-bottom: 18px;
+  position: relative;
+}
+.timeline-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 18px;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+.timeline-step.done:not(:last-child)::before {
+  background: var(--accent);
+}
+.timeline-dot {
+  width: 14px;
+  height: 14px;
+  margin-top: 4px;
+  margin-left: 4px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: var(--surface);
+  z-index: 1;
+}
+.timeline-step.done .timeline-dot {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.timeline-step.current .timeline-dot {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.timeline-step strong {
+  display: block;
+  font-size: 0.94rem;
+}
+.timeline-step.pending strong {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+.timeline-step .dim {
+  font-size: 0.82rem;
+}
+.timeline-note {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 /* ---------- Klarna ---------- */
 .klarna-placeholder {
   display: flex;

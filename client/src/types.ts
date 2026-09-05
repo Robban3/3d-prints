@@ -148,7 +148,13 @@ export interface OrderLine {
   size?: string;
 }
 
-export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad';
+export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad' | 'avbruten';
+
+export interface StatusEvent {
+  status: OrderStatus;
+  at: string;
+  note?: string;
+}
 
 export interface ShopOrder {
   id: string;
@@ -161,6 +167,7 @@ export interface ShopOrder {
   shipping: number;
   total: number;
   payment?: PaymentDetails;
+  history: StatusEvent[];
 }
 
 export interface CustomOrder {
@@ -179,6 +186,7 @@ export interface CustomOrder {
   quote: QuoteBreakdown;
   total: number;
   payment?: PaymentDetails;
+  history: StatusEvent[];
 }
 
 export type AnyOrder = ShopOrder | CustomOrder;

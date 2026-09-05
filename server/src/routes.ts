@@ -7,6 +7,7 @@ import { findOrder, generateOrderNumber, saveOrder } from './store.ts';
 import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
 import { pathParam } from './http.ts';
 import { release, reserve, stockLevels } from './stock.ts';
+import { orderConfirmation, sendMail } from './mailer.ts';
 import {
   KlarnaError,
   createSession,
@@ -155,6 +156,15 @@ async function settle(
   };
 }
 
+/** Bekräftelsemejlet får aldrig fälla en order som redan är betald och sparad. */
+async function notify(order: Order | CustomOrder): Promise<void> {
+  try {
+    await sendMail(orderConfirmation(order));
+  } catch (error) {
+    console.error('Kunde inte skicka orderbekräftelse', error);
+  }
+}
+
 api.post('/orders', async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const customer = parseCustomer(body.customer);
@@ -187,6 +197,7 @@ api.post('/orders', async (req, res) => {
     type: 'shop',
     createdAt: new Date().toISOString(),
     status: 'mottagen',
+    history: [{ status: 'mottagen', at: new Date().toISOString() }],
     customer,
     lines,
     subtotal,
@@ -196,6 +207,7 @@ api.post('/orders', async (req, res) => {
   };
 
   await saveOrder(order);
+  await notify(order);
   res.status(201).json({ order });
 });
 
@@ -242,6 +254,7 @@ api.post('/custom-orders', async (req, res) => {
     type: 'custom',
     createdAt: new Date().toISOString(),
     status: 'mottagen',
+    history: [{ status: 'mottagen', at: new Date().toISOString() }],
     customer,
     request,
     projectName,
@@ -256,6 +269,7 @@ api.post('/custom-orders', async (req, res) => {
   };
 
   await saveOrder(order);
+  await notify(order);
   res.status(201).json({ order });
 });
 
