@@ -106,8 +106,9 @@ export function CheckoutPage() {
               <div className="panel">
                 <h2>Betalning</h2>
                 <p className="muted" style={{ marginBottom: 0 }}>
-                  Vi skickar en betalningslänk (Swish, kort eller faktura) till din e-post så snart
-                  ordern är bekräftad. Inga kortuppgifter lämnas här.
+                  Betalningen sker med Klarna. Så snart ordern är bekräftad skickar vi en
+                  betalningslänk till din e-post, där du väljer att betala direkt, med kort eller
+                  mot faktura. Inga betaluppgifter lämnas här.
                 </p>
               </div>
             </div>
