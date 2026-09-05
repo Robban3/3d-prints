@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { CustomerForm } from '../components/CustomerForm';
 import { useCart } from '../lib/cart';
-import { ApiError, fetchConfig, placeOrder } from '../lib/api';
+import { ApiError, createPaymentSession, fetchConfig, placeOrder } from '../lib/api';
+import { KlarnaPayment } from '../components/KlarnaPayment';
+import { loadKlarna, authorize } from '../lib/klarna';
 import { useAsync } from '../lib/useAsync';
 import { formatPrice } from '../lib/format';
 import { PageHeader } from '../components/PageHeader';
-import type { CustomerDetails } from '../types';
+import type { CustomerDetails, PaymentSession } from '../types';
 
 const emptyCustomer: CustomerDetails = {
   name: '',
@@ -29,9 +31,51 @@ export function CheckoutPage() {
   const shipping = subtotal >= shippingConfig.freeThreshold ? 0 : shippingConfig.fee;
 
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
+  const [session, setSession] = useState<PaymentSession | null>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [sessionError, setSessionError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Beloppet i Klarnas widget måste följa varukorgen, så sessionen görs om när
+  // innehållet ändras.
+  const cartKey = items.map((item) => `${item.key}x${item.quantity}`).join('|');
+  useEffect(() => {
+    if (items.length === 0) return;
+    let active = true;
+    setSessionLoading(true);
+    createPaymentSession({
+      type: 'shop',
+      lines: items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        color: item.color,
+        size: item.size,
+      })),
+    })
+      .then((result) => {
+        if (!active) return;
+        setSession(result.session);
+        setSessionError(null);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        setSession(null);
+        setSessionError(
+          error instanceof ApiError
+            ? error.message
+            : 'Betalningen kunde inte förberedas. Du kan fortfarande lägga ordern och få en betalningslänk.',
+        );
+      })
+      .finally(() => {
+        if (active) setSessionLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cartKey]);
 
   if (items.length === 0) {
     return (
@@ -54,6 +98,28 @@ export function CheckoutPage() {
     setSubmitError(null);
     setErrors({});
     try {
+      let authorizationToken: string | undefined;
+      if (session && !session.test) {
+        // Kunden godkänner betalningen i Klarnas widget innan ordern skapas.
+        const payments = await loadKlarna();
+        authorizationToken = await authorize(
+          payments,
+          session.paymentMethodCategories[0]?.identifier,
+          {
+            billing_address: {
+              given_name: customer.name.split(' ')[0],
+              family_name: customer.name.split(' ').slice(1).join(' '),
+              email: customer.email,
+              street_address: customer.address,
+              postal_code: customer.postalCode,
+              city: customer.city,
+              phone: customer.phone,
+              country: 'SE',
+            },
+          },
+        );
+      }
+
       const result = await placeOrder({
         customer,
         lines: items.map((item) => ({
@@ -62,6 +128,7 @@ export function CheckoutPage() {
           color: item.color,
           size: item.size,
         })),
+        authorizationToken,
       });
       clear();
       navigate(`/order/${result.order.id}`, { state: { order: result.order } });
@@ -70,7 +137,9 @@ export function CheckoutPage() {
         setErrors(error.fields);
         setSubmitError(error.message);
       } else {
-        setSubmitError('Beställningen gick inte igenom. Försök igen.');
+        setSubmitError(
+          error instanceof Error ? error.message : 'Beställningen gick inte igenom. Försök igen.',
+        );
       }
       setSubmitting(false);
     }
@@ -103,14 +172,7 @@ export function CheckoutPage() {
                   notePlaceholder="Portkod, önskat leveransdatum eller en hälsning om det är en present."
                 />
               </div>
-              <div className="panel">
-                <h2>Betalning</h2>
-                <p className="muted" style={{ marginBottom: 0 }}>
-                  Betalningen sker med Klarna. Så snart ordern är bekräftad skickar vi en
-                  betalningslänk till din e-post, där du väljer att betala direkt, med kort eller
-                  mot faktura. Inga betaluppgifter lämnas här.
-                </p>
-              </div>
+              <KlarnaPayment session={session} loading={sessionLoading} error={sessionError} />
             </div>
 
             <aside className="panel sticky-panel">

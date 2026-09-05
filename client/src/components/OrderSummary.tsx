@@ -103,6 +103,35 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
         </div>
       )}
 
+      {order.payment && (
+        <div
+          style={{
+            marginTop: 20,
+            borderTop: '1px solid var(--border)',
+            paddingTop: 16,
+          }}
+        >
+          <span className="field-label">Betalning</span>
+          <div className="payment-line" style={{ marginTop: 8 }}>
+            <span className="klarna-mark">Klarna</span>
+            <span className="muted" style={{ fontSize: '0.9rem' }}>
+              {order.payment.status === 'auktoriserad' ? 'Godkänd' : 'Avvaktar betalning'}
+              {order.payment.test ? ' · testläge' : ''}
+            </span>
+          </div>
+          {order.payment.reference && (
+            <span className="dim" style={{ display: 'block', marginTop: 6, fontSize: '0.84rem' }}>
+              Referens {order.payment.reference}
+            </span>
+          )}
+          {order.payment.test && (
+            <span className="dim" style={{ display: 'block', marginTop: 6, fontSize: '0.84rem' }}>
+              Butiken saknar Klarna-nycklar, så ingen betalning har genomförts.
+            </span>
+          )}
+        </div>
+      )}
+
       <div
         style={{
           marginTop: 20,

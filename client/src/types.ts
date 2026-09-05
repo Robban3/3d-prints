@@ -81,6 +81,22 @@ export interface ShopConfig {
   };
   shipping: { fee: number; freeThreshold: number };
   upload: { maxBytes: number; extensions: string[] };
+  payment: { provider: 'klarna'; live: boolean };
+}
+
+export interface PaymentSession {
+  clientToken: string;
+  paymentMethodCategories: Array<{ identifier: string; name: string }>;
+  /** True när servern saknar Klarna-nycklar och ingen riktig betalning sker. */
+  test: boolean;
+}
+
+export interface PaymentDetails {
+  provider: 'klarna';
+  reference?: string;
+  status: 'auktoriserad' | 'avvaktar' | 'obetald';
+  fraudStatus?: string;
+  test: boolean;
 }
 
 export interface UploadedFile {
@@ -144,6 +160,7 @@ export interface ShopOrder {
   subtotal: number;
   shipping: number;
   total: number;
+  payment?: PaymentDetails;
 }
 
 export interface CustomOrder {
@@ -161,6 +178,7 @@ export interface CustomOrder {
   description: string;
   quote: QuoteBreakdown;
   total: number;
+  payment?: PaymentDetails;
 }
 
 export type AnyOrder = ShopOrder | CustomOrder;
