@@ -220,6 +220,7 @@ client/
   src/pages/      en fil per vy
   src/components/ delade komponenter, bl.a. de genererade produktbilderna
   src/lib/        API-klient, varukorg och formatering
+  test/           komponent- och enhetstester (Vitest + Testing Library)
 ```
 
 Produktbilderna är genererade SVG:er (`client/src/components/ProductArt.tsx`) i
