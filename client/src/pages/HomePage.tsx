@@ -1,92 +1,89 @@
-import { Link } from 'react-router';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { ProductArt } from '../components/ProductArt';
 import { ProductCard } from '../components/ProductCard';
-import { fetchProducts } from '../lib/api';
+import { CategoryStrip } from '../components/CategoryStrip';
+import { TrustBar } from '../components/TrustBar';
+import { StatsRow } from '../components/StatsRow';
+import { UploadDropzone } from '../components/UploadDropzone';
+import { Icon } from '../components/Icon';
+import { fetchConfig, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
+import type { IconName } from '../components/Icon';
+import type { UploadedFile } from '../types';
 
-const usps = [
-  {
-    icon: '⚙',
-    title: 'Egen verkstad',
-    text: 'Åtta maskiner i Göteborg. Vi äger hela kedjan från slicing till packning, utan mellanhänder.',
-  },
-  {
-    icon: '⏱',
-    title: 'Print startar samma dag',
-    text: 'Beställningar före 14.00 läggs i kön direkt. Lagervara skickas normalt inom ett dygn.',
-  },
-  {
-    icon: '♻',
-    title: 'Materialet går tillbaka',
-    text: 'Stödmaterial och misslyckade print mals ned och blir nytt filament. Vi skickar i papper.',
-  },
-  {
-    icon: '✎',
-    title: 'Din fil, vår maskin',
-    text: 'Ladda upp en STL så får du pris direkt. Har du bara en skiss ritar vi modellen åt dig.',
-  },
+const steps: Array<{ title: string; text: string }> = [
+  { title: 'Ladda upp din 3D-fil', text: 'Vi kontrollerar och analyserar modellen' },
+  { title: 'Få offert & välj material', text: 'Du får pris och leveranstid direkt' },
+  { title: 'Vi printar din produkt', text: 'Kvalitetskontroll och efterbearbetning' },
+  { title: 'Leverans till dig', text: 'Spårbar leverans inom 2–7 arbetsdagar' },
 ];
 
-const steps = [
-  {
-    n: '01',
-    title: 'Ladda upp din fil',
-    text: 'STL, OBJ, 3MF eller STEP. Har du ingen fil hjälper vi dig att rita.',
-  },
-  {
-    n: '02',
-    title: 'Välj material och kvalitet',
-    text: 'Priset uppdateras direkt när du ändrar något i formuläret.',
-  },
-  {
-    n: '03',
-    title: 'Vi printar och kontrollerar',
-    text: 'Varje detalj mäts och rensas från stödmaterial innan den packas.',
-  },
-  {
-    n: '04',
-    title: 'Hemleverans',
-    text: 'Spårbar leverans inom 2–7 arbetsdagar beroende på jobbets storlek.',
-  },
+const miniFeatures: Array<{ icon: IconName; title: string; text: string }> = [
+  { icon: 'file', title: 'STL, 3MF, OBJ', text: 'Flera filformat' },
+  { icon: 'bolt', title: 'Snabb offert', text: 'Direkt i formuläret' },
+  { icon: 'shield', title: 'Hög kvalitet', text: 'Professionell finish' },
+];
+
+const values: Array<{ icon: IconName; title: string; text: string }> = [
+  { icon: 'target', title: 'Hög precision', text: 'Noggranna printar med skarpa detaljer.' },
+  { icon: 'cube', title: 'Kvalitetsmaterial', text: 'Vi använder endast premium filament.' },
+  { icon: 'leaf', title: 'Hållbarhet', text: 'Spillet mals ned och blir nytt material.' },
+  { icon: 'heart', title: 'Kundfokus', text: 'Vi finns här för dig hela vägen.' },
 ];
 
 export function HomePage() {
+  const navigate = useNavigate();
   const { data, loading } = useAsync(() => fetchProducts(), []);
+  const config = useAsync(() => fetchConfig(), []);
+  const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
+
   const products = data?.products ?? [];
-  const featured = products.filter((product) => product.featured).slice(0, 4);
-  const heroArt = products.slice(0, 4);
+  const popular = [...products]
+    .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount)
+    .slice(0, 12);
+  const stage = products.filter((product) => product.featured).slice(0, 3);
 
   return (
     <>
       <section className="hero">
-        <div className="container hero-grid">
+        <div className="container">
           <div>
-            <span className="eyebrow">3D-print från Göteborg</span>
-            <h1>Saker som inte fanns förrän någon printade dem</h1>
+            <h1>
+              3D-printade produkter.
+              <br />
+              <span className="accent-text">Byggda för dig.</span>
+            </h1>
             <p className="lead">
-              Fjorton egendesignade produkter för hem och kontor – och en verkstad som lika gärna
-              printar din egen fil. Ladda upp en modell så får du pris och leveranstid på sekunden.
+              Högkvalitativa 3D-printade produkter och prototyper. Snabbt, hållbart och precis –
+              precis som du vill ha det.
             </p>
-            <div className="row" style={{ marginTop: 26 }}>
+            <div className="hero-cta">
               <Link className="btn btn-lg" to="/produkter">
-                Se produkterna
+                Utforska produkter
               </Link>
               <Link className="btn btn-ghost btn-lg" to="/egen-print">
-                Beställ egen print
+                Beställ din egen print
               </Link>
             </div>
-            <div className="row" style={{ marginTop: 26, gap: 24 }}>
-              <span className="muted">✓ Fri frakt över 599 kr</span>
-              <span className="muted">✓ 30 dagars öppet köp</span>
-              <span className="muted">✓ 4,7 av 5 i snitt</span>
-            </div>
+            <span className="rating-strip">
+              <span className="rating-boxes" aria-hidden="true">
+                <i>★</i>
+                <i>★</i>
+                <i>★</i>
+                <i>★</i>
+                <i>★</i>
+              </span>
+              4,7/5 baserat på 1 007 omdömen
+            </span>
           </div>
-          <div className="hero-art" aria-hidden="true">
-            {heroArt.map((product) => (
-              <div className="art-tile" key={product.id}>
+
+          <div className="hero-stage" aria-hidden="true">
+            {stage.map((product) => (
+              <div className="stage-item" key={product.id}>
                 <ProductArt
                   shape={product.art.shape}
-                  accent={product.art.accent}
+                  tone={product.art.tone}
                   title={product.name}
                 />
               </div>
@@ -95,115 +92,127 @@ export function HomePage() {
         </div>
       </section>
 
+      <div className="container">
+        <CategoryStrip />
+      </div>
+
       <section className="section">
         <div className="container">
-          <div className="usp-grid">
-            {usps.map((usp) => (
-              <div className="usp" key={usp.title}>
-                <div className="usp-icon" aria-hidden="true">
-                  {usp.icon}
+          <div className="spread section-head">
+            <h2 style={{ margin: 0 }}>Populära produkter</h2>
+            <Link className="link-arrow" to="/produkter">
+              Visa alla produkter
+              <Icon name="arrowRight" size={16} />
+            </Link>
+          </div>
+
+          {loading ? (
+            <div className="product-grid">
+              {Array.from({ length: 12 }, (_, index) => (
+                <div className="skeleton" key={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="product-grid">
+              {popular.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+
+          <TrustBar />
+        </div>
+      </section>
+
+      <section className="section section-alt">
+        <div className="container custom-grid">
+          <div className="custom-pitch">
+            <h2>
+              Har du en egen design?
+              <br />
+              <span className="accent-text">Vi printar den åt dig.</span>
+            </h2>
+            <p className="muted">
+              Ladda upp din 3D-fil så får du en offert direkt. Välj material, färg och kvalitet – vi
+              tar hand om resten.
+            </p>
+            <div className="mini-features">
+              {miniFeatures.map((feature) => (
+                <div className="mini-feature" key={feature.title}>
+                  <Icon name={feature.icon} size={18} />
+                  <span>
+                    <strong>{feature.title}</strong>
+                    <span>{feature.text}</span>
+                  </span>
                 </div>
-                <h3>{usp.title}</h3>
-                <p>{usp.text}</p>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <UploadDropzone
+              accepted={config.data?.upload.extensions ?? ['.stl', '.obj', '.3mf']}
+              maxBytes={config.data?.upload.maxBytes ?? 100 * 1024 * 1024}
+              uploaded={uploaded}
+              onUploaded={(file) => {
+                setUploaded(file);
+                // Filen följer med till formuläret, så den inte behöver laddas upp igen.
+                if (file) navigate('/egen-print', { state: { uploaded: file } });
+              }}
+            />
+            <p className="center" style={{ marginTop: 14, marginBottom: 0 }}>
+              <Link className="link-arrow" to="/material">
+                Läs mer om våra material
+                <Icon name="arrowRight" size={16} />
+              </Link>
+            </p>
+          </div>
+
+          <div className="steps-panel">
+            <h3>Så här fungerar det</h3>
+            {steps.map((step, index) => (
+              <div className="step" key={step.title}>
+                <span className="step-num">{index + 1}</span>
+                <span>
+                  <strong>{step.title}</strong>
+                  <span>{step.text}</span>
+                </span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section-tight">
         <div className="container">
-          <div className="spread section-head">
-            <div>
-              <h2>Populärt just nu</h2>
-              <p>Fyra produkter som lämnar verkstaden i högst takt den här månaden.</p>
-            </div>
-            <Link className="btn btn-ghost" to="/produkter">
-              Alla 14 produkter
-            </Link>
-          </div>
-          {loading ? (
-            <div className="product-grid">
-              {[0, 1, 2, 3].map((n) => (
-                <div className="skeleton" key={n} />
-              ))}
-            </div>
-          ) : (
-            <div className="product-grid">
-              {featured.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+          <StatsRow />
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section-tight" style={{ paddingTop: 0 }}>
         <div className="container">
-          <div className="panel" style={{ padding: 'clamp(28px, 5vw, 52px)' }}>
-            <div className="hero-grid">
-              <div>
-                <span className="eyebrow">Egen print</span>
-                <h2>Skicka din fil – vi gör resten</h2>
-                <p className="muted">
-                  Prototyper, reservdelar till diskmaskinen, en modell till examensarbetet eller 200
-                  giveaways till mässan. Fyll i formuläret så räknar vi fram pris och leveransdatum
-                  medan du skriver, innan du bestämmer dig.
-                </p>
-                <ol className="stack" style={{ listStyle: 'none', padding: 0, marginTop: 24 }}>
-                  {steps.map((step) => (
-                    <li key={step.n} className="row" style={{ alignItems: 'flex-start', gap: 16 }}>
-                      <span className="mono" style={{ color: 'var(--accent)', fontWeight: 700 }}>
-                        {step.n}
-                      </span>
-                      <span>
-                        <strong>{step.title}</strong>
-                        <br />
-                        <span className="muted" style={{ fontSize: '0.92rem' }}>
-                          {step.text}
-                        </span>
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-                <Link className="btn btn-lg" to="/egen-print" style={{ marginTop: 26 }}>
-                  Räkna ut ditt pris
-                </Link>
+          <div className="value-grid">
+            {values.map((value) => (
+              <div className="value-item" key={value.title}>
+                <Icon name={value.icon} size={24} />
+                <strong>{value.title}</strong>
+                <p>{value.text}</p>
               </div>
-              <div className="panel panel-tight" style={{ background: 'var(--bg-raised)' }}>
-                <h3>Vad kostar det ungefär?</h3>
-                <table className="spec-table">
-                  <tbody>
-                    <tr>
-                      <th>Liten detalj, PLA (20 cm³)</th>
-                      <td>från 149 kr</td>
-                    </tr>
-                    <tr>
-                      <th>Reservdel i PETG (60 cm³)</th>
-                      <td>ca 280 kr</td>
-                    </tr>
-                    <tr>
-                      <th>Prototyp i resin (40 cm³)</th>
-                      <td>ca 420 kr</td>
-                    </tr>
-                    <tr>
-                      <th>50 st giveaways (12 cm³/st)</th>
-                      <td>ca 40 kr/st</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <p
-                  className="dim"
-                  style={{
-                    fontSize: '0.85rem',
-                    marginTop: 14,
-                    marginBottom: 0,
-                  }}
-                >
-                  Exakt pris får du direkt i formuläret. Startavgiften på 95 kr tas ut en gång per
-                  order, oavsett antal.
-                </p>
-              </div>
+            ))}
+            <div className="newsletter">
+              <strong>Få nyheter &amp; erbjudanden</strong>
+              <p>Anmäl dig till vårt nyhetsbrev.</p>
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  navigate('/om-oss');
+                }}
+              >
+                <input className="input" type="email" placeholder="Din e-postadress" required />
+                <button type="submit" className="btn">
+                  Prenumerera
+                </button>
+              </form>
             </div>
           </div>
         </div>

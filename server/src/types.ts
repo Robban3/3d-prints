@@ -39,18 +39,27 @@ export interface Product {
   reviewCount: number;
   featured: boolean;
   /** Nyckel till den genererade SVG-illustrationen. */
-  art: { shape: ArtShape; accent: string };
+  art: { shape: ArtShape; tone: ArtTone };
 }
 
 export type ArtShape =
-  | 'vase'
-  | 'arch'
-  | 'grid'
-  | 'tower'
-  | 'hook'
-  | 'creature'
-  | 'sphere'
-  | 'stand';
+  | 'planter'
+  | 'headphoneStand'
+  | 'organizer'
+  | 'dragon'
+  | 'moonLamp'
+  | 'penHolder'
+  | 'wallHook'
+  | 'coffeeDripper'
+  | 'diceTower'
+  | 'phoneStand'
+  | 'cableClip'
+  | 'spiralVase'
+  | 'gearFidget'
+  | 'spiceShelf';
+
+/** Ytan produkten visas i – motsvarar hur den faktiskt printas. */
+export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla';
 
 export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
 

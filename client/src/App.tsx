@@ -12,11 +12,15 @@ import { ConfirmationPage } from './pages/ConfirmationPage';
 import { TrackOrderPage } from './pages/TrackOrderPage';
 import { AboutPage } from './pages/AboutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { MaterialPage } from './pages/MaterialPage';
+import { HowItWorksPage } from './pages/HowItWorksPage';
+import { TopBar } from './components/TopBar';
 
 export function App() {
   return (
     <>
       <ScrollToTop />
+      <TopBar />
       <Header />
       <main id="innehall">
         <Routes>
@@ -28,6 +32,8 @@ export function App() {
           <Route path="/kassa" element={<CheckoutPage />} />
           <Route path="/order/:id" element={<ConfirmationPage />} />
           <Route path="/spara-order" element={<TrackOrderPage />} />
+          <Route path="/material" element={<MaterialPage />} />
+          <Route path="/sa-funkar-det" element={<HowItWorksPage />} />
           <Route path="/om-oss" element={<AboutPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

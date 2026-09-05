@@ -2,14 +2,22 @@ export type MaterialId = 'pla' | 'petg' | 'abs' | 'tpu' | 'resin';
 export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
 export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
 export type ArtShape =
-  | 'vase'
-  | 'arch'
-  | 'grid'
-  | 'tower'
-  | 'hook'
-  | 'creature'
-  | 'sphere'
-  | 'stand';
+  | 'planter'
+  | 'headphoneStand'
+  | 'organizer'
+  | 'dragon'
+  | 'moonLamp'
+  | 'penHolder'
+  | 'wallHook'
+  | 'coffeeDripper'
+  | 'diceTower'
+  | 'phoneStand'
+  | 'cableClip'
+  | 'spiralVase'
+  | 'gearFidget'
+  | 'spiceShelf';
+
+export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla';
 
 export interface Material {
   id: MaterialId;
@@ -58,7 +66,7 @@ export interface Product {
   rating: number;
   reviewCount: number;
   featured: boolean;
-  art: { shape: ArtShape; accent: string };
+  art: { shape: ArtShape; tone: ArtTone };
 }
 
 export interface ShopConfig {

@@ -48,7 +48,7 @@ export function CartPage() {
                   aria-hidden="true"
                   tabIndex={-1}
                 >
-                  <ProductArt shape={item.art.shape} accent={item.art.accent} title={item.name} />
+                  <ProductArt shape={item.art.shape} tone={item.art.tone} title={item.name} />
                 </Link>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '1rem' }}>

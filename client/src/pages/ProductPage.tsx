@@ -79,11 +79,7 @@ export function ProductPage() {
         <div className="product-layout">
           <div className="stack">
             <div className="product-hero-art">
-              <ProductArt
-                shape={product.art.shape}
-                accent={product.art.accent}
-                title={product.name}
-              />
+              <ProductArt shape={product.art.shape} tone={product.art.tone} title={product.name} />
             </div>
             <div className="panel panel-tight">
               <h3>Specifikation</h3>
