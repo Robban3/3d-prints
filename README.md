@@ -194,6 +194,27 @@ export SMTP_PASSWORD=...
 export MAIL_FROM='Formlabb <hej@formlabb.se>'
 ```
 
+## Härdning för drift
+
+- **Säkerhetsheaders** via helmet, med en CSP som släpper igenom Klarnas
+  skript och iframe men inget annat. `frame-ancestors 'none'` hindrar att
+  butiken bäddas in någon annanstans.
+- **Takgränser per IP** på de vägar som kostar något: 20 ordrar och 120
+  betalsessioner per timme, 120 prisförfrågningar per minut, 30 adminförsök
+  per kvart, och 20 filer eller 500 MB per timme. Sessionsgränsen är avsiktligt
+  mycket högre än ordergränsen, eftersom en session skapas om varje gång
+  varukorgen ändras. Svaret innehåller `Retry-After`.
+- **`trust proxy`** är påslaget, annars ser servern bara proxyns adress och
+  takgränserna blir verkningslösa. Antalet hopp styrs med `TRUST_PROXY_HOPS`.
+- **Klarnas notifieringar** tas emot på
+  `POST /api/payments/klarna/notification`, som löser ut en betalning vars
+  bedrägerikontroll låg på `PENDING`. Klarna signerar inte sina push-anrop, så
+  hemligheten i frågesträngen är det som skiljer ett äkta anrop från ett
+  påhittat – utan `KLARNA_NOTIFICATION_SECRET` tas inga notifieringar emot.
+- **Filuppladdning mot objektlagring.** Filerna ligger på lokal disk som
+  standard, vilket försvinner vid omstart i de flesta driftmiljöer. Sätts
+  `S3_BUCKET` läggs de i stället i objektlagring; SDK:n laddas först då.
+
 ## Miljövariabler
 
 | Variabel      | Standard            | Beskrivning                     |
@@ -214,6 +235,8 @@ server/
   src/lifecycle.ts orderns tillåtna statusövergångar
   src/mailer.ts   bekräftelse- och statusmejl
   src/stock.ts    lagersaldo med reservation
+  src/storage.ts  lokal disk eller objektlagring för uppladdade filer
+  src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter
   test/           enhetstester
 client/

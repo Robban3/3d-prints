@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
+import { storage } from './storage.ts';
 
 /** Format vi kan slica direkt eller konvertera i verkstaden. */
 export const ALLOWED_EXTENSIONS = ['.stl', '.obj', '.3mf', '.step', '.stp', '.f3d'] as const;
@@ -89,7 +90,7 @@ export async function deleteUpload(id: string): Promise<boolean> {
   const meta = await readMeta(id);
   if (!meta) return false;
   const paths = pathsFor(meta.id, meta.extension);
-  await rm(paths.file, { force: true });
+  await storage().remove(storedFileName(meta.id, meta.extension), paths.file);
   await rm(paths.meta, { force: true });
   return true;
 }

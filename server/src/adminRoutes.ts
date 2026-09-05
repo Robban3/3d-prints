@@ -2,6 +2,7 @@ import { Router } from 'express';
 import type { RequestHandler } from 'express';
 import { timingSafeEqual } from 'node:crypto';
 import { pathParam } from './http.ts';
+import { rateLimit } from './rateLimit.ts';
 import { findOrder, listOrders, updateOrder } from './store.ts';
 import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from './lifecycle.ts';
 import { release } from './stock.ts';
@@ -27,6 +28,14 @@ function matches(provided: string, expected: string): boolean {
   return timingSafeEqual(a, b);
 }
 
+/** Hårdare gräns här, eftersom felaktiga försök är gissningar på nyckeln. */
+const adminLimit = rateLimit({
+  name: 'admin',
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: 'För många försök. Vänta en stund.',
+});
+
 const requireAdmin: RequestHandler = (req, res, next) => {
   const expected = adminToken();
   if (!expected) {
@@ -46,7 +55,7 @@ admin.get('/admin/status', (_req, res) => {
   res.json({ enabled: adminToken() !== undefined });
 });
 
-admin.get('/admin/orders', requireAdmin, async (_req, res) => {
+admin.get('/admin/orders', adminLimit, requireAdmin, async (_req, res) => {
   const orders = await listOrders();
   res.json({
     orders: orders.map((order) => ({ ...order, next: nextStatuses(order.status) })),
@@ -54,7 +63,7 @@ admin.get('/admin/orders', requireAdmin, async (_req, res) => {
   });
 });
 
-admin.patch('/admin/orders/:id/status', requireAdmin, async (req, res) => {
+admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const id = pathParam(req.params.id);
   const target = body.status;

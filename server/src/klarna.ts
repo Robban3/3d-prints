@@ -43,6 +43,7 @@ export interface KlarnaOrderPayload {
   order_tax_amount: number;
   order_lines: KlarnaOrderLine[];
   merchant_reference1?: string;
+  merchant_urls?: { notification: string };
 }
 
 export interface KlarnaSession {
@@ -70,6 +71,23 @@ export class KlarnaError extends Error {
     this.status = status;
     this.detail = detail;
   }
+}
+
+/**
+ * Adressen Klarna hör av sig till när en bedrägeriprövning landat. Hemligheten
+ * ligger i sökvägen, eftersom Klarna inte signerar sina push-anrop – utan den
+ * går ingen notifiering igenom.
+ */
+export function notificationUrl(): string | undefined {
+  const base = process.env.PUBLIC_BASE_URL;
+  const secret = process.env.KLARNA_NOTIFICATION_SECRET;
+  if (!base || !secret || secret.length < 16) return undefined;
+  return `${base.replace(/\/$/, '')}/api/payments/klarna/notification?token=${encodeURIComponent(secret)}`;
+}
+
+export function notificationSecret(): string | undefined {
+  const secret = process.env.KLARNA_NOTIFICATION_SECRET;
+  return secret && secret.length >= 16 ? secret : undefined;
 }
 
 export function klarnaConfig(): KlarnaConfig | undefined {
@@ -153,6 +171,7 @@ export function payloadForOrder(
     order_tax_amount: lines.reduce((sum, line) => sum + line.total_tax_amount, 0),
     order_lines: lines,
     ...(order.id ? { merchant_reference1: order.id } : {}),
+    ...(notificationUrl() ? { merchant_urls: { notification: notificationUrl()! } } : {}),
   };
 }
 
@@ -182,6 +201,7 @@ export function payloadForCustomOrder(
     order_tax_amount: line.total_tax_amount,
     order_lines: [line],
     ...(order.id ? { merchant_reference1: order.id } : {}),
+    ...(notificationUrl() ? { merchant_urls: { notification: notificationUrl()! } } : {}),
   };
 }
 

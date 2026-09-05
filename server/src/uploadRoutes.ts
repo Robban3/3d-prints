@@ -4,6 +4,7 @@ import multer from 'multer';
 import { createReadStream } from 'node:fs';
 import { rm } from 'node:fs/promises';
 import { pathParam } from './http.ts';
+import { storage as fileStore } from './storage.ts';
 import {
   ALLOWED_EXTENSIONS,
   MAX_UPLOAD_BYTES,
@@ -101,14 +102,19 @@ uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
     return;
   }
 
-  writeMeta({
-    id,
-    originalName: file.originalname.slice(0, 200),
-    extension: extensionOf(file.originalname),
-    size: file.size,
-    createdAt: new Date().toISOString(),
-    claimedBy: null,
-  })
+  const extension = extensionOf(file.originalname);
+  fileStore()
+    .put(storedFileName(id, extension), file.path, 'application/octet-stream')
+    .then(() =>
+      writeMeta({
+        id,
+        originalName: file.originalname.slice(0, 200),
+        extension,
+        size: file.size,
+        createdAt: new Date().toISOString(),
+        claimedBy: null,
+      }),
+    )
     .then((meta) => {
       recordUpload(clientKey(req), meta.size);
       res.status(201).json({
@@ -131,7 +137,10 @@ uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
 uploads.get('/uploads/:id', (req, res, next) => {
   readMeta(pathParam(req.params.id))
     .then(async (meta) => {
-      if (!meta || !(await uploadExists(meta))) {
+      const object = meta
+        ? await fileStore().get(storedFileName(meta.id, meta.extension), filePathFor(meta))
+        : undefined;
+      if (!meta || !object) {
         res.status(404).json({ error: 'Filen hittades inte' });
         return;
       }
@@ -143,7 +152,7 @@ uploads.get('/uploads/:id', (req, res, next) => {
         `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(meta.originalName)}`,
       );
       res.setHeader('Content-Length', String(meta.size));
-      createReadStream(filePathFor(meta)).on('error', next).pipe(res);
+      object.body.on('error', next).pipe(res);
     })
     .catch(next);
 });

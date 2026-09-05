@@ -3,11 +3,12 @@ import { categories, productBySlug, products } from './data/products.ts';
 import { materials, qualities } from './data/materials.ts';
 import { calculateQuote, QUOTE_LIMITS } from './pricing.ts';
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, shippingFor } from './shipping.ts';
-import { findOrder, generateOrderNumber, saveOrder } from './store.ts';
+import { findOrder, generateOrderNumber, listOrders, saveOrder, updateOrder } from './store.ts';
 import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
 import { pathParam } from './http.ts';
 import { release, reserve, stockLevels } from './stock.ts';
 import { orderConfirmation, sendMail } from './mailer.ts';
+import { rateLimit } from './rateLimit.ts';
 import {
   KlarnaError,
   createSession,
@@ -15,6 +16,7 @@ import {
   klarnaConfig,
   payloadForCustomOrder,
   payloadForOrder,
+  notificationSecret,
   placeOrder as placeKlarnaOrder,
 } from './klarna.ts';
 import {
@@ -26,6 +28,31 @@ import {
 import type { CustomOrder, Order, PaymentDetails } from './types.ts';
 
 export const api = Router();
+
+const orderLimit = rateLimit({
+  name: 'orders',
+  windowMs: 60 * 60 * 1000,
+  max: Number(process.env.RATE_LIMIT_ORDERS ?? 20),
+  message: 'Många beställningar från samma nätverk. Försök igen om en stund.',
+});
+
+/**
+ * En betalsession skapas om varje gång varukorgen ändras, så den gränsen måste
+ * vara betydligt generösare än den för lagda ordrar.
+ */
+const sessionLimit = rateLimit({
+  name: 'payment-sessions',
+  windowMs: 60 * 60 * 1000,
+  max: Number(process.env.RATE_LIMIT_SESSIONS ?? 120),
+  message: 'För många betalförsök. Vänta en stund och försök igen.',
+});
+
+const quoteLimit = rateLimit({
+  name: 'quote',
+  windowMs: 60 * 1000,
+  max: 120,
+  message: 'För många prisförfrågningar. Vänta en stund och försök igen.',
+});
 
 api.get('/health', (_req, res) => {
   res.json({ status: 'ok', products: products.length });
@@ -86,7 +113,7 @@ api.get('/products/:slug', async (req, res) => {
   res.json({ product: withStock(product), related: related.map(withStock) });
 });
 
-api.post('/quote', (req, res) => {
+api.post('/quote', quoteLimit, (req, res) => {
   const request = parseQuoteRequest(req.body);
   res.json({ request, quote: calculateQuote(request) });
 });
@@ -103,7 +130,7 @@ const paymentLocale = () =>
  * Skapar en betalsession hos Klarna. Beloppet räknas alltid fram här av samma
  * kod som lägger ordern, så att widgeten visar exakt det kunden debiteras.
  */
-api.post('/payments/session', async (req, res) => {
+api.post('/payments/session', sessionLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const config = paymentLocale();
 
@@ -165,7 +192,7 @@ async function notify(order: Order | CustomOrder): Promise<void> {
   }
 }
 
-api.post('/orders', async (req, res) => {
+api.post('/orders', orderLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const customer = parseCustomer(body.customer);
   const lines = parseOrderLines(body.lines);
@@ -211,7 +238,7 @@ api.post('/orders', async (req, res) => {
   res.status(201).json({ order });
 });
 
-api.post('/custom-orders', async (req, res) => {
+api.post('/custom-orders', orderLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const customer = parseCustomer(body.customer);
   const request = parseQuoteRequest(body.request);
@@ -271,6 +298,45 @@ api.post('/custom-orders', async (req, res) => {
   await saveOrder(order);
   await notify(order);
   res.status(201).json({ order });
+});
+
+/**
+ * Klarna hör av sig hit när en bedrägeriprövning som låg på PENDING landat.
+ * Anropet är oautentiserat hos Klarna, så hemligheten i frågesträngen är det
+ * som skiljer ett äkta anrop från ett påhittat.
+ */
+api.post('/payments/klarna/notification', async (req, res) => {
+  const secret = notificationSecret();
+  if (!secret || req.query.token !== secret) {
+    res.status(401).json({ error: 'Ogiltig notifiering' });
+    return;
+  }
+
+  const body = (req.body ?? {}) as { order_id?: unknown; event_type?: unknown };
+  const klarnaOrderId = typeof body.order_id === 'string' ? body.order_id : '';
+  const event = typeof body.event_type === 'string' ? body.event_type : '';
+  if (!klarnaOrderId || !event) {
+    res.status(400).json({ error: 'Saknar order_id eller event_type' });
+    return;
+  }
+
+  const orders = await listOrders();
+  const match = orders.find((order) => order.payment?.reference === klarnaOrderId);
+  if (!match) {
+    // Klarna gör om anropet senare om vi svarar med fel, så en okänd order
+    // kvitteras med 200 för att inte fastna i en loop.
+    console.warn('Klarna-notifiering för okänd order', klarnaOrderId);
+    res.status(200).json({ ok: true });
+    return;
+  }
+
+  const status = event === 'FRAUD_RISK_ACCEPTED' ? 'auktoriserad' : 'obetald';
+  await updateOrder(match.id, (order) => ({
+    ...order,
+    payment: order.payment ? { ...order.payment, status, fraudStatus: event } : order.payment,
+  }));
+
+  res.json({ ok: true });
 });
 
 api.get('/orders/:id', async (req, res) => {
