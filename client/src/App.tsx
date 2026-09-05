@@ -1,0 +1,38 @@
+import { Route, Routes } from "react-router-dom";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import { ScrollToTop } from "./components/ScrollToTop";
+import { HomePage } from "./pages/HomePage";
+import { ShopPage } from "./pages/ShopPage";
+import { ProductPage } from "./pages/ProductPage";
+import { CustomOrderPage } from "./pages/CustomOrderPage";
+import { CartPage } from "./pages/CartPage";
+import { CheckoutPage } from "./pages/CheckoutPage";
+import { ConfirmationPage } from "./pages/ConfirmationPage";
+import { TrackOrderPage } from "./pages/TrackOrderPage";
+import { AboutPage } from "./pages/AboutPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
+
+export function App() {
+  return (
+    <>
+      <ScrollToTop />
+      <Header />
+      <main id="innehall">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/produkter" element={<ShopPage />} />
+          <Route path="/produkter/:slug" element={<ProductPage />} />
+          <Route path="/egen-print" element={<CustomOrderPage />} />
+          <Route path="/varukorg" element={<CartPage />} />
+          <Route path="/kassa" element={<CheckoutPage />} />
+          <Route path="/order/:id" element={<ConfirmationPage />} />
+          <Route path="/spara-order" element={<TrackOrderPage />} />
+          <Route path="/om-oss" element={<AboutPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+      <Footer />
+    </>
+  );
+}
