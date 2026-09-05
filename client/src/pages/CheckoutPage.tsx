@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { CustomerForm } from '../components/CustomerForm';
 import { useCart } from '../lib/cart';
 import { ApiError, fetchConfig, placeOrder } from '../lib/api';

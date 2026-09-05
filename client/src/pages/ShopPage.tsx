@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { ProductCard } from '../components/ProductCard';
 import { fetchConfig, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';

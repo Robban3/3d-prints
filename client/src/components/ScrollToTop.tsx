@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 /** Startar varje ny sida överst i stället för där föregående sida låg. */
 export function ScrollToTop() {

@@ -1,4 +1,4 @@
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router';
 import { useCart } from '../lib/cart';
 import { Logo } from './Logo';
 
