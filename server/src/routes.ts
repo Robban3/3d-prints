@@ -6,6 +6,7 @@ import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, shippingFor } from './shipping.t
 import { findOrder, generateOrderNumber, saveOrder } from './store.ts';
 import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
 import { pathParam } from './http.ts';
+import { release, reserve, stockLevels } from './stock.ts';
 import {
   KlarnaError,
   createSession,
@@ -41,7 +42,7 @@ api.get('/config', (_req, res) => {
   });
 });
 
-api.get('/products', (req, res) => {
+api.get('/products', async (req, res) => {
   const category = typeof req.query.category === 'string' ? req.query.category : undefined;
   const search = typeof req.query.search === 'string' ? req.query.search.toLowerCase().trim() : '';
 
@@ -54,10 +55,15 @@ api.get('/products', (req, res) => {
       [product.name, product.tagline, product.description].join(' ').toLowerCase().includes(search),
     );
   }
-  res.json({ products: result, total: result.length });
+  // Saldot är föränderligt och hämtas därför separat från katalogen.
+  const levels = await stockLevels();
+  res.json({
+    products: result.map((product) => ({ ...product, stock: levels.get(product.id) ?? 0 })),
+    total: result.length,
+  });
 });
 
-api.get('/products/:slug', (req, res) => {
+api.get('/products/:slug', async (req, res) => {
   const product = productBySlug.get(pathParam(req.params.slug));
   if (!product) {
     res.status(404).json({ error: 'Produkten hittades inte' });
@@ -71,7 +77,12 @@ api.get('/products/:slug', (req, res) => {
     .filter((p) => p.id !== product.id && p.category !== product.category)
     .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount);
   const related = [...sameCategory, ...fillers].slice(0, 5);
-  res.json({ product, related });
+  const levels = await stockLevels();
+  const withStock = <T extends { id: string }>(entry: T) => ({
+    ...entry,
+    stock: levels.get(entry.id) ?? 0,
+  });
+  res.json({ product: withStock(product), related: related.map(withStock) });
 });
 
 api.post('/quote', (req, res) => {
@@ -153,10 +164,23 @@ api.post('/orders', async (req, res) => {
   const shipping = shippingFor(subtotal);
 
   const orderId = generateOrderNumber('S');
-  const payment = await settle(
-    typeof body.authorizationToken === 'string' ? body.authorizationToken : undefined,
-    payloadForOrder({ lines, shipping, total: subtotal + shipping, id: orderId }, paymentLocale()),
-  );
+  // Saldot dras av innan betalningen, så att två kunder inte kan köpa samma
+  // sista exemplar medan Klarna svarar.
+  await reserve(lines);
+
+  let payment;
+  try {
+    payment = await settle(
+      typeof body.authorizationToken === 'string' ? body.authorizationToken : undefined,
+      payloadForOrder(
+        { lines, shipping, total: subtotal + shipping, id: orderId },
+        paymentLocale(),
+      ),
+    );
+  } catch (error) {
+    await release(lines);
+    throw error;
+  }
 
   const order: Order = {
     id: orderId,

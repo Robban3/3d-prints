@@ -135,7 +135,11 @@ export function CheckoutPage() {
     } catch (error) {
       if (error instanceof ApiError) {
         setErrors(error.fields);
-        setSubmitError(error.message);
+        // Lagerfel hör inte till något fält i formuläret och visas därför samlat.
+        const stockMessages = Object.entries(error.fields)
+          .filter(([field]) => field.startsWith('stock.'))
+          .map(([, message]) => message);
+        setSubmitError(stockMessages.length > 0 ? stockMessages.join(' ') : error.message);
       } else {
         setSubmitError(
           error instanceof Error ? error.message : 'Beställningen gick inte igenom. Försök igen.',

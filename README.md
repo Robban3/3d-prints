@@ -44,6 +44,7 @@ npm start          # http://localhost:4000
 - Filtrering per kategori, fritextsökning och sortering på pris, namn eller popularitet
 - Produktsida med färg- och storleksval, antal och löpande totalpris
 - Varukorg som sparas i `localStorage` och överlever omladdning
+- Lagersaldo som dras av vid köp och hindrar överförsäljning
 - Kassa med validering, fri frakt över 599 kr, Klarna-betalning och orderbekräftelse
 - Orderspårning på ordernummer
 

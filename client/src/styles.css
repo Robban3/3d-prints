@@ -8,14 +8,18 @@
   --border-strong: #2b323d;
   --text: #f4f6f9;
   --text-muted: #98a1ae;
-  --text-dim: #6a7381;
+  --text-dim: #79828f;
+  /* Blått som text på mörk botten (5,35:1) … */
   --accent: #2b7fff;
   --accent-strong: #4b95ff;
   --accent-soft: rgba(43, 127, 255, 0.12);
+  /* … och en mörkare ton som knappbotten, så vit text når 5,38:1. */
+  --accent-btn: #1a63e0;
+  --accent-btn-hover: #1f6ff0;
   --accent-ink: #ffffff;
   --danger: #ff6b5c;
   --success: #22c55e;
-  --star: #00b67a;
+  --star: #00875a;
   --radius-sm: 8px;
   --radius: 12px;
   --radius-lg: 16px;
@@ -143,11 +147,11 @@ textarea {
     background 0.15s ease,
     border-color 0.15s ease,
     color 0.15s ease;
-  background: var(--accent);
+  background: var(--accent-btn);
   color: var(--accent-ink);
 }
 .btn:hover:not(:disabled) {
-  background: var(--accent-strong);
+  background: var(--accent-btn-hover);
 }
 .btn:disabled {
   opacity: 0.5;
@@ -345,7 +349,7 @@ textarea {
   position: absolute;
   top: 2px;
   right: 1px;
-  background: var(--accent);
+  background: var(--accent-btn);
   color: #fff;
   border-radius: 999px;
   min-width: 18px;
@@ -668,8 +672,8 @@ textarea {
   transition: all 0.15s ease;
 }
 .add-btn:hover {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--accent-btn);
+  border-color: var(--accent-btn);
   color: #fff;
 }
 .add-btn.done {
@@ -1090,8 +1094,8 @@ input[type='range'] {
   color: var(--text);
 }
 .chip[aria-pressed='true'] {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--accent-btn);
+  border-color: var(--accent-btn);
   color: #fff;
   font-weight: 600;
 }
