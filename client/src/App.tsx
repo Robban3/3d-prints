@@ -1,17 +1,17 @@
-import { Route, Routes } from "react-router-dom";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
-import { ScrollToTop } from "./components/ScrollToTop";
-import { HomePage } from "./pages/HomePage";
-import { ShopPage } from "./pages/ShopPage";
-import { ProductPage } from "./pages/ProductPage";
-import { CustomOrderPage } from "./pages/CustomOrderPage";
-import { CartPage } from "./pages/CartPage";
-import { CheckoutPage } from "./pages/CheckoutPage";
-import { ConfirmationPage } from "./pages/ConfirmationPage";
-import { TrackOrderPage } from "./pages/TrackOrderPage";
-import { AboutPage } from "./pages/AboutPage";
-import { NotFoundPage } from "./pages/NotFoundPage";
+import { Route, Routes } from 'react-router-dom';
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
+import { ScrollToTop } from './components/ScrollToTop';
+import { HomePage } from './pages/HomePage';
+import { ShopPage } from './pages/ShopPage';
+import { ProductPage } from './pages/ProductPage';
+import { CustomOrderPage } from './pages/CustomOrderPage';
+import { CartPage } from './pages/CartPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { ConfirmationPage } from './pages/ConfirmationPage';
+import { TrackOrderPage } from './pages/TrackOrderPage';
+import { AboutPage } from './pages/AboutPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 export function App() {
   return (

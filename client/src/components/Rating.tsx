@@ -3,11 +3,11 @@ export function Rating({ value, count }: { value: number; count: number }) {
   return (
     <span className="rating">
       <span className="stars" aria-hidden="true">
-        {"★".repeat(full)}
-        {"☆".repeat(5 - full)}
+        {'★'.repeat(full)}
+        {'☆'.repeat(5 - full)}
       </span>
       <span>
-        {value.toFixed(1).replace(".", ",")} ({count})
+        {value.toFixed(1).replace('.', ',')} ({count})
       </span>
     </span>
   );

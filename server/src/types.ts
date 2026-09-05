@@ -1,4 +1,4 @@
-export type MaterialId = "pla" | "petg" | "abs" | "tpu" | "resin";
+export type MaterialId = 'pla' | 'petg' | 'abs' | 'tpu' | 'resin';
 
 export interface Material {
   id: MaterialId;
@@ -43,21 +43,16 @@ export interface Product {
 }
 
 export type ArtShape =
-  | "vase"
-  | "arch"
-  | "grid"
-  | "tower"
-  | "hook"
-  | "creature"
-  | "sphere"
-  | "stand";
+  | 'vase'
+  | 'arch'
+  | 'grid'
+  | 'tower'
+  | 'hook'
+  | 'creature'
+  | 'sphere'
+  | 'stand';
 
-export type CategoryId =
-  | "inredning"
-  | "kontor"
-  | "kok"
-  | "prylar"
-  | "tillbehor";
+export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
 
 export interface Category {
   id: CategoryId;
@@ -84,11 +79,11 @@ export interface CustomerDetails {
   note?: string;
 }
 
-export type OrderStatus = "mottagen" | "i_produktion" | "skickad" | "levererad";
+export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad';
 
 export interface Order {
   id: string;
-  type: "shop";
+  type: 'shop';
   createdAt: string;
   status: OrderStatus;
   customer: CustomerDetails;
@@ -98,7 +93,7 @@ export interface Order {
   total: number;
 }
 
-export type PrintQuality = "utkast" | "standard" | "fin" | "ultrafin";
+export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
 
 export interface CustomQuoteRequest {
   material: MaterialId;
@@ -127,14 +122,17 @@ export interface QuoteBreakdown {
 
 export interface CustomOrder {
   id: string;
-  type: "custom";
+  type: 'custom';
   createdAt: string;
   status: OrderStatus;
   customer: CustomerDetails;
   request: CustomQuoteRequest;
   projectName: string;
+  /** Id för den uppladdade modellfilen, om kunden bifogade en. */
+  fileId?: string;
   fileName?: string;
   fileUrl?: string;
+  fileSize?: number;
   description: string;
   quote: QuoteBreakdown;
   total: number;

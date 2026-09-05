@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { ApiError } from "./api";
+import { useEffect, useState } from 'react';
+import { ApiError } from './api';
 
 interface AsyncState<T> {
   data: T | null;
@@ -11,10 +11,7 @@ interface AsyncState<T> {
  * Kör en asynkron laddning och håller reda på laddnings- och feltillstånd.
  * Svar från en förfrågan som hunnit bli inaktuell kastas bort.
  */
-export function useAsync<T>(
-  loader: () => Promise<T>,
-  deps: unknown[],
-): AsyncState<T> {
+export function useAsync<T>(loader: () => Promise<T>, deps: unknown[]): AsyncState<T> {
   const [state, setState] = useState<AsyncState<T>>({
     data: null,
     loading: true,
@@ -30,8 +27,7 @@ export function useAsync<T>(
       })
       .catch((error: unknown) => {
         if (!active) return;
-        const message =
-          error instanceof ApiError ? error.message : "Kunde inte hämta data";
+        const message = error instanceof ApiError ? error.message : 'Kunde inte hämta data';
         setState({ data: null, loading: false, error: message });
       });
     return () => {

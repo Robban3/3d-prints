@@ -1,9 +1,9 @@
-import { Link } from "react-router-dom";
-import { ProductArt } from "../components/ProductArt";
-import { useCart } from "../lib/cart";
-import { formatPrice } from "../lib/format";
-import { fetchConfig } from "../lib/api";
-import { useAsync } from "../lib/useAsync";
+import { Link } from 'react-router-dom';
+import { ProductArt } from '../components/ProductArt';
+import { useCart } from '../lib/cart';
+import { formatPrice } from '../lib/format';
+import { fetchConfig } from '../lib/api';
+import { useAsync } from '../lib/useAsync';
 
 export function CartPage() {
   const { items, subtotal, setQuantity, remove, clear } = useCart();
@@ -12,8 +12,7 @@ export function CartPage() {
     fee: 59,
     freeThreshold: 599,
   };
-  const shipping =
-    subtotal >= shippingConfig.freeThreshold ? 0 : shippingConfig.fee;
+  const shipping = subtotal >= shippingConfig.freeThreshold ? 0 : shippingConfig.fee;
   const missingForFreeShipping = shippingConfig.freeThreshold - subtotal;
 
   if (items.length === 0) {
@@ -21,13 +20,8 @@ export function CartPage() {
       <section className="section">
         <div className="container center">
           <h1>Varukorgen är tom</h1>
-          <p className="muted">
-            Sortimentet finns kvar – och vi printar lika gärna din egen fil.
-          </p>
-          <div
-            className="row"
-            style={{ justifyContent: "center", marginTop: 20 }}
-          >
+          <p className="muted">Sortimentet finns kvar – och vi printar lika gärna din egen fil.</p>
+          <div className="row" style={{ justifyContent: 'center', marginTop: 20 }}>
             <Link className="btn" to="/produkter">
               Till produkterna
             </Link>
@@ -54,23 +48,15 @@ export function CartPage() {
                   aria-hidden="true"
                   tabIndex={-1}
                 >
-                  <ProductArt
-                    shape={item.art.shape}
-                    accent={item.art.accent}
-                    title={item.name}
-                  />
+                  <ProductArt shape={item.art.shape} accent={item.art.accent} title={item.name} />
                 </Link>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: "1rem" }}>
+                  <h3 style={{ margin: 0, fontSize: '1rem' }}>
                     <Link to={`/produkter/${item.slug}`}>{item.name}</Link>
                   </h3>
-                  <p
-                    className="dim"
-                    style={{ margin: "4px 0 8px", fontSize: "0.86rem" }}
-                  >
+                  <p className="dim" style={{ margin: '4px 0 8px', fontSize: '0.86rem' }}>
                     {item.color}
-                    {item.sizeName ? ` · ${item.sizeName}` : ""} ·{" "}
-                    {formatPrice(item.unitPrice)}/st
+                    {item.sizeName ? ` · ${item.sizeName}` : ''} · {formatPrice(item.unitPrice)}/st
                   </p>
                   <div className="row">
                     <div className="qty">
@@ -90,11 +76,7 @@ export function CartPage() {
                         +
                       </button>
                     </div>
-                    <button
-                      type="button"
-                      className="btn-quiet"
-                      onClick={() => remove(item.key)}
-                    >
+                    <button type="button" className="btn-quiet" onClick={() => remove(item.key)}>
                       Ta bort
                     </button>
                   </div>
@@ -120,7 +102,7 @@ export function CartPage() {
             </div>
             <div className="summary-row">
               <span>Frakt</span>
-              <span>{shipping === 0 ? "Fri" : formatPrice(shipping)}</span>
+              <span>{shipping === 0 ? 'Fri' : formatPrice(shipping)}</span>
             </div>
             <div className="summary-row total">
               <span>Totalt</span>
@@ -128,21 +110,13 @@ export function CartPage() {
             </div>
             {missingForFreeShipping > 0 && (
               <p className="notice" style={{ marginTop: 14 }}>
-                Handla för {formatPrice(missingForFreeShipping)} till så bjuder
-                vi på frakten.
+                Handla för {formatPrice(missingForFreeShipping)} till så bjuder vi på frakten.
               </p>
             )}
-            <Link
-              className="btn btn-block btn-lg"
-              to="/kassa"
-              style={{ marginTop: 18 }}
-            >
+            <Link className="btn btn-block btn-lg" to="/kassa" style={{ marginTop: 18 }}>
               Till kassan
             </Link>
-            <p
-              className="dim"
-              style={{ fontSize: "0.82rem", marginTop: 12, marginBottom: 0 }}
-            >
+            <p className="dim" style={{ fontSize: '0.82rem', marginTop: 12, marginBottom: 0 }}>
               Alla priser inkl. moms · 30 dagars öppet köp
             </p>
           </aside>

@@ -1,44 +1,41 @@
-import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { ProductCard } from "../components/ProductCard";
-import { fetchConfig, fetchProducts } from "../lib/api";
-import { useAsync } from "../lib/useAsync";
-import type { Product } from "../types";
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { ProductCard } from '../components/ProductCard';
+import { fetchConfig, fetchProducts } from '../lib/api';
+import { useAsync } from '../lib/useAsync';
+import type { Product } from '../types';
 
-type SortId = "popular" | "price-asc" | "price-desc" | "name";
+type SortId = 'popular' | 'price-asc' | 'price-desc' | 'name';
 
 const sorters: Record<SortId, (a: Product, b: Product) => number> = {
   popular: (a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount,
-  "price-asc": (a, b) => a.price - b.price,
-  "price-desc": (a, b) => b.price - a.price,
-  name: (a, b) => a.name.localeCompare(b.name, "sv"),
+  'price-asc': (a, b) => a.price - b.price,
+  'price-desc': (a, b) => b.price - a.price,
+  name: (a, b) => a.name.localeCompare(b.name, 'sv'),
 };
 
 const sortLabels: Array<{ id: SortId; label: string }> = [
-  { id: "popular", label: "Populärast" },
-  { id: "price-asc", label: "Lägsta pris" },
-  { id: "price-desc", label: "Högsta pris" },
-  { id: "name", label: "Namn A–Ö" },
+  { id: 'popular', label: 'Populärast' },
+  { id: 'price-asc', label: 'Lägsta pris' },
+  { id: 'price-desc', label: 'Högsta pris' },
+  { id: 'name', label: 'Namn A–Ö' },
 ];
 
 export function ShopPage() {
   const [params, setParams] = useSearchParams();
-  const category = params.get("kategori") ?? "alla";
-  const [search, setSearch] = useState(params.get("sok") ?? "");
-  const [sort, setSort] = useState<SortId>("popular");
+  const category = params.get('kategori') ?? 'alla';
+  const [search, setSearch] = useState(params.get('sok') ?? '');
+  const [sort, setSort] = useState<SortId>('popular');
 
   const config = useAsync(() => fetchConfig(), []);
-  const { data, loading, error } = useAsync(
-    () => fetchProducts({ category }),
-    [category],
-  );
+  const { data, loading, error } = useAsync(() => fetchProducts({ category }), [category]);
 
   const visible = useMemo(() => {
     const term = search.toLowerCase().trim();
     const filtered = (data?.products ?? []).filter((product) =>
       term
         ? [product.name, product.tagline, product.description]
-            .join(" ")
+            .join(' ')
             .toLowerCase()
             .includes(term)
         : true,
@@ -48,8 +45,8 @@ export function ShopPage() {
 
   function selectCategory(id: string) {
     const next = new URLSearchParams(params);
-    if (id === "alla") next.delete("kategori");
-    else next.set("kategori", id);
+    if (id === 'alla') next.delete('kategori');
+    else next.set('kategori', id);
     setParams(next, { replace: true });
   }
 
@@ -64,7 +61,7 @@ export function ShopPage() {
           <p>
             {active
               ? active.description
-              : "Allt vi designar och printar i egen verkstad, redo att skickas."}
+              : 'Allt vi designar och printar i egen verkstad, redo att skickas.'}
           </p>
         </div>
 
@@ -73,8 +70,8 @@ export function ShopPage() {
             <button
               type="button"
               className="chip"
-              aria-pressed={category === "alla"}
-              onClick={() => selectCategory("alla")}
+              aria-pressed={category === 'alla'}
+              onClick={() => selectCategory('alla')}
             >
               Alla
             </button>
@@ -90,7 +87,7 @@ export function ShopPage() {
               </button>
             ))}
           </div>
-          <div className="row" style={{ marginLeft: "auto" }}>
+          <div className="row" style={{ marginLeft: 'auto' }}>
             <label className="field-label" htmlFor="sok">
               Sök
             </label>
@@ -134,13 +131,13 @@ export function ShopPage() {
           <div className="panel center">
             <h3>Inga träffar</h3>
             <p className="muted">
-              Vi hittade ingenting på ”{search}”. Prova ett annat ord – eller
-              låt oss printa det du letar efter.
+              Vi hittade ingenting på ”{search}”. Prova ett annat ord – eller låt oss printa det du
+              letar efter.
             </p>
           </div>
         ) : (
           <>
-            <p className="dim" style={{ fontSize: "0.88rem" }}>
+            <p className="dim" style={{ fontSize: '0.88rem' }}>
               Visar {visible.length} produkter
             </p>
             <div className="product-grid">

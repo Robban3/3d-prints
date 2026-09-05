@@ -1,12 +1,12 @@
-import { NavLink, Link } from "react-router-dom";
-import { useCart } from "../lib/cart";
-import { Logo } from "./Logo";
+import { NavLink, Link } from 'react-router-dom';
+import { useCart } from '../lib/cart';
+import { Logo } from './Logo';
 
 const links = [
-  { to: "/produkter", label: "Produkter" },
-  { to: "/egen-print", label: "Beställ egen print" },
-  { to: "/spara-order", label: "Spåra order" },
-  { to: "/om-oss", label: "Om oss" },
+  { to: '/produkter', label: 'Produkter' },
+  { to: '/egen-print', label: 'Beställ egen print' },
+  { to: '/spara-order', label: 'Spåra order' },
+  { to: '/om-oss', label: 'Om oss' },
 ];
 
 export function Header() {
@@ -24,7 +24,7 @@ export function Header() {
             <NavLink
               key={link.to}
               to={link.to}
-              className={({ isActive }) => (isActive ? "active" : "")}
+              className={({ isActive }) => (isActive ? 'active' : '')}
             >
               {link.label}
             </NavLink>

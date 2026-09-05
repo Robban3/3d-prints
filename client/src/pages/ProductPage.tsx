@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { ProductArt } from "../components/ProductArt";
-import { ProductCard } from "../components/ProductCard";
-import { Rating } from "../components/Rating";
-import { fetchProduct } from "../lib/api";
-import { useAsync } from "../lib/useAsync";
-import { useCart } from "../lib/cart";
-import { formatHours, formatPrice } from "../lib/format";
+import { useEffect, useState } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { ProductArt } from '../components/ProductArt';
+import { ProductCard } from '../components/ProductCard';
+import { Rating } from '../components/Rating';
+import { fetchProduct } from '../lib/api';
+import { useAsync } from '../lib/useAsync';
+import { useCart } from '../lib/cart';
+import { formatHours, formatPrice } from '../lib/format';
 
 export function ProductPage() {
-  const { slug = "" } = useParams();
+  const { slug = '' } = useParams();
   const navigate = useNavigate();
   const { add } = useCart();
   const { data, loading, error } = useAsync(() => fetchProduct(slug), [slug]);
 
   const product = data?.product;
-  const [color, setColor] = useState("");
-  const [sizeId, setSizeId] = useState("");
+  const [color, setColor] = useState('');
+  const [sizeId, setSizeId] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
     if (!product) return;
-    setColor(product.colors[0] ?? "");
-    setSizeId(product.sizes?.[0]?.id ?? "");
+    setColor(product.colors[0] ?? '');
+    setSizeId(product.sizes?.[0]?.id ?? '');
     setQuantity(1);
     setAdded(false);
   }, [product]);
@@ -38,9 +38,7 @@ export function ProductPage() {
     return (
       <div className="container section center">
         <h1>Produkten finns inte</h1>
-        <p className="muted">
-          {error ?? "Kontrollera länken eller bläddra i sortimentet."}
-        </p>
+        <p className="muted">{error ?? 'Kontrollera länken eller bläddra i sortimentet.'}</p>
         <Link className="btn" to="/produkter">
           Till produkterna
         </Link>
@@ -64,7 +62,7 @@ export function ProductPage() {
       sizeName: size?.name,
       art: product.art,
     });
-    if (goToCart) navigate("/varukorg");
+    if (goToCart) navigate('/varukorg');
     else {
       setAdded(true);
       window.setTimeout(() => setAdded(false), 2500);
@@ -75,8 +73,7 @@ export function ProductPage() {
     <section className="section">
       <div className="container">
         <nav className="breadcrumbs" aria-label="Brödsmulor">
-          <Link to="/">Start</Link> / <Link to="/produkter">Produkter</Link> /{" "}
-          {product.name}
+          <Link to="/">Start</Link> / <Link to="/produkter">Produkter</Link> / {product.name}
         </nav>
 
         <div className="product-layout">
@@ -99,7 +96,7 @@ export function ProductPage() {
                   <tr>
                     <th>Mått (B×D×H)</th>
                     <td>
-                      {product.dimensions.width} × {product.dimensions.depth} ×{" "}
+                      {product.dimensions.width} × {product.dimensions.depth} ×{' '}
                       {product.dimensions.height} mm
                     </td>
                   </tr>
@@ -123,13 +120,11 @@ export function ProductPage() {
           <div className="stack" style={{ gap: 22 }}>
             <div>
               <div className="row">
-                <span className="badge badge-accent">
-                  {product.material.toUpperCase()}
-                </span>
+                <span className="badge badge-accent">{product.material.toUpperCase()}</span>
                 <Rating value={product.rating} count={product.reviewCount} />
               </div>
               <h1 style={{ marginTop: 14 }}>{product.name}</h1>
-              <p className="muted" style={{ fontSize: "1.05rem" }}>
+              <p className="muted" style={{ fontSize: '1.05rem' }}>
                 {product.tagline}
               </p>
             </div>
@@ -176,8 +171,8 @@ export function ProductPage() {
                           <strong>{entry.name}</strong>
                           <span>
                             {entry.priceDelta === 0
-                              ? "Grundpris"
-                              : `${entry.priceDelta > 0 ? "+" : ""}${formatPrice(entry.priceDelta)}`}
+                              ? 'Grundpris'
+                              : `${entry.priceDelta > 0 ? '+' : ''}${formatPrice(entry.priceDelta)}`}
                           </span>
                         </button>
                       ))}
@@ -209,18 +204,14 @@ export function ProductPage() {
                   </div>
                   <div className="center">
                     <span className="field-label">Totalt</span>
-                    <div className="price" style={{ fontSize: "1.6rem" }}>
+                    <div className="price" style={{ fontSize: '1.6rem' }}>
                       {formatPrice(unitPrice * quantity)}
                     </div>
                   </div>
                 </div>
 
                 <div className="row">
-                  <button
-                    type="button"
-                    className="btn btn-lg"
-                    onClick={() => addToCart(false)}
-                  >
+                  <button type="button" className="btn btn-lg" onClick={() => addToCart(false)}>
                     Lägg i varukorg
                   </button>
                   <button
@@ -231,12 +222,10 @@ export function ProductPage() {
                     Köp nu
                   </button>
                 </div>
-                {added && (
-                  <p className="notice notice-success">Tillagd i varukorgen.</p>
-                )}
-                <p className="dim" style={{ margin: 0, fontSize: "0.86rem" }}>
-                  Printas på beställning i vår verkstad · Skickas inom 1–3
-                  arbetsdagar · Fri frakt över 599 kr
+                {added && <p className="notice notice-success">Tillagd i varukorgen.</p>}
+                <p className="dim" style={{ margin: 0, fontSize: '0.86rem' }}>
+                  Printas på beställning i vår verkstad · Skickas inom 1–3 arbetsdagar · Fri frakt
+                  över 599 kr
                 </p>
               </div>
             </div>
@@ -244,8 +233,8 @@ export function ProductPage() {
             <div className="panel panel-tight">
               <h3>Vill du ha den annorlunda?</h3>
               <p className="muted" style={{ marginBottom: 12 }}>
-                Vi ändrar gärna mått, färg eller detaljer på våra egna modeller
-                – eller printar din egen fil från grunden.
+                Vi ändrar gärna mått, färg eller detaljer på våra egna modeller – eller printar din
+                egen fil från grunden.
               </p>
               <Link className="btn btn-ghost" to="/egen-print">
                 Beställ en egen variant

@@ -1,9 +1,9 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import { randomUUID } from "node:crypto";
-import type { AnyOrder } from "./types.ts";
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { randomUUID } from 'node:crypto';
+import type { AnyOrder } from './types.ts';
 
-const DATA_FILE = resolve(process.env.ORDER_STORE ?? "data/orders.json");
+const DATA_FILE = resolve(process.env.ORDER_STORE ?? 'data/orders.json');
 
 /**
  * Enkel filbaserad orderlagring. Skrivningarna serialiseras via en promise-kedja
@@ -21,18 +21,18 @@ function serialize<T>(task: () => Promise<T>): Promise<T> {
 
 async function readAll(): Promise<AnyOrder[]> {
   try {
-    const raw = await readFile(DATA_FILE, "utf8");
+    const raw = await readFile(DATA_FILE, 'utf8');
     const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed) ? (parsed as AnyOrder[]) : [];
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
     throw error;
   }
 }
 
-export function generateOrderNumber(prefix: "S" | "C"): string {
+export function generateOrderNumber(prefix: 'S' | 'C'): string {
   const year = new Date().getFullYear();
-  const suffix = randomUUID().replace(/-/g, "").slice(0, 6).toUpperCase();
+  const suffix = randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
   return `${prefix}${year}-${suffix}`;
 }
 
@@ -41,7 +41,7 @@ export async function saveOrder<T extends AnyOrder>(order: T): Promise<T> {
     const orders = await readAll();
     orders.push(order);
     await mkdir(dirname(DATA_FILE), { recursive: true });
-    await writeFile(DATA_FILE, JSON.stringify(orders, null, 2), "utf8");
+    await writeFile(DATA_FILE, JSON.stringify(orders, null, 2), 'utf8');
     return order;
   });
 }

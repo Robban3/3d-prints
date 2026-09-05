@@ -1,5 +1,5 @@
-import { materialById, qualityById } from "./data/materials.ts";
-import type { CustomQuoteRequest, QuoteBreakdown } from "./types.ts";
+import { materialById, qualityById } from './data/materials.ts';
+import type { CustomQuoteRequest, QuoteBreakdown } from './types.ts';
 
 /** Materialpris i kronor per kubikcentimeter faktiskt utskjuten plast. */
 const MATERIAL_PRICE_PER_CM3 = 2.4;
@@ -51,26 +51,19 @@ export function calculateQuote(request: CustomQuoteRequest): QuoteBreakdown {
 
   // Skalet kostar alltid material, fyllningen skalar med fyllnadsgraden.
   const shellShare = 0.35;
-  const effectiveVolume =
-    request.volumeCm3 * (shellShare + (1 - shellShare) * infillRatio);
+  const effectiveVolume = request.volumeCm3 * (shellShare + (1 - shellShare) * infillRatio);
 
-  const materialCost =
-    effectiveVolume * MATERIAL_PRICE_PER_CM3 * material.priceFactor;
-  const printHoursPerUnit =
-    (effectiveVolume / THROUGHPUT_CM3_PER_HOUR) * quality.timeFactor;
+  const materialCost = effectiveVolume * MATERIAL_PRICE_PER_CM3 * material.priceFactor;
+  const printHoursPerUnit = (effectiveVolume / THROUGHPUT_CM3_PER_HOUR) * quality.timeFactor;
   const machineCost = printHoursPerUnit * MACHINE_RATE_PER_HOUR;
-  const postProcessingCost = request.postProcessing
-    ? POST_PROCESSING_PER_UNIT
-    : 0;
+  const postProcessingCost = request.postProcessing ? POST_PROCESSING_PER_UNIT : 0;
 
   const unitBase = materialCost + machineCost + postProcessingCost;
   const discountRate = volumeDiscountRate(quantity);
   const discountedUnit = unitBase * (1 - discountRate);
 
   const lineTotal = discountedUnit * quantity;
-  const rushSurcharge = request.rush
-    ? (lineTotal + SETUP_FEE) * RUSH_FACTOR
-    : 0;
+  const rushSurcharge = request.rush ? (lineTotal + SETUP_FEE) * RUSH_FACTOR : 0;
   const rawTotal = lineTotal + SETUP_FEE + rushSurcharge;
   const total = Math.max(MIN_ORDER_VALUE, rawTotal);
 

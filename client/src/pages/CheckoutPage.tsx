@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { CustomerForm } from "../components/CustomerForm";
-import { useCart } from "../lib/cart";
-import { ApiError, fetchConfig, placeOrder } from "../lib/api";
-import { useAsync } from "../lib/useAsync";
-import { formatPrice } from "../lib/format";
-import type { CustomerDetails } from "../types";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { CustomerForm } from '../components/CustomerForm';
+import { useCart } from '../lib/cart';
+import { ApiError, fetchConfig, placeOrder } from '../lib/api';
+import { useAsync } from '../lib/useAsync';
+import { formatPrice } from '../lib/format';
+import type { CustomerDetails } from '../types';
 
 const emptyCustomer: CustomerDetails = {
-  name: "",
-  email: "",
-  phone: "",
-  address: "",
-  postalCode: "",
-  city: "",
-  note: "",
+  name: '',
+  email: '',
+  phone: '',
+  address: '',
+  postalCode: '',
+  city: '',
+  note: '',
 };
 
 export function CheckoutPage() {
@@ -25,8 +25,7 @@ export function CheckoutPage() {
     fee: 59,
     freeThreshold: 599,
   };
-  const shipping =
-    subtotal >= shippingConfig.freeThreshold ? 0 : shippingConfig.fee;
+  const shipping = subtotal >= shippingConfig.freeThreshold ? 0 : shippingConfig.fee;
 
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -69,7 +68,7 @@ export function CheckoutPage() {
         setErrors(error.fields);
         setSubmitError(error.message);
       } else {
-        setSubmitError("Beställningen gick inte igenom. Försök igen.");
+        setSubmitError('Beställningen gick inte igenom. Försök igen.');
       }
       setSubmitting(false);
     }
@@ -85,21 +84,14 @@ export function CheckoutPage() {
         </ol>
         <h1>Kassa</h1>
 
-        <form
-          className="cart-layout"
-          style={{ marginTop: 26 }}
-          onSubmit={submit}
-          noValidate
-        >
+        <form className="cart-layout" style={{ marginTop: 26 }} onSubmit={submit} noValidate>
           <div className="stack" style={{ gap: 22 }}>
             <div className="panel">
               <h2>Leveransuppgifter</h2>
               <CustomerForm
                 value={customer}
                 errors={errors}
-                onChange={(update) =>
-                  setCustomer((current) => ({ ...current, ...update }))
-                }
+                onChange={(update) => setCustomer((current) => ({ ...current, ...update }))}
                 noteLabel="Meddelande till verkstaden (valfritt)"
                 notePlaceholder="Portkod, önskat leveransdatum eller en hälsning om det är en present."
               />
@@ -107,9 +99,8 @@ export function CheckoutPage() {
             <div className="panel">
               <h2>Betalning</h2>
               <p className="muted" style={{ marginBottom: 0 }}>
-                Vi skickar en betalningslänk (Swish, kort eller faktura) till
-                din e-post så snart ordern är bekräftad. Inga kortuppgifter
-                lämnas här.
+                Vi skickar en betalningslänk (Swish, kort eller faktura) till din e-post så snart
+                ordern är bekräftad. Inga kortuppgifter lämnas här.
               </p>
             </div>
           </div>
@@ -121,9 +112,9 @@ export function CheckoutPage() {
                 <span>
                   {item.quantity} × {item.name}
                   <br />
-                  <span className="dim" style={{ fontSize: "0.82rem" }}>
+                  <span className="dim" style={{ fontSize: '0.82rem' }}>
                     {item.color}
-                    {item.sizeName ? ` · ${item.sizeName}` : ""}
+                    {item.sizeName ? ` · ${item.sizeName}` : ''}
                   </span>
                 </span>
                 <span>{formatPrice(item.unitPrice * item.quantity)}</span>
@@ -131,7 +122,7 @@ export function CheckoutPage() {
             ))}
             <div className="summary-row">
               <span>Frakt</span>
-              <span>{shipping === 0 ? "Fri" : formatPrice(shipping)}</span>
+              <span>{shipping === 0 ? 'Fri' : formatPrice(shipping)}</span>
             </div>
             <div className="summary-row total">
               <span>Att betala</span>
@@ -150,13 +141,9 @@ export function CheckoutPage() {
               style={{ marginTop: 18 }}
               disabled={submitting}
             >
-              {submitting ? "Skickar…" : "Slutför beställning"}
+              {submitting ? 'Skickar…' : 'Slutför beställning'}
             </button>
-            <Link
-              className="btn btn-quiet btn-block"
-              to="/varukorg"
-              style={{ marginTop: 8 }}
-            >
+            <Link className="btn btn-quiet btn-block" to="/varukorg" style={{ marginTop: 8 }}>
               Tillbaka till varukorgen
             </Link>
           </aside>
