@@ -7,12 +7,21 @@ import { findOrder, generateOrderNumber, saveOrder } from './store.ts';
 import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
 import { pathParam } from './http.ts';
 import {
+  KlarnaError,
+  createSession,
+  isConfigured,
+  klarnaConfig,
+  payloadForCustomOrder,
+  payloadForOrder,
+  placeOrder as placeKlarnaOrder,
+} from './klarna.ts';
+import {
   ValidationError,
   parseCustomer,
   parseOrderLines,
   parseQuoteRequest,
 } from './validation.ts';
-import type { CustomOrder, Order } from './types.ts';
+import type { CustomOrder, Order, PaymentDetails } from './types.ts';
 
 export const api = Router();
 
@@ -28,6 +37,7 @@ api.get('/config', (_req, res) => {
     quoteLimits: QUOTE_LIMITS,
     shipping: { fee: SHIPPING_FEE, freeThreshold: FREE_SHIPPING_THRESHOLD },
     upload: { maxBytes: MAX_UPLOAD_BYTES, extensions: ALLOWED_EXTENSIONS },
+    payment: { provider: 'klarna', live: isConfigured() },
   });
 });
 
@@ -69,6 +79,71 @@ api.post('/quote', (req, res) => {
   res.json({ request, quote: calculateQuote(request) });
 });
 
+/** Standardvärden när Klarna-nycklar saknas, så testläget kan räkna likadant. */
+const paymentLocale = () =>
+  klarnaConfig() ?? {
+    purchaseCountry: 'SE',
+    purchaseCurrency: 'SEK',
+    locale: 'sv-SE',
+  };
+
+/**
+ * Skapar en betalsession hos Klarna. Beloppet räknas alltid fram här av samma
+ * kod som lägger ordern, så att widgeten visar exakt det kunden debiteras.
+ */
+api.post('/payments/session', async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const config = paymentLocale();
+
+  let payload;
+  if (body.type === 'custom') {
+    const request = parseQuoteRequest(body.request);
+    const projectName = String(body.projectName ?? '').trim() || 'Eget printjobb';
+    payload = payloadForCustomOrder(
+      { projectName, request, quote: calculateQuote(request) },
+      config,
+    );
+  } else {
+    const lines = parseOrderLines(body.lines);
+    const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+    payload = payloadForOrder({ lines, shipping: shippingFor(subtotal), total: subtotal }, config);
+  }
+
+  const session = await createSession(payload);
+  res.json({
+    session: {
+      clientToken: session.clientToken,
+      paymentMethodCategories: session.paymentMethodCategories,
+      test: session.mock,
+    },
+    amount: payload.order_amount,
+  });
+});
+
+/** Växlar in kundens auktorisering mot en riktig order hos Klarna. */
+async function settle(
+  authorizationToken: string | undefined,
+  payload: ReturnType<typeof payloadForOrder>,
+): Promise<PaymentDetails | undefined> {
+  if (!isConfigured()) {
+    // Utan nycklar sker ingen betalning. Ordern läggs ändå, men märks tydligt
+    // som obetald i testläge i stället för att se betald ut.
+    return { provider: 'klarna', status: 'avvaktar', test: true };
+  }
+  if (!authorizationToken) {
+    // Betalningen kan också skötas via en länk i efterhand.
+    return undefined;
+  }
+  const placed = await placeKlarnaOrder(authorizationToken, payload);
+  return {
+    provider: 'klarna',
+    reference: placed.orderId,
+    status: placed.fraudStatus === 'REJECTED' ? 'obetald' : 'auktoriserad',
+    fraudStatus: placed.fraudStatus,
+    test: placed.mock,
+  };
+}
+
 api.post('/orders', async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const customer = parseCustomer(body.customer);
@@ -77,8 +152,14 @@ api.post('/orders', async (req, res) => {
   const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
   const shipping = shippingFor(subtotal);
 
+  const orderId = generateOrderNumber('S');
+  const payment = await settle(
+    typeof body.authorizationToken === 'string' ? body.authorizationToken : undefined,
+    payloadForOrder({ lines, shipping, total: subtotal + shipping, id: orderId }, paymentLocale()),
+  );
+
   const order: Order = {
-    id: generateOrderNumber('S'),
+    id: orderId,
     type: 'shop',
     createdAt: new Date().toISOString(),
     status: 'mottagen',
@@ -87,6 +168,7 @@ api.post('/orders', async (req, res) => {
     subtotal,
     shipping,
     total: subtotal + shipping,
+    payment,
   };
 
   await saveOrder(order);
@@ -126,6 +208,11 @@ api.post('/custom-orders', async (req, res) => {
     }
   }
 
+  const payment = await settle(
+    typeof body.authorizationToken === 'string' ? body.authorizationToken : undefined,
+    payloadForCustomOrder({ projectName, request, quote, id: orderId }, paymentLocale()),
+  );
+
   const order: CustomOrder = {
     id: orderId,
     type: 'custom',
@@ -141,6 +228,7 @@ api.post('/custom-orders', async (req, res) => {
     description,
     quote,
     total: quote.total,
+    payment,
   };
 
   await saveOrder(order);

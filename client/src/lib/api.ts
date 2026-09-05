@@ -6,6 +6,7 @@ import type {
   QuoteBreakdown,
   QuoteRequest,
   ShopConfig,
+  PaymentSession,
   ShopOrder,
   UploadedFile,
 } from '../types';
@@ -71,6 +72,17 @@ export function fetchQuote(
   return request('/quote', { method: 'POST', body: JSON.stringify(payload) });
 }
 
+export function createPaymentSession(
+  payload:
+    | {
+        type: 'shop';
+        lines: Array<{ productId: string; quantity: number; color: string; size?: string }>;
+      }
+    | { type: 'custom'; request: QuoteRequest; projectName: string },
+): Promise<{ session: PaymentSession; amount: number }> {
+  return request('/payments/session', { method: 'POST', body: JSON.stringify(payload) });
+}
+
 export function placeOrder(payload: {
   customer: CustomerDetails;
   lines: Array<{
@@ -79,6 +91,7 @@ export function placeOrder(payload: {
     color: string;
     size?: string;
   }>;
+  authorizationToken?: string;
 }): Promise<{ order: ShopOrder }> {
   return request('/orders', { method: 'POST', body: JSON.stringify(payload) });
 }
@@ -89,6 +102,7 @@ export function placeCustomOrder(payload: {
   projectName: string;
   description: string;
   fileId?: string;
+  authorizationToken?: string;
 }): Promise<{ order: CustomOrder }> {
   return request('/custom-orders', {
     method: 'POST',

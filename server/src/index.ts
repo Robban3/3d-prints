@@ -8,6 +8,7 @@ import { api } from './routes.ts';
 import { uploads } from './uploadRoutes.ts';
 import { ORPHAN_MAX_AGE_MS, sweepOrphans } from './uploads.ts';
 import { ValidationError } from './validation.ts';
+import { KlarnaError } from './klarna.ts';
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
@@ -41,6 +42,15 @@ const clientErrors: Record<number, string> = {
 const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   if (error instanceof ValidationError) {
     res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
+    return;
+  }
+
+  if (error instanceof KlarnaError) {
+    // Detaljen loggas för felsökning men skickas inte vidare till kunden.
+    console.error('Klarna svarade med fel', error.status, error.detail);
+    res.status(error.status >= 500 ? 502 : 400).json({
+      error: 'Betalningen gick inte igenom. Försök igen eller välj att få en betalningslänk.',
+    });
     return;
   }
 

@@ -92,6 +92,16 @@ export interface CustomerDetails {
 
 export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad';
 
+export interface PaymentDetails {
+  provider: 'klarna';
+  /** Klarnas ordernummer, som kunden ser i Klarna-appen. Saknas i testläge. */
+  reference?: string;
+  status: 'auktoriserad' | 'avvaktar' | 'obetald';
+  fraudStatus?: string;
+  /** True när ordern lades utan Klarna-nycklar, dvs. i testläge. */
+  test: boolean;
+}
+
 export interface Order {
   id: string;
   type: 'shop';
@@ -102,6 +112,7 @@ export interface Order {
   shipping: number;
   subtotal: number;
   total: number;
+  payment?: PaymentDetails;
 }
 
 export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
@@ -147,6 +158,7 @@ export interface CustomOrder {
   description: string;
   quote: QuoteBreakdown;
   total: number;
+  payment?: PaymentDetails;
 }
 
 export type AnyOrder = Order | CustomOrder;

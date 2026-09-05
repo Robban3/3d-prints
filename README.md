@@ -44,7 +44,7 @@ npm start          # http://localhost:4000
 - Filtrering per kategori, fritextsökning och sortering på pris, namn eller popularitet
 - Produktsida med färg- och storleksval, antal och löpande totalpris
 - Varukorg som sparas i `localStorage` och överlever omladdning
-- Kassa med validering, fri frakt över 599 kr och orderbekräftelse
+- Kassa med validering, fri frakt över 599 kr, Klarna-betalning och orderbekräftelse
 - Orderspårning på ordernummer
 
 **Egna printjobb**
@@ -122,6 +122,41 @@ Så här hanteras filerna:
 Byt lagringen mot S3 eller motsvarande genom att ersätta `server/src/uploads.ts` –
 resten av koden går bara via funktionerna där.
 
+## Betalning med Klarna
+
+Kassan använder **Klarna Payments**. Flödet är tvådelat, så att beloppet aldrig
+kan sättas av klienten:
+
+```
+POST /api/payments/session   -> { clientToken }     servern prissätter ordern
+   (webbläsaren renderar Klarnas widget och kunden godkänner)
+POST /api/orders             <- { authorizationToken }
+   (servern växlar in auktoriseringen mot en Klarna-order)
+```
+
+Beloppen räknas fram av samma kod som lägger ordern, i ören, med momsen per rad
+enligt Klarnas formel `total_tax_amount = total_amount - total_amount * 10000 /
+(10000 + tax_rate)`. Frakten skickas som en egen rad av typen `shipping_fee`.
+
+**Utan nycklar kör butiken i testläge.** Servern svarar då med en session märkt
+`test: true`, kassan visar en tydlig platshållare i stället för widgeten, och
+ordern läggs med betalstatus _avvaktar_ – ingen betalning genomförs och inget
+utger sig för att vara betalt. Det gör att hela flödet går att använda i
+utveckling utan konto hos Klarna.
+
+För att slå på riktiga betalningar, sätt nycklarna från Klarnas
+merchant-portal:
+
+```bash
+export KLARNA_USERNAME=PK00000_0000000000000000
+export KLARNA_PASSWORD=...
+export KLARNA_ENV=playground   # eller production
+```
+
+Playground är standard. Nycklarna läses bara på servern och skickas aldrig till
+webbläsaren; klienten får enbart det kortlivade `client_token` som Klarnas SDK
+behöver.
+
 ## Miljövariabler
 
 | Variabel      | Standard            | Beskrivning                     |
@@ -138,6 +173,7 @@ server/
   src/pricing.ts  prismodellen för egna printjobb
   src/validation.ts  indatavalidering
   src/uploads.ts  lagring av uppladdade modellfiler
+  src/klarna.ts   betalsessioner och orderväxling mot Klarna
   src/routes.ts   API-rutter
   test/           enhetstester
 client/
