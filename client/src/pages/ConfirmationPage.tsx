@@ -22,7 +22,7 @@ export function ConfirmationPage() {
         title="Tack för din beställning!"
         text={
           data
-            ? `Vi har skickat en bekräftelse till ${data.order.customer.email} tillsammans med en betalningslänk.`
+            ? `Vi har skickat en bekräftelse till ${data.order.customer.email} tillsammans med en betalningslänk från Klarna.`
             : 'Vi hämtar din order.'
         }
       />
