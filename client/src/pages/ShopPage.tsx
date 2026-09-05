@@ -24,7 +24,10 @@ const sortLabels: Array<{ id: SortId; label: string }> = [
 export function ShopPage() {
   const [params, setParams] = useSearchParams();
   const category = params.get('kategori') ?? 'alla';
-  const [search, setSearch] = useState(params.get('sok') ?? '');
+  // Sökningen bor i URL:en, så att headerns sökruta och delade länkar slår
+  // igenom även när butiken redan är öppen.
+  const search = params.get('sok') ?? '';
+  const [material, setMaterial] = useState('alla');
   const [sort, setSort] = useState<SortId>('popular');
 
   const config = useAsync(() => fetchConfig(), []);
@@ -32,16 +35,18 @@ export function ShopPage() {
 
   const visible = useMemo(() => {
     const term = search.toLowerCase().trim();
-    const filtered = (data?.products ?? []).filter((product) =>
-      term
-        ? [product.name, product.tagline, product.description]
-            .join(' ')
-            .toLowerCase()
-            .includes(term)
-        : true,
-    );
+    const filtered = (data?.products ?? [])
+      .filter((product) => material === 'alla' || product.material === material)
+      .filter((product) =>
+        term
+          ? [product.name, product.tagline, product.description]
+              .join(' ')
+              .toLowerCase()
+              .includes(term)
+          : true,
+      );
     return [...filtered].sort(sorters[sort]);
-  }, [data, search, sort]);
+  }, [data, search, material, sort]);
 
   function selectCategory(id: string) {
     const next = new URLSearchParams(params);
@@ -50,7 +55,15 @@ export function ShopPage() {
     setParams(next, { replace: true });
   }
 
+  function setSearch(term: string) {
+    const next = new URLSearchParams(params);
+    if (term) next.set('sok', term);
+    else next.delete('sok');
+    setParams(next, { replace: true });
+  }
+
   const categories = config.data?.categories ?? [];
+  const materials = config.data?.materials ?? [];
   const active = categories.find((entry) => entry.id === category);
 
   return (
@@ -65,54 +78,52 @@ export function ShopPage() {
           </p>
         </div>
 
-        <div className="filter-bar">
-          <div className="chip-row">
-            <button
-              type="button"
-              className="chip"
-              aria-pressed={category === 'alla'}
-              onClick={() => selectCategory('alla')}
-            >
-              Alla
-            </button>
+        <div className="toolbar">
+          <select
+            className="select"
+            aria-label="Kategori"
+            value={category}
+            onChange={(event) => selectCategory(event.target.value)}
+          >
+            <option value="alla">Alla kategorier</option>
             {categories.map((entry) => (
-              <button
-                key={entry.id}
-                type="button"
-                className="chip"
-                aria-pressed={category === entry.id}
-                onClick={() => selectCategory(entry.id)}
-              >
+              <option key={entry.id} value={entry.id}>
                 {entry.name}
-              </button>
+              </option>
             ))}
-          </div>
-          <div className="row" style={{ marginLeft: 'auto' }}>
-            <label className="field-label" htmlFor="sok">
-              Sök
-            </label>
+          </select>
+          <select
+            className="select"
+            aria-label="Material"
+            value={material}
+            onChange={(event) => setMaterial(event.target.value)}
+          >
+            <option value="alla">Alla material</option>
+            {materials.map((entry) => (
+              <option key={entry.id} value={entry.id}>
+                {entry.name}
+              </option>
+            ))}
+          </select>
+          <div className="toolbar-right">
             <input
-              id="sok"
               className="input"
               type="search"
-              placeholder="t.ex. kruka"
+              aria-label="Sök"
+              placeholder="Sök produkt…"
               value={search}
-              style={{ width: 180 }}
+              style={{ width: 210 }}
               onChange={(event) => setSearch(event.target.value)}
             />
-            <label className="field-label" htmlFor="sortering">
-              Sortera
-            </label>
             <select
-              id="sortering"
-              className="input"
-              style={{ width: 170 }}
+              className="select"
+              aria-label="Sortering"
               value={sort}
               onChange={(event) => setSort(event.target.value as SortId)}
             >
               {sortLabels.map((entry) => (
                 <option key={entry.id} value={entry.id}>
-                  {entry.label}
+                  Sortera: {entry.label}
                 </option>
               ))}
             </select>
@@ -123,8 +134,8 @@ export function ShopPage() {
 
         {loading ? (
           <div className="product-grid">
-            {[0, 1, 2, 3, 4, 5].map((n) => (
-              <div className="skeleton" key={n} />
+            {Array.from({ length: 12 }, (_, index) => (
+              <div className="skeleton" key={index} />
             ))}
           </div>
         ) : visible.length === 0 ? (

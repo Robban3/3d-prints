@@ -57,7 +57,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviewCount: 63,
     featured: true,
-    art: { shape: 'vase', accent: '#c98b5f' },
+    art: { shape: 'planter', tone: 'benvit' },
   },
   {
     id: 'p-002',
@@ -78,7 +78,7 @@ export const products: Product[] = [
     rating: 4.7,
     reviewCount: 41,
     featured: true,
-    art: { shape: 'arch', accent: '#5fa8c9' },
+    art: { shape: 'headphoneStand', tone: 'grafit' },
   },
   {
     id: 'p-003',
@@ -104,7 +104,7 @@ export const products: Product[] = [
     rating: 4.6,
     reviewCount: 28,
     featured: true,
-    art: { shape: 'grid', accent: '#7bbf6a' },
+    art: { shape: 'organizer', tone: 'stal' },
   },
   {
     id: 'p-004',
@@ -130,7 +130,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviewCount: 187,
     featured: true,
-    art: { shape: 'creature', accent: '#b07bd4' },
+    art: { shape: 'dragon', tone: 'bla' },
   },
   {
     id: 'p-005',
@@ -156,7 +156,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviewCount: 96,
     featured: true,
-    art: { shape: 'sphere', accent: '#e0c98b' },
+    art: { shape: 'moonLamp', tone: 'benvit' },
   },
   {
     id: 'p-006',
@@ -177,7 +177,7 @@ export const products: Product[] = [
     rating: 4.5,
     reviewCount: 34,
     featured: false,
-    art: { shape: 'grid', accent: '#d4a15f' },
+    art: { shape: 'penHolder', tone: 'grafit' },
   },
   {
     id: 'p-007',
@@ -202,7 +202,7 @@ export const products: Product[] = [
     rating: 4.4,
     reviewCount: 57,
     featured: false,
-    art: { shape: 'hook', accent: '#6ac9b0' },
+    art: { shape: 'wallHook', tone: 'grafit' },
   },
   {
     id: 'p-008',
@@ -223,7 +223,7 @@ export const products: Product[] = [
     rating: 4.6,
     reviewCount: 39,
     featured: false,
-    art: { shape: 'stand', accent: '#c96a4f' },
+    art: { shape: 'coffeeDripper', tone: 'bla' },
   },
   {
     id: 'p-009',
@@ -248,7 +248,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviewCount: 72,
     featured: false,
-    art: { shape: 'tower', accent: '#8f7bd4' },
+    art: { shape: 'diceTower', tone: 'grafit' },
   },
   {
     id: 'p-010',
@@ -269,7 +269,7 @@ export const products: Product[] = [
     rating: 4.3,
     reviewCount: 118,
     featured: false,
-    art: { shape: 'stand', accent: '#e07b7b' },
+    art: { shape: 'phoneStand', tone: 'stal' },
   },
   {
     id: 'p-011',
@@ -290,7 +290,7 @@ export const products: Product[] = [
     rating: 4.2,
     reviewCount: 91,
     featured: false,
-    art: { shape: 'hook', accent: '#9ec95f' },
+    art: { shape: 'cableClip', tone: 'bla' },
   },
   {
     id: 'p-012',
@@ -315,7 +315,7 @@ export const products: Product[] = [
     rating: 4.7,
     reviewCount: 52,
     featured: false,
-    art: { shape: 'vase', accent: '#7bd4c0' },
+    art: { shape: 'spiralVase', tone: 'benvit' },
   },
   {
     id: 'p-013',
@@ -336,7 +336,7 @@ export const products: Product[] = [
     rating: 4.5,
     reviewCount: 143,
     featured: false,
-    art: { shape: 'sphere', accent: '#c9d45f' },
+    art: { shape: 'gearFidget', tone: 'benvit' },
   },
   {
     id: 'p-014',
@@ -361,7 +361,7 @@ export const products: Product[] = [
     rating: 4.6,
     reviewCount: 26,
     featured: false,
-    art: { shape: 'grid', accent: '#5f9ec9' },
+    art: { shape: 'spiceShelf', tone: 'stal' },
   },
 ];
 

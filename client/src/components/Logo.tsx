@@ -1,21 +1,21 @@
-export function Logo({ size = 30 }: { size?: number }) {
+export function Logo({ size = 34 }: { size?: number }) {
   return (
-    <svg className="brand-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="7" fill="#171c26" stroke="#242b39" />
+    <svg className="brand-mark" width={size} height={size} viewBox="0 0 36 36" aria-hidden="true">
+      <rect x="0.75" y="0.75" width="34.5" height="34.5" rx="9" fill="#12151b" stroke="#2b323d" />
       <path
-        d="M16 5 27 11v10l-11 6-11-6V11z"
+        d="M18 7.5 28 13v10l-10 5.5L8 23V13z"
         fill="none"
-        stroke="#b6f24a"
-        strokeWidth="2.2"
+        stroke="#2b7fff"
+        strokeWidth="2.1"
         strokeLinejoin="round"
       />
       <path
-        d="M5 11l11 6 11-6M16 17v10"
+        d="M8 13l10 5.5L28 13M18 18.5V28.5"
         fill="none"
-        stroke="#b6f24a"
-        strokeWidth="2.2"
+        stroke="#2b7fff"
+        strokeWidth="2.1"
         strokeLinejoin="round"
-        opacity=".6"
+        opacity=".55"
       />
     </svg>
   );

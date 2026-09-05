@@ -1,17 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import { CustomerForm } from '../components/CustomerForm';
+import { UploadDropzone } from '../components/UploadDropzone';
 import { TextAreaField, TextField } from '../components/Field';
-import {
-  ApiError,
-  deleteUpload,
-  fetchConfig,
-  fetchQuote,
-  placeCustomOrder,
-  uploadModelFile,
-} from '../lib/api';
+import { ApiError, fetchConfig, fetchQuote, placeCustomOrder } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
-import { formatBytes, formatHours, formatPrice } from '../lib/format';
+import { formatHours, formatPrice } from '../lib/format';
 import type {
   CustomerDetails,
   MaterialId,
@@ -49,7 +43,7 @@ const volumePresets = [
 export function CustomOrderPage() {
   const navigate = useNavigate();
   const config = useAsync(() => fetchConfig(), []);
-  const fileInput = useRef<HTMLInputElement>(null);
+  const location = useLocation();
 
   const [request, setRequest] = useState<QuoteRequest>({
     material: 'pla',
@@ -62,11 +56,10 @@ export function CustomOrderPage() {
   });
   const [projectName, setProjectName] = useState('');
   const [description, setDescription] = useState('');
-  const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
-  const [fileError, setFileError] = useState('');
-  const [dragging, setDragging] = useState(false);
-  const abortUpload = useRef<(() => void) | null>(null);
+  // En fil som laddades upp på startsidan följer med hit via navigeringen.
+  const carried = (location.state as { uploaded?: UploadedFile } | null)?.uploaded ?? null;
+  const [uploaded, setUploaded] = useState<UploadedFile | null>(carried);
+  const [uploading, setUploading] = useState(false);
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
 
   const [quote, setQuote] = useState<QuoteBreakdown | null>(null);
@@ -110,49 +103,6 @@ export function CustomOrderPage() {
 
   function patch(update: Partial<QuoteRequest>) {
     setRequest((current) => ({ ...current, ...update }));
-  }
-
-  async function selectFile(file: File | undefined) {
-    if (!file) return;
-    const lower = file.name.toLowerCase();
-    if (!accepted.some((extension) => lower.endsWith(extension))) {
-      setFileError(`Filformatet stöds inte. Ladda upp ${accepted.join(', ')}.`);
-      return;
-    }
-    if (file.size > maxBytes) {
-      setFileError(
-        `Filen är större än ${formatBytes(maxBytes)}. Hör av dig så löser vi överföringen manuellt.`,
-      );
-      return;
-    }
-
-    setFileError('');
-    setUploadProgress(0);
-    const upload = uploadModelFile(file, setUploadProgress);
-    abortUpload.current = upload.abort;
-    try {
-      setUploaded(await upload.promise);
-    } catch (error) {
-      setUploaded(null);
-      setFileError(
-        error instanceof ApiError ? error.message : 'Uppladdningen misslyckades. Försök igen.',
-      );
-    } finally {
-      abortUpload.current = null;
-      setUploadProgress(null);
-      // Samma fil ska gå att välja igen efter ett misslyckat försök.
-      if (fileInput.current) fileInput.current.value = '';
-    }
-  }
-
-  function removeFile() {
-    if (uploadProgress !== null) {
-      abortUpload.current?.();
-      return;
-    }
-    if (uploaded) void deleteUpload(uploaded.id);
-    setUploaded(null);
-    setFileError('');
   }
 
   async function submit(event: React.FormEvent) {
@@ -208,72 +158,14 @@ export function CustomOrderPage() {
 
                 <div className="field">
                   <span className="field-label">Modellfil (valfritt)</span>
-                  <input
-                    ref={fileInput}
-                    type="file"
-                    accept={accepted.join(',')}
-                    hidden
-                    onChange={(event) => void selectFile(event.target.files?.[0])}
+                  <UploadDropzone
+                    accepted={accepted}
+                    maxBytes={maxBytes}
+                    uploaded={uploaded}
+                    onUploaded={setUploaded}
+                    onBusyChange={setUploading}
+                    error={errors.fileId}
                   />
-                  {uploadProgress !== null ? (
-                    <div className="file-chip">
-                      <span style={{ flex: 1 }}>
-                        <strong>Laddar upp… {uploadProgress} %</strong>
-                        <span
-                          className="progress"
-                          role="progressbar"
-                          aria-valuenow={uploadProgress}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                        >
-                          <span style={{ width: `${uploadProgress}%` }} />
-                        </span>
-                      </span>
-                      <button type="button" className="btn-quiet" onClick={removeFile}>
-                        Avbryt
-                      </button>
-                    </div>
-                  ) : uploaded ? (
-                    <div className="file-chip">
-                      <span>
-                        <strong>{uploaded.fileName}</strong>
-                        <br />
-                        <span className="dim" style={{ fontSize: '0.84rem' }}>
-                          {formatBytes(uploaded.size)} · uppladdad och sparad hos oss
-                        </span>
-                      </span>
-                      <button type="button" className="btn-quiet" onClick={removeFile}>
-                        Ta bort
-                      </button>
-                    </div>
-                  ) : (
-                    <div
-                      className={dragging ? 'dropzone dragging' : 'dropzone'}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => fileInput.current?.click()}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter' || event.key === ' ') fileInput.current?.click();
-                      }}
-                      onDragOver={(event) => {
-                        event.preventDefault();
-                        setDragging(true);
-                      }}
-                      onDragLeave={() => setDragging(false)}
-                      onDrop={(event) => {
-                        event.preventDefault();
-                        setDragging(false);
-                        void selectFile(event.dataTransfer.files[0]);
-                      }}
-                    >
-                      <strong>Dra hit din fil eller klicka för att välja</strong>
-                      <span>
-                        {accepted.join(', ').toUpperCase()} · max {formatBytes(maxBytes)}
-                      </span>
-                    </div>
-                  )}
-                  {fileError && <span className="error">{fileError}</span>}
-                  {errors.fileId && <span className="error">{errors.fileId}</span>}
                 </div>
 
                 <TextAreaField
@@ -517,13 +409,9 @@ export function CustomOrderPage() {
               type="submit"
               className="btn btn-block btn-lg"
               style={{ marginTop: 18 }}
-              disabled={submitting || uploadProgress !== null}
+              disabled={submitting || uploading}
             >
-              {submitting
-                ? 'Skickar…'
-                : uploadProgress !== null
-                  ? 'Väntar på filen…'
-                  : 'Skicka beställning'}
+              {submitting ? 'Skickar…' : uploading ? 'Väntar på filen…' : 'Skicka beställning'}
             </button>
             <p className="dim" style={{ fontSize: '0.82rem', marginTop: 12, marginBottom: 0 }}>
               Du binder dig inte förrän vi bekräftat filen. Vi hör av oss inom en arbetsdag om något
