@@ -53,9 +53,14 @@ api.get('/products/:slug', (req, res) => {
     res.status(404).json({ error: 'Produkten hittades inte' });
     return;
   }
-  const related = products
-    .filter((p) => p.id !== product.id && p.category === product.category)
-    .slice(0, 3);
+  // Samma kategori först, därefter de mest omtyckta så att raden alltid blir full.
+  const sameCategory = products.filter(
+    (p) => p.id !== product.id && p.category === product.category,
+  );
+  const fillers = products
+    .filter((p) => p.id !== product.id && p.category !== product.category)
+    .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount);
+  const related = [...sameCategory, ...fillers].slice(0, 5);
   res.json({ product, related });
 });
 

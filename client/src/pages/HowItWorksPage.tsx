@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { Icon } from '../components/Icon';
 import { StatsRow } from '../components/StatsRow';
+import { PageHeader } from '../components/PageHeader';
 import type { IconName } from '../components/Icon';
 
 const steps: Array<{ icon: IconName; title: string; text: string }> = [
@@ -33,60 +34,56 @@ const steps: Array<{ icon: IconName; title: string; text: string }> = [
 
 export function HowItWorksPage() {
   return (
-    <section className="section">
-      <div className="container">
-        <div className="section-head">
-          <span className="badge badge-accent" style={{ marginBottom: 14 }}>
-            Så funkar det
-          </span>
-          <h1>Från fil till färdig detalj</h1>
-          <p>
-            Fem steg, och du vet vad det kostar redan i det andra. Ingenting läggs på i efterhand
-            utan att du godkänt det.
-          </p>
-        </div>
-
-        <div className="stack" style={{ gap: 14 }}>
-          {steps.map((step, index) => (
-            <div className="panel" key={step.title}>
-              <div
-                className="row"
-                style={{ alignItems: 'flex-start', gap: 16, flexWrap: 'nowrap' }}
-              >
-                <span className="step-num" style={{ width: 32, height: 32, fontSize: '0.85rem' }}>
-                  {index + 1}
-                </span>
-                <div>
-                  <div className="row" style={{ gap: 9, marginBottom: 4 }}>
-                    <Icon name={step.icon} size={19} />
-                    <h3 style={{ margin: 0 }}>{step.title}</h3>
+    <>
+      <PageHeader
+        eyebrow="Så funkar det"
+        title="Från fil till färdig detalj"
+        text="Fem steg, och du vet vad det kostar redan i det andra. Ingenting läggs på i efterhand utan att du godkänt det."
+      />
+      <section className="section">
+        <div className="container">
+          <div className="stack" style={{ gap: 14 }}>
+            {steps.map((step, index) => (
+              <div className="panel" key={step.title}>
+                <div
+                  className="row"
+                  style={{ alignItems: 'flex-start', gap: 16, flexWrap: 'nowrap' }}
+                >
+                  <span className="step-num" style={{ width: 32, height: 32, fontSize: '0.85rem' }}>
+                    {index + 1}
+                  </span>
+                  <div>
+                    <div className="row" style={{ gap: 9, marginBottom: 4 }}>
+                      <Icon name={step.icon} size={19} />
+                      <h3 style={{ margin: 0 }}>{step.title}</h3>
+                    </div>
+                    <p className="muted" style={{ margin: 0, fontSize: '0.92rem' }}>
+                      {step.text}
+                    </p>
                   </div>
-                  <p className="muted" style={{ margin: 0, fontSize: '0.92rem' }}>
-                    {step.text}
-                  </p>
                 </div>
               </div>
+            ))}
+          </div>
+
+          <div style={{ margin: '34px 0' }}>
+            <StatsRow />
+          </div>
+
+          <div className="panel center">
+            <h3>Redo att sätta igång?</h3>
+            <p className="muted">Ladda upp filen så har du ett pris inom någon minut.</p>
+            <div className="row" style={{ justifyContent: 'center' }}>
+              <Link className="btn btn-lg" to="/egen-print">
+                Beställ egen print
+              </Link>
+              <Link className="btn btn-ghost btn-lg" to="/produkter">
+                Se sortimentet
+              </Link>
             </div>
-          ))}
-        </div>
-
-        <div style={{ margin: '34px 0' }}>
-          <StatsRow />
-        </div>
-
-        <div className="panel center">
-          <h3>Redo att sätta igång?</h3>
-          <p className="muted">Ladda upp filen så har du ett pris inom någon minut.</p>
-          <div className="row" style={{ justifyContent: 'center' }}>
-            <Link className="btn btn-lg" to="/egen-print">
-              Beställ egen print
-            </Link>
-            <Link className="btn btn-ghost btn-lg" to="/produkter">
-              Se sortimentet
-            </Link>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

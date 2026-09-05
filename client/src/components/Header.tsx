@@ -7,11 +7,10 @@ import { Logo } from './Logo';
 import { Icon } from './Icon';
 
 const links = [
-  { to: '/', label: 'Hem', end: true },
   { to: '/material', label: 'Material' },
   { to: '/sa-funkar-det', label: 'Så funkar det' },
   { to: '/om-oss', label: 'Om oss' },
-  { to: '/spara-order', label: 'Spåra order' },
+  { to: '/kontakt', label: 'Kontakt' },
 ];
 
 export function Header() {
@@ -95,7 +94,7 @@ export function Header() {
               </div>
             )}
           </div>
-          {links.slice(1).map((link) => (
+          {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -104,9 +103,6 @@ export function Header() {
               {link.label}
             </NavLink>
           ))}
-          <NavLink to="/egen-print" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Egen print
-          </NavLink>
         </nav>
 
         <div className="header-actions">

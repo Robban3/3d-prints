@@ -87,7 +87,9 @@ export function ProductPage() {
                 <tbody>
                   <tr>
                     <th>Material</th>
-                    <td>{product.material.toUpperCase()}</td>
+                    <td>
+                      {product.material.toUpperCase()} {product.finish}
+                    </td>
                   </tr>
                   <tr>
                     <th>Mått (B×D×H)</th>
@@ -116,10 +118,14 @@ export function ProductPage() {
           <div className="stack" style={{ gap: 22 }}>
             <div>
               <div className="row">
-                <span className="badge badge-accent">{product.material.toUpperCase()}</span>
+                <span className="badge badge-accent">
+                  {product.material.toUpperCase()} {product.finish}
+                </span>
                 <Rating value={product.rating} count={product.reviewCount} />
               </div>
-              <h1 style={{ marginTop: 14 }}>{product.name}</h1>
+              <h1 className="product-title" style={{ marginTop: 14 }}>
+                {product.name}
+              </h1>
               <p className="muted" style={{ fontSize: '1.05rem' }}>
                 {product.tagline}
               </p>

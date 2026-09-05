@@ -1,6 +1,7 @@
 import { Link, useLocation, useParams } from 'react-router';
 import { OrderSummary } from '../components/OrderSummary';
 import { fetchOrder } from '../lib/api';
+import { PageHeader } from '../components/PageHeader';
 import { useAsync } from '../lib/useAsync';
 import type { AnyOrder } from '../types';
 
@@ -15,37 +16,45 @@ export function ConfirmationPage() {
   );
 
   return (
-    <section className="section">
-      <div className="container receipt">
-        <ol className="steps">
-          <li className="done">Varukorg</li>
-          <li className="done">Uppgifter</li>
-          <li className="current">Bekräftelse</li>
-        </ol>
+    <>
+      <PageHeader
+        eyebrow="Bekräftelse"
+        title="Tack för din beställning!"
+        text={
+          data
+            ? `Vi har skickat en bekräftelse till ${data.order.customer.email} tillsammans med en betalningslänk.`
+            : 'Vi hämtar din order.'
+        }
+      />
+      <section className="section">
+        <div className="container receipt">
+          <ol className="steps">
+            <li className="done">Varukorg</li>
+            <li className="done">Uppgifter</li>
+            <li className="current">Bekräftelse</li>
+          </ol>
 
-        {loading && <div className="skeleton" style={{ height: 300 }} />}
-        {error && <p className="notice notice-error">{error}</p>}
+          {loading && <div className="skeleton" style={{ aspectRatio: 'auto', height: 300 }} />}
+          {error && <p className="notice notice-error">{error}</p>}
 
-        {data && (
-          <>
-            <h1>Tack för din beställning!</h1>
-            <p className="muted">
-              Vi har skickat en bekräftelse till {data.order.customer.email} tillsammans med en
-              betalningslänk. Spara ordernumret – med det kan du följa jobbet hela vägen från kön
-              till leverans.
-            </p>
-            <OrderSummary order={data.order} />
-            <div className="row" style={{ marginTop: 24 }}>
-              <Link className="btn" to="/produkter">
-                Fortsätt handla
-              </Link>
-              <Link className="btn btn-ghost" to={`/spara-order?id=${data.order.id}`}>
-                Spåra ordern
-              </Link>
-            </div>
-          </>
-        )}
-      </div>
-    </section>
+          {data && (
+            <>
+              <OrderSummary order={data.order} />
+              <p className="muted" style={{ marginTop: 18, fontSize: '0.9rem' }}>
+                Spara ordernumret – med det följer du jobbet hela vägen från kön till leverans.
+              </p>
+              <div className="row" style={{ marginTop: 18 }}>
+                <Link className="btn" to="/produkter">
+                  Fortsätt handla
+                </Link>
+                <Link className="btn btn-ghost" to={`/spara-order?id=${data.order.id}`}>
+                  Spåra ordern
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    </>
   );
 }
