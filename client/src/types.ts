@@ -56,6 +56,7 @@ export interface Product {
   category: CategoryId;
   price: number;
   material: MaterialId;
+  finish: string;
   printTimeHours: number;
   dimensions: { width: number; depth: number; height: number };
   weightGrams: number;

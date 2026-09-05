@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { ProductArt } from '../components/ProductArt';
+import { HeroScene } from '../components/HeroScene';
 import { ProductCard } from '../components/ProductCard';
 import { CategoryStrip } from '../components/CategoryStrip';
 import { TrustBar } from '../components/TrustBar';
@@ -42,7 +42,11 @@ export function HomePage() {
   const popular = [...products]
     .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount)
     .slice(0, 12);
-  const stage = products.filter((product) => product.featured).slice(0, 3);
+  // Betyget räknas fram ur produkternas egna omdömen i stället för att hittas på.
+  const reviewCount = products.reduce((sum, product) => sum + product.reviewCount, 0);
+  const averageRating = reviewCount
+    ? products.reduce((sum, product) => sum + product.rating * product.reviewCount, 0) / reviewCount
+    : 0;
 
   return (
     <>
@@ -74,20 +78,13 @@ export function HomePage() {
                 <i>★</i>
                 <i>★</i>
               </span>
-              4,7/5 baserat på 1 007 omdömen
+              {averageRating.toFixed(1).replace('.', ',')}/5 baserat på{' '}
+              {reviewCount.toLocaleString('sv-SE')} omdömen
             </span>
           </div>
 
-          <div className="hero-stage" aria-hidden="true">
-            {stage.map((product) => (
-              <div className="stage-item" key={product.id}>
-                <ProductArt
-                  shape={product.art.shape}
-                  tone={product.art.tone}
-                  title={product.name}
-                />
-              </div>
-            ))}
+          <div className="hero-visual">
+            <HeroScene />
           </div>
         </div>
       </section>

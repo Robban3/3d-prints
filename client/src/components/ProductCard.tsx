@@ -37,7 +37,9 @@ export function ProductCard({ product }: { product: Product }) {
         <h3>
           <Link to={`/produkter/${product.slug}`}>{product.name}</Link>
         </h3>
-        <p className="sub">{product.material.toUpperCase()}</p>
+        <p className="sub">
+          {product.material.toUpperCase()} {product.finish}
+        </p>
         <div className="price-row">
           <span className="price">{formatPrice(product.price)}</span>
           <button

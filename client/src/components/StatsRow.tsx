@@ -3,8 +3,8 @@ import type { IconName } from './Icon';
 
 const stats: Array<{ icon: IconName; value: string; label: string }> = [
   { icon: 'clock', value: '1–3 dagar', label: 'Snabb produktion' },
-  { icon: 'layers', value: '5 material', label: 'Från PLA till resin' },
-  { icon: 'users', value: '1000+ kunder', label: 'Sedan 2021' },
+  { icon: 'layers', value: '5 material', label: 'Hög kvalitet' },
+  { icon: 'users', value: '1 000+ kunder', label: 'Nöjda kunder' },
   { icon: 'flag', value: 'Svenskt företag', label: 'Tillverkning i Göteborg' },
 ];
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { OrderSummary } from '../components/OrderSummary';
 import { ApiError, fetchOrder } from '../lib/api';
+import { PageHeader } from '../components/PageHeader';
 import type { AnyOrder } from '../types';
 
 export function TrackOrderPage() {
@@ -32,46 +33,47 @@ export function TrackOrderPage() {
   }
 
   return (
-    <section className="section">
-      <div className="container receipt">
-        <h1>Spåra din order</h1>
-        <p className="muted">
-          Ordernumret står i bekräftelsemejlet och börjar med S för butiksorder eller C för egna
-          printjobb.
-        </p>
+    <>
+      <PageHeader
+        eyebrow="Orderstatus"
+        title="Spåra din order"
+        text="Ordernumret står i bekräftelsemejlet och börjar med S för butiksorder eller C för egna printjobb."
+      />
+      <section className="section">
+        <div className="container receipt">
+          <form className="panel" onSubmit={submit}>
+            <div className="field">
+              <label htmlFor="orderId">Ordernummer</label>
+              <input
+                id="orderId"
+                className="input"
+                placeholder="S2026-A1B2C3"
+                value={id}
+                onChange={(event) => setId(event.target.value)}
+              />
+            </div>
+            <button
+              type="submit"
+              className="btn"
+              style={{ marginTop: 16 }}
+              disabled={loading || !id.trim()}
+            >
+              {loading ? 'Söker…' : 'Hämta order'}
+            </button>
+          </form>
 
-        <form className="panel" onSubmit={submit}>
-          <div className="field">
-            <label htmlFor="orderId">Ordernummer</label>
-            <input
-              id="orderId"
-              className="input"
-              placeholder="S2026-A1B2C3"
-              value={id}
-              onChange={(event) => setId(event.target.value)}
-            />
-          </div>
-          <button
-            type="submit"
-            className="btn"
-            style={{ marginTop: 16 }}
-            disabled={loading || !id.trim()}
-          >
-            {loading ? 'Söker…' : 'Hämta order'}
-          </button>
-        </form>
-
-        {error && (
-          <p className="notice notice-error" style={{ marginTop: 20 }}>
-            {error}
-          </p>
-        )}
-        {order && (
-          <div style={{ marginTop: 24 }}>
-            <OrderSummary order={order} />
-          </div>
-        )}
-      </div>
-    </section>
+          {error && (
+            <p className="notice notice-error" style={{ marginTop: 20 }}>
+              {error}
+            </p>
+          )}
+          {order && (
+            <div style={{ marginTop: 24 }}>
+              <OrderSummary order={order} />
+            </div>
+          )}
+        </div>
+      </section>
+    </>
   );
 }
