@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { OrderSummary } from '../components/OrderSummary';
 import { ApiError, fetchOrder } from '../lib/api';
 import type { AnyOrder } from '../types';

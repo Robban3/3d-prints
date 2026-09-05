@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { ProductArt } from '../components/ProductArt';
 import { useCart } from '../lib/cart';
 import { formatPrice } from '../lib/format';

@@ -32,11 +32,28 @@ app.use((_req, res) => {
   res.status(404).json({ error: 'Sidan hittades inte' });
 });
 
+const clientErrors: Record<number, string> = {
+  400: 'Förfrågan gick inte att tolka',
+  413: 'Förfrågan är för stor',
+  415: 'Innehållstypen stöds inte',
+};
+
 const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   if (error instanceof ValidationError) {
     res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
     return;
   }
+
+  // Middleware som express.json sätter själva statuskoden på sina fel, till
+  // exempel 400 för trasig JSON. Det är kundens fel och ska inte bli en 500:a.
+  const status =
+    (error as { status?: number; statusCode?: number } | null)?.status ??
+    (error as { statusCode?: number } | null)?.statusCode;
+  if (typeof status === 'number' && status >= 400 && status < 500) {
+    res.status(status).json({ error: clientErrors[status] ?? 'Ogiltig förfrågan' });
+    return;
+  }
+
   console.error(error);
   res.status(500).json({ error: 'Något gick fel på servern' });
 };

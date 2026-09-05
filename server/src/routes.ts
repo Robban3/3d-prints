@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import type { RequestHandler } from 'express';
 import { categories, productBySlug, products } from './data/products.ts';
 import { materials, qualities } from './data/materials.ts';
 import { calculateQuote, QUOTE_LIMITS } from './pricing.ts';
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, shippingFor } from './shipping.ts';
 import { findOrder, generateOrderNumber, saveOrder } from './store.ts';
 import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
+import { pathParam } from './http.ts';
 import {
   ValidationError,
   parseCustomer,
@@ -15,16 +15,6 @@ import {
 import type { CustomOrder, Order } from './types.ts';
 
 export const api = Router();
-
-/**
- * Express 4 fångar inte avvisade promises från async-handlers, så asynkrona
- * rutter lindas för att skicka vidare felet till felhanteraren.
- */
-function wrap(handler: RequestHandler): RequestHandler {
-  return (req, res, next) => {
-    Promise.resolve(handler(req, res, next)).catch(next);
-  };
-}
 
 api.get('/health', (_req, res) => {
   res.json({ status: 'ok', products: products.length });
@@ -58,7 +48,7 @@ api.get('/products', (req, res) => {
 });
 
 api.get('/products/:slug', (req, res) => {
-  const product = productBySlug.get(req.params.slug ?? '');
+  const product = productBySlug.get(pathParam(req.params.slug));
   if (!product) {
     res.status(404).json({ error: 'Produkten hittades inte' });
     return;
@@ -74,98 +64,89 @@ api.post('/quote', (req, res) => {
   res.json({ request, quote: calculateQuote(request) });
 });
 
-api.post(
-  '/orders',
-  wrap(async (req, res) => {
-    const body = (req.body ?? {}) as Record<string, unknown>;
-    const customer = parseCustomer(body.customer);
-    const lines = parseOrderLines(body.lines);
+api.post('/orders', async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const customer = parseCustomer(body.customer);
+  const lines = parseOrderLines(body.lines);
 
-    const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
-    const shipping = shippingFor(subtotal);
+  const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+  const shipping = shippingFor(subtotal);
 
-    const order: Order = {
-      id: generateOrderNumber('S'),
-      type: 'shop',
-      createdAt: new Date().toISOString(),
-      status: 'mottagen',
-      customer,
-      lines,
-      subtotal,
-      shipping,
-      total: subtotal + shipping,
-    };
+  const order: Order = {
+    id: generateOrderNumber('S'),
+    type: 'shop',
+    createdAt: new Date().toISOString(),
+    status: 'mottagen',
+    customer,
+    lines,
+    subtotal,
+    shipping,
+    total: subtotal + shipping,
+  };
 
-    await saveOrder(order);
-    res.status(201).json({ order });
-  }),
-);
+  await saveOrder(order);
+  res.status(201).json({ order });
+});
 
-api.post(
-  '/custom-orders',
-  wrap(async (req, res) => {
-    const body = (req.body ?? {}) as Record<string, unknown>;
-    const customer = parseCustomer(body.customer);
-    const request = parseQuoteRequest(body.request);
+api.post('/custom-orders', async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const customer = parseCustomer(body.customer);
+  const request = parseQuoteRequest(body.request);
 
-    const projectName = String(body.projectName ?? '').trim();
-    const description = String(body.description ?? '').trim();
-    const errors: Record<string, string> = {};
-    if (projectName.length < 2) errors.projectName = 'Ge projektet ett namn.';
-    if (description.length < 10)
-      errors.description = 'Beskriv vad du vill ha printat (minst 10 tecken).';
-    // Filnamnet tas från den uppladdade filens metadata, aldrig från klienten.
-    const fileId = String(body.fileId ?? '').trim();
-    const upload = fileId ? await readMeta(fileId) : undefined;
-    if (fileId && !upload) {
-      errors.fileId = 'Vi hittar inte din uppladdade fil. Ladda upp den igen.';
-    } else if (upload?.claimedBy) {
-      errors.fileId = 'Filen är redan kopplad till en annan beställning.';
+  const projectName = String(body.projectName ?? '').trim();
+  const description = String(body.description ?? '').trim();
+  const errors: Record<string, string> = {};
+  if (projectName.length < 2) errors.projectName = 'Ge projektet ett namn.';
+  if (description.length < 10)
+    errors.description = 'Beskriv vad du vill ha printat (minst 10 tecken).';
+  // Filnamnet tas från den uppladdade filens metadata, aldrig från klienten.
+  const fileId = String(body.fileId ?? '').trim();
+  const upload = fileId ? await readMeta(fileId) : undefined;
+  if (fileId && !upload) {
+    errors.fileId = 'Vi hittar inte din uppladdade fil. Ladda upp den igen.';
+  } else if (upload?.claimedBy) {
+    errors.fileId = 'Filen är redan kopplad till en annan beställning.';
+  }
+  if (Object.keys(errors).length > 0) throw new ValidationError(errors);
+
+  const quote = calculateQuote(request);
+  const orderId = generateOrderNumber('C');
+
+  if (upload) {
+    const claimed = await claimUpload(upload.id, orderId);
+    if (!claimed) {
+      throw new ValidationError({
+        fileId: 'Filen kunde inte kopplas till ordern. Ladda upp den igen.',
+      });
     }
-    if (Object.keys(errors).length > 0) throw new ValidationError(errors);
+  }
 
-    const quote = calculateQuote(request);
-    const orderId = generateOrderNumber('C');
+  const order: CustomOrder = {
+    id: orderId,
+    type: 'custom',
+    createdAt: new Date().toISOString(),
+    status: 'mottagen',
+    customer,
+    request,
+    projectName,
+    fileId: upload?.id,
+    fileName: upload?.originalName,
+    fileUrl: upload ? `/api/uploads/${upload.id}` : undefined,
+    fileSize: upload?.size,
+    description,
+    quote,
+    total: quote.total,
+  };
 
-    if (upload) {
-      const claimed = await claimUpload(upload.id, orderId);
-      if (!claimed) {
-        throw new ValidationError({
-          fileId: 'Filen kunde inte kopplas till ordern. Ladda upp den igen.',
-        });
-      }
-    }
+  await saveOrder(order);
+  res.status(201).json({ order });
+});
 
-    const order: CustomOrder = {
-      id: orderId,
-      type: 'custom',
-      createdAt: new Date().toISOString(),
-      status: 'mottagen',
-      customer,
-      request,
-      projectName,
-      fileId: upload?.id,
-      fileName: upload?.originalName,
-      fileUrl: upload ? `/api/uploads/${upload.id}` : undefined,
-      fileSize: upload?.size,
-      description,
-      quote,
-      total: quote.total,
-    };
-
-    await saveOrder(order);
-    res.status(201).json({ order });
-  }),
-);
-
-api.get(
-  '/orders/:id',
-  wrap(async (req, res) => {
-    const order = await findOrder(req.params.id ?? '');
-    if (!order) {
-      res.status(404).json({ error: 'Ordern hittades inte' });
-      return;
-    }
-    res.json({ order });
-  }),
-);
+api.get('/orders/:id', async (req, res) => {
+  const order = await findOrder(pathParam(req.params.id));
+  if (!order) {
+    res.status(404).json({ error: 'Ordern hittades inte' });
+    return;
+  }
+  res.json({ order });
+});

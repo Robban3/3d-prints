@@ -3,6 +3,7 @@ import type { Request, RequestHandler, Response } from 'express';
 import multer from 'multer';
 import { createReadStream } from 'node:fs';
 import { rm } from 'node:fs/promises';
+import { pathParam } from './http.ts';
 import {
   ALLOWED_EXTENSIONS,
   MAX_UPLOAD_BYTES,
@@ -128,7 +129,7 @@ uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
  * webbläsaren, så att inget innehåll kan köras i vår domän.
  */
 uploads.get('/uploads/:id', (req, res, next) => {
-  readMeta(req.params.id ?? '')
+  readMeta(pathParam(req.params.id))
     .then(async (meta) => {
       if (!meta || !(await uploadExists(meta))) {
         res.status(404).json({ error: 'Filen hittades inte' });
@@ -148,7 +149,7 @@ uploads.get('/uploads/:id', (req, res, next) => {
 });
 
 uploads.delete('/uploads/:id', (req, res, next) => {
-  readMeta(req.params.id ?? '')
+  readMeta(pathParam(req.params.id))
     .then(async (meta) => {
       if (!meta) {
         res.status(404).json({ error: 'Filen hittades inte' });

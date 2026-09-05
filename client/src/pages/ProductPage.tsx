@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router';
 import { ProductArt } from '../components/ProductArt';
 import { ProductCard } from '../components/ProductCard';
 import { Rating } from '../components/Rating';

@@ -4,8 +4,8 @@ En komplett webbutik för 3D-printade produkter med två köpflöden: färdiga p
 ur sortimentet och kundunika printjobb där kunden laddar upp sin egen modellfil och
 får pris direkt.
 
-- **Frontend:** React 18 + TypeScript + Vite + React Router
-- **Backend:** Node + Express (TypeScript, körs med Nodes inbyggda type stripping)
+- **Frontend:** React 18 + TypeScript + Vite + React Router 7
+- **Backend:** Node + Express 5 (TypeScript, körs med Nodes inbyggda type stripping)
 - **Datalagring:** filbaserad orderlagring (`server/data/orders.json`) och uppladdade
   modellfiler på disk (`server/uploads/`)
 
