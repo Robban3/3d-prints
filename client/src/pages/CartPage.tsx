@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { ProductArt } from '../components/ProductArt';
+import { ProductImage } from '../components/ProductImage';
 import { useCart } from '../lib/cart';
 import { formatPrice } from '../lib/format';
 import { fetchConfig } from '../lib/api';
@@ -63,7 +63,7 @@ export function CartPage() {
                     aria-hidden="true"
                     tabIndex={-1}
                   >
-                    <ProductArt shape={item.art.shape} tone={item.art.tone} title={item.name} />
+                    <ProductImage product={{ name: item.name, art: item.art, image: item.image }} />
                   </Link>
                   <div>
                     <h3 style={{ margin: 0, fontSize: '1rem' }}>

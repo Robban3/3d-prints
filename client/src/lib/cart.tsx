@@ -13,6 +13,7 @@ export interface CartItem {
   size?: string;
   sizeName?: string;
   art: Product['art'];
+  image?: Product['image'];
 }
 
 interface CartContextValue {

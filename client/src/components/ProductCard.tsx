@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { ProductArt } from './ProductArt';
+import { ProductImage } from './ProductImage';
 import { Icon } from './Icon';
 import { formatPrice } from '../lib/format';
 import { useCart } from '../lib/cart';
@@ -22,6 +22,7 @@ export function ProductCard({ product }: { product: Product }) {
       size: product.sizes?.[0]?.id,
       sizeName: product.sizes?.[0]?.name,
       art: product.art,
+      image: product.image,
     });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
@@ -30,7 +31,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="product-card">
       <Link to={`/produkter/${product.slug}`} className="art" tabIndex={-1} aria-hidden="true">
-        <ProductArt shape={product.art.shape} tone={product.art.tone} title={product.name} />
+        <ProductImage product={product} />
         {product.stock <= 20 && <span className="flag flag-warn">Få kvar</span>}
       </Link>
       <div className="body">

@@ -6,6 +6,30 @@ import { storage } from './storage.ts';
 /** Format vi kan slica direkt eller konvertera i verkstaden. */
 export const ALLOWED_EXTENSIONS = ['.stl', '.obj', '.3mf', '.step', '.stp', '.f3d'] as const;
 export const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
+
+/** Produktbilder laddas upp separat och har egna gränser. */
+export const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif'] as const;
+export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+
+const IMAGE_CONTENT_TYPES: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.avif': 'image/avif',
+};
+
+export function isImageExtension(extension: string): boolean {
+  return (IMAGE_EXTENSIONS as readonly string[]).includes(extension.toLowerCase());
+}
+
+export function isAllowedImageName(fileName: string): boolean {
+  return isImageExtension(extensionOf(fileName));
+}
+
+export function imageContentType(extension: string): string {
+  return IMAGE_CONTENT_TYPES[extension.toLowerCase()] ?? 'application/octet-stream';
+}
 /** Uppladdningar som aldrig kopplas till en order städas bort efter ett dygn. */
 export const ORPHAN_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
@@ -13,6 +37,8 @@ const ID_PATTERN = /^[0-9a-f]{32}$/;
 
 export interface UploadMeta {
   id: string;
+  /** Produktbilder visas öppet; modellfiler är knutna till en order. */
+  kind?: 'model' | 'image';
   /** Filnamnet kunden laddade upp – används bara som etikett, aldrig som sökväg. */
   originalName: string;
   extension: string;
@@ -40,7 +66,10 @@ export function extensionOf(fileName: string): string {
 }
 
 export function isAllowedExtension(extension: string): boolean {
-  return (ALLOWED_EXTENSIONS as readonly string[]).includes(extension.toLowerCase());
+  return (
+    (ALLOWED_EXTENSIONS as readonly string[]).includes(extension.toLowerCase()) ||
+    isImageExtension(extension)
+  );
 }
 
 export function isAllowedFileName(fileName: string): boolean {
@@ -113,7 +142,8 @@ export async function sweepOrphans(
   for (const entry of entries) {
     if (!entry.endsWith('.json')) continue;
     const meta = await readMeta(entry.slice(0, -'.json'.length));
-    if (!meta || meta.claimedBy) continue;
+    // Bilder hör till katalogen och har ingen order att knytas till.
+    if (!meta || meta.claimedBy || meta.kind === 'image') continue;
     if (now - new Date(meta.createdAt).getTime() < maxAgeMs) continue;
     await deleteUpload(meta.id);
     removed += 1;

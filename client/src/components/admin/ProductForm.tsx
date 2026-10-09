@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ProductArt } from '../ProductArt';
+import { ApiError, uploadProductImage } from '../../lib/api';
 import { TextAreaField, TextField } from '../Field';
 import { formatPrice } from '../../lib/format';
 import type { ArtShape, ArtTone, Category, Material, Product, ProductDraft } from '../../types';
@@ -140,6 +141,24 @@ export function ProductForm({
   onCancel,
 }: Props) {
   const sizes = draft.sizes ?? [];
+  const imageInput = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [imageError, setImageError] = useState('');
+
+  async function pickImage(file: File | undefined) {
+    if (!file) return;
+    setUploading(true);
+    setImageError('');
+    try {
+      const image = await uploadProductImage(file).promise;
+      onChange({ image });
+    } catch (caught) {
+      setImageError(caught instanceof ApiError ? caught.message : 'Bilden kunde inte laddas upp.');
+    } finally {
+      setUploading(false);
+      if (imageInput.current) imageInput.current.value = '';
+    }
+  }
 
   function setSize(index: number, patch: Partial<{ id: string; name: string; priceDelta: number }>) {
     const next = sizes.map((size, i) => (i === index ? { ...size, ...patch } : size));
@@ -264,9 +283,53 @@ export function ProductForm({
 
         <div className="stack">
           <h3>Bild</h3>
-          <div className="admin-art-preview">
-            <ProductArt shape={draft.art.shape} tone={draft.art.tone} title="Förhandsvisning" />
-          </div>
+          {draft.image ? (
+            <div className="admin-image-preview">
+              <img src={draft.image.url} alt="" />
+              <span style={{ flex: 1, minWidth: 0 }}>
+                <strong style={{ display: 'block', fontSize: '0.9rem' }}>
+                  {draft.image.fileName}
+                </strong>
+                <span className="dim" style={{ fontSize: '0.82rem' }}>
+                  Visas i stället för den ritade illustrationen.
+                </span>
+              </span>
+              <button
+                type="button"
+                className="btn-quiet"
+                onClick={() => onChange({ image: undefined })}
+              >
+                Ta bort
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="admin-art-preview">
+                <ProductArt shape={draft.art.shape} tone={draft.art.tone} title="Förhandsvisning" />
+              </div>
+              <input
+                ref={imageInput}
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp,.avif"
+                hidden
+                onChange={(event) => void pickImage(event.target.files?.[0])}
+              />
+              <div className="row">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  disabled={uploading}
+                  onClick={() => imageInput.current?.click()}
+                >
+                  {uploading ? 'Laddar upp…' : 'Ladda upp foto'}
+                </button>
+                <span className="field-hint">
+                  Utan foto ritas illustrationen nedan. JPG, PNG, WEBP eller AVIF, max 8 MB.
+                </span>
+              </div>
+              {imageError && <span className="error">{imageError}</span>}
+            </>
+          )}
           <div className="grid-2">
             <div className="field">
               <label htmlFor="form">Form</label>

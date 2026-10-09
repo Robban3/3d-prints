@@ -42,8 +42,10 @@ export interface Product {
   featured: boolean;
   /** Opublicerade produkter syns bara i adminpanelen. Saknas = publicerad. */
   published?: boolean;
-  /** Nyckel till den genererade SVG-illustrationen. */
+  /** Nyckel till den genererade SVG-illustrationen, som används utan foto. */
   art: { shape: ArtShape; tone: ArtTone };
+  /** Uppladdad produktbild. Visas i stället för den ritade illustrationen. */
+  image?: { id: string; url: string; fileName: string };
 }
 
 export type ArtShape =

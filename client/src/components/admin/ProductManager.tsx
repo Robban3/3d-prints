@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ProductArt } from '../ProductArt';
+import { ProductImage } from '../ProductImage';
 import { ProductForm, emptyDraft } from './ProductForm';
 import {
   ApiError,
@@ -34,6 +34,7 @@ function toDraft(product: Product): ProductDraft {
     featured: product.featured,
     published: product.published !== false,
     art: { ...product.art },
+    ...(product.image ? { image: { ...product.image } } : {}),
   };
 }
 
@@ -169,7 +170,7 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
         {products?.map((product) => (
           <div className="admin-row" key={product.id}>
             <div className="admin-row-art">
-              <ProductArt shape={product.art.shape} tone={product.art.tone} title={product.name} />
+              <ProductImage product={product} />
             </div>
             <div className="admin-row-main">
               <strong>{product.name}</strong>
