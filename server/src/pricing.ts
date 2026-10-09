@@ -1,5 +1,5 @@
-import { materialById, qualityById } from './data/materials.ts';
-import type { CustomQuoteRequest, QuoteBreakdown } from './types.ts';
+import { findMaterial, findQuality } from './catalog.ts';
+import type { CustomQuoteRequest, Material, QualityLevel, QuoteBreakdown } from './types.ts';
 
 /** Materialpris i kronor per kubikcentimeter faktiskt utskjuten plast. */
 const MATERIAL_PRICE_PER_CM3 = 2.4;
@@ -39,13 +39,16 @@ function round(value: number): number {
  * Räknar fram ett pris för ett kundunikt printjobb. Modellen är avsiktligt
  * enkel och förutsägbar: material + maskintid + påslag, med volymrabatt på
  * allt utom startavgiften.
+ *
+ * Material och kvalitet skickas in i stället för att slås upp här, så att
+ * matematiken förblir ren och går att testa med vilka faktorer som helst.
+ * Använd quoteFor() när värdena ska hämtas ur katalogen.
  */
-export function calculateQuote(request: CustomQuoteRequest): QuoteBreakdown {
-  const material = materialById.get(request.material);
-  const quality = qualityById.get(request.quality);
-  if (!material) throw new Error(`Okänt material: ${request.material}`);
-  if (!quality) throw new Error(`Okänd kvalitet: ${request.quality}`);
-
+export function calculateQuote(
+  request: CustomQuoteRequest,
+  material: Material,
+  quality: QualityLevel,
+): QuoteBreakdown {
   const quantity = Math.max(1, Math.round(request.quantity));
   const infillRatio = request.infill / 100;
 
@@ -85,4 +88,15 @@ export function calculateQuote(request: CustomQuoteRequest): QuoteBreakdown {
     estimatedPrintHours: round(estimatedPrintHours),
     estimatedDeliveryDays,
   };
+}
+
+/** Hämtar material och kvalitet ur katalogen och räknar fram priset. */
+export async function quoteFor(request: CustomQuoteRequest): Promise<QuoteBreakdown> {
+  const [material, quality] = await Promise.all([
+    findMaterial(request.material),
+    findQuality(request.quality),
+  ]);
+  if (!material) throw new Error(`Okänt material: ${request.material}`);
+  if (!quality) throw new Error(`Okänd kvalitet: ${request.quality}`);
+  return calculateQuote(request, material, quality);
 }

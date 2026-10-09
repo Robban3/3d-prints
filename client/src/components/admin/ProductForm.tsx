@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ProductArt } from '../ProductArt';
 import { TextAreaField, TextField } from '../Field';
 import { formatPrice } from '../../lib/format';
-import type { ArtShape, ArtTone, Category, Product, ProductDraft } from '../../types';
+import type { ArtShape, ArtTone, Category, Material, Product, ProductDraft } from '../../types';
 
 const SHAPES: Array<{ id: ArtShape; name: string }> = [
   { id: 'planter', name: 'Kruka' },
@@ -28,13 +28,6 @@ const TONES: Array<{ id: ArtTone; name: string }> = [
   { id: 'bla', name: 'Blå' },
 ];
 
-const MATERIALS = [
-  { id: 'pla', name: 'PLA' },
-  { id: 'petg', name: 'PETG' },
-  { id: 'abs', name: 'ABS' },
-  { id: 'tpu', name: 'TPU' },
-  { id: 'resin', name: 'Resin' },
-];
 
 export function emptyDraft(categoryId: string): ProductDraft {
   return {
@@ -64,6 +57,8 @@ export function emptyDraft(categoryId: string): ProductDraft {
 interface Props {
   draft: ProductDraft;
   categories: Category[];
+  /** Hämtas från katalogen, så nytillagda material dyker upp direkt. */
+  materials: Material[];
   errors: Record<string, string>;
   saving: boolean;
   onChange: (patch: Partial<ProductDraft>) => void;
@@ -137,6 +132,7 @@ function ListEditor({
 export function ProductForm({
   draft,
   categories,
+  materials,
   errors,
   saving,
   onChange,
@@ -222,7 +218,7 @@ export function ProductForm({
                   onChange({ material: event.target.value as Product['material'] })
                 }
               >
-                {MATERIALS.map((material) => (
+                {materials.map((material) => (
                   <option key={material.id} value={material.id}>
                     {material.name}
                   </option>

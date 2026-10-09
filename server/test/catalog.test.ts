@@ -23,6 +23,8 @@ import { ProductInputError, parseProductInput, slugify } from '../src/catalogVal
 let dir: string;
 
 const categoryIds = ['inredning', 'kontor', 'kok', 'prylar', 'tillbehor'];
+const materialIds = ['pla', 'petg', 'abs', 'tpu', 'resin'];
+const options = { categoryIds, materialIds };
 
 function validInput(overrides: Record<string, unknown> = {}) {
   return {
@@ -76,7 +78,7 @@ describe('katalogen', () => {
 
 describe('skapa produkt', () => {
   it('lägger till produkten och ger den ett id', async () => {
-    const created = await createProduct(parseProductInput(validInput(), { categoryIds }));
+    const created = await createProduct(parseProductInput(validInput(), options));
     assert.match(created.id, /^p-\d{3}$/);
     assert.equal((await allProducts()).length, 15);
     assert.equal((await findProduct(created.id))?.name, 'Testprodukt');
@@ -84,19 +86,19 @@ describe('skapa produkt', () => {
 
   it('härleder webbadressen ur namnet', async () => {
     const created = await createProduct(
-      parseProductInput(validInput({ name: 'Snygg Växtkruka Å' }), { categoryIds }),
+      parseProductInput(validInput({ name: 'Snygg Växtkruka Å' }), options),
     );
     assert.equal(created.slug, 'snygg-vaxtkruka-a');
     assert.equal((await findProductBySlug('snygg-vaxtkruka-a'))?.id, created.id);
   });
 
   it('avvisar en webbadress som redan används', async () => {
-    const input = parseProductInput(validInput({ slug: 'terra-vaxtkruka' }), { categoryIds });
+    const input = parseProductInput(validInput({ slug: 'terra-vaxtkruka' }), options);
     await assert.rejects(() => createProduct(input), CatalogError);
   });
 
   it('överlever en omstart', async () => {
-    const created = await createProduct(parseProductInput(validInput(), { categoryIds }));
+    const created = await createProduct(parseProductInput(validInput(), options));
     resetCatalogCache();
     assert.equal((await findProduct(created.id))?.name, 'Testprodukt');
   });
@@ -198,7 +200,7 @@ describe('kategorier', () => {
 
 describe('validering av produktindata', () => {
   it('tar emot ett komplett formulär', () => {
-    const parsed = parseProductInput(validInput(), { categoryIds });
+    const parsed = parseProductInput(validInput(), options);
     assert.equal(parsed.name, 'Testprodukt');
     assert.equal(parsed.price, 299);
     assert.equal(parsed.published, true);
@@ -208,7 +210,7 @@ describe('validering av produktindata', () => {
     try {
       parseProductInput(
         validInput({ name: '', price: -5, category: 'finns-inte', description: 'kort', colors: [] }),
-        { categoryIds },
+        options,
       );
       assert.fail('förväntade ProductInputError');
     } catch (error) {
@@ -225,15 +227,15 @@ describe('validering av produktindata', () => {
       [{ art: { shape: 'rymdskepp', tone: 'benvit' } }, 'art.shape'],
       [{ art: { shape: 'planter', tone: 'neon' } }, 'art.tone'],
     ] as const) {
-      assert.throws(() => parseProductInput(validInput(patch), { categoryIds }), ProductInputError);
+      assert.throws(() => parseProductInput(validInput(patch), options), ProductInputError);
     }
   });
 
   it('rundar av priset och håller måtten inom rimliga gränser', () => {
-    const parsed = parseProductInput(validInput({ price: 299.6 }), { categoryIds });
+    const parsed = parseProductInput(validInput({ price: 299.6 }), options);
     assert.equal(parsed.price, 300);
     assert.throws(
-      () => parseProductInput(validInput({ dimensions: { width: 0, depth: 1, height: 1 } }), { categoryIds }),
+      () => parseProductInput(validInput({ dimensions: { width: 0, depth: 1, height: 1 } }), options),
       ProductInputError,
     );
   });
@@ -241,7 +243,7 @@ describe('validering av produktindata', () => {
   it('tar emot storlekar och ger dem id ur namnet', () => {
     const parsed = parseProductInput(
       validInput({ sizes: [{ name: 'Liten', priceDelta: -50 }, { name: 'Stor', priceDelta: 120 }] }),
-      { categoryIds },
+      options,
     );
     assert.deepEqual(parsed.sizes?.map((size) => size.id), ['liten', 'stor']);
     assert.equal(parsed.sizes?.[0]?.priceDelta, -50);
@@ -252,7 +254,7 @@ describe('validering av produktindata', () => {
       () =>
         parseProductInput(
           validInput({ sizes: [{ id: 'a', name: 'En' }, { id: 'a', name: 'Två' }] }),
-          { categoryIds },
+          options,
         ),
       ProductInputError,
     );
@@ -261,7 +263,7 @@ describe('validering av produktindata', () => {
   it('städar bort tomma färger och höjdpunkter', () => {
     const parsed = parseProductInput(
       validInput({ colors: ['Svart', '  ', ''], highlights: ['Bra', ''] }),
-      { categoryIds },
+      options,
     );
     assert.deepEqual(parsed.colors, ['Svart']);
     assert.deepEqual(parsed.highlights, ['Bra']);

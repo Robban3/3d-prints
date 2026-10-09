@@ -1,7 +1,13 @@
 import { Router } from 'express';
-import { allCategories, findProductBySlug, publishedProducts } from './catalog.ts';
-import { materials, qualities } from './data/materials.ts';
-import { calculateQuote, QUOTE_LIMITS } from './pricing.ts';
+import {
+  allCategories,
+  allMaterials,
+  allQualities,
+  findProductBySlug,
+  publishedProducts,
+} from './catalog.ts';
+
+import { QUOTE_LIMITS, quoteFor } from './pricing.ts';
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, shippingFor } from './shipping.ts';
 import { findOrder, generateOrderNumber, listOrders, saveOrder, updateOrder } from './store.ts';
 import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
@@ -60,8 +66,8 @@ api.get('/health', async (_req, res) => {
 
 api.get('/config', async (_req, res) => {
   res.json({
-    materials,
-    qualities,
+    materials: await allMaterials(),
+    qualities: await allQualities(),
     categories: await allCategories(),
     quoteLimits: QUOTE_LIMITS,
     shipping: { fee: SHIPPING_FEE, freeThreshold: FREE_SHIPPING_THRESHOLD },
@@ -115,8 +121,8 @@ api.get('/products/:slug', async (req, res) => {
 });
 
 api.post('/quote', quoteLimit, (req, res) => {
-  const request = parseQuoteRequest(req.body);
-  res.json({ request, quote: calculateQuote(request) });
+  const request = await parseQuoteRequest(req.body);
+  res.json({ request, quote: await quoteFor(request) });
 });
 
 /** Standardvärden när Klarna-nycklar saknas, så testläget kan räkna likadant. */
@@ -137,10 +143,10 @@ api.post('/payments/session', sessionLimit, async (req, res) => {
 
   let payload;
   if (body.type === 'custom') {
-    const request = parseQuoteRequest(body.request);
+    const request = await parseQuoteRequest(body.request);
     const projectName = String(body.projectName ?? '').trim() || 'Eget printjobb';
     payload = payloadForCustomOrder(
-      { projectName, request, quote: calculateQuote(request) },
+      { projectName, request, quote: await quoteFor(request) },
       config,
     );
   } else {
@@ -242,7 +248,7 @@ api.post('/orders', orderLimit, async (req, res) => {
 api.post('/custom-orders', orderLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const customer = parseCustomer(body.customer);
-  const request = parseQuoteRequest(body.request);
+  const request = await parseQuoteRequest(body.request);
 
   const projectName = String(body.projectName ?? '').trim();
   const description = String(body.description ?? '').trim();
@@ -260,7 +266,7 @@ api.post('/custom-orders', orderLimit, async (req, res) => {
   }
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
 
-  const quote = calculateQuote(request);
+  const quote = await quoteFor(request);
   const orderId = generateOrderNumber('C');
 
   if (upload) {

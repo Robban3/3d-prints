@@ -1,4 +1,4 @@
-import { materialById, qualityById } from './data/materials.ts';
+import { findMaterial, findQuality } from './catalog.ts';
 import { QUOTE_LIMITS } from './pricing.ts';
 import type { CustomQuoteRequest, CustomerDetails, OrderLine } from './types.ts';
 import { findProduct } from './catalog.ts';
@@ -111,7 +111,7 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
   return lines;
 }
 
-export function parseQuoteRequest(input: unknown): CustomQuoteRequest {
+export async function parseQuoteRequest(input: unknown): Promise<CustomQuoteRequest> {
   const raw = asRecord(input);
   const errors: Record<string, string> = {};
 
@@ -121,8 +121,8 @@ export function parseQuoteRequest(input: unknown): CustomQuoteRequest {
   const infill = num(raw.infill);
   const quantity = Math.round(num(raw.quantity));
 
-  if (!materialById.has(material as never)) errors.material = 'Välj ett material.';
-  if (!qualityById.has(quality as never)) errors.quality = 'Välj en utskriftskvalitet.';
+  if (!(await findMaterial(material))) errors.material = 'Välj ett material.';
+  if (!(await findQuality(quality))) errors.quality = 'Välj en utskriftskvalitet.';
   const v = QUOTE_LIMITS.volumeCm3;
   if (!(volumeCm3 >= v.min && volumeCm3 <= v.max)) {
     errors.volumeCm3 = `Volymen ska vara mellan ${v.min} och ${v.max} cm³.`;

@@ -3,18 +3,20 @@ import { PageHeader } from '../components/PageHeader';
 import { OrderManager } from '../components/admin/OrderManager';
 import { ProductManager } from '../components/admin/ProductManager';
 import { CategoryManager } from '../components/admin/CategoryManager';
-import { ApiError, fetchAdminCategories, fetchAdminStatus } from '../lib/api';
+import { MaterialManager } from '../components/admin/MaterialManager';
+import { ApiError, fetchAdminCategories, fetchAdminMaterials, fetchAdminStatus } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
-import type { Category } from '../types';
+import type { Category, Material } from '../types';
 
 const STORAGE_KEY = 'formlabb.admin.token';
 
-type Tab = 'ordrar' | 'produkter' | 'kategorier';
+type Tab = 'ordrar' | 'produkter' | 'kategorier' | 'material';
 
 const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'ordrar', label: 'Ordrar' },
   { id: 'produkter', label: 'Produkter' },
   { id: 'kategorier', label: 'Kategorier' },
+  { id: 'material', label: 'Material' },
 ];
 
 /**
@@ -34,13 +36,18 @@ export function AdminPage() {
   const [signInError, setSignInError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>('ordrar');
   const [categories, setCategories] = useState<Category[]>([]);
+  const [materials, setMaterials] = useState<Material[]>([]);
 
-  // Kategorierna behövs i produktformuläret och hämtas därför en nivå upp.
+  // Kategorier och material behövs i produktformuläret och hämtas en nivå upp.
   const loadCategories = useCallback(async () => {
     if (!token) return;
     try {
-      const result = await fetchAdminCategories(token);
-      setCategories(result.categories);
+      const [categoryResult, materialResult] = await Promise.all([
+        fetchAdminCategories(token),
+        fetchAdminMaterials(token),
+      ]);
+      setCategories(categoryResult.categories);
+      setMaterials(materialResult.materials);
       setSignInError(null);
     } catch (caught) {
       if (caught instanceof ApiError && caught.status === 401) {
@@ -62,6 +69,7 @@ export function AdminPage() {
     }
     setToken('');
     setCategories([]);
+    setMaterials([]);
   }
 
   function signIn(event: React.FormEvent) {
@@ -176,11 +184,15 @@ export function AdminPage() {
             <ProductManager
               token={token}
               categories={categories}
+              materials={materials}
               onChanged={() => void loadCategories()}
             />
           )}
           {tab === 'kategorier' && (
             <CategoryManager token={token} onChanged={() => void loadCategories()} />
+          )}
+          {tab === 'material' && (
+            <MaterialManager token={token} onChanged={() => void loadCategories()} />
           )}
         </div>
       </section>

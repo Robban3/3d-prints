@@ -106,15 +106,15 @@ describe('parseQuoteRequest', () => {
     postProcessing: true,
   };
 
-  it('tar emot en giltig förfrågan', () => {
-    const request = parseQuoteRequest(valid);
+  it('tar emot en giltig förfrågan', async () => {
+    const request = await parseQuoteRequest(valid);
     assert.equal(request.material, 'petg');
     assert.equal(request.postProcessing, true);
   });
 
-  it('avvisar värden utanför gränserna', () => {
-    assert.throws(() => parseQuoteRequest({ ...valid, volumeCm3: 99999 }), ValidationError);
-    assert.throws(() => parseQuoteRequest({ ...valid, infill: 300 }), ValidationError);
-    assert.throws(() => parseQuoteRequest({ ...valid, material: 'guld' }), ValidationError);
+  it('avvisar värden utanför gränserna', async () => {
+    await assert.rejects(() => parseQuoteRequest({ ...valid, volumeCm3: 99999 }), ValidationError);
+    await assert.rejects(() => parseQuoteRequest({ ...valid, infill: 300 }), ValidationError);
+    await assert.rejects(() => parseQuoteRequest({ ...valid, material: 'guld' }), ValidationError);
   });
 });

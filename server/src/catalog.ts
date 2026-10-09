@@ -2,7 +2,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { categories as seedCategories, products as seedProducts } from './data/products.ts';
-import type { Category, Product } from './types.ts';
+import { materials as seedMaterials, qualities as seedQualities } from './data/materials.ts';
+import type { Category, Material, Product, QualityLevel } from './types.ts';
 
 /**
  * Katalogen var tidigare en konstant som kompilerades in i servern. För att
@@ -15,6 +16,8 @@ const CATALOG_FILE = () => resolve(process.env.CATALOG_STORE ?? 'data/catalog.js
 interface CatalogFile {
   products: Product[];
   categories: Category[];
+  materials: Material[];
+  qualities: QualityLevel[];
 }
 
 let cache: CatalogFile | null = null;
@@ -28,7 +31,12 @@ function serialize<T>(task: () => Promise<T>): Promise<T> {
 
 function seed(): CatalogFile {
   // Djupkopia, annars delar lagringen objekt med konstanten.
-  return structuredClone({ products: seedProducts, categories: seedCategories });
+  return structuredClone({
+    products: seedProducts,
+    categories: seedCategories,
+    materials: seedMaterials,
+    qualities: seedQualities,
+  });
 }
 
 async function load(): Promise<CatalogFile> {
@@ -36,9 +44,13 @@ async function load(): Promise<CatalogFile> {
   try {
     const raw = await readFile(CATALOG_FILE(), 'utf8');
     const parsed = JSON.parse(raw) as Partial<CatalogFile>;
+    const fallback = seed();
     cache = {
-      products: Array.isArray(parsed.products) ? parsed.products : seed().products,
-      categories: Array.isArray(parsed.categories) ? parsed.categories : seed().categories,
+      products: Array.isArray(parsed.products) ? parsed.products : fallback.products,
+      categories: Array.isArray(parsed.categories) ? parsed.categories : fallback.categories,
+      // Materialen tillkom senare – en äldre fil saknar dem och får standarden.
+      materials: Array.isArray(parsed.materials) ? parsed.materials : fallback.materials,
+      qualities: Array.isArray(parsed.qualities) ? parsed.qualities : fallback.qualities,
     };
   } catch {
     cache = seed();
@@ -86,6 +98,22 @@ export async function findProductBySlug(slug: string): Promise<Product | undefin
 
 export async function allCategories(): Promise<Category[]> {
   return [...(await load()).categories];
+}
+
+export async function allMaterials(): Promise<Material[]> {
+  return [...(await load()).materials];
+}
+
+export async function findMaterial(id: string): Promise<Material | undefined> {
+  return (await load()).materials.find((material) => material.id === id);
+}
+
+export async function allQualities(): Promise<QualityLevel[]> {
+  return [...(await load()).qualities];
+}
+
+export async function findQuality(id: string): Promise<QualityLevel | undefined> {
+  return (await load()).qualities.find((quality) => quality.id === id);
 }
 
 /* ---------- Skrivning ---------- */
@@ -189,6 +217,70 @@ export async function deleteCategory(id: string): Promise<Category> {
 
     await persist({ ...data, categories: data.categories.filter((entry) => entry.id !== id) });
     return category;
+  });
+}
+
+export async function saveMaterial(material: Material): Promise<Material> {
+  return serialize(async () => {
+    const data = await load();
+    const index = data.materials.findIndex((entry) => entry.id === material.id);
+    const materials = [...data.materials];
+    if (index === -1) materials.push(material);
+    else materials[index] = material;
+    await persist({ ...data, materials });
+    return material;
+  });
+}
+
+export async function deleteMaterial(id: string): Promise<Material> {
+  return serialize(async () => {
+    const data = await load();
+    const material = data.materials.find((entry) => entry.id === id);
+    if (!material) throw new CatalogError({ id: 'Materialet finns inte.' }, 404);
+
+    // Ett material som produkter är satta i får inte försvinna under dem.
+    const inUse = data.products.filter((product) => product.material === id);
+    if (inUse.length > 0) {
+      throw new CatalogError(
+        {
+          id: `Materialet används av ${inUse.length} ${
+            inUse.length === 1 ? 'produkt' : 'produkter'
+          }. Byt material på dem först.`,
+        },
+        409,
+      );
+    }
+    if (data.materials.length === 1) {
+      throw new CatalogError({ id: 'Det måste finnas minst ett material.' }, 409);
+    }
+
+    await persist({ ...data, materials: data.materials.filter((entry) => entry.id !== id) });
+    return material;
+  });
+}
+
+export async function saveQuality(quality: QualityLevel): Promise<QualityLevel> {
+  return serialize(async () => {
+    const data = await load();
+    const index = data.qualities.findIndex((entry) => entry.id === quality.id);
+    const qualities = [...data.qualities];
+    if (index === -1) qualities.push(quality);
+    else qualities[index] = quality;
+    await persist({ ...data, qualities });
+    return quality;
+  });
+}
+
+export async function deleteQuality(id: string): Promise<QualityLevel> {
+  return serialize(async () => {
+    const data = await load();
+    const quality = data.qualities.find((entry) => entry.id === id);
+    if (!quality) throw new CatalogError({ id: 'Kvalitetsnivån finns inte.' }, 404);
+    if (data.qualities.length === 1) {
+      throw new CatalogError({ id: 'Det måste finnas minst en kvalitetsnivå.' }, 409);
+    }
+    await persist({ ...data, qualities: data.qualities.filter((entry) => entry.id !== id) });
+    return quality;
   });
 }
 

@@ -1,4 +1,4 @@
-export type MaterialId = 'pla' | 'petg' | 'abs' | 'tpu' | 'resin';
+export type MaterialId = string;
 
 export interface Material {
   id: MaterialId;
@@ -125,7 +125,16 @@ export interface Order {
   history: StatusEvent[];
 }
 
-export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
+export type PrintQuality = string;
+
+export interface QualityLevel {
+  id: PrintQuality;
+  name: string;
+  layerHeightMm: number;
+  /** Faktor på maskintiden – finare lager tar längre tid. */
+  timeFactor: number;
+  description: string;
+}
 
 export interface CustomQuoteRequest {
   material: MaterialId;
