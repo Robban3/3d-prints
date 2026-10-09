@@ -4,19 +4,23 @@ import { OrderManager } from '../components/admin/OrderManager';
 import { ProductManager } from '../components/admin/ProductManager';
 import { CategoryManager } from '../components/admin/CategoryManager';
 import { MaterialManager } from '../components/admin/MaterialManager';
+import { CatalogTransfer } from '../components/admin/CatalogTransfer';
+import { HistoryView } from '../components/admin/HistoryView';
 import { ApiError, fetchAdminCategories, fetchAdminMaterials, fetchAdminStatus } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import type { Category, Material } from '../types';
 
 const STORAGE_KEY = 'formlabb.admin.token';
 
-type Tab = 'ordrar' | 'produkter' | 'kategorier' | 'material';
+type Tab = 'ordrar' | 'produkter' | 'kategorier' | 'material' | 'import' | 'historik';
 
 const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'ordrar', label: 'Ordrar' },
   { id: 'produkter', label: 'Produkter' },
   { id: 'kategorier', label: 'Kategorier' },
   { id: 'material', label: 'Material' },
+  { id: 'import', label: 'Import/export' },
+  { id: 'historik', label: 'Historik' },
 ];
 
 /**
@@ -194,6 +198,10 @@ export function AdminPage() {
           {tab === 'material' && (
             <MaterialManager token={token} onChanged={() => void loadCategories()} />
           )}
+          {tab === 'import' && (
+            <CatalogTransfer token={token} onImported={() => void loadCategories()} />
+          )}
+          {tab === 'historik' && <HistoryView token={token} />}
         </div>
       </section>
     </>

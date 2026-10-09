@@ -164,13 +164,25 @@ behöver.
 Verkstadens panel ligger på `/verkstad` och har tre flikar:
 
 - **Ordrar** – flytta ordrar framåt i produktionen, se tidslinjen per order
-- **Produkter** – lägg till, redigera och ta bort produkter
+- **Produkter** – lägg till, redigera och ta bort produkter, med foto eller ritad bild
 - **Kategorier** – lägg till, byt namn på och ta bort kategorier
+- **Material** – material och kvalitetsnivåer, vars faktorer styr priset på egna printjobb
+- **Import/export** – exportera katalogen, ändra många produkter i filen, läs in igen
+- **Historik** – de senaste ändringarna i katalogen och i ordrarnas status
 
 Allt i en produkt går att ändra: namn, webbadress, säljande rad, beskrivning,
 kategori, pris, material, ytfinish, mått, vikt, printtid, lagersaldo, färger,
 storlekar med pristillägg, höjdpunkter, samt vilken form och yta
 produktbilden ritas i – med levande förhandsvisning medan du väljer.
+
+Varje produkt kan ha ett **uppladdat foto**; utan foto ritas illustrationen.
+Bilderna har egna gränser (JPG, PNG, WEBP, AVIF, max 8 MB) och serveras med sin
+riktiga innehållstyp, medan modellfiler fortsatt bara går att ladda ner.
+
+**Import och export** går via samma JSON-format åt båda hållen. Produkter matchas
+på webbadressen, så en exporterad fil som ändrats uppdaterar i stället för att
+skapa dubbletter. Importen visar alltid en plan först och skriver ingenting om
+någon rad är felaktig.
 
 En ny produkt kan sparas som **utkast**. Utkast syns bara i panelen och går
 varken att se eller beställa i butiken förrän de publiceras.
@@ -262,6 +274,8 @@ server/
   src/stock.ts    lagersaldo med reservation
   src/catalog.ts  produkter och kategorier, redigerbara i adminpanelen
   src/catalogValidation.ts  validering av produktformuläret
+  src/catalogTransfer.ts  export och import av katalogen
+  src/auditLog.ts  ändringshistorik
   src/storage.ts  lokal disk eller objektlagring för uppladdade filer
   src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter

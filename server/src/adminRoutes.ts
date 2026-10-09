@@ -24,6 +24,8 @@ import {
   updateCategory,
   updateProduct,
 } from './catalog.ts';
+import { buildExport, planImport } from './catalogTransfer.ts';
+import { changedFields, history, record } from './auditLog.ts';
 import {
   parseCategoryInput,
   parseMaterialInput,
@@ -135,6 +137,13 @@ admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, re
     await release(updated.lines);
   }
 
+  await record({
+    action: 'status',
+    entity: 'order',
+    entityId: updated.id,
+    summary: `${existing.status} → ${target}`,
+  });
+
   const mail = statusUpdate(updated);
   let mailResult: { delivered: boolean; path?: string } | undefined;
   if (mail) {
@@ -176,6 +185,12 @@ admin.post('/admin/products', adminLimit, requireAdmin, async (req, res) => {
   const product = await createProduct(input);
   // Lagersaldot är föränderligt och sätts i sin egen lagring.
   await setStock(product.id, input.stock);
+  await record({
+    action: 'skapad',
+    entity: 'produkt',
+    entityId: product.id,
+    summary: product.name,
+  });
   res.status(201).json({ product });
 });
 
@@ -191,6 +206,16 @@ admin.patch('/admin/products/:id', adminLimit, requireAdmin, async (req, res) =>
   const input = parseProductInput({ ...existing, ...(req.body as object) }, await inputOptions());
   const product = await updateProduct(id, input);
   await setStock(id, input.stock);
+  await record({
+    action: 'ändrad',
+    entity: 'produkt',
+    entityId: id,
+    summary: product.name,
+    changed: changedFields(
+      existing as unknown as Record<string, unknown>,
+      product as unknown as Record<string, unknown>,
+    ),
+  });
   res.json({ product });
 });
 
@@ -198,6 +223,12 @@ admin.delete('/admin/products/:id', adminLimit, requireAdmin, async (req, res) =
   const id = pathParam(req.params.id);
   const product = await deleteProduct(id);
   await removeStock(id);
+  await record({
+    action: 'borttagen',
+    entity: 'produkt',
+    entityId: id,
+    summary: product.name,
+  });
   // Lagda ordrar behåller sin egen kopia av namn och pris och påverkas inte.
   res.json({ product });
 });
@@ -214,17 +245,30 @@ admin.get('/admin/categories', adminLimit, requireAdmin, async (_req, res) => {
 
 admin.post('/admin/categories', adminLimit, requireAdmin, async (req, res) => {
   const category = await createCategory(parseCategoryInput(req.body));
+  await record({
+    action: 'skapad',
+    entity: 'kategori',
+    entityId: category.id,
+    summary: category.name,
+  });
   res.status(201).json({ category });
 });
 
 admin.patch('/admin/categories/:id', adminLimit, requireAdmin, async (req, res) => {
   const id = pathParam(req.params.id);
   const category = await updateCategory(id, parseCategoryInput(req.body, id));
+  await record({ action: 'ändrad', entity: 'kategori', entityId: id, summary: category.name });
   res.json({ category });
 });
 
 admin.delete('/admin/categories/:id', adminLimit, requireAdmin, async (req, res) => {
   const category = await deleteCategory(pathParam(req.params.id));
+  await record({
+    action: 'borttagen',
+    entity: 'kategori',
+    entityId: category.id,
+    summary: category.name,
+  });
   res.json({ category });
 });
 
@@ -247,17 +291,35 @@ admin.get('/admin/materials', adminLimit, requireAdmin, async (_req, res) => {
 
 admin.post('/admin/materials', adminLimit, requireAdmin, async (req, res) => {
   const material = await saveMaterial(parseMaterialInput(req.body));
+  await record({
+    action: 'skapad',
+    entity: 'material',
+    entityId: material.id,
+    summary: material.name,
+  });
   res.status(201).json({ material });
 });
 
 admin.patch('/admin/materials/:id', adminLimit, requireAdmin, async (req, res) => {
   const id = pathParam(req.params.id);
   const material = await saveMaterial(parseMaterialInput(req.body, id));
+  await record({
+    action: 'ändrad',
+    entity: 'material',
+    entityId: id,
+    summary: `${material.name} (prisfaktor ${material.priceFactor})`,
+  });
   res.json({ material });
 });
 
 admin.delete('/admin/materials/:id', adminLimit, requireAdmin, async (req, res) => {
   const material = await deleteMaterial(pathParam(req.params.id));
+  await record({
+    action: 'borttagen',
+    entity: 'material',
+    entityId: material.id,
+    summary: material.name,
+  });
   res.json({ material });
 });
 
@@ -269,10 +331,78 @@ admin.post('/admin/qualities', adminLimit, requireAdmin, async (req, res) => {
 admin.patch('/admin/qualities/:id', adminLimit, requireAdmin, async (req, res) => {
   const id = pathParam(req.params.id);
   const quality = await saveQuality(parseQualityInput(req.body, id));
+  await record({
+    action: 'ändrad',
+    entity: 'kvalitet',
+    entityId: id,
+    summary: `${quality.name} (tidsfaktor ${quality.timeFactor})`,
+  });
   res.json({ quality });
 });
 
 admin.delete('/admin/qualities/:id', adminLimit, requireAdmin, async (req, res) => {
   const quality = await deleteQuality(pathParam(req.params.id));
   res.json({ quality });
+});
+
+/* ---------- Export, import och historik ---------- */
+
+admin.get('/admin/catalog/export', adminLimit, requireAdmin, async (_req, res) => {
+  const [products, categories, materials, qualities] = await Promise.all([
+    allProducts(),
+    allCategories(),
+    allMaterials(),
+    allQualities(),
+  ]);
+  const payload = buildExport({ products, categories, materials, qualities });
+  res.setHeader('Content-Disposition', 'attachment; filename="katalog.json"');
+  res.json(payload);
+});
+
+/**
+ * Importen körs i två steg. Utan `apply` returneras bara en plan, så att det
+ * går att se vad som skulle hända innan något skrivs. Är någon rad felaktig
+ * skrivs ingenting alls – halva kataloger är värre än inga.
+ */
+admin.post('/admin/catalog/import', adminLimit, requireAdmin, async (req, res) => {
+  const body = (req.body ?? {}) as { apply?: unknown; catalog?: unknown };
+  const existing = await allProducts();
+  const plan = planImport(body.catalog, existing, await inputOptions());
+
+  if (body.apply !== true || plan.failed > 0) {
+    res.status(plan.failed > 0 && body.apply === true ? 400 : 200).json({
+      applied: false,
+      ...plan,
+      products: undefined,
+    });
+    return;
+  }
+
+  let created = 0;
+  let updated = 0;
+  for (const entry of plan.products) {
+    if (entry.existingId) {
+      await updateProduct(entry.existingId, entry.input);
+      await setStock(entry.existingId, entry.input.stock);
+      updated += 1;
+    } else {
+      const product = await createProduct(entry.input);
+      await setStock(product.id, entry.input.stock);
+      created += 1;
+    }
+  }
+
+  await record({
+    action: 'importerad',
+    entity: 'produkt',
+    entityId: 'katalog',
+    summary: `${created} skapade, ${updated} uppdaterade`,
+  });
+
+  res.json({ applied: true, rows: plan.rows, created, updated, ok: plan.ok, failed: 0 });
+});
+
+admin.get('/admin/history', adminLimit, requireAdmin, async (req, res) => {
+  const limit = Math.min(200, Math.max(1, Number(req.query.limit ?? 100) || 100));
+  res.json({ entries: await history(limit) });
 });

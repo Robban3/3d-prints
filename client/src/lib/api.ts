@@ -8,11 +8,13 @@ import type {
   ShopConfig,
   AdminCategory,
   AdminMaterial,
+  AuditEntry,
   Category,
   Material,
   Quality,
   OrderStatus,
   PaymentSession,
+  ImportResult,
   ProductDraft,
   ShopOrder,
   UploadedFile,
@@ -330,6 +332,26 @@ export function deleteQuality(token: string, id: string): Promise<{ quality: Qua
     `/admin/qualities/${encodeURIComponent(id)}`,
     adminInit(token, { method: 'DELETE' }),
   );
+}
+
+export function exportCatalog(token: string): Promise<Record<string, unknown>> {
+  return request('/admin/catalog/export', adminInit(token));
+}
+
+/** Utan `apply` returneras bara en plan över vad importen skulle göra. */
+export function importCatalog(
+  token: string,
+  catalog: unknown,
+  apply: boolean,
+): Promise<ImportResult> {
+  return request(
+    '/admin/catalog/import',
+    adminInit(token, { method: 'POST', body: JSON.stringify({ catalog, apply }) }),
+  );
+}
+
+export function fetchHistory(token: string): Promise<{ entries: AuditEntry[] }> {
+  return request('/admin/history', adminInit(token));
 }
 
 export async function deleteUpload(id: string): Promise<void> {

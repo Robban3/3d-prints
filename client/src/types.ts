@@ -204,3 +204,28 @@ export interface AdminMaterial extends Material {
 
 /** Produktformulärets form – samma fält som Product, men utan id. */
 export type ProductDraft = Omit<Product, 'id'>;
+
+export interface AuditEntry {
+  at: string;
+  action: 'skapad' | 'ändrad' | 'borttagen' | 'importerad' | 'status';
+  entity: 'produkt' | 'kategori' | 'material' | 'kvalitet' | 'order';
+  entityId: string;
+  summary: string;
+  changed?: string[];
+}
+
+export interface ImportRow {
+  index: number;
+  name: string;
+  status: 'skapad' | 'ändrad' | 'fel';
+  errors?: Record<string, string>;
+}
+
+export interface ImportResult {
+  applied: boolean;
+  rows: ImportRow[];
+  ok: number;
+  failed: number;
+  created?: number;
+  updated?: number;
+}
