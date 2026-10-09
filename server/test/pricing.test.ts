@@ -1,7 +1,17 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 import { calculateQuote, volumeDiscountRate } from '../src/pricing.ts';
-import type { CustomQuoteRequest } from '../src/types.ts';
+import { materials, qualities } from '../src/data/materials.ts';
+import type { CustomQuoteRequest, Material, QualityLevel } from '../src/types.ts';
+
+const materialFor = (id: string): Material =>
+  materials.find((material) => material.id === id) ?? materials[0]!;
+const qualityFor = (id: string): QualityLevel =>
+  qualities.find((quality) => quality.id === id) ?? qualities[1]!;
+
+/** Slår upp material och kvalitet ur förfrågan, som quoteFor gör i drift. */
+const priceOf = (request: CustomQuoteRequest) =>
+  calculateQuote(request, materialFor(request.material), qualityFor(request.quality));
 
 const base: CustomQuoteRequest = {
   material: 'pla',
@@ -15,54 +25,54 @@ const base: CustomQuoteRequest = {
 
 describe('calculateQuote', () => {
   it('ger ett pris över minimibeloppet för ett normalt jobb', () => {
-    const quote = calculateQuote(base);
+    const quote = priceOf(base);
     assert.ok(quote.total >= 149, `förväntade minst 149 kr, fick ${quote.total}`);
     assert.equal(quote.setupFee, 95);
     assert.ok(quote.estimatedPrintHours > 0);
   });
 
   it('tar aldrig mindre än minimibeloppet', () => {
-    const quote = calculateQuote({ ...base, volumeCm3: 1, infill: 5 });
+    const quote = priceOf({ ...base, volumeCm3: 1, infill: 5 });
     assert.equal(quote.total, 149);
   });
 
   it('gör dyrare material dyrare', () => {
-    const pla = calculateQuote(base).total;
-    const resin = calculateQuote({ ...base, material: 'resin' }).total;
+    const pla = priceOf(base).total;
+    const resin = priceOf({ ...base, material: 'resin' }).total;
     assert.ok(resin > pla, `resin (${resin}) borde kosta mer än PLA (${pla})`);
   });
 
   it('gör finare lagerhöjd dyrare och långsammare', () => {
-    const standard = calculateQuote(base);
-    const ultrafin = calculateQuote({ ...base, quality: 'ultrafin' });
+    const standard = priceOf(base);
+    const ultrafin = priceOf({ ...base, quality: 'ultrafin' });
     assert.ok(ultrafin.total > standard.total);
     assert.ok(ultrafin.estimatedPrintHours > standard.estimatedPrintHours);
   });
 
   it('höjer priset med fyllnadsgraden', () => {
-    const low = calculateQuote({ ...base, infill: 10 }).total;
-    const high = calculateQuote({ ...base, infill: 100 }).total;
+    const low = priceOf({ ...base, infill: 10 }).total;
+    const high = priceOf({ ...base, infill: 100 }).total;
     assert.ok(high > low);
   });
 
   it('ger lägre styckpris vid större volymer', () => {
-    const single = calculateQuote(base);
-    const bulk = calculateQuote({ ...base, quantity: 50 });
+    const single = priceOf(base);
+    const bulk = priceOf({ ...base, quantity: 50 });
     assert.ok(bulk.unitPrice < single.unitPrice);
     assert.ok(bulk.volumeDiscount > 0);
   });
 
   it('lägger på expresstillägg och kortar leveranstiden', () => {
-    const normal = calculateQuote(base);
-    const rush = calculateQuote({ ...base, rush: true });
+    const normal = priceOf(base);
+    const rush = priceOf({ ...base, rush: true });
     assert.ok(rush.total > normal.total);
     assert.ok(rush.estimatedDeliveryDays < normal.estimatedDeliveryDays);
     assert.ok(rush.rushSurcharge > 0);
   });
 
   it('debiterar efterbearbetning per enhet', () => {
-    const without = calculateQuote({ ...base, quantity: 2 });
-    const withPost = calculateQuote({
+    const without = priceOf({ ...base, quantity: 2 });
+    const withPost = priceOf({
       ...base,
       quantity: 2,
       postProcessing: true,
@@ -71,8 +81,9 @@ describe('calculateQuote', () => {
     assert.ok(withPost.total - without.total >= 170);
   });
 
-  it('kastar fel för okänt material', () => {
-    assert.throws(() => calculateQuote({ ...base, material: 'trä' as never }), /Okänt material/);
+  it('kastar fel för okänt material när det slås upp', async () => {
+    const { quoteFor } = await import('../src/pricing.ts');
+    await assert.rejects(() => quoteFor({ ...base, material: 'trä' }), /Okänt material/);
   });
 });
 

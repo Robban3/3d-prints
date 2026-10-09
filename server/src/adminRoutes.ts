@@ -9,16 +9,27 @@ import { sendMail, statusUpdate } from './mailer.ts';
 import {
   CatalogError,
   allCategories,
+  allMaterials,
   allProducts,
+  allQualities,
   createCategory,
   createProduct,
   deleteCategory,
+  deleteMaterial,
   deleteProduct,
+  deleteQuality,
   findProduct,
+  saveMaterial,
+  saveQuality,
   updateCategory,
   updateProduct,
 } from './catalog.ts';
-import { parseCategoryInput, parseProductInput } from './catalogValidation.ts';
+import {
+  parseCategoryInput,
+  parseMaterialInput,
+  parseProductInput,
+  parseQualityInput,
+} from './catalogValidation.ts';
 import { release, removeStock, setStock, stockLevels } from './stock.ts';
 import type { AnyOrder, StatusEvent } from './types.ts';
 
@@ -140,6 +151,15 @@ admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, re
 
 /* ---------- Katalog ---------- */
 
+/** Vilka kategorier och material som finns just nu, för valideringen. */
+async function inputOptions() {
+  const [categories, materials] = await Promise.all([allCategories(), allMaterials()]);
+  return {
+    categoryIds: categories.map((category) => category.id),
+    materialIds: materials.map((material) => material.id),
+  };
+}
+
 /** Saldot bor i lagerlagringen, så listan speglar in det som gäller nu. */
 async function withLiveStock() {
   const [products, levels] = await Promise.all([allProducts(), stockLevels()]);
@@ -152,8 +172,7 @@ admin.get('/admin/products', adminLimit, requireAdmin, async (_req, res) => {
 });
 
 admin.post('/admin/products', adminLimit, requireAdmin, async (req, res) => {
-  const categories = await allCategories();
-  const input = parseProductInput(req.body, { categoryIds: categories.map((c) => c.id) });
+  const input = parseProductInput(req.body, await inputOptions());
   const product = await createProduct(input);
   // Lagersaldot är föränderligt och sätts i sin egen lagring.
   await setStock(product.id, input.stock);
@@ -168,11 +187,8 @@ admin.patch('/admin/products/:id', adminLimit, requireAdmin, async (req, res) =>
     return;
   }
 
-  const categories = await allCategories();
   // Formuläret skickar hela produkten tillbaka, så den valideras i sin helhet.
-  const input = parseProductInput({ ...existing, ...(req.body as object) }, {
-    categoryIds: categories.map((c) => c.id),
-  });
+  const input = parseProductInput({ ...existing, ...(req.body as object) }, await inputOptions());
   const product = await updateProduct(id, input);
   await setStock(id, input.stock);
   res.json({ product });
@@ -210,4 +226,53 @@ admin.patch('/admin/categories/:id', adminLimit, requireAdmin, async (req, res) 
 admin.delete('/admin/categories/:id', adminLimit, requireAdmin, async (req, res) => {
   const category = await deleteCategory(pathParam(req.params.id));
   res.json({ category });
+});
+
+/* ---------- Material och kvalitetsnivåer ---------- */
+
+admin.get('/admin/materials', adminLimit, requireAdmin, async (_req, res) => {
+  const [materials, qualities, products] = await Promise.all([
+    allMaterials(),
+    allQualities(),
+    allProducts(),
+  ]);
+  res.json({
+    materials: materials.map((material) => ({
+      ...material,
+      productCount: products.filter((product) => product.material === material.id).length,
+    })),
+    qualities,
+  });
+});
+
+admin.post('/admin/materials', adminLimit, requireAdmin, async (req, res) => {
+  const material = await saveMaterial(parseMaterialInput(req.body));
+  res.status(201).json({ material });
+});
+
+admin.patch('/admin/materials/:id', adminLimit, requireAdmin, async (req, res) => {
+  const id = pathParam(req.params.id);
+  const material = await saveMaterial(parseMaterialInput(req.body, id));
+  res.json({ material });
+});
+
+admin.delete('/admin/materials/:id', adminLimit, requireAdmin, async (req, res) => {
+  const material = await deleteMaterial(pathParam(req.params.id));
+  res.json({ material });
+});
+
+admin.post('/admin/qualities', adminLimit, requireAdmin, async (req, res) => {
+  const quality = await saveQuality(parseQualityInput(req.body));
+  res.status(201).json({ quality });
+});
+
+admin.patch('/admin/qualities/:id', adminLimit, requireAdmin, async (req, res) => {
+  const id = pathParam(req.params.id);
+  const quality = await saveQuality(parseQualityInput(req.body, id));
+  res.json({ quality });
+});
+
+admin.delete('/admin/qualities/:id', adminLimit, requireAdmin, async (req, res) => {
+  const quality = await deleteQuality(pathParam(req.params.id));
+  res.json({ quality });
 });

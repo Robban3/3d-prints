@@ -197,5 +197,9 @@ export interface AdminCategory extends Category {
   productCount: number;
 }
 
+export interface AdminMaterial extends Material {
+  productCount: number;
+}
+
 /** Produktformulärets form – samma fält som Product, men utan id. */
 export type ProductDraft = Omit<Product, 'id'>;

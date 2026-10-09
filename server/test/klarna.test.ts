@@ -11,6 +11,7 @@ import {
   toMinorUnits,
 } from '../src/klarna.ts';
 import { calculateQuote } from '../src/pricing.ts';
+import { materials, qualities } from '../src/data/materials.ts';
 import type { OrderLine } from '../src/types.ts';
 
 const config = { purchaseCountry: 'SE', purchaseCurrency: 'SEK', locale: 'sv-SE' };
@@ -108,7 +109,11 @@ describe('payloadForCustomOrder', () => {
   };
 
   it('skickar hela jobbet som en rad med samma summa som offerten', () => {
-    const quote = calculateQuote(request);
+    const quote = calculateQuote(
+      request,
+      materials.find((m) => m.id === request.material)!,
+      qualities.find((q) => q.id === request.quality)!,
+    );
     const payload = payloadForCustomOrder({ projectName: 'Kamerafäste', request, quote }, config);
     assert.equal(payload.order_lines.length, 1);
     assert.equal(payload.order_amount, toMinorUnits(quote.total));
@@ -117,7 +122,11 @@ describe('payloadForCustomOrder', () => {
   });
 
   it('beskriver jobbet i radnamnet', () => {
-    const quote = calculateQuote(request);
+    const quote = calculateQuote(
+      request,
+      materials.find((m) => m.id === request.material)!,
+      qualities.find((q) => q.id === request.quality)!,
+    );
     const payload = payloadForCustomOrder({ projectName: 'Kamerafäste', request, quote }, config);
     assert.equal(payload.order_lines[0]!.name, 'Kamerafäste (10 st, PETG)');
   });

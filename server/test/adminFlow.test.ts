@@ -17,6 +17,8 @@ import { parseOrderLines } from '../src/validation.ts';
 
 let dir: string;
 const categoryIds = ['inredning', 'kontor', 'kok', 'prylar', 'tillbehor'];
+const materialIds = ['pla', 'petg', 'abs', 'tpu', 'resin'];
+const options = { categoryIds, materialIds };
 
 const input = {
   name: 'Fönsterhylla',
@@ -53,7 +55,7 @@ afterEach(async () => {
 
 /** Samma steg som POST /api/admin/products tar. */
 async function addProduct(overrides: Record<string, unknown> = {}) {
-  const parsed = parseProductInput({ ...input, ...overrides }, { categoryIds });
+  const parsed = parseProductInput({ ...input, ...overrides }, options);
   const product = await createProduct(parsed);
   await setStock(product.id, parsed.stock);
   return product;

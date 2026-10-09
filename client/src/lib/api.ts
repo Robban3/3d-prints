@@ -7,7 +7,10 @@ import type {
   QuoteRequest,
   ShopConfig,
   AdminCategory,
+  AdminMaterial,
   Category,
+  Material,
+  Quality,
   OrderStatus,
   PaymentSession,
   ProductDraft,
@@ -252,6 +255,52 @@ export function updateCategory(
 export function deleteCategory(token: string, id: string): Promise<{ category: Category }> {
   return request(
     `/admin/categories/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+export function fetchAdminMaterials(
+  token: string,
+): Promise<{ materials: AdminMaterial[]; qualities: Quality[] }> {
+  return request('/admin/materials', adminInit(token));
+}
+
+export function saveMaterial(
+  token: string,
+  material: Material,
+  isNew: boolean,
+): Promise<{ material: Material }> {
+  return isNew
+    ? request('/admin/materials', adminInit(token, { method: 'POST', body: JSON.stringify(material) }))
+    : request(
+        `/admin/materials/${encodeURIComponent(material.id)}`,
+        adminInit(token, { method: 'PATCH', body: JSON.stringify(material) }),
+      );
+}
+
+export function deleteMaterial(token: string, id: string): Promise<{ material: Material }> {
+  return request(
+    `/admin/materials/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+export function saveQuality(
+  token: string,
+  quality: Quality,
+  isNew: boolean,
+): Promise<{ quality: Quality }> {
+  return isNew
+    ? request('/admin/qualities', adminInit(token, { method: 'POST', body: JSON.stringify(quality) }))
+    : request(
+        `/admin/qualities/${encodeURIComponent(quality.id)}`,
+        adminInit(token, { method: 'PATCH', body: JSON.stringify(quality) }),
+      );
+}
+
+export function deleteQuality(token: string, id: string): Promise<{ quality: Quality }> {
+  return request(
+    `/admin/qualities/${encodeURIComponent(id)}`,
     adminInit(token, { method: 'DELETE' }),
   );
 }

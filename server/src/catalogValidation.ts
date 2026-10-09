@@ -1,5 +1,12 @@
-import { materialById } from './data/materials.ts';
-import type { ArtShape, ArtTone, Category, Product, ProductVariantOption } from './types.ts';
+import type {
+  ArtShape,
+  ArtTone,
+  Category,
+  Material,
+  Product,
+  ProductVariantOption,
+  QualityLevel,
+} from './types.ts';
 
 /**
  * Validering av det som matas in i adminpanelen. Samma regler gäller oavsett om
@@ -111,6 +118,8 @@ function parseSizes(value: unknown, errors: Record<string, string>): ProductVari
 export interface ProductInputOptions {
   /** Kategorierna som finns just nu – produkten måste höra till en av dem. */
   categoryIds: string[];
+  /** Materialen som finns just nu. */
+  materialIds: string[];
 }
 
 /**
@@ -149,7 +158,7 @@ export function parseProductInput(
   }
 
   const material = text(raw.material);
-  if (!materialById.has(material as never)) errors.material = 'Välj ett material som finns.';
+  if (!options.materialIds.includes(material)) errors.material = 'Välj ett material som finns.';
 
   const finish = text(raw.finish) || 'Matte';
 
@@ -249,4 +258,75 @@ export function parseCategoryInput(input: unknown, existingId?: string): Categor
   if (Object.keys(errors).length > 0) throw new ProductInputError(errors);
 
   return { id: id as Category['id'], name, description };
+}
+
+export function parseMaterialInput(input: unknown, existingId?: string): Material {
+  const raw = asRecord(input);
+  const errors: Record<string, string> = {};
+
+  const name = text(raw.name);
+  if (name.length < 1) errors.name = 'Materialet behöver ett namn.';
+
+  const id = existingId ?? (text(raw.id) || slugify(name));
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
+    errors.id = 'Id:t får bara innehålla små bokstäver, siffror och bindestreck.';
+  }
+
+  const priceFactor = num(raw.priceFactor);
+  if (!(priceFactor >= 0.1 && priceFactor <= 20)) {
+    errors.priceFactor = 'Prisfaktorn ska vara mellan 0,1 och 20.';
+  }
+
+  const description = text(raw.description);
+  if (description.length < 10) errors.description = 'Beskriv materialet kort.';
+
+  const traits = Array.isArray(raw.traits)
+    ? raw.traits.map((entry) => text(entry)).filter((entry) => entry.length > 0)
+    : [];
+
+  if (Object.keys(errors).length > 0) throw new ProductInputError(errors);
+
+  return {
+    id,
+    name,
+    priceFactor: Math.round(priceFactor * 100) / 100,
+    description,
+    traits,
+  };
+}
+
+export function parseQualityInput(input: unknown, existingId?: string): QualityLevel {
+  const raw = asRecord(input);
+  const errors: Record<string, string> = {};
+
+  const name = text(raw.name);
+  if (name.length < 1) errors.name = 'Kvalitetsnivån behöver ett namn.';
+
+  const id = existingId ?? (text(raw.id) || slugify(name));
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
+    errors.id = 'Id:t får bara innehålla små bokstäver, siffror och bindestreck.';
+  }
+
+  const layerHeightMm = num(raw.layerHeightMm);
+  if (!(layerHeightMm > 0 && layerHeightMm <= 2)) {
+    errors.layerHeightMm = 'Lagerhöjden ska vara mellan 0 och 2 mm.';
+  }
+
+  const timeFactor = num(raw.timeFactor);
+  if (!(timeFactor >= 0.1 && timeFactor <= 20)) {
+    errors.timeFactor = 'Tidsfaktorn ska vara mellan 0,1 och 20.';
+  }
+
+  const description = text(raw.description);
+  if (description.length < 5) errors.description = 'Beskriv nivån kort.';
+
+  if (Object.keys(errors).length > 0) throw new ProductInputError(errors);
+
+  return {
+    id,
+    name,
+    layerHeightMm: Math.round(layerHeightMm * 1000) / 1000,
+    timeFactor: Math.round(timeFactor * 100) / 100,
+    description,
+  };
 }

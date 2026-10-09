@@ -1,4 +1,4 @@
-import type { Material, PrintQuality } from '../types.ts';
+import type { Material, QualityLevel } from '../types.ts';
 
 export const materials: Material[] = [
   {
@@ -45,14 +45,7 @@ export const materials: Material[] = [
 
 export const materialById = new Map(materials.map((m) => [m.id, m]));
 
-export const qualities: Array<{
-  id: PrintQuality;
-  name: string;
-  layerHeightMm: number;
-  /** Faktor på maskintiden – finare lager tar längre tid. */
-  timeFactor: number;
-  description: string;
-}> = [
+export const qualities: QualityLevel[] = [
   {
     id: 'utkast',
     name: 'Utkast',

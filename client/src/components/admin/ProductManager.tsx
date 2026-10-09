@@ -9,7 +9,7 @@ import {
   updateProduct,
 } from '../../lib/api';
 import { formatPrice } from '../../lib/format';
-import type { Category, Product, ProductDraft } from '../../types';
+import type { Category, Material, Product, ProductDraft } from '../../types';
 
 /** Produkten utan id, som formuläret arbetar med. */
 function toDraft(product: Product): ProductDraft {
@@ -40,11 +40,12 @@ function toDraft(product: Product): ProductDraft {
 interface Props {
   token: string;
   categories: Category[];
+  materials: Material[];
   onChanged: () => void;
 }
 
 /** Listan över produkter, med formuläret öppet vid redigering. */
-export function ProductManager({ token, categories, onChanged }: Props) {
+export function ProductManager({ token, categories, materials, onChanged }: Props) {
   const [products, setProducts] = useState<Product[] | null>(null);
   const [editing, setEditing] = useState<{ id: string | null; draft: ProductDraft } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -134,6 +135,7 @@ export function ProductManager({ token, categories, onChanged }: Props) {
         <ProductForm
           draft={editing.draft}
           categories={categories}
+          materials={materials}
           errors={errors}
           saving={saving}
           onChange={(patch) =>
