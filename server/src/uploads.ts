@@ -65,11 +65,18 @@ export function extensionOf(fileName: string): string {
   return extname(fileName).toLowerCase();
 }
 
+/** Format som duger som modellfil till ett printjobb. */
 export function isAllowedExtension(extension: string): boolean {
-  return (
-    (ALLOWED_EXTENSIONS as readonly string[]).includes(extension.toLowerCase()) ||
-    isImageExtension(extension)
-  );
+  return (ALLOWED_EXTENSIONS as readonly string[]).includes(extension.toLowerCase());
+}
+
+/**
+ * Format vi över huvud taget lagrar – modellfiler eller produktbilder. Används
+ * när metadata läses tillbaka, och är avsiktligt bredare än den som avgör vad
+ * en kund får skicka in som modellfil.
+ */
+export function isStorableExtension(extension: string): boolean {
+  return isAllowedExtension(extension) || isImageExtension(extension);
 }
 
 export function isAllowedFileName(fileName: string): boolean {
@@ -98,7 +105,7 @@ export async function readMeta(id: string): Promise<UploadMeta | undefined> {
     const raw = await readFile(join(uploadDir(), `${id}.json`), 'utf8');
     const parsed = JSON.parse(raw) as UploadMeta;
     // Metadatan styr vilken fil vi öppnar, så ändelsen kontrolleras även här.
-    return isAllowedExtension(parsed.extension) ? parsed : undefined;
+    return isStorableExtension(parsed.extension) ? parsed : undefined;
   } catch {
     return undefined;
   }

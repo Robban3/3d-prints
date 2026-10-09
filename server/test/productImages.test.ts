@@ -11,6 +11,7 @@ import {
   isAllowedFileName,
   isAllowedImageName,
   isImageExtension,
+  isStorableExtension,
   generateUploadId,
   readMeta,
   sweepOrphans,
@@ -57,6 +58,18 @@ describe('bildformat', () => {
     assert.equal(isImageExtension('.stl'), false);
     // Modellfiler ska fortfarande fungera som förut.
     assert.ok(isAllowedFileName('modell.3mf'));
+  });
+
+  it('håller modellfilsfiltret skilt från bildfiltret', () => {
+    // En bild får aldrig gå in som modellfil till ett printjobb …
+    assert.equal(isAllowedFileName('bild.png'), false);
+    assert.equal(isAllowedFileName('foto.jpg'), false);
+    // … och en modellfil är ingen bild.
+    assert.equal(isAllowedImageName('modell.stl'), false);
+    // Lagringen känner igen båda, så metadata går att läsa tillbaka.
+    assert.ok(isStorableExtension('.png'));
+    assert.ok(isStorableExtension('.stl'));
+    assert.equal(isStorableExtension('.exe'), false);
   });
 
   it('ger rätt innehållstyp per format', () => {
