@@ -6,8 +6,11 @@ import type {
   QuoteBreakdown,
   QuoteRequest,
   ShopConfig,
+  AdminCategory,
+  Category,
   OrderStatus,
   PaymentSession,
+  ProductDraft,
   ShopOrder,
   UploadedFile,
 } from '../types';
@@ -181,6 +184,76 @@ export function setOrderStatus(
     headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify({ status, note }),
   });
+}
+
+/* ---------- Katalogen i adminpanelen ---------- */
+
+function adminInit(token: string, init: RequestInit = {}): RequestInit {
+  return { ...init, headers: { ...init.headers, Authorization: `Bearer ${token}` } };
+}
+
+export function fetchAdminProducts(token: string): Promise<{ products: Product[]; total: number }> {
+  return request('/admin/products', adminInit(token));
+}
+
+export function createProduct(
+  token: string,
+  draft: ProductDraft,
+): Promise<{ product: Product }> {
+  return request(
+    '/admin/products',
+    adminInit(token, { method: 'POST', body: JSON.stringify(draft) }),
+  );
+}
+
+export function updateProduct(
+  token: string,
+  id: string,
+  draft: ProductDraft,
+): Promise<{ product: Product }> {
+  return request(
+    `/admin/products/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'PATCH', body: JSON.stringify(draft) }),
+  );
+}
+
+export function deleteProduct(token: string, id: string): Promise<{ product: Product }> {
+  return request(
+    `/admin/products/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+export function fetchAdminCategories(token: string): Promise<{ categories: AdminCategory[] }> {
+  return request('/admin/categories', adminInit(token));
+}
+
+export function createCategory(
+  token: string,
+  category: Omit<Category, 'id'> & { id?: string },
+): Promise<{ category: Category }> {
+  return request(
+    '/admin/categories',
+    adminInit(token, { method: 'POST', body: JSON.stringify(category) }),
+  );
+}
+
+export function updateCategory(
+  token: string,
+  id: string,
+  category: Partial<Category>,
+): Promise<{ category: Category }> {
+  return request(
+    `/admin/categories/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'PATCH', body: JSON.stringify(category) }),
+  );
+}
+
+export function deleteCategory(token: string, id: string): Promise<{ category: Category }> {
+  return request(
+    `/admin/categories/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
 }
 
 export async function deleteUpload(id: string): Promise<void> {

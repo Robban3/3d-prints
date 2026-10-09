@@ -6,8 +6,8 @@ får pris direkt.
 
 - **Frontend:** React 18 + TypeScript + Vite + React Router 7
 - **Backend:** Node + Express 5 (TypeScript, körs med Nodes inbyggda type stripping)
-- **Datalagring:** filbaserad orderlagring (`server/data/orders.json`) och uppladdade
-  modellfiler på disk (`server/uploads/`)
+- **Datalagring:** filbaserad lagring under `server/data/` (katalog, ordrar, lagersaldo)
+  och uppladdade modellfiler på disk (`server/uploads/`)
 
 ## Kom igång
 
@@ -159,6 +159,31 @@ Playground är standard. Nycklarna läses bara på servern och skickas aldrig ti
 webbläsaren; klienten får enbart det kortlivade `client_token` som Klarnas SDK
 behöver.
 
+## Adminpanelen
+
+Verkstadens panel ligger på `/verkstad` och har tre flikar:
+
+- **Ordrar** – flytta ordrar framåt i produktionen, se tidslinjen per order
+- **Produkter** – lägg till, redigera och ta bort produkter
+- **Kategorier** – lägg till, byt namn på och ta bort kategorier
+
+Allt i en produkt går att ändra: namn, webbadress, säljande rad, beskrivning,
+kategori, pris, material, ytfinish, mått, vikt, printtid, lagersaldo, färger,
+storlekar med pristillägg, höjdpunkter, samt vilken form och yta
+produktbilden ritas i – med levande förhandsvisning medan du väljer.
+
+En ny produkt kan sparas som **utkast**. Utkast syns bara i panelen och går
+varken att se eller beställa i butiken förrän de publiceras.
+
+**Katalogen är inte längre en konstant i koden.** Den sås från
+`server/src/data/products.ts` första gången servern startar och sparas sedan i
+`server/data/catalog.json`. Lagersaldot bor kvar i sin egen lagring, så ett
+saldo som ändrats av köp skrivs inte över när produkten redigeras.
+
+Att ta bort en produkt påverkar inte lagda ordrar – varje orderrad bär sin egen
+kopia av namn och pris. En kategori som fortfarande har produkter i sig går inte
+att ta bort; flytta produkterna först.
+
 ## Orderns livscykel
 
 En order rör sig `mottagen → i produktion → skickad → levererad`, och kan
@@ -235,6 +260,8 @@ server/
   src/lifecycle.ts orderns tillåtna statusövergångar
   src/mailer.ts   bekräftelse- och statusmejl
   src/stock.ts    lagersaldo med reservation
+  src/catalog.ts  produkter och kategorier, redigerbara i adminpanelen
+  src/catalogValidation.ts  validering av produktformuläret
   src/storage.ts  lokal disk eller objektlagring för uppladdade filer
   src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter
@@ -242,6 +269,7 @@ server/
 client/
   src/pages/      en fil per vy
   src/components/ delade komponenter, bl.a. de genererade produktbilderna
+  src/components/admin/  adminpanelens vyer och produktformulär
   src/lib/        API-klient, varukorg och formatering
   test/           komponent- och enhetstester (Vitest + Testing Library)
 ```

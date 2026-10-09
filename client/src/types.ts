@@ -67,6 +67,8 @@ export interface Product {
   rating: number;
   reviewCount: number;
   featured: boolean;
+  /** Opublicerade produkter syns bara i adminpanelen. */
+  published?: boolean;
   art: { shape: ArtShape; tone: ArtTone };
 }
 
@@ -190,3 +192,10 @@ export interface CustomOrder {
 }
 
 export type AnyOrder = ShopOrder | CustomOrder;
+
+export interface AdminCategory extends Category {
+  productCount: number;
+}
+
+/** Produktformulärets form – samma fält som Product, men utan id. */
+export type ProductDraft = Omit<Product, 'id'>;

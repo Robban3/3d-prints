@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
-import { products } from './data/products.ts';
+import { allProducts } from './catalog.ts';
 import type { OrderLine } from './types.ts';
 
 /**
@@ -29,7 +29,8 @@ function serialize<T>(task: () => Promise<T>): Promise<T> {
   return run;
 }
 
-function initial(): Map<string, number> {
+async function initial(): Promise<Map<string, number>> {
+  const products = await allProducts();
   return new Map(products.map((product) => [product.id, product.stock]));
 }
 
@@ -38,14 +39,14 @@ async function load(): Promise<Map<string, number>> {
   try {
     const raw = await readFile(STOCK_FILE(), 'utf8');
     const parsed = JSON.parse(raw) as Record<string, number>;
-    const levels = initial();
+    const levels = await initial();
     for (const [id, value] of Object.entries(parsed)) {
       // Produkter som tagits bort ur katalogen ignoreras.
       if (levels.has(id) && Number.isInteger(value) && value >= 0) levels.set(id, value);
     }
     cache = levels;
   } catch {
-    cache = initial();
+    cache = await initial();
   }
   return cache;
 }
@@ -80,7 +81,7 @@ export async function reserve(lines: OrderLine[]): Promise<void> {
     for (const [productId, quantity] of wanted) {
       const available = levels.get(productId) ?? 0;
       if (quantity > available) {
-        const name = products.find((product) => product.id === productId)?.name ?? productId;
+        const name = (await allProducts()).find((p) => p.id === productId)?.name ?? productId;
         errors[`stock.${productId}`] =
           available === 0
             ? `${name} är slut i lager just nu.`
@@ -105,6 +106,24 @@ export async function release(lines: OrderLine[]): Promise<void> {
       if (current === undefined) continue;
       levels.set(line.productId, current + line.quantity);
     }
+    await persist(levels);
+  });
+}
+
+/** Sätter saldot för en produkt, t.ex. när den skapas eller redigeras. */
+export async function setStock(productId: string, quantity: number): Promise<void> {
+  return serialize(async () => {
+    const levels = await load();
+    levels.set(productId, Math.max(0, Math.round(quantity)));
+    await persist(levels);
+  });
+}
+
+/** Tar bort saldot för en produkt som plockats ur katalogen. */
+export async function removeStock(productId: string): Promise<void> {
+  return serialize(async () => {
+    const levels = await load();
+    if (!levels.delete(productId)) return;
     await persist(levels);
   });
 }

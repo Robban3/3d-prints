@@ -12,6 +12,8 @@ import { ORPHAN_MAX_AGE_MS, sweepOrphans } from './uploads.ts';
 import { ValidationError } from './validation.ts';
 import { KlarnaError } from './klarna.ts';
 import { OutOfStockError } from './stock.ts';
+import { CatalogError } from './catalog.ts';
+import { ProductInputError } from './catalogValidation.ts';
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
@@ -74,6 +76,16 @@ const clientErrors: Record<number, string> = {
 const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   if (error instanceof ValidationError) {
     res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
+    return;
+  }
+
+  if (error instanceof ProductInputError) {
+    res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
+    return;
+  }
+
+  if (error instanceof CatalogError) {
+    res.status(error.status).json({ error: error.message, fields: error.fields });
     return;
   }
 

@@ -38,22 +38,27 @@ const diskStorage: Storage = {
 };
 
 function s3Storage(bucket: string): Storage {
-  // SDK:n laddas först när den behövs, så en butik på lokal disk slipper den.
-  const client = import('@aws-sdk/client-s3').then(
-    ({ S3Client }) =>
-      new S3Client({
-        region: process.env.S3_REGION ?? 'eu-north-1',
-        ...(process.env.S3_ENDPOINT
-          ? { endpoint: process.env.S3_ENDPOINT, forcePathStyle: true }
-          : {}),
-      }),
-  );
+  // Laddas vid första anropet, inte när lagringen väljs – annars ligger en
+  // avvisad promise och väntar om paketet inte är installerat.
+  let client: Promise<unknown> | undefined;
+  const connect = () => {
+    client ??= import('@aws-sdk/client-s3').then(
+      ({ S3Client }) =>
+        new S3Client({
+          region: process.env.S3_REGION ?? 'eu-north-1',
+          ...(process.env.S3_ENDPOINT
+            ? { endpoint: process.env.S3_ENDPOINT, forcePathStyle: true }
+            : {}),
+        }),
+    );
+    return client as Promise<InstanceType<(typeof import('@aws-sdk/client-s3'))['S3Client']>>;
+  };
   const prefix = process.env.S3_PREFIX ?? 'uploads/';
 
   return {
     kind: 's3',
     async put(key, localPath, contentType) {
-      const [{ PutObjectCommand }, s3] = await Promise.all([import('@aws-sdk/client-s3'), client]);
+      const [{ PutObjectCommand }, s3] = await Promise.all([import('@aws-sdk/client-s3'), connect()]);
       await s3.send(
         new PutObjectCommand({
           Bucket: bucket,
@@ -66,7 +71,7 @@ function s3Storage(bucket: string): Storage {
       await rm(localPath, { force: true });
     },
     async get(key) {
-      const [{ GetObjectCommand }, s3] = await Promise.all([import('@aws-sdk/client-s3'), client]);
+      const [{ GetObjectCommand }, s3] = await Promise.all([import('@aws-sdk/client-s3'), connect()]);
       try {
         const result = await s3.send(new GetObjectCommand({ Bucket: bucket, Key: prefix + key }));
         if (!result.Body) return undefined;
@@ -78,7 +83,7 @@ function s3Storage(bucket: string): Storage {
     async remove(key, localPath) {
       const [{ DeleteObjectCommand }, s3] = await Promise.all([
         import('@aws-sdk/client-s3'),
-        client,
+        connect(),
       ]);
       await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: prefix + key }));
       await rm(localPath, { force: true });

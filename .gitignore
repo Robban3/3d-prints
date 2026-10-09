@@ -3,5 +3,6 @@ dist/
 .env
 .DS_Store
 *.log
-server/data/orders.json
+# All körtidsdata: ordrar, lagersaldo, katalog och utkorgen för brev.
+server/data/
 server/uploads/
