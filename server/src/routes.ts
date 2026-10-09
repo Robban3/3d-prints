@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { categories, productBySlug, products } from './data/products.ts';
+import { allCategories, findProductBySlug, publishedProducts } from './catalog.ts';
 import { materials, qualities } from './data/materials.ts';
 import { calculateQuote, QUOTE_LIMITS } from './pricing.ts';
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, shippingFor } from './shipping.ts';
@@ -54,15 +54,15 @@ const quoteLimit = rateLimit({
   message: 'För många prisförfrågningar. Vänta en stund och försök igen.',
 });
 
-api.get('/health', (_req, res) => {
-  res.json({ status: 'ok', products: products.length });
+api.get('/health', async (_req, res) => {
+  res.json({ status: 'ok', products: (await publishedProducts()).length });
 });
 
-api.get('/config', (_req, res) => {
+api.get('/config', async (_req, res) => {
   res.json({
     materials,
     qualities,
-    categories,
+    categories: await allCategories(),
     quoteLimits: QUOTE_LIMITS,
     shipping: { fee: SHIPPING_FEE, freeThreshold: FREE_SHIPPING_THRESHOLD },
     upload: { maxBytes: MAX_UPLOAD_BYTES, extensions: ALLOWED_EXTENSIONS },
@@ -74,7 +74,7 @@ api.get('/products', async (req, res) => {
   const category = typeof req.query.category === 'string' ? req.query.category : undefined;
   const search = typeof req.query.search === 'string' ? req.query.search.toLowerCase().trim() : '';
 
-  let result = products;
+  let result = await publishedProducts();
   if (category && category !== 'alla') {
     result = result.filter((product) => product.category === category);
   }
@@ -92,16 +92,17 @@ api.get('/products', async (req, res) => {
 });
 
 api.get('/products/:slug', async (req, res) => {
-  const product = productBySlug.get(pathParam(req.params.slug));
-  if (!product) {
+  const product = await findProductBySlug(pathParam(req.params.slug));
+  if (!product || product.published === false) {
     res.status(404).json({ error: 'Produkten hittades inte' });
     return;
   }
   // Samma kategori först, därefter de mest omtyckta så att raden alltid blir full.
-  const sameCategory = products.filter(
+  const catalog = await publishedProducts();
+  const sameCategory = catalog.filter(
     (p) => p.id !== product.id && p.category === product.category,
   );
-  const fillers = products
+  const fillers = catalog
     .filter((p) => p.id !== product.id && p.category !== product.category)
     .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount);
   const related = [...sameCategory, ...fillers].slice(0, 5);
@@ -143,7 +144,7 @@ api.post('/payments/session', sessionLimit, async (req, res) => {
       config,
     );
   } else {
-    const lines = parseOrderLines(body.lines);
+    const lines = await parseOrderLines(body.lines);
     const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
     payload = payloadForOrder({ lines, shipping: shippingFor(subtotal), total: subtotal }, config);
   }
@@ -195,7 +196,7 @@ async function notify(order: Order | CustomOrder): Promise<void> {
 api.post('/orders', orderLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const customer = parseCustomer(body.customer);
-  const lines = parseOrderLines(body.lines);
+  const lines = await parseOrderLines(body.lines);
 
   const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
   const shipping = shippingFor(subtotal);

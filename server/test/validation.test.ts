@@ -42,8 +42,8 @@ describe('parseCustomer', () => {
 describe('parseOrderLines', () => {
   const product = products[0]!;
 
-  it('hämtar priset från katalogen och ignorerar klientens pris', () => {
-    const lines = parseOrderLines([
+  it('hämtar priset från katalogen och ignorerar klientens pris', async () => {
+    const lines = await parseOrderLines([
       {
         productId: product.id,
         quantity: 2,
@@ -55,9 +55,9 @@ describe('parseOrderLines', () => {
     assert.equal(lines[0]!.unitPrice, product.price + product.sizes![0]!.priceDelta);
   });
 
-  it('lägger till storlekstillägg', () => {
+  it('lägger till storlekstillägg', async () => {
     const large = product.sizes!.at(-1)!;
-    const lines = parseOrderLines([
+    const lines = await parseOrderLines([
       {
         productId: product.id,
         quantity: 1,
@@ -68,21 +68,27 @@ describe('parseOrderLines', () => {
     assert.equal(lines[0]!.unitPrice, product.price + large.priceDelta);
   });
 
-  it('avvisar tom varukorg', () => {
-    assert.throws(() => parseOrderLines([]), ValidationError);
+  it('avvisar tom varukorg', async () => {
+    await assert.rejects(() => parseOrderLines([]), ValidationError);
   });
 
-  it('avvisar okänd produkt och ogiltig färg', () => {
-    assert.throws(() => parseOrderLines([{ productId: 'saknas', quantity: 1 }]), ValidationError);
-    assert.throws(
+  it('avvisar okänd produkt och ogiltig färg', async () => {
+    await assert.rejects(
+      () => parseOrderLines([{ productId: 'saknas', quantity: 1 }]),
+      ValidationError,
+    );
+    await assert.rejects(
       () => parseOrderLines([{ productId: product.id, quantity: 1, color: 'Neonrosa' }]),
       ValidationError,
     );
   });
 
-  it('avvisar orimliga antal', () => {
-    assert.throws(() => parseOrderLines([{ productId: product.id, quantity: 0 }]), ValidationError);
-    assert.throws(
+  it('avvisar orimliga antal', async () => {
+    await assert.rejects(
+      () => parseOrderLines([{ productId: product.id, quantity: 0 }]),
+      ValidationError,
+    );
+    await assert.rejects(
       () => parseOrderLines([{ productId: product.id, quantity: 500 }]),
       ValidationError,
     );

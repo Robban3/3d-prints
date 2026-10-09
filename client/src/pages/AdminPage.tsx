@@ -1,18 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
-import { OrderTimeline } from '../components/OrderTimeline';
-import { ApiError, fetchAdminOrders, fetchAdminStatus, setOrderStatus } from '../lib/api';
+import { OrderManager } from '../components/admin/OrderManager';
+import { ProductManager } from '../components/admin/ProductManager';
+import { CategoryManager } from '../components/admin/CategoryManager';
+import { ApiError, fetchAdminCategories, fetchAdminStatus } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
-import { formatDate, formatPrice } from '../lib/format';
-import { statusLabels } from '../lib/status';
-import type { AnyOrder, OrderStatus } from '../types';
+import type { Category } from '../types';
 
 const STORAGE_KEY = 'formlabb.admin.token';
 
-type AdminOrder = AnyOrder & { next: OrderStatus[] };
+type Tab = 'ordrar' | 'produkter' | 'kategorier';
+
+const tabs: Array<{ id: Tab; label: string }> = [
+  { id: 'ordrar', label: 'Ordrar' },
+  { id: 'produkter', label: 'Produkter' },
+  { id: 'kategorier', label: 'Kategorier' },
+];
 
 /**
- * Enkel verkstadsvy för att flytta ordrar framåt. Nyckeln ligger i
+ * Verkstadens panel: ordrar, sortiment och kategorier. Nyckeln ligger i
  * sessionStorage, så den försvinner när fliken stängs.
  */
 export function AdminPage() {
@@ -25,26 +31,38 @@ export function AdminPage() {
     }
   });
   const [input, setInput] = useState('');
-  const [orders, setOrders] = useState<AdminOrder[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [signInError, setSignInError] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>('ordrar');
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  const load = useCallback(async (key: string) => {
+  // Kategorierna behövs i produktformuläret och hämtas därför en nivå upp.
+  const loadCategories = useCallback(async () => {
+    if (!token) return;
     try {
-      const result = await fetchAdminOrders(key);
-      setOrders(result.orders);
-      setError(null);
+      const result = await fetchAdminCategories(token);
+      setCategories(result.categories);
+      setSignInError(null);
     } catch (caught) {
-      setOrders(null);
-      setError(caught instanceof ApiError ? caught.message : 'Kunde inte hämta ordrar');
-      if (caught instanceof ApiError && caught.status === 401) setToken('');
+      if (caught instanceof ApiError && caught.status === 401) {
+        setSignInError(caught.message);
+        signOut();
+      }
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
-    if (token) void load(token);
-  }, [token, load]);
+    void loadCategories();
+  }, [loadCategories]);
+
+  function signOut() {
+    try {
+      window.sessionStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Nyckeln försvinner ändå vid omladdning.
+    }
+    setToken('');
+    setCategories([]);
+  }
 
   function signIn(event: React.FormEvent) {
     event.preventDefault();
@@ -53,30 +71,10 @@ export function AdminPage() {
     try {
       window.sessionStorage.setItem(STORAGE_KEY, key);
     } catch {
-      // Utan lagring får nyckeln leva i minnet under sidans livstid.
+      // Utan lagring lever nyckeln i minnet under sidans livstid.
     }
     setToken(key);
     setInput('');
-  }
-
-  async function advance(order: AdminOrder, next: OrderStatus) {
-    setBusy(order.id);
-    setNotice(null);
-    try {
-      const result = await setOrderStatus(token, order.id, next);
-      setNotice(
-        result.mail
-          ? result.mail.delivered
-            ? `Statusmejl skickat till ${order.customer.email}.`
-            : `Statusmejl lagt i utkorgen (${result.mail.path ?? 'data/utkorg'}).`
-          : `${order.id} är nu ${statusLabels[next].toLowerCase()}.`,
-      );
-      await load(token);
-    } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : 'Statusbytet gick inte igenom');
-    } finally {
-      setBusy(null);
-    }
   }
 
   if (status.data && !status.data.enabled) {
@@ -92,7 +90,7 @@ export function AdminPage() {
             <div className="panel">
               <p className="muted" style={{ marginBottom: 0 }}>
                 Sätt en nyckel på minst 16 tecken i <code>ADMIN_TOKEN</code> och starta om servern
-                för att aktivera orderhanteringen.
+                för att aktivera panelen.
               </p>
             </div>
           </div>
@@ -107,7 +105,7 @@ export function AdminPage() {
         <PageHeader
           eyebrow="Verkstaden"
           title="Logga in"
-          text="Ange adminnyckeln för att se ordrar."
+          text="Ange adminnyckeln för att se ordrar och sortiment."
         />
         <section className="section">
           <div className="container receipt">
@@ -123,9 +121,9 @@ export function AdminPage() {
                   onChange={(event) => setInput(event.target.value)}
                 />
               </div>
-              {error && (
+              {signInError && (
                 <p className="notice notice-error" style={{ marginTop: 14 }}>
-                  {error}
+                  {signInError}
                 </p>
               )}
               <button
@@ -147,22 +145,10 @@ export function AdminPage() {
     <>
       <PageHeader
         eyebrow="Verkstaden"
-        title="Ordrar"
-        text={orders ? `${orders.length} ordrar i systemet.` : 'Hämtar ordrar…'}
+        title="Adminpanel"
+        text="Hantera ordrar, sortiment och kategorier."
         aside={
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => {
-              try {
-                window.sessionStorage.removeItem(STORAGE_KEY);
-              } catch {
-                // Inget att göra – nyckeln försvinner ändå vid omladdning.
-              }
-              setToken('');
-              setOrders(null);
-            }}
-          >
+          <button type="button" className="btn btn-ghost" onClick={signOut}>
             Logga ut
           </button>
         }
@@ -170,69 +156,32 @@ export function AdminPage() {
 
       <section className="section">
         <div className="container">
-          {notice && <p className="notice notice-success">{notice}</p>}
-          {error && <p className="notice notice-error">{error}</p>}
-          {!orders && !error && (
-            <div className="skeleton" style={{ aspectRatio: 'auto', height: 200 }} />
-          )}
-
-          <div className="stack" style={{ gap: 16 }}>
-            {orders?.map((order) => (
-              <div className="panel" key={order.id}>
-                <div className="spread">
-                  <div>
-                    <span className="order-id">{order.id}</span>
-                    <p className="dim" style={{ margin: '4px 0 0', fontSize: '0.84rem' }}>
-                      {formatDate(order.createdAt)} · {order.customer.name} · {order.customer.email}
-                    </p>
-                  </div>
-                  <div className="row">
-                    <span className="badge badge-accent">{statusLabels[order.status]}</span>
-                    <strong>{formatPrice(order.total)}</strong>
-                  </div>
-                </div>
-
-                <div className="grid-2" style={{ marginTop: 18, alignItems: 'start' }}>
-                  <div>
-                    <span className="field-label">Innehåll</span>
-                    <ul className="tick-list" style={{ marginTop: 8 }}>
-                      {order.type === 'shop' ? (
-                        order.lines.map((line) => (
-                          <li key={`${line.productId}-${line.color}-${line.size ?? ''}`}>
-                            {line.quantity} × {line.name}
-                          </li>
-                        ))
-                      ) : (
-                        <li>
-                          {order.projectName} · {order.request.quantity} st{' '}
-                          {order.request.material.toUpperCase()}
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                  <OrderTimeline order={order} />
-                </div>
-
-                {order.next.length > 0 && (
-                  <div className="row" style={{ marginTop: 14 }}>
-                    {order.next.map((next) => (
-                      <button
-                        key={next}
-                        type="button"
-                        className={next === 'avbruten' ? 'btn btn-ghost' : 'btn'}
-                        disabled={busy === order.id}
-                        onClick={() => void advance(order, next)}
-                      >
-                        {busy === order.id
-                          ? 'Uppdaterar…'
-                          : `Markera som ${statusLabels[next].toLowerCase()}`}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+          <div className="admin-tabs" role="tablist" aria-label="Adminvyer">
+            {tabs.map((entry) => (
+              <button
+                key={entry.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === entry.id}
+                className="admin-tab"
+                onClick={() => setTab(entry.id)}
+              >
+                {entry.label}
+              </button>
             ))}
           </div>
+
+          {tab === 'ordrar' && <OrderManager token={token} onUnauthorized={signOut} />}
+          {tab === 'produkter' && (
+            <ProductManager
+              token={token}
+              categories={categories}
+              onChanged={() => void loadCategories()}
+            />
+          )}
+          {tab === 'kategorier' && (
+            <CategoryManager token={token} onChanged={() => void loadCategories()} />
+          )}
         </div>
       </section>
     </>

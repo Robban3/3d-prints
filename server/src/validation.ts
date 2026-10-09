@@ -1,7 +1,7 @@
 import { materialById, qualityById } from './data/materials.ts';
 import { QUOTE_LIMITS } from './pricing.ts';
 import type { CustomQuoteRequest, CustomerDetails, OrderLine } from './types.ts';
-import { productById } from './data/products.ts';
+import { findProduct } from './catalog.ts';
 
 export class ValidationError extends Error {
   readonly fields: Record<string, string>;
@@ -60,29 +60,29 @@ export function parseCustomer(input: unknown): CustomerDetails {
   };
 }
 
-export function parseOrderLines(input: unknown): OrderLine[] {
+export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
   if (!Array.isArray(input) || input.length === 0) {
     throw new ValidationError({ lines: 'Varukorgen är tom.' });
   }
   const errors: Record<string, string> = {};
   const lines: OrderLine[] = [];
 
-  input.forEach((entry, index) => {
+  for (const [index, entry] of input.entries()) {
     const raw = asRecord(entry);
-    const product = productById.get(text(raw.productId));
-    if (!product) {
+    const product = await findProduct(text(raw.productId));
+    if (!product || product.published === false) {
       errors[`lines.${index}`] = 'Produkten finns inte.';
-      return;
+      continue;
     }
     const quantity = Math.round(num(raw.quantity));
     if (!Number.isFinite(quantity) || quantity < 1 || quantity > 99) {
       errors[`lines.${index}.quantity`] = 'Antal måste vara mellan 1 och 99.';
-      return;
+      continue;
     }
     const color = text(raw.color) || product.colors[0]!;
     if (!product.colors.includes(color)) {
       errors[`lines.${index}.color`] = 'Ogiltig färg för produkten.';
-      return;
+      continue;
     }
     const sizeId = text(raw.size);
     let size: string | undefined;
@@ -93,7 +93,7 @@ export function parseOrderLines(input: unknown): OrderLine[] {
       priceDelta = match.priceDelta;
     } else if (sizeId) {
       errors[`lines.${index}.size`] = 'Produkten har inga storleksval.';
-      return;
+      continue;
     }
 
     // Priset hämtas alltid från katalogen, aldrig från klienten.
@@ -105,7 +105,7 @@ export function parseOrderLines(input: unknown): OrderLine[] {
       color,
       size,
     });
-  });
+  }
 
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return lines;

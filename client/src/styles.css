@@ -946,6 +946,120 @@ textarea {
   color: var(--accent-strong);
 }
 
+/* ---------- Adminpanel ---------- */
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 26px;
+}
+.admin-tab {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 11px 18px;
+  font-size: 0.93rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.admin-tab:hover {
+  color: var(--text);
+}
+.admin-tab[aria-selected='true'] {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.admin-row {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto auto;
+  gap: 16px;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+}
+.admin-row-art {
+  background: linear-gradient(165deg, #1a1e25, #0c0e12);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+}
+.admin-row-main {
+  min-width: 0;
+}
+.admin-row-main strong {
+  display: block;
+  font-size: 0.95rem;
+}
+.admin-row-main .dim {
+  font-size: 0.82rem;
+}
+.admin-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.admin-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+.admin-art-preview {
+  background: linear-gradient(165deg, #1a1e25, #0a0c10);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  max-width: 230px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+}
+.size-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) 110px auto auto;
+  gap: 10px;
+  align-items: center;
+}
+.chip-remove {
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  margin-left: 6px;
+  padding: 0 2px;
+  font-size: 1rem;
+  line-height: 1;
+}
+.chip-remove:hover {
+  color: var(--danger);
+}
+
+@media (max-width: 900px) {
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-row {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .admin-row-meta,
+  .admin-row-actions {
+    grid-column: 1 / -1;
+  }
+}
+
 /* ---------- Tidslinje ---------- */
 .timeline {
   list-style: none;

@@ -40,6 +40,8 @@ export interface Product {
   rating: number;
   reviewCount: number;
   featured: boolean;
+  /** Opublicerade produkter syns bara i adminpanelen. Saknas = publicerad. */
+  published?: boolean;
   /** Nyckel till den genererade SVG-illustrationen. */
   art: { shape: ArtShape; tone: ArtTone };
 }
