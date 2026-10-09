@@ -70,6 +70,7 @@ export interface Product {
   /** Opublicerade produkter syns bara i adminpanelen. */
   published?: boolean;
   art: { shape: ArtShape; tone: ArtTone };
+  image?: { id: string; url: string; fileName: string };
 }
 
 export interface ShopConfig {

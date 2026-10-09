@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router';
-import { ProductArt } from '../components/ProductArt';
+import { ProductImage } from '../components/ProductImage';
 import { ProductCard } from '../components/ProductCard';
 import { Rating } from '../components/Rating';
 import { fetchProduct } from '../lib/api';
@@ -61,6 +61,7 @@ export function ProductPage() {
       size: size?.id,
       sizeName: size?.name,
       art: product.art,
+      image: product.image,
     });
     if (goToCart) navigate('/varukorg');
     else {
@@ -79,7 +80,7 @@ export function ProductPage() {
         <div className="product-layout">
           <div className="stack">
             <div className="product-hero-art">
-              <ProductArt shape={product.art.shape} tone={product.art.tone} title={product.name} />
+              <ProductImage product={product} />
             </div>
             <div className="panel panel-tight">
               <h3>Specifikation</h3>

@@ -259,6 +259,33 @@ export function deleteCategory(token: string, id: string): Promise<{ category: C
   );
 }
 
+/** Laddar upp en produktbild. Returnerar id och adress att spara på produkten. */
+export function uploadProductImage(
+  file: File,
+): { promise: Promise<{ id: string; url: string; fileName: string }>; abort: () => void } {
+  const xhr = new XMLHttpRequest();
+  const promise = new Promise<{ id: string; url: string; fileName: string }>((resolve, reject) => {
+    const body = new FormData();
+    body.append('file', file);
+    xhr.addEventListener('load', () => {
+      let payload: { image?: { id: string; url: string; fileName: string }; error?: string } = {};
+      try {
+        payload = JSON.parse(xhr.responseText) as typeof payload;
+      } catch {
+        payload = {};
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && payload.image) resolve(payload.image);
+      else reject(new ApiError(payload.error ?? 'Bilden kunde inte laddas upp', xhr.status));
+    });
+    xhr.addEventListener('error', () =>
+      reject(new ApiError('Uppladdningen avbröts. Kontrollera din uppkoppling.', 0)),
+    );
+    xhr.open('POST', `${BASE}/uploads/images`);
+    xhr.send(body);
+  });
+  return { promise, abort: () => xhr.abort() };
+}
+
 export function fetchAdminMaterials(
   token: string,
 ): Promise<{ materials: AdminMaterial[]; qualities: Quality[] }> {

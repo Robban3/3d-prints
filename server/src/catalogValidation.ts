@@ -203,6 +203,22 @@ export function parseProductInput(
     errors.reviewCount = 'Antalet omdömen kan inte vara negativt.';
   }
 
+  // Bilden är valfri; saknas den ritas den genererade illustrationen i stället.
+  const imageRaw = asRecord(raw.image);
+  const imageId = text(imageRaw.id);
+  let image: Product['image'];
+  if (imageId) {
+    if (!/^[0-9a-f]{32}$/.test(imageId)) {
+      errors['image.id'] = 'Bilden kunde inte kopplas. Ladda upp den igen.';
+    } else {
+      image = {
+        id: imageId,
+        url: `/api/uploads/${imageId}`,
+        fileName: text(imageRaw.fileName).slice(0, 200) || 'produktbild',
+      };
+    }
+  }
+
   const art = asRecord(raw.art);
   const shape = text(art.shape);
   const tone = text(art.tone);
@@ -235,6 +251,7 @@ export function parseProductInput(
     reviewCount,
     featured: raw.featured === true,
     published: raw.published !== false,
+    ...(image ? { image } : {}),
     art: { shape: shape as ArtShape, tone: tone as ArtTone },
   };
 }

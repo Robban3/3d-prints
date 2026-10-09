@@ -7,7 +7,12 @@ import { pathParam } from './http.ts';
 import { storage as fileStore } from './storage.ts';
 import {
   ALLOWED_EXTENSIONS,
+  IMAGE_EXTENSIONS,
+  MAX_IMAGE_BYTES,
   MAX_UPLOAD_BYTES,
+  imageContentType,
+  isAllowedImageName,
+  isImageExtension,
   deleteUpload,
   ensureUploadDir,
   extensionOf,
@@ -51,6 +56,18 @@ const upload = multer({
       callback(
         new UploadRejected(`Filformatet stöds inte. Ladda upp ${ALLOWED_EXTENSIONS.join(', ')}.`),
       );
+      return;
+    }
+    callback(null, true);
+  },
+});
+
+const imageUpload = multer({
+  storage,
+  limits: { fileSize: MAX_IMAGE_BYTES, files: 1, fields: 4 },
+  fileFilter: (_req, file, callback) => {
+    if (!isAllowedImageName(file.originalname)) {
+      callback(new UploadRejected(`Bilden måste vara ${IMAGE_EXTENSIONS.join(', ')}.`));
       return;
     }
     callback(null, true);
@@ -145,12 +162,20 @@ uploads.get('/uploads/:id', (req, res, next) => {
         return;
       }
       const safeName = meta.originalName.replace(/["\\\r\n]/g, '_');
-      res.setHeader('Content-Type', 'application/octet-stream');
+      const isImage = meta.kind === 'image' || isImageExtension(meta.extension);
+      // Bilder ska visas i butiken; modellfiler ska aldrig renderas av webbläsaren.
+      res.setHeader(
+        'Content-Type',
+        isImage ? imageContentType(meta.extension) : 'application/octet-stream',
+      );
       res.setHeader('X-Content-Type-Options', 'nosniff');
       res.setHeader(
         'Content-Disposition',
-        `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(meta.originalName)}`,
+        isImage
+          ? `inline; filename="${safeName}"`
+          : `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(meta.originalName)}`,
       );
+      if (isImage) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
       res.setHeader('Content-Length', String(meta.size));
       object.body.on('error', next).pipe(res);
     })
@@ -171,6 +196,74 @@ uploads.delete('/uploads/:id', (req, res, next) => {
       }
       await deleteUpload(meta.id);
       res.status(204).end();
+    })
+    .catch(next);
+});
+
+/**
+ * Produktbilder. Till skillnad från modellfiler hör de till katalogen och
+ * knyts aldrig till en order, så de städas inte bort som föräldralösa.
+ */
+const handleImage: RequestHandler = (req, res, next) => {
+  const limit = rateLimitStatus(clientKey(req));
+  if (!limit.allowed) {
+    res.status(429).json({ error: limit.reason });
+    return;
+  }
+
+  imageUpload.single('file')(req, res, (error: unknown) => {
+    if (!error) {
+      next();
+      return;
+    }
+    if (req.file?.path) void rm(req.file.path, { force: true });
+
+    if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
+      res.status(413).json({
+        error: `Bilden är större än ${Math.round(MAX_IMAGE_BYTES / 1024 / 1024)} MB.`,
+      });
+      return;
+    }
+    if (error instanceof UploadRejected) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
+    next(error);
+  });
+};
+
+uploads.post('/uploads/images', handleImage, (req: Request, res: Response, next) => {
+  const file = req.file;
+  const id = (req as Request & { uploadId?: string }).uploadId;
+  if (!file || !id) {
+    res.status(400).json({ error: 'Ingen bild togs emot.' });
+    return;
+  }
+
+  const extension = extensionOf(file.originalname);
+  fileStore()
+    .put(storedFileName(id, extension), file.path, imageContentType(extension))
+    .then(() =>
+      writeMeta({
+        id,
+        kind: 'image',
+        originalName: file.originalname.slice(0, 200),
+        extension,
+        size: file.size,
+        createdAt: new Date().toISOString(),
+        claimedBy: null,
+      }),
+    )
+    .then((meta) => {
+      recordUpload(clientKey(req), meta.size);
+      res.status(201).json({
+        image: {
+          id: meta.id,
+          fileName: meta.originalName,
+          size: meta.size,
+          url: `/api/uploads/${meta.id}`,
+        },
+      });
     })
     .catch(next);
 });
