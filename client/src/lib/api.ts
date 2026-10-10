@@ -1,4 +1,5 @@
 import type {
+  Actor,
   AdminReview,
   AnyOrder,
   AppliedDiscount,
@@ -30,8 +31,10 @@ import type {
   PickList,
   FilamentShortage,
   ProductDraft,
+  Permission,
   ProductionQueue,
   QueuePlace,
+  Role,
   Spool,
   ReorderDraft,
   Review,
@@ -40,6 +43,7 @@ import type {
   SavedQuote,
   ShopOrder,
   UploadedFile,
+  User,
 } from '../types';
 
 const BASE = '/api';
@@ -284,8 +288,62 @@ export function uploadModelFile(
   return { promise, abort: () => request.abort() };
 }
 
-export function fetchAdminStatus(): Promise<{ enabled: boolean }> {
+export function fetchAdminStatus(): Promise<{
+  enabled: boolean;
+  users: number;
+  /** True när startnyckeln fortfarande gäller, dvs. innan första användaren. */
+  bootstrap: boolean;
+}> {
   return request('/admin/status');
+}
+
+export function adminLogin(
+  email: string,
+  password: string,
+): Promise<{ token: string; expiresAt: string; user: Actor; permissions: Permission[] }> {
+  return request('/admin/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export function adminLogout(token: string): Promise<{ ok: true }> {
+  return request('/admin/logout', adminInit(token, { method: 'POST' }));
+}
+
+/** Vem token hör till, och vad den får göra. Samma svar för startnyckeln. */
+export function fetchAdminMe(token: string): Promise<{ user: Actor; permissions: Permission[] }> {
+  return request('/admin/me', adminInit(token));
+}
+
+/* ---------- Användare i panelen ---------- */
+
+export function fetchUsers(
+  token: string,
+): Promise<{ users: User[]; roles: Record<Role, Permission[]> }> {
+  return request('/admin/users', adminInit(token));
+}
+
+export function createUser(
+  token: string,
+  user: { email: string; name: string; role: Role; password: string },
+): Promise<{ user: User }> {
+  return request('/admin/users', adminInit(token, { method: 'POST', body: JSON.stringify(user) }));
+}
+
+export function updateUser(
+  token: string,
+  id: string,
+  patch: { name?: string; role?: Role; active?: boolean; password?: string },
+): Promise<{ user: User }> {
+  return request(
+    `/admin/users/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'PATCH', body: JSON.stringify(patch) }),
+  );
+}
+
+export function deleteUser(token: string, id: string): Promise<{ ok: true }> {
+  return request(`/admin/users/${encodeURIComponent(id)}`, adminInit(token, { method: 'DELETE' }));
 }
 
 export function fetchAdminOrders(
