@@ -2354,6 +2354,37 @@ details.faq p {
   color: #ffaea4;
 }
 
+/* ---------- Modellen på en lagd order ---------- */
+
+.model-panel {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 12px;
+}
+.model-panel-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+.model-panel-head svg {
+  flex: none;
+  color: var(--text-muted);
+}
+.model-panel-head .dim {
+  font-size: 0.8rem;
+}
+.model-panel-head .btn-quiet {
+  margin-left: auto;
+}
+/* I orderlistan räcker en lägre vy – modellen ska orientera, inte dominera. */
+.model-panel .model-canvas {
+  height: 240px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

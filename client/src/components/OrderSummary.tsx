@@ -1,3 +1,4 @@
+import { ModelPanel } from './ModelPanel';
 import { formatBytes, formatDate, formatHours, formatPrice } from '../lib/format';
 import { statusLabels } from '../lib/status';
 import type { AnyOrder } from '../types';
@@ -74,6 +75,7 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
                 <th>Volym / fyllnad</th>
                 <td>
                   {order.request.volumeCm3} cm³ · {order.request.infill} %
+                  {order.model && <span className="dim"> · uppmätt ur filen</span>}
                 </td>
               </tr>
               <tr>
@@ -94,6 +96,13 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
             <span>Totalt</span>
             <span>{formatPrice(order.total)}</span>
           </div>
+
+          <ModelPanel
+            fileName={order.fileName}
+            fileUrl={order.fileUrl}
+            fileSize={order.fileSize}
+            model={order.model}
+          />
         </div>
       )}
 

@@ -7,6 +7,7 @@ import { ProductCard } from '../src/components/ProductCard';
 import { OrderTimeline } from '../src/components/OrderTimeline';
 import { UploadDropzone } from '../src/components/UploadDropzone';
 import { ModelFacts } from '../src/components/ModelFacts';
+import { ModelPanel } from '../src/components/ModelPanel';
 import { ReviewSection } from '../src/components/ReviewSection';
 import { StockWatchForm } from '../src/components/StockWatchForm';
 import { CartProvider } from '../src/lib/cart';
@@ -375,5 +376,65 @@ describe('StockWatchForm', () => {
     );
 
     global.fetch = originalFetch;
+  });
+});
+
+describe('ModelPanel', () => {
+  const model: ModelAnalysis = {
+    format: 'stl',
+    volumeCm3: 27.5,
+    surfaceAreaCm2: 54,
+    bounds: { width: 30, depth: 30, height: 30 },
+    triangles: 1248,
+    openEdges: 0,
+    nonManifoldEdges: 0,
+    watertight: true,
+    invertedNormals: false,
+    fitsBuildPlate: true,
+    warnings: [],
+  };
+
+  it('visar filen och uppmätningen', () => {
+    render(
+      <ModelPanel
+        fileName="faste.stl"
+        fileUrl="/api/uploads/abc"
+        fileSize={2048}
+        model={model}
+        collapsible
+      />,
+    );
+    expect(screen.getByRole('link', { name: 'faste.stl' })).toHaveAttribute(
+      'href',
+      '/api/uploads/abc',
+    );
+    expect(screen.getByText('27,5 cm³')).toBeInTheDocument();
+  });
+
+  it('ritar inte 3D-vyn förrän någon ber om den', async () => {
+    const { container } = render(
+      <ModelPanel fileName="faste.stl" fileUrl="/api/uploads/abc" model={model} collapsible />,
+    );
+    // Varje vy tar ett eget WebGL-sammanhang, så en lista får inte öppna alla.
+    expect(container.querySelector('.model-viewer')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Visa modellen i 3D' })).toBeInTheDocument();
+  });
+
+  it('erbjuder ingen 3D-vy för ett format vi inte kan rita', () => {
+    render(<ModelPanel fileName="ritning.step" fileUrl="/api/uploads/abc" collapsible />);
+    expect(screen.queryByRole('button', { name: 'Visa modellen i 3D' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'ritning.step' })).toBeInTheDocument();
+  });
+
+  it('erbjuder ingen 3D-vy när filen inte finns kvar', () => {
+    render(<ModelPanel fileName="faste.stl" model={model} collapsible />);
+    expect(screen.queryByRole('button', { name: 'Visa modellen i 3D' })).toBeNull();
+    // Siffrorna sparas på ordern och finns kvar även utan filen.
+    expect(screen.getByText('27,5 cm³')).toBeInTheDocument();
+  });
+
+  it('visar ingenting för en order utan fil', () => {
+    const { container } = render(<ModelPanel />);
+    expect(container.firstChild).toBeNull();
   });
 });
