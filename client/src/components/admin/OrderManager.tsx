@@ -4,6 +4,7 @@ import { ApiError, fetchAdminOrders, setOrderStatus } from '../../lib/api';
 import { formatDate, formatPrice } from '../../lib/format';
 import { statusLabels } from '../../lib/status';
 import type { AnyOrder, OrderStatus } from '../../types';
+import { ModelPanel } from '../ModelPanel';
 
 type AdminOrder = AnyOrder & { next: OrderStatus[] };
 
@@ -57,12 +58,12 @@ export function OrderManager({ token, onUnauthorized }: Props) {
 
   return (
     <>
-      <h2>
-        Ordrar {orders ? <span className="dim">({orders.length})</span> : null}
-      </h2>
+      <h2>Ordrar {orders ? <span className="dim">({orders.length})</span> : null}</h2>
       {notice && <p className="notice notice-success">{notice}</p>}
       {error && <p className="notice notice-error">{error}</p>}
-      {!orders && !error && <div className="skeleton" style={{ aspectRatio: 'auto', height: 200 }} />}
+      {!orders && !error && (
+        <div className="skeleton" style={{ aspectRatio: 'auto', height: 200 }} />
+      )}
 
       <div className="stack" style={{ gap: 16 }}>
         {orders?.map((order) => (
@@ -100,6 +101,16 @@ export function OrderManager({ token, onUnauthorized }: Props) {
               </div>
               <OrderTimeline order={order} />
             </div>
+
+            {order.type === 'custom' && (
+              <ModelPanel
+                fileName={order.fileName}
+                fileUrl={order.fileUrl}
+                fileSize={order.fileSize}
+                model={order.model}
+                collapsible
+              />
+            )}
 
             {order.next.length > 0 && (
               <div className="row" style={{ marginTop: 14 }}>
