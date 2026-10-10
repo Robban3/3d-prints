@@ -103,7 +103,10 @@ export const DEFAULT_CAMPAIGNS: Campaign[] = [
     eyebrow: 'Julkollektionen',
     title: 'En jul med personlig prägel',
     text: 'Gör julen till din med 3D-printade dekorationer och personliga presenter. Upptäck stilrena granar, dekorativa stjärnor och julgranspynt med namnen du tycker allra mest om.',
-    cta: { label: 'Upptäck julkollektionen', href: '/produkter?kategori=jul' },
+    cta: {
+      label: 'Upptäck julkollektionen',
+      href: '/produkter?kategori=julpynt-personligt,jul-dekorationer,julklappar',
+    },
     media: {
       kind: 'image',
       id: '',

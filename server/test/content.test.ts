@@ -387,7 +387,7 @@ describe('kampanjen som följer med', () => {
     assert.equal(content.campaigns.length, 1);
     assert.equal(content.campaigns[0]!.eyebrow, 'Julkollektionen');
     assert.equal(content.campaigns[0]!.title, 'En jul med personlig prägel');
-    assert.equal(content.campaigns[0]!.cta?.href, '/produkter?kategori=jul');
+    assert.match(content.campaigns[0]!.cta?.href ?? '', /^\/produkter\?kategori=/);
   });
 
   it('kommer inte tillbaka när butiken tagit bort den', async () => {

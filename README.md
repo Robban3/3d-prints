@@ -40,7 +40,7 @@ npm start          # http://localhost:4000
 
 **Butiken**
 
-- 19 unika produkter i sex kategorier, varav en julkollektion
+- 22 unika produkter i åtta kategorier, varav tre utgör julkollektionen
 - Filtrering per kategori, fritextsökning och sortering på pris, namn eller popularitet
 - Produktsida med färg- och storleksval, antal och löpande totalpris
 - Varukorg som sparas i `localStorage` och överlever omladdning
@@ -152,17 +152,25 @@ Så här hanteras filerna:
 Byt lagringen mot S3 eller motsvarande genom att ersätta `server/src/uploads.ts` –
 resten av koden går bara via funktionerna där.
 
-**Julkollektionen** ligger i sortimentet som kategorin `jul`, med fem produkter:
-bordsgran, två julgranskulor, stjärna och en namnring. De ritas med fyra egna
-former i samma SVG-språk som resten av sortimentet, i två nya ytor – granbarr
-och vinrött.
+**Julkollektionen** är tre kategorier: `julpynt-personligt` (namn och egna
+hälsningar), `jul-dekorationer` (granar, stjärnor och julkulor) och `julklappar`
+(presenter till familj, vänner och kollegor). De lyfts fram i en egen sektion på
+startsidan, där namn och beskrivningar hämtas ur katalogen – en ändring i
+panelen slår alltså igenom direkt, och bara urvalet och illustrationen står i
+koden.
 
-Kampanjen på startsidan följer med från start och pekar på kategorin. Den har
-inget datumfönster satt, så den syns direkt; sätt start- och slutdatum under
-**Startsida** i panelen när den ska gå av sig själv. Bilden ligger i
-`client/public/kampanjer/` och är beskuren så att den bara visar produkterna –
-kampanjblocket har sin egen rubrik och text, och bildens egen text skulle
-dubblera den.
+Kollektionens åtta produkter ritas med fem egna former i samma SVG-språk som
+resten av sortimentet, i två nya ytor – granbarr och vinrött.
+
+Produktlistan tar flera kategorier på en gång: `?kategori=a,b,c`. Det är så
+kampanjen och kategoriraden pekar på hela kollektionen trots att den är uppdelad
+i teman.
+
+Kampanjen på startsidan följer med från start. Den har inget datumfönster satt,
+så den syns direkt; sätt start- och slutdatum under **Startsida** i panelen när
+den ska gå av sig själv. Bilden ligger i `client/public/kampanjer/` och är
+beskuren så att den bara visar produkterna – kampanjblocket har sin egen rubrik
+och text, och bildens egen text skulle dubblera den.
 
 ## Printstatus och materialguiden
 

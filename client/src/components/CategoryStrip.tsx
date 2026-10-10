@@ -8,7 +8,12 @@ const entries: Array<{ to: string; icon: IconName; title: string; text: string }
   { to: '/produkter?kategori=kontor', icon: 'desk', title: 'Desk', text: 'Kontor & organisering' },
   { to: '/produkter?kategori=prylar', icon: 'hobby', title: 'Hobby', text: 'Modeller & tillbehör' },
   { to: '/produkter?kategori=kok', icon: 'gear', title: 'Kök', text: 'Funktionella delar' },
-  { to: '/produkter?kategori=jul', icon: 'tree', title: 'Jul', text: 'Julkollektionen' },
+  {
+    to: '/produkter?kategori=julpynt-personligt,jul-dekorationer,julklappar',
+    icon: 'tree',
+    title: 'Jul',
+    text: 'Julkollektionen',
+  },
   { to: '/egen-print', icon: 'sparkle', title: 'Special', text: 'Unika designer' },
 ];
 

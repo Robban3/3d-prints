@@ -134,8 +134,14 @@ api.get('/products', async (req, res) => {
   const search = typeof req.query.search === 'string' ? req.query.search.toLowerCase().trim() : '';
 
   let result = await publishedProducts();
-  if (category && category !== 'alla') {
-    result = result.filter((product) => product.category === category);
+  // Flera kategorier åt gången: en kampanj kan peka på en hel kollektion som
+  // delats upp i teman.
+  const wanted = (category ?? '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0 && entry !== 'alla');
+  if (wanted.length > 0) {
+    result = result.filter((product) => wanted.includes(product.category));
   }
   if (search) {
     result = result.filter((product) =>

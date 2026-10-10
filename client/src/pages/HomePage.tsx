@@ -13,6 +13,7 @@ import type { IconName } from '../components/Icon';
 import type { UploadedFile } from '../types';
 import { shopJsonLd, useDocumentMeta } from '../lib/meta';
 import { CampaignBlock } from '../components/CampaignBlock';
+import { FeaturedCategories } from '../components/FeaturedCategories';
 import { HeroMedia } from '../components/HeroMedia';
 
 /** Visas innan innehållet hämtats, och om ingen rört heron i panelen. */
@@ -152,6 +153,8 @@ export function HomePage() {
           ))}
         </div>
       )}
+
+      <FeaturedCategories categories={config.data?.categories ?? []} title="Julkollektionen" />
 
       <div className="container">
         <CategoryStrip />

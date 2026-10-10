@@ -4,7 +4,8 @@ import { MemoryRouter } from 'react-router';
 import type { ReactElement } from 'react';
 import { HeroMedia } from '../src/components/HeroMedia';
 import { CampaignBlock } from '../src/components/CampaignBlock';
-import type { Campaign, Media } from '../src/types';
+import { FeaturedCategories } from '../src/components/FeaturedCategories';
+import type { Campaign, Category, Media } from '../src/types';
 
 const image: Media = {
   kind: 'image',
@@ -181,5 +182,70 @@ describe('CampaignBlock', () => {
   it('märker upp layouten med en klass', () => {
     const { container } = withRouter(<CampaignBlock campaign={{ ...campaign, layout: 'kort' }} />);
     expect(container.querySelector('.campaign-kort')).not.toBeNull();
+  });
+});
+
+describe('FeaturedCategories', () => {
+  const categories: Category[] = [
+    {
+      id: 'julpynt-personligt',
+      name: 'Personligt julpynt',
+      description: 'Namn och egna hälsningar.',
+    },
+    {
+      id: 'jul-dekorationer',
+      name: 'Julens dekorationer',
+      description: 'Granar, stjärnor och julkulor.',
+    },
+    {
+      id: 'julklappar',
+      name: 'Små personliga julklappar',
+      description: 'Presenter till familj, vänner och kollegor.',
+    },
+    { id: 'kontor', name: 'Kontor', description: 'Skrivbordet.' },
+  ];
+
+  it('lyfter fram de tre kategorierna med namn och beskrivning', () => {
+    withRouter(<FeaturedCategories categories={categories} title="Julkollektionen" />);
+    expect(screen.getByText('Personligt julpynt')).toBeInTheDocument();
+    expect(screen.getByText('Namn och egna hälsningar.')).toBeInTheDocument();
+    expect(screen.getByText('Julens dekorationer')).toBeInTheDocument();
+    expect(screen.getByText('Små personliga julklappar')).toBeInTheDocument();
+    // Kategorier som inte är utvalda hör inte hemma här.
+    expect(screen.queryByText('Kontor')).toBeNull();
+  });
+
+  it('länkar varje kort till sin kategori', () => {
+    withRouter(<FeaturedCategories categories={categories} title="Julkollektionen" />);
+    expect(screen.getByRole('link', { name: /Personligt julpynt/ })).toHaveAttribute(
+      'href',
+      '/produkter?kategori=julpynt-personligt',
+    );
+  });
+
+  it('länkar till hela kollektionen på en gång', () => {
+    withRouter(<FeaturedCategories categories={categories} title="Julkollektionen" />);
+    expect(screen.getByRole('link', { name: /Visa hela kollektionen/ })).toHaveAttribute(
+      'href',
+      '/produkter?kategori=julpynt-personligt,jul-dekorationer,julklappar',
+    );
+  });
+
+  it('tar namnen från katalogen, inte från koden', () => {
+    withRouter(
+      <FeaturedCategories
+        categories={[{ ...categories[0]!, name: 'Omdöpt i panelen', description: 'Ny text.' }]}
+        title="Jul"
+      />,
+    );
+    expect(screen.getByText('Omdöpt i panelen')).toBeInTheDocument();
+    expect(screen.getByText('Ny text.')).toBeInTheDocument();
+  });
+
+  it('visar ingenting när kategorierna tagits bort', () => {
+    const { container } = withRouter(
+      <FeaturedCategories categories={[categories[3]!]} title="Julkollektionen" />,
+    );
+    expect(container.firstChild).toBeNull();
   });
 });
