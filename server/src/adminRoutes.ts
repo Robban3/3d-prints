@@ -9,6 +9,7 @@ import { backInStock, sendMail, statusUpdate } from './mailer.ts';
 import { claimWatchers, watcherCounts } from './notify.ts';
 import { buildStats, lowStockThreshold } from './stats.ts';
 import { buildQueue, printerCount } from './queue.ts';
+import { buildPickList } from './picking.ts';
 import {
   addSpool,
   allSpools,
@@ -59,7 +60,7 @@ import {
   parseQualityInput,
 } from './catalogValidation.ts';
 import { release, removeStock, setStock, stockLevels } from './stock.ts';
-import type { AnyOrder, StatusEvent } from './types.ts';
+import type { AnyOrder, OrderStatus, StatusEvent } from './types.ts';
 
 export const admin = Router();
 
@@ -115,30 +116,39 @@ admin.get('/admin/orders', adminLimit, requireAdmin, async (_req, res) => {
   });
 });
 
-admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, res) => {
-  const body = (req.body ?? {}) as Record<string, unknown>;
-  const id = pathParam(req.params.id);
-  const target = body.status;
+type MailResult = { delivered: boolean; path?: string };
 
-  if (!isOrderStatus(target)) {
-    res.status(400).json({ error: 'Okänd status.' });
-    return;
-  }
+type StatusOutcome =
+  | {
+      ok: true;
+      order: AnyOrder;
+      from: OrderStatus;
+      mail?: MailResult;
+      filament?: Awaited<ReturnType<typeof consume>>;
+    }
+  | { ok: false; id: string; reason: 'saknas' }
+  | { ok: false; id: string; reason: 'otillåten'; from: OrderStatus; allowed: OrderStatus[] };
 
+/**
+ * Flyttar en order till en ny status, med allt som hänger på det: lagret,
+ * filamentet, loggen och mejlet till kunden.
+ *
+ * Både enskilda statusbyten och bulkbytet går den här vägen, så en order som
+ * flyttas tillsammans med tio andra behandlas exakt som en som flyttas ensam.
+ */
+async function applyStatus(id: string, target: OrderStatus, note?: string): Promise<StatusOutcome> {
   const existing = await findOrder(id);
-  if (!existing) {
-    res.status(404).json({ error: 'Ordern hittades inte' });
-    return;
-  }
+  if (!existing) return { ok: false, id, reason: 'saknas' };
   if (!canTransition(existing.status, target)) {
-    res.status(409).json({
-      error: `Går inte att flytta från ${existing.status} till ${target}.`,
+    return {
+      ok: false,
+      id,
+      reason: 'otillåten',
+      from: existing.status,
       allowed: nextStatuses(existing.status),
-    });
-    return;
+    };
   }
 
-  const note = typeof body.note === 'string' ? body.note.trim().slice(0, 300) : undefined;
   const event: StatusEvent = {
     status: target,
     at: new Date().toISOString(),
@@ -153,10 +163,8 @@ admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, re
       history: [...(order.history ?? []), event],
     }),
   );
-  if (!updated) {
-    res.status(404).json({ error: 'Ordern hittades inte' });
-    return;
-  }
+  // Ordern kan ha tagits bort mellan uppslaget och skrivningen.
+  if (!updated) return { ok: false, id, reason: 'saknas' };
 
   // En avbruten butiksorder ska lämna tillbaka sina exemplar till lagret.
   if (shouldRestoreStock(target) && updated.type === 'shop') {
@@ -180,7 +188,7 @@ admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, re
   });
 
   const mail = statusUpdate(updated);
-  let mailResult: { delivered: boolean; path?: string } | undefined;
+  let mailResult: MailResult | undefined;
   if (mail) {
     try {
       mailResult = await sendMail(mail);
@@ -190,12 +198,120 @@ admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, re
     }
   }
 
-  res.json({
+  return {
+    ok: true,
     order: updated,
-    next: nextStatuses(updated.status),
-    mail: mailResult,
+    from: existing.status,
+    ...(mailResult ? { mail: mailResult } : {}),
     ...(filament ? { filament } : {}),
+  };
+}
+
+function noteFrom(value: unknown): string | undefined {
+  const note = typeof value === 'string' ? value.trim().slice(0, 300) : '';
+  return note ? note : undefined;
+}
+
+admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const target = body.status;
+
+  if (!isOrderStatus(target)) {
+    res.status(400).json({ error: 'Okänd status.' });
+    return;
+  }
+
+  const result = await applyStatus(pathParam(req.params.id), target, noteFrom(body.note));
+  if (!result.ok) {
+    if (result.reason === 'saknas') {
+      res.status(404).json({ error: 'Ordern hittades inte' });
+      return;
+    }
+    res.status(409).json({
+      error: `Går inte att flytta från ${result.from} till ${target}.`,
+      allowed: result.allowed,
+    });
+    return;
+  }
+
+  res.json({
+    order: result.order,
+    next: nextStatuses(result.order.status),
+    mail: result.mail,
+    ...(result.filament ? { filament: result.filament } : {}),
   });
+});
+
+/** Hur många ordrar som får flyttas i ett svep. Skyddar mot en slint-klickad lista. */
+const BULK_LIMIT = 100;
+
+/**
+ * Flyttar flera ordrar till samma status. Varje order prövas för sig: en som
+ * inte kan flyttas stoppar inte de övriga, men den rapporteras tillbaka med
+ * skälet, så panelen kan visa exakt vad som inte gick.
+ */
+admin.post('/admin/orders/status', adminLimit, requireAdmin, async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const target = body.status;
+
+  if (!isOrderStatus(target)) {
+    res.status(400).json({ error: 'Okänd status.' });
+    return;
+  }
+
+  const ids = Array.isArray(body.ids)
+    ? [...new Set(body.ids.filter((id): id is string => typeof id === 'string' && id.length > 0))]
+    : [];
+  if (ids.length === 0) {
+    res.status(400).json({ error: 'Välj minst en order.' });
+    return;
+  }
+  if (ids.length > BULK_LIMIT) {
+    res.status(400).json({ error: `Högst ${BULK_LIMIT} ordrar åt gången.` });
+    return;
+  }
+
+  const note = noteFrom(body.note);
+  const moved: AnyOrder[] = [];
+  const failed: Array<{ id: string; reason: string }> = [];
+
+  // En i taget: statusbytet skriver till ordern, lagret och filamentet, och
+  // de skrivningarna ska inte trängas med varandra.
+  for (const id of ids) {
+    const result = await applyStatus(id, target, note);
+    if (result.ok) {
+      moved.push(result.order);
+    } else if (result.reason === 'saknas') {
+      failed.push({ id, reason: 'Ordern hittades inte.' });
+    } else {
+      failed.push({ id, reason: `Går inte att flytta från ${result.from} till ${target}.` });
+    }
+  }
+
+  res.json({
+    moved: moved.map((order) => ({ ...order, next: nextStatuses(order.status) })),
+    failed,
+    status: target,
+  });
+});
+
+/**
+ * Plocklistan för ett urval ordrar: antingen de ordrar som räknas upp, eller
+ * alla i en viss status. Utan urval är det de mottagna – det är de som väntar
+ * på att göras i ordning.
+ */
+admin.get('/admin/picklist', adminLimit, requireAdmin, async (req, res) => {
+  const requested = typeof req.query.ids === 'string' ? req.query.ids.split(',') : [];
+  const ids = new Set(requested.map((id) => id.trim().toLowerCase()).filter(Boolean));
+  const status = isOrderStatus(req.query.status) ? req.query.status : undefined;
+
+  const [all, products] = await Promise.all([listOrders(), allProducts()]);
+  const orders =
+    ids.size > 0
+      ? all.filter((order) => ids.has(order.id.toLowerCase()))
+      : all.filter((order) => order.status === (status ?? 'mottagen'));
+
+  res.json({ list: buildPickList({ orders, products }) });
 });
 
 /* ---------- Katalog ---------- */
