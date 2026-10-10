@@ -2620,6 +2620,30 @@ details.faq p {
   gap: 8px;
 }
 
+/* ---------- Sparad offert och ombeställning ---------- */
+
+.share-quote {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.share-quote strong {
+  font-size: 0.94rem;
+}
+.share-quote .input {
+  width: 100%;
+  font-size: 0.82rem;
+  /* Länken ska gå att markera i sin helhet, inte brytas på mitten. */
+  text-overflow: ellipsis;
+}
+
+.reorder {
+  margin-top: 16px;
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

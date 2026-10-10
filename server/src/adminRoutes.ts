@@ -20,7 +20,6 @@ import {
   saveHero,
 } from './content.ts';
 import {
-  CatalogError,
   allCategories,
   allMaterials,
   allProducts,

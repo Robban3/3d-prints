@@ -17,10 +17,18 @@ import {
 import { evaluateDiscount, findDiscount, redeemDiscount, releaseDiscount } from './discounts.ts';
 import type { AppliedDiscount } from './shipping.ts';
 import { findOrder, generateOrderNumber, listOrders, saveOrder, updateOrder } from './store.ts';
-import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
+import {
+  ALLOWED_EXTENSIONS,
+  MAX_UPLOAD_BYTES,
+  claimUpload,
+  cloneUpload,
+  holdUpload,
+  readMeta,
+} from './uploads.ts';
 import { pathParam } from './http.ts';
 import { release, reserve, stockLevels } from './stock.ts';
-import { orderConfirmation, sendMail } from './mailer.ts';
+import { orderConfirmation, savedQuoteMail, sendMail } from './mailer.ts';
+import { expiryFrom, findQuote, saveQuote } from './quotes.ts';
 import { rateLimit } from './rateLimit.ts';
 import { publicHomeContent } from './content.ts';
 import {
@@ -34,7 +42,6 @@ import {
 import type { ReviewSummary } from './reviews.ts';
 import { WatchError, watchStock } from './notify.ts';
 import {
-  KlarnaError,
   createSession,
   isConfigured,
   klarnaConfig,
@@ -89,6 +96,12 @@ const discountLimit = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: Number(process.env.RATE_LIMIT_DISCOUNTS ?? 60),
   message: 'För många försök med rabattkoder. Vänta en stund och försök igen.',
+});
+const saveLimit = rateLimit({
+  name: 'sparade-offerter',
+  windowMs: 60 * 60 * 1000,
+  max: Number(process.env.RATE_LIMIT_SAVED_QUOTES ?? 20),
+  message: 'Många sparade offerter från samma nätverk. Försök igen om en stund.',
 });
 const quoteLimit = rateLimit({
   name: 'quote',
@@ -267,6 +280,139 @@ api.post('/products/:slug/notify', notifyLimit, async (req, res) => {
     }
     throw error;
   }
+});
+
+/* ---------- Sparade offerter ---------- */
+
+/**
+ * Sparar den uträknade offerten bakom en egen länk. Den som räknar på ett jobb
+ * är ofta inte den som får beställa det, så siffrorna ska gå att skicka vidare
+ * utan att någon fyller i formuläret igen.
+ */
+api.post('/quotes', saveLimit, async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const requested = await parseQuoteRequest(body.request);
+
+  const projectName = String(body.projectName ?? '').trim() || 'Eget printjobb';
+  const description = String(body.description ?? '').trim();
+
+  const fileId = String(body.fileId ?? '').trim();
+  const upload = fileId ? await readMeta(fileId) : undefined;
+  if (fileId && !upload) {
+    throw new ValidationError({ fileId: 'Vi hittar inte din uppladdade fil. Ladda upp den igen.' });
+  }
+
+  const email = String(body.email ?? '')
+    .trim()
+    .toLowerCase();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    throw new ValidationError({ email: 'Fyll i en mejladress vi kan skicka offerten till.' });
+  }
+
+  const request = withMeasuredVolume(requested, upload?.analysis);
+  const quote = await quoteFor(request);
+  const saved = await saveQuote({
+    projectName,
+    description,
+    request,
+    quote,
+    ...(upload
+      ? {
+          fileId: upload.id,
+          fileName: upload.originalName,
+          fileUrl: `/api/uploads/${upload.id}`,
+          fileSize: upload.size,
+          ...(upload.analysis ? { model: upload.analysis } : {}),
+        }
+      : {}),
+    ...(email ? { email } : {}),
+  });
+
+  // Filen måste finnas kvar så länge offerten går att beställa. Annars städas
+  // den bort som föräldralös inom ett dygn.
+  if (upload) await holdUpload(upload.id, expiryFrom(new Date(saved.createdAt)));
+
+  const mail = email
+    ? await sendMail(
+        savedQuoteMail({
+          to: email,
+          id: saved.id,
+          projectName: saved.projectName,
+          total: quote.total,
+          deliveryDays: quote.estimatedDeliveryDays,
+          expiresAt: saved.expiresAt,
+        }),
+      )
+    : undefined;
+
+  // Sökvägen, inte en absolut adress: klienten vet vilket ursprung den körs på,
+  // och SHOP_URL pekar på driftmiljön även när man kör lokalt. Mejlet behöver
+  // en absolut adress och bygger sin egen.
+  res.status(201).json({ quote: saved, path: `/offert/${saved.id}`, mail });
+});
+
+/**
+ * Hämtar en sparad offert. Priset räknas också om mot dagens siffror – ett pris
+ * som ändrats sedan offerten sparades ska synas, inte tigas om.
+ */
+api.get('/quotes/:id', async (req, res) => {
+  const saved = await findQuote(pathParam(req.params.id));
+  if (!saved) {
+    res.status(404).json({ error: 'Offerten hittades inte, eller har gått ut.' });
+    return;
+  }
+
+  let current = null;
+  try {
+    current = await quoteFor(saved.request);
+  } catch {
+    // Materialet eller kvaliteten finns inte kvar i katalogen. Då går det inte
+    // att räkna om, och den sparade siffran är allt vi har.
+    current = null;
+  }
+
+  res.json({
+    quote: saved,
+    current,
+    changed: current !== null && current.total !== saved.quote.total,
+  });
+});
+
+/**
+ * Förbereder en ny beställning av ett jobb som redan gjorts. Filen kopieras till
+ * ett nytt id, eftersom originalet hör till sin order – en fil äger en order och
+ * bara en. Själva ordern läggs sedan genom det vanliga formuläret, så den går
+ * igenom samma validering och betalning som alla andra.
+ */
+api.post('/orders/:id/reorder', saveLimit, async (req, res) => {
+  const order = await findOrder(pathParam(req.params.id));
+  if (!order || order.type !== 'custom') {
+    res.status(404).json({ error: 'Vi hittar ingen tidigare beställning med det numret.' });
+    return;
+  }
+
+  const copy = order.fileId ? await cloneUpload(order.fileId) : undefined;
+  res.json({
+    draft: {
+      projectName: order.projectName,
+      description: order.description,
+      request: order.request,
+      customer: order.customer,
+      ...(copy
+        ? {
+            fileId: copy.id,
+            fileName: copy.originalName,
+            fileUrl: `/api/uploads/${copy.id}`,
+            fileSize: copy.size,
+            ...(copy.analysis ? { analysis: copy.analysis } : {}),
+          }
+        : {}),
+      // Filen fanns på ordern men går inte att kopiera – då får kunden ladda
+      // upp den igen i stället för att tro att den följt med.
+      fileMissing: Boolean(order.fileId) && copy === undefined,
+    },
+    quote: await quoteFor(order.request),
+  });
 });
 
 /**

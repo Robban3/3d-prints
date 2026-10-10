@@ -1,12 +1,14 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import { mkdtemp, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import {
   ORPHAN_MAX_AGE_MS,
   claimUpload,
+  cloneUpload,
+  holdUpload,
   deleteUpload,
   extensionOf,
   filePathFor,
@@ -180,5 +182,110 @@ describe('rateLimitStatus', () => {
     const now = Date.now();
     for (let i = 0; i < 20; i += 1) recordUpload('1.2.3.4', 1024, now - 2 * 60 * 60 * 1000);
     assert.equal(rateLimitStatus('1.2.3.4', now).allowed, true);
+  });
+});
+
+describe('holdUpload', () => {
+  it('skyddar filen från städningen så länge skyddet gäller', async () => {
+    const meta = await seed({
+      createdAt: new Date(Date.now() - ORPHAN_MAX_AGE_MS - 1000).toISOString(),
+    });
+    await holdUpload(meta.id, new Date(Date.now() + 60_000));
+
+    assert.equal(await sweepOrphans(), 0);
+    assert.ok(await readMeta(meta.id));
+  });
+
+  it('släpper filen när skyddet gått ut', async () => {
+    const meta = await seed({
+      createdAt: new Date(Date.now() - ORPHAN_MAX_AGE_MS - 1000).toISOString(),
+    });
+    await holdUpload(meta.id, new Date(Date.now() - 1000));
+
+    assert.equal(await sweepOrphans(), 1);
+    assert.equal(await readMeta(meta.id), undefined);
+  });
+
+  it('kortar inte ett längre skydd', async () => {
+    const meta = await seed();
+    const long = new Date(Date.now() + 600_000);
+    await holdUpload(meta.id, long);
+    await holdUpload(meta.id, new Date(Date.now() + 1000));
+    assert.equal((await readMeta(meta.id))?.heldUntil, long.toISOString());
+  });
+
+  it('förlänger ett kortare skydd', async () => {
+    const meta = await seed();
+    await holdUpload(meta.id, new Date(Date.now() + 1000));
+    const long = new Date(Date.now() + 600_000);
+    await holdUpload(meta.id, long);
+    assert.equal((await readMeta(meta.id))?.heldUntil, long.toISOString());
+  });
+
+  it('svarar undefined för en fil som inte finns', async () => {
+    assert.equal(await holdUpload(generateUploadId(), new Date()), undefined);
+  });
+});
+
+describe('cloneUpload', () => {
+  it('kopierar filen till ett nytt id', async () => {
+    const meta = await seed();
+    const copy = await cloneUpload(meta.id);
+
+    assert.ok(copy);
+    assert.notEqual(copy!.id, meta.id);
+    assert.equal(copy!.originalName, meta.originalName);
+    assert.equal(copy!.extension, meta.extension);
+    assert.ok(await uploadExists(copy!));
+    // Originalet ska ligga kvar orört.
+    assert.ok(await readMeta(meta.id));
+  });
+
+  it('ger kopian samma innehåll', async () => {
+    const meta = await seed();
+    const copy = await cloneUpload(meta.id);
+    const [original, copied] = await Promise.all([
+      readFile(filePathFor(meta), 'utf8'),
+      readFile(filePathFor(copy!), 'utf8'),
+    ]);
+    assert.equal(copied, original);
+  });
+
+  it('lämnar kopian oanvänd även när originalet hör till en order', async () => {
+    const meta = await seed({ claimedBy: 'C2026-ABC123' });
+    const copy = await cloneUpload(meta.id);
+    assert.equal(copy!.claimedBy, null);
+    // Och originalets koppling rörs inte.
+    assert.equal((await readMeta(meta.id))?.claimedBy, 'C2026-ABC123');
+  });
+
+  it('tar med uppmätningen, eftersom det är samma modell', async () => {
+    const meta = await seed({
+      analysis: {
+        format: 'stl',
+        volumeCm3: 27,
+        surfaceAreaCm2: 54,
+        bounds: { width: 30, depth: 30, height: 30 },
+        triangles: 12,
+        openEdges: 0,
+        nonManifoldEdges: 0,
+        watertight: true,
+        invertedNormals: false,
+        fitsBuildPlate: true,
+        warnings: [],
+      },
+    });
+    assert.equal((await cloneUpload(meta.id))?.analysis?.volumeCm3, 27);
+  });
+
+  it('ärver inte originalets skydd mot städning', async () => {
+    const meta = await seed();
+    await holdUpload(meta.id, new Date(Date.now() + 600_000));
+    const copy = await cloneUpload(meta.id);
+    assert.equal(copy!.heldUntil, undefined);
+  });
+
+  it('svarar undefined för en fil som inte finns', async () => {
+    assert.equal(await cloneUpload(generateUploadId()), undefined);
   });
 });

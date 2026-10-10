@@ -1,4 +1,5 @@
 import { ModelPanel } from './ModelPanel';
+import { ReorderButton } from './ReorderButton';
 import { formatBytes, formatDate, formatHours, formatPrice } from '../lib/format';
 import { statusLabels } from '../lib/status';
 import type { AnyOrder } from '../types';
@@ -109,6 +110,8 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
             fileSize={order.fileSize}
             model={order.model}
           />
+
+          <ReorderButton orderId={order.id} />
         </div>
       )}
 

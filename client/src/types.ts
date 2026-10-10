@@ -235,6 +235,40 @@ export interface CustomOrder {
 
 export type AnyOrder = ShopOrder | CustomOrder;
 
+/* ---------- Sparade offerter ---------- */
+
+export interface SavedQuote {
+  id: string;
+  createdAt: string;
+  expiresAt: string;
+  projectName: string;
+  description: string;
+  request: QuoteRequest;
+  /** Priset som gällde när offerten sparades. */
+  quote: QuoteBreakdown;
+  fileId?: string;
+  fileName?: string;
+  fileUrl?: string;
+  fileSize?: number;
+  model?: ModelAnalysis;
+  email?: string;
+}
+
+/** Underlaget till en ny beställning av ett jobb som redan gjorts. */
+export interface ReorderDraft {
+  projectName: string;
+  description: string;
+  request: QuoteRequest;
+  customer: CustomerDetails;
+  fileId?: string;
+  fileName?: string;
+  fileUrl?: string;
+  fileSize?: number;
+  analysis?: ModelAnalysis;
+  /** Filen fanns på ordern men gick inte att kopiera. */
+  fileMissing: boolean;
+}
+
 /* ---------- Startsidan ---------- */
 
 /** Uppladdad bild eller video. Adressen byggs alltid av serverns id. */
