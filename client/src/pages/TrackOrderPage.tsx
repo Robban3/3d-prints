@@ -5,8 +5,14 @@ import { OrderTimeline } from '../components/OrderTimeline';
 import { ApiError, fetchOrder } from '../lib/api';
 import { PageHeader } from '../components/PageHeader';
 import type { AnyOrder } from '../types';
+import { useDocumentMeta } from '../lib/meta';
 
 export function TrackOrderPage() {
+  useDocumentMeta({
+    title: 'Spåra din order',
+    description: 'Slå upp en beställning med ordernummer och se var den står.',
+    noindex: true,
+  });
   const [params] = useSearchParams();
   const [id, setId] = useState(params.get('id') ?? '');
   const [order, setOrder] = useState<AnyOrder | null>(null);

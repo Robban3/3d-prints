@@ -5,8 +5,14 @@ import { formatPrice } from '../lib/format';
 import { fetchConfig } from '../lib/api';
 import { PageHeader } from '../components/PageHeader';
 import { useAsync } from '../lib/useAsync';
+import { useDocumentMeta } from '../lib/meta';
 
 export function CartPage() {
+  useDocumentMeta({
+    title: 'Din varukorg',
+    description: 'Varorna du valt, innan du går till kassan.',
+    noindex: true,
+  });
   const { items, subtotal, setQuantity, remove, clear } = useCart();
   const config = useAsync(() => fetchConfig(), []);
   const shippingConfig = config.data?.shipping ?? {

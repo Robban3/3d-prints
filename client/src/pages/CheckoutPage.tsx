@@ -9,6 +9,7 @@ import { useAsync } from '../lib/useAsync';
 import { formatPrice } from '../lib/format';
 import { PageHeader } from '../components/PageHeader';
 import type { CustomerDetails, PaymentSession } from '../types';
+import { useDocumentMeta } from '../lib/meta';
 
 const emptyCustomer: CustomerDetails = {
   name: '',
@@ -21,6 +22,11 @@ const emptyCustomer: CustomerDetails = {
 };
 
 export function CheckoutPage() {
+  useDocumentMeta({
+    title: 'Kassa',
+    description: 'Fyll i dina uppgifter och betala med Klarna.',
+    noindex: true,
+  });
   const { items, subtotal, clear } = useCart();
   const navigate = useNavigate();
   const config = useAsync(() => fetchConfig(), []);

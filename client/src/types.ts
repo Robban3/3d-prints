@@ -231,6 +231,84 @@ export interface CustomOrder {
 
 export type AnyOrder = ShopOrder | CustomOrder;
 
+/* ---------- Omdömen ---------- */
+
+export interface Review {
+  id: string;
+  createdAt: string;
+  author: string;
+  rating: number;
+  title: string;
+  body: string;
+  /** Satt när mejladressen finns på en order med produkten. */
+  verifiedPurchase: boolean;
+  /** Verkstadens svar, som visas under omdömet. */
+  reply?: string;
+}
+
+export interface ReviewSummary {
+  average: number;
+  count: number;
+  /** Antal omdömen per betyg, 1 till 5. */
+  distribution: Record<number, number>;
+}
+
+export type ReviewStatus = 'väntar' | 'publicerad' | 'avslagen';
+
+/** Omdömet som panelen ser det – med adress, status och produktnamn. */
+export interface AdminReview extends Review {
+  productId: string;
+  productName: string;
+  email: string;
+  status: ReviewStatus;
+  moderatedAt?: string;
+}
+
+/* ---------- Översikt ---------- */
+
+export interface DayBucket {
+  date: string;
+  revenue: number;
+  orders: number;
+}
+
+export interface Bestseller {
+  productId: string;
+  name: string;
+  quantity: number;
+  revenue: number;
+}
+
+export interface LowStockItem {
+  productId: string;
+  name: string;
+  stock: number;
+  watchers: number;
+}
+
+export interface DashboardStats {
+  revenue: {
+    total: number;
+    period: number;
+    byDay: DayBucket[];
+    byMonth: DayBucket[];
+  };
+  orders: {
+    total: number;
+    active: number;
+    cancelled: number;
+    shop: number;
+    custom: number;
+    averageValue: number;
+    byStatus: Record<OrderStatus, number>;
+    waitingToStart: number;
+  };
+  bestsellers: Bestseller[];
+  lowStock: LowStockItem[];
+  pendingReviews: number;
+  peakRevenue: number;
+}
+
 export interface AdminCategory extends Category {
   productCount: number;
 }

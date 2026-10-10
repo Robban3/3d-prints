@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { PageHeader } from '../components/PageHeader';
 import { StatsRow } from '../components/StatsRow';
+import { useDocumentMeta } from '../lib/meta';
 
 const faq = [
   {
@@ -30,6 +31,11 @@ const faq = [
 ];
 
 export function AboutPage() {
+  useDocumentMeta({
+    title: 'Om oss',
+    description:
+      'Formlabb är en 3D-printverkstad som printar på beställning – egna produkter och kundunika jobb, allt i Sverige.',
+  });
   return (
     <>
       <PageHeader

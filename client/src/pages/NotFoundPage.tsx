@@ -1,7 +1,13 @@
 import { Link } from 'react-router';
 import { PageHeader } from '../components/PageHeader';
+import { useDocumentMeta } from '../lib/meta';
 
 export function NotFoundPage() {
+  useDocumentMeta({
+    title: 'Sidan finns inte',
+    description: 'Länken leder inte vidare. Bläddra i sortimentet i stället.',
+    noindex: true,
+  });
   return (
     <>
       <PageHeader

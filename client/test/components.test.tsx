@@ -7,8 +7,10 @@ import { ProductCard } from '../src/components/ProductCard';
 import { OrderTimeline } from '../src/components/OrderTimeline';
 import { UploadDropzone } from '../src/components/UploadDropzone';
 import { ModelFacts } from '../src/components/ModelFacts';
+import { ReviewSection } from '../src/components/ReviewSection';
+import { StockWatchForm } from '../src/components/StockWatchForm';
 import { CartProvider } from '../src/lib/cart';
-import type { AnyOrder, ModelAnalysis, Product } from '../src/types';
+import type { AnyOrder, ModelAnalysis, Product, Review } from '../src/types';
 
 const product: Product = {
   id: 'p-001',
@@ -244,5 +246,134 @@ describe('ModelFacts', () => {
       />,
     );
     expect(screen.getByText('För tung att kontrollera')).toBeInTheDocument();
+  });
+});
+
+describe('ReviewSection', () => {
+  const reviews: Review[] = [
+    {
+      id: 'r1',
+      createdAt: '2026-09-20T10:00:00.000Z',
+      author: 'Anna',
+      rating: 5,
+      title: 'Perfekt passform',
+      body: 'Ytan är helt jämn och måtten stämmer.',
+      verifiedPurchase: true,
+      reply: 'Tack Anna!',
+    },
+    {
+      id: 'r2',
+      createdAt: '2026-09-18T10:00:00.000Z',
+      author: 'Bo',
+      rating: 3,
+      title: '',
+      body: 'Bra men lite blank yta.',
+      verifiedPurchase: false,
+    },
+  ];
+
+  const summary = { average: 4, count: 2, distribution: { 1: 0, 2: 0, 3: 1, 4: 0, 5: 1 } };
+
+  it('visar snittbetyget och antalet omdömen', () => {
+    render(<ReviewSection slug="terra-vaxtkruka" reviews={reviews} summary={summary} />);
+    expect(screen.getByText('4,0')).toBeInTheDocument();
+    expect(screen.getByText('2 omdömen')).toBeInTheDocument();
+  });
+
+  it('listar omdömena med verifieringsmärke och svar', () => {
+    render(<ReviewSection slug="terra-vaxtkruka" reviews={reviews} summary={summary} />);
+    expect(screen.getByText('Perfekt passform')).toBeInTheDocument();
+    expect(screen.getByText('Bra men lite blank yta.')).toBeInTheDocument();
+    expect(screen.getByText('Verifierat köp')).toBeInTheDocument();
+    expect(screen.getByText(/Tack Anna!/)).toBeInTheDocument();
+  });
+
+  it('böjer ordet rätt för ett enda omdöme', () => {
+    render(
+      <ReviewSection
+        slug="terra-vaxtkruka"
+        reviews={[reviews[0]!]}
+        summary={{ average: 5, count: 1, distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 1 } }}
+      />,
+    );
+    expect(screen.getByText('1 omdöme')).toBeInTheDocument();
+  });
+
+  it('säger att ingen lämnat omdöme när listan är tom', () => {
+    render(<ReviewSection slug="terra-vaxtkruka" reviews={[]} summary={null} />);
+    expect(screen.getByText(/Ingen har lämnat ett omdöme/)).toBeInTheDocument();
+  });
+
+  it('öppnar formuläret och säger att omdömet granskas först', async () => {
+    render(<ReviewSection slug="terra-vaxtkruka" reviews={[]} summary={null} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Skriv ett omdöme' }));
+    expect(screen.getByLabelText('Ditt omdöme')).toBeInTheDocument();
+    expect(screen.getByText('Omdömet granskas innan det publiceras.')).toBeInTheDocument();
+  });
+
+  it('markerar valt betyg i stjärnorna', async () => {
+    render(<ReviewSection slug="terra-vaxtkruka" reviews={[]} summary={null} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Skriv ett omdöme' }));
+    await userEvent.click(screen.getByRole('radio', { name: '4 av 5' }));
+    expect(screen.getByRole('radio', { name: '4 av 5' })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('radio', { name: '5 av 5' })).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('visar serverns fältfel vid sidan om formuläret', async () => {
+    const originalFetch = global.fetch;
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: () =>
+        Promise.resolve({ error: 'Omdömet kunde inte sparas', fields: { body: 'Berätta mer.' } }),
+    } as unknown as Response);
+
+    render(<ReviewSection slug="terra-vaxtkruka" reviews={[]} summary={null} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Skriv ett omdöme' }));
+    fireEvent.submit(screen.getByRole('button', { name: 'Skicka omdömet' }));
+    await waitFor(() => expect(screen.getByText('Berätta mer.')).toBeInTheDocument());
+
+    global.fetch = originalFetch;
+  });
+});
+
+describe('StockWatchForm', () => {
+  it('bekräftar att det blir ett enda mejl', async () => {
+    const originalFetch = global.fetch;
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: () => Promise.resolve({ watching: true, productName: 'Terra växtkruka' }),
+    } as unknown as Response);
+
+    render(<StockWatchForm slug="terra-vaxtkruka" />);
+    await userEvent.type(screen.getByLabelText('Mejladress'), 'anna@example.com');
+    fireEvent.submit(screen.getByRole('button', { name: 'Meddela mig' }));
+    await waitFor(() => expect(screen.getByText(/Vi hör av oss/)).toBeInTheDocument());
+
+    global.fetch = originalFetch;
+  });
+
+  it('visar felet när adressen inte duger', async () => {
+    const originalFetch = global.fetch;
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: () =>
+        Promise.resolve({
+          error: 'Bevakningen kunde inte sparas',
+          fields: { email: 'Fyll i en mejladress vi kan skicka beskedet till.' },
+        }),
+    } as unknown as Response);
+
+    render(<StockWatchForm slug="terra-vaxtkruka" />);
+    fireEvent.submit(screen.getByRole('button', { name: 'Meddela mig' }));
+    await waitFor(() =>
+      expect(
+        screen.getByText('Fyll i en mejladress vi kan skicka beskedet till.'),
+      ).toBeInTheDocument(),
+    );
+
+    global.fetch = originalFetch;
   });
 });
