@@ -275,7 +275,11 @@ api.post('/payments/session', sessionLimit, async (req, res) => {
 
   let payload;
   if (body.type === 'custom') {
-    const request = await parseQuoteRequest(body.request);
+    // Samma uppmätta volym som ordern räknas på, annars auktoriserar kunden ett
+    // annat belopp än det ordern sedan landar på.
+    const fileId = String(body.fileId ?? '').trim();
+    const upload = fileId ? await readMeta(fileId) : undefined;
+    const request = withMeasuredVolume(await parseQuoteRequest(body.request), upload?.analysis);
     const projectName = String(body.projectName ?? '').trim() || 'Eget printjobb';
     payload = payloadForCustomOrder(
       { projectName, request, quote: await quoteFor(request) },

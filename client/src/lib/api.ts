@@ -131,7 +131,7 @@ export function createPaymentSession(
         type: 'shop';
         lines: Array<{ productId: string; quantity: number; color: string; size?: string }>;
       }
-    | { type: 'custom'; request: QuoteRequest; projectName: string },
+    | { type: 'custom'; request: QuoteRequest; projectName: string; fileId?: string },
 ): Promise<{ session: PaymentSession; amount: number }> {
   return request('/payments/session', { method: 'POST', body: JSON.stringify(payload) });
 }
