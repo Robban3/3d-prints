@@ -5,7 +5,9 @@ import { pathParam } from './http.ts';
 import { rateLimit } from './rateLimit.ts';
 import { findOrder, listOrders, updateOrder } from './store.ts';
 import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from './lifecycle.ts';
-import { sendMail, statusUpdate } from './mailer.ts';
+import { backInStock, sendMail, statusUpdate } from './mailer.ts';
+import { claimWatchers, watcherCounts } from './notify.ts';
+import { buildStats, lowStockThreshold } from './stats.ts';
 import {
   CatalogError,
   allCategories,
@@ -26,6 +28,8 @@ import {
 } from './catalog.ts';
 import { buildExport, planImport } from './catalogTransfer.ts';
 import { changedFields, history, record } from './auditLog.ts';
+import { allReviews, countWaiting, deleteReview, findReview, setReviewStatus } from './reviews.ts';
+import type { ReviewStatus } from './reviews.ts';
 import {
   parseCategoryInput,
   parseMaterialInput,
@@ -204,8 +208,10 @@ admin.patch('/admin/products/:id', adminLimit, requireAdmin, async (req, res) =>
 
   // Formuläret skickar hela produkten tillbaka, så den valideras i sin helhet.
   const input = parseProductInput({ ...existing, ...(req.body as object) }, await inputOptions());
+  const before = (await stockLevels()).get(id) ?? 0;
   const product = await updateProduct(id, input);
   await setStock(id, input.stock);
+  const notified = await announceRestock(product, before, input.stock);
   await record({
     action: 'ändrad',
     entity: 'produkt',
@@ -216,7 +222,7 @@ admin.patch('/admin/products/:id', adminLimit, requireAdmin, async (req, res) =>
       product as unknown as Record<string, unknown>,
     ),
   });
-  res.json({ product });
+  res.json({ product, notified });
 });
 
 admin.delete('/admin/products/:id', adminLimit, requireAdmin, async (req, res) => {
@@ -380,10 +386,14 @@ admin.post('/admin/catalog/import', adminLimit, requireAdmin, async (req, res) =
 
   let created = 0;
   let updated = 0;
+  let notified = 0;
+  const levels = await stockLevels();
   for (const entry of plan.products) {
     if (entry.existingId) {
-      await updateProduct(entry.existingId, entry.input);
+      const product = await updateProduct(entry.existingId, entry.input);
+      const before = levels.get(entry.existingId) ?? 0;
       await setStock(entry.existingId, entry.input.stock);
+      notified += await announceRestock(product, before, entry.input.stock);
       updated += 1;
     } else {
       const product = await createProduct(entry.input);
@@ -399,10 +409,144 @@ admin.post('/admin/catalog/import', adminLimit, requireAdmin, async (req, res) =
     summary: `${created} skapade, ${updated} uppdaterade`,
   });
 
-  res.json({ applied: true, rows: plan.rows, created, updated, ok: plan.ok, failed: 0 });
+  res.json({ applied: true, rows: plan.rows, created, updated, notified, ok: plan.ok, failed: 0 });
 });
 
 admin.get('/admin/history', adminLimit, requireAdmin, async (req, res) => {
   const limit = Math.min(200, Math.max(1, Number(req.query.limit ?? 100) || 100));
   res.json({ entries: await history(limit) });
 });
+
+/* ---------- Omdömen ---------- */
+
+const REVIEW_STATUSES = ['väntar', 'publicerad', 'avslagen'] as const;
+
+function isReviewStatus(value: unknown): value is ReviewStatus {
+  return typeof value === 'string' && (REVIEW_STATUSES as readonly string[]).includes(value);
+}
+
+/**
+ * Hela kön, väntande först. Produktnamnet följer med så att panelen inte
+ * behöver slå upp varje produkt för sig.
+ */
+admin.get('/admin/reviews', adminLimit, requireAdmin, async (req, res) => {
+  const status = isReviewStatus(req.query.status) ? req.query.status : undefined;
+  const [reviews, products] = await Promise.all([allReviews(status), allProducts()]);
+  const names = new Map(products.map((product) => [product.id, product.name]));
+
+  res.json({
+    reviews: reviews.map((review) => ({
+      ...review,
+      productName: names.get(review.productId) ?? 'Borttagen produkt',
+    })),
+    waiting: await countWaiting(),
+  });
+});
+
+admin.patch('/admin/reviews/:id', adminLimit, requireAdmin, async (req, res) => {
+  const body = (req.body ?? {}) as { status?: unknown; reply?: unknown };
+  if (!isReviewStatus(body.status)) {
+    res.status(400).json({
+      error: 'Okänd status.',
+      fields: { status: `Välj en av ${REVIEW_STATUSES.join(', ')}.` },
+    });
+    return;
+  }
+  if (body.reply !== undefined && typeof body.reply !== 'string') {
+    res.status(400).json({ error: 'Svaret måste vara text.', fields: { reply: 'Ogiltigt svar.' } });
+    return;
+  }
+  if (typeof body.reply === 'string' && body.reply.length > 1000) {
+    res.status(400).json({
+      error: 'Svaret är för långt.',
+      fields: { reply: 'Svaret får vara högst 1000 tecken.' },
+    });
+    return;
+  }
+
+  const review = await setReviewStatus(pathParam(req.params.id), body.status, body.reply);
+  if (!review) {
+    res.status(404).json({ error: 'Omdömet hittades inte' });
+    return;
+  }
+
+  await record({
+    action: 'status',
+    entity: 'omdöme',
+    entityId: review.id,
+    summary: `${review.rating} av 5 från ${review.author} → ${review.status}`,
+  });
+  res.json({ review, waiting: await countWaiting() });
+});
+
+admin.delete('/admin/reviews/:id', adminLimit, requireAdmin, async (req, res) => {
+  const id = pathParam(req.params.id);
+  const existing = await findReview(id);
+  const review = await deleteReview(id);
+  if (!review) {
+    res.status(404).json({ error: 'Omdömet hittades inte' });
+    return;
+  }
+
+  await record({
+    action: 'borttagen',
+    entity: 'omdöme',
+    entityId: review.id,
+    summary: `${existing?.rating ?? review.rating} av 5 från ${review.author}`,
+  });
+  res.json({ review, waiting: await countWaiting() });
+});
+
+/* ---------- Översikt ---------- */
+
+admin.get('/admin/stats', adminLimit, requireAdmin, async (req, res) => {
+  const days = Math.min(365, Math.max(7, Number(req.query.days ?? 30) || 30));
+  const [orders, products, stock, watchers, pendingReviews] = await Promise.all([
+    listOrders(),
+    allProducts(),
+    stockLevels(),
+    watcherCounts(),
+    countWaiting(),
+  ]);
+
+  res.json({
+    stats: buildStats({ orders, products, stock, watchers, pendingReviews, days }),
+    days,
+    lowStockThreshold: lowStockThreshold(),
+  });
+});
+
+/**
+ * Skickar beskedet till dem som bevakat en slutsåld produkt. Bevakningarna
+ * plockas ut och tas bort i samma steg, så ingen får mejlet två gånger.
+ * Returnerar hur många som fick besked.
+ */
+async function announceRestock(
+  product: { id: string; name: string; slug: string },
+  before: number,
+  after: number,
+): Promise<number> {
+  // Bara övergången från tomt till påfyllt är ett besked värt att skicka.
+  if (before > 0 || after <= 0) return 0;
+
+  const watchers = await claimWatchers(product.id);
+  for (const watcher of watchers) {
+    await sendMail(
+      backInStock({
+        to: watcher.email,
+        productName: product.name,
+        slug: product.slug,
+        stock: after,
+      }),
+    );
+  }
+  if (watchers.length > 0) {
+    await record({
+      action: 'status',
+      entity: 'produkt',
+      entityId: product.id,
+      summary: `${product.name} i lager igen – ${watchers.length} fick besked`,
+    });
+  }
+  return watchers.length;
+}

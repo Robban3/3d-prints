@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
 import { formatDate, formatPrice } from './format.ts';
 import type { AnyOrder } from './types.ts';
+import { shopUrl } from './http.ts';
 
 /**
  * Utan SMTP-uppgifter skrivs breven till en katalog i stället för att skickas.
@@ -115,10 +116,39 @@ export function orderConfirmation(order: AnyOrder): Mail {
       `  ${order.customer.address}`,
       `  ${order.customer.postalCode} ${order.customer.city}`,
       '',
-      `Följ din order: https://formlabb.se/spara-order?id=${order.id}`,
+      `Följ din order: ${shopUrl()}/spara-order?id=${order.id}`,
       '',
       'Hälsningar,',
       'Formlabb, Tredje Långgatan 14, Göteborg',
+    ].join('\n'),
+  };
+}
+
+/** Beskedet till den som bevakat en slutsåld produkt. */
+export function backInStock(options: {
+  to: string;
+  productName: string;
+  slug: string;
+  stock: number;
+}): Mail {
+  const link = `${shopUrl()}/produkter/${options.slug}`;
+  return {
+    to: options.to,
+    subject: `${options.productName} finns i lager igen`,
+    text: [
+      'Hej!',
+      '',
+      `Du ville få besked när ${options.productName} fanns igen – nu står den i hyllan.`,
+      options.stock <= 3
+        ? `Det är bara ${options.stock} kvar, så det kan gå fort.`
+        : `Vi har ${options.stock} i lager.`,
+      '',
+      `Beställ här: ${link}`,
+      '',
+      'Det här är enda mejlet du får om den här bevakningen – vi hör inte av oss igen.',
+      '',
+      'Hälsningar',
+      'Formlabb',
     ].join('\n'),
   };
 }
@@ -150,7 +180,7 @@ export function statusUpdate(order: AnyOrder): Mail | undefined {
       message.body,
       '',
       `Ordernummer: ${order.id}`,
-      `Följ din order: https://formlabb.se/spara-order?id=${order.id}`,
+      `Följ din order: ${shopUrl()}/spara-order?id=${order.id}`,
       '',
       'Hälsningar,',
       'Formlabb',

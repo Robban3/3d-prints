@@ -16,6 +16,16 @@ import { release, reserve, stockLevels } from './stock.ts';
 import { orderConfirmation, sendMail } from './mailer.ts';
 import { rateLimit } from './rateLimit.ts';
 import {
+  ReviewError,
+  publicReview,
+  publishedFor,
+  submitReview,
+  summaries,
+  summaryFor,
+} from './reviews.ts';
+import type { ReviewSummary } from './reviews.ts';
+import { WatchError, watchStock } from './notify.ts';
+import {
   KlarnaError,
   createSession,
   isConfigured,
@@ -54,6 +64,18 @@ const sessionLimit = rateLimit({
   message: 'För många betalförsök. Vänta en stund och försök igen.',
 });
 
+const reviewLimit = rateLimit({
+  name: 'reviews',
+  windowMs: 60 * 60 * 1000,
+  max: Number(process.env.RATE_LIMIT_REVIEWS ?? 5),
+  message: 'Många omdömen från samma nätverk. Hör av dig om du vill skriva fler.',
+});
+const notifyLimit = rateLimit({
+  name: 'bevakningar',
+  windowMs: 60 * 60 * 1000,
+  max: Number(process.env.RATE_LIMIT_WATCHES ?? 10),
+  message: 'Många bevakningar från samma nätverk. Försök igen om en stund.',
+});
 const quoteLimit = rateLimit({
   name: 'quote',
   windowMs: 60 * 1000,
@@ -90,10 +112,14 @@ api.get('/products', async (req, res) => {
       [product.name, product.tagline, product.description].join(' ').toLowerCase().includes(search),
     );
   }
-  // Saldot är föränderligt och hämtas därför separat från katalogen.
+  // Saldot och betygen är föränderliga och hämtas därför separat från katalogen.
   const levels = await stockLevels();
+  const ratings = await summaries();
   res.json({
-    products: result.map((product) => ({ ...product, stock: levels.get(product.id) ?? 0 })),
+    products: result.map((product) => ({
+      ...withRating(product, ratings.get(product.id)),
+      stock: levels.get(product.id) ?? 0,
+    })),
     total: result.length,
   });
 });
@@ -114,11 +140,51 @@ api.get('/products/:slug', async (req, res) => {
     .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount);
   const related = [...sameCategory, ...fillers].slice(0, 5);
   const levels = await stockLevels();
-  const withStock = <T extends { id: string }>(entry: T) => ({
-    ...entry,
+  const ratings = await summaries();
+  const decorate = <T extends { id: string; rating: number; reviewCount: number }>(entry: T) => ({
+    ...withRating(entry, ratings.get(entry.id)),
     stock: levels.get(entry.id) ?? 0,
   });
-  res.json({ product: withStock(product), related: related.map(withStock) });
+  res.json({
+    product: decorate(product),
+    related: related.map(decorate),
+    reviews: await publishedFor(product.id),
+    reviewSummary: (await summaryFor(product.id)) ?? null,
+  });
+});
+
+/**
+ * Tar emot ett omdöme. Det publiceras inte direkt – någon i verkstaden får
+ * godkänna det först, annars kunde vem som helst sätta betyget på en produkt.
+ */
+api.post('/products/:slug/reviews', reviewLimit, async (req, res) => {
+  const product = await findProductBySlug(pathParam(req.params.slug));
+  if (!product || product.published === false) {
+    res.status(404).json({ error: 'Produkten hittades inte' });
+    return;
+  }
+
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+
+  try {
+    const review = await submitReview({
+      productId: product.id,
+      author: typeof body.author === 'string' ? body.author : '',
+      email,
+      rating: Number(body.rating),
+      title: typeof body.title === 'string' ? body.title : '',
+      body: typeof body.body === 'string' ? body.body : '',
+      verifiedPurchase: await hasBought(email, product.id),
+    });
+    res.status(201).json({ review: publicReview(review), status: review.status });
+  } catch (error) {
+    if (error instanceof ReviewError) {
+      res.status(400).json({ error: error.message, fields: error.fields });
+      return;
+    }
+    throw error;
+  }
 });
 
 api.post('/quote', quoteLimit, async (req, res) => {
@@ -132,6 +198,64 @@ api.post('/quote', quoteLimit, async (req, res) => {
   );
   res.json({ request, quote: await quoteFor(request), model: upload?.analysis });
 });
+
+/**
+ * Bevakning av en slutsåld produkt. Vi lovar ett enda mejl: det som skickas när
+ * saldot fyllts på. Därefter är bevakningen borta.
+ */
+api.post('/products/:slug/notify', notifyLimit, async (req, res) => {
+  const product = await findProductBySlug(pathParam(req.params.slug));
+  if (!product || product.published === false) {
+    res.status(404).json({ error: 'Produkten hittades inte' });
+    return;
+  }
+
+  const levels = await stockLevels();
+  if ((levels.get(product.id) ?? 0) > 0) {
+    res.status(409).json({
+      error: 'Produkten finns i lager just nu – du kan beställa den direkt.',
+    });
+    return;
+  }
+
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  try {
+    await watchStock(product.id, typeof body.email === 'string' ? body.email : '');
+    // Bevakningen i sig är inget vi behöver lämna ut.
+    res.status(201).json({ watching: true, productName: product.name });
+  } catch (error) {
+    if (error instanceof WatchError) {
+      res.status(400).json({ error: error.message, fields: error.fields });
+      return;
+    }
+    throw error;
+  }
+});
+
+/**
+ * Finns det riktiga omdömen är det de som gäller. Produkter utan omdömen
+ * behåller katalogens värden, så en ny produkt inte ser ut att ha fått noll i betyg.
+ */
+function withRating<T extends { rating: number; reviewCount: number }>(
+  product: T,
+  summary: ReviewSummary | undefined,
+): T {
+  if (!summary || summary.count === 0) return product;
+  return { ...product, rating: summary.average, reviewCount: summary.count };
+}
+
+/** Sant när mejladressen finns på en levererad eller pågående order med produkten. */
+async function hasBought(email: string, productId: string): Promise<boolean> {
+  if (!email) return false;
+  const orders = await listOrders();
+  return orders.some(
+    (order) =>
+      order.customer.email.toLowerCase() === email &&
+      order.status !== 'avbruten' &&
+      order.type === 'shop' &&
+      order.lines.some((line) => line.productId === productId),
+  );
+}
 
 /** Standardvärden när Klarna-nycklar saknas, så testläget kan räkna likadant. */
 const paymentLocale = () =>
