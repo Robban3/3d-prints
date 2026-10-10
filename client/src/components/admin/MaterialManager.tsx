@@ -7,11 +7,41 @@ import {
   saveMaterial,
   saveQuality,
 } from '../../lib/api';
-import type { AdminMaterial, Material, Quality } from '../../types';
+import type { AdminMaterial, Material, MaterialProperties, Quality } from '../../types';
 
 interface Props {
   token: string;
   onChanged: () => void;
+}
+
+/**
+ * Uppdaterar ett av egenskapsfälten. Tomma fält lämnas tomma, och när alla fyra
+ * tömts tas hela objektet bort – ett halvt ifyllt material avvisas av servern.
+ */
+function patchProperties(
+  material: Material,
+  setMaterial: (next: Material) => void,
+  key: keyof MaterialProperties,
+  raw: string | boolean,
+): void {
+  const current = material.properties;
+  const base: MaterialProperties = current ?? {
+    maxTempC: Number.NaN,
+    strength: Number.NaN,
+    flexibility: Number.NaN,
+    detail: Number.NaN,
+    outdoor: false,
+  };
+
+  const next: MaterialProperties =
+    key === 'outdoor'
+      ? { ...base, outdoor: raw === true }
+      : { ...base, [key]: raw === '' ? Number.NaN : Number(raw) };
+
+  // Alla fyra talen tomma och ingen utomhusmarkering: då finns inga egenskaper.
+  const numbers = [next.maxTempC, next.strength, next.flexibility, next.detail];
+  const empty = numbers.every((value) => Number.isNaN(value));
+  setMaterial({ ...material, properties: empty && !next.outdoor ? undefined : next });
 }
 
 const blankMaterial: Material = {
@@ -255,6 +285,89 @@ export function MaterialManager({ token, onChanged }: Props) {
             )}
           </div>
         </div>
+        <fieldset className="guide-fields">
+          <legend>Egenskaper för materialguiden</legend>
+          <p className="field-hint" style={{ marginTop: 0 }}>
+            Guiden väger de här mot vad kunden svarar. Fyll i alla fyra, eller lämna dem tomma – då
+            föreslås materialet inte av guiden men går att välja som vanligt.
+          </p>
+          <div className="grid-2">
+            <div className="field">
+              <label htmlFor="maxtemp">Tål upp till (°C)</label>
+              <input
+                id="maxtemp"
+                className="input"
+                type="number"
+                min={20}
+                max={400}
+                placeholder="55"
+                value={material.properties?.maxTempC ?? ''}
+                onChange={(event) =>
+                  patchProperties(material, setMaterial, 'maxTempC', event.target.value)
+                }
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="hallfasthet">Hållfasthet (1–5)</label>
+              <input
+                id="hallfasthet"
+                className="input"
+                type="number"
+                min={1}
+                max={5}
+                value={material.properties?.strength ?? ''}
+                onChange={(event) =>
+                  patchProperties(material, setMaterial, 'strength', event.target.value)
+                }
+              />
+              <span className="field-hint">1 är skört, 5 bär last.</span>
+            </div>
+            <div className="field">
+              <label htmlFor="bojlighet">Böjlighet (1–5)</label>
+              <input
+                id="bojlighet"
+                className="input"
+                type="number"
+                min={1}
+                max={5}
+                value={material.properties?.flexibility ?? ''}
+                onChange={(event) =>
+                  patchProperties(material, setMaterial, 'flexibility', event.target.value)
+                }
+              />
+              <span className="field-hint">1 är styvt, 5 är gummiliknande.</span>
+            </div>
+            <div className="field">
+              <label htmlFor="detaljniva">Detaljnivå (1–5)</label>
+              <input
+                id="detaljniva"
+                className="input"
+                type="number"
+                min={1}
+                max={5}
+                value={material.properties?.detail ?? ''}
+                onChange={(event) =>
+                  patchProperties(material, setMaterial, 'detail', event.target.value)
+                }
+              />
+            </div>
+          </div>
+          <label className="checkbox" style={{ marginTop: 12 }}>
+            <input
+              type="checkbox"
+              checked={material.properties?.outdoor ?? false}
+              onChange={(event) =>
+                patchProperties(material, setMaterial, 'outdoor', event.target.checked)
+              }
+            />
+            <span>
+              <strong>Tål att stå ute</strong>
+              <span>Klarar fukt och UV över tid. ABS och resin gör det inte.</span>
+            </span>
+          </label>
+          {errors.properties && <span className="error">{errors.properties}</span>}
+        </fieldset>
+
         <div className="field" style={{ marginTop: 14 }}>
           <label htmlFor="materialbeskrivning">Beskrivning</label>
           <input

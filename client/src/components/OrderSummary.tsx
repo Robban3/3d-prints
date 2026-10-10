@@ -1,4 +1,5 @@
 import { ModelPanel } from './ModelPanel';
+import { PrintProgressBar } from './PrintProgressBar';
 import { ReorderButton } from './ReorderButton';
 import { formatBytes, formatDate, formatHours, formatPrice } from '../lib/format';
 import { statusLabels } from '../lib/status';
@@ -18,6 +19,8 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
       <p className="dim" style={{ fontSize: '0.86rem', marginTop: 8 }}>
         Lagd {formatDate(order.createdAt)}
       </p>
+
+      <PrintProgressBar order={order} />
 
       {order.type === 'shop' ? (
         <div style={{ marginTop: 18 }}>

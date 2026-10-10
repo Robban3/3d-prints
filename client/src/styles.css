@@ -2644,6 +2644,69 @@ details.faq p {
   justify-items: start;
 }
 
+/* ---------- Printstatus och materialguiden ---------- */
+
+.print-progress {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+}
+.print-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+  margin-bottom: 9px;
+}
+.print-progress-head svg {
+  color: var(--accent);
+  vertical-align: -2px;
+}
+.print-progress-percent {
+  font-variant-numeric: tabular-nums;
+}
+.print-progress .dim {
+  margin: 9px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.material-guide .option-cards {
+  /* Tre svar i bredd, men de får brytas på en liten skärm. */
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+.guide-alternatives {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+.guide-alternative {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: start;
+  gap: 4px 10px;
+  align-items: baseline;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  padding: 11px 13px;
+  font-size: 0.88rem;
+}
+.guide-alternative .dim {
+  font-size: 0.8rem;
+}
+.guide-alternative-text {
+  grid-column: 1 / -1;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

@@ -9,9 +9,28 @@ export interface Material {
   priceFactor: number;
   /** Densitet i g/cm³, används för att räkna fram vikten. Saknas = PLA:s 1.24. */
   densityGramsPerCm3?: number;
+  /**
+   * Egenskaperna materialguiden väger mot kundens behov. Saknas de kan
+   * materialet inte rekommenderas av guiden, men går att välja som vanligt.
+   */
+  properties?: MaterialProperties;
   description: string;
   /** Egenskaper som visas i UI:t. */
   traits: string[];
+}
+
+/** Mätbara egenskaper, satta i panelen. Skalorna går från 1 till 5. */
+export interface MaterialProperties {
+  /** Högsta användningstemperatur i grader Celsius. */
+  maxTempC: number;
+  /** Hållfasthet: 1 är skört, 5 bär last. */
+  strength: number;
+  /** Böjlighet: 1 är styvt, 5 är gummiliknande. */
+  flexibility: number;
+  /** Detaljnivå: 1 är grovt, 5 återger minsta detalj. */
+  detail: number;
+  /** Tål fukt och UV tillräckligt för att stå ute. */
+  outdoor: boolean;
 }
 
 export interface ProductVariantOption {
@@ -127,6 +146,11 @@ export interface OrderDiscount {
 export interface Order {
   id: string;
   type: 'shop';
+  /**
+   * Beräknad printtid för hela ordern, summerad ur produkternas printtider när
+   * ordern läggs. Används för att visa hur långt jobbet kommit.
+   */
+  productionHours?: number;
   createdAt: string;
   status: OrderStatus;
   customer: CustomerDetails;

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
@@ -9,6 +9,7 @@ import { UploadDropzone } from '../src/components/UploadDropzone';
 import { ModelFacts } from '../src/components/ModelFacts';
 import { DiscountField } from '../src/components/DiscountField';
 import { ModelPanel } from '../src/components/ModelPanel';
+import { PrintProgressBar } from '../src/components/PrintProgressBar';
 import { QuoteSummary } from '../src/components/QuoteSummary';
 import { ShippingPicker } from '../src/components/ShippingPicker';
 import { ReviewSection } from '../src/components/ReviewSection';
@@ -696,5 +697,73 @@ describe('QuoteSummary', () => {
     render(<QuoteSummary quote={quote} quantity={1} />);
     expect(screen.getByText(/48 g/)).toBeInTheDocument();
     expect(screen.getByText(/4 arbetsdagar/)).toBeInTheDocument();
+  });
+});
+
+describe('PrintProgressBar', () => {
+  const started = '2026-10-10T08:00:00.000Z';
+
+  function printing(over: Partial<AnyOrder> = {}): AnyOrder {
+    return {
+      ...(order as AnyOrder),
+      status: 'i_produktion',
+      productionHours: 10,
+      history: [
+        { status: 'mottagen', at: '2026-10-09T10:00:00.000Z' },
+        { status: 'i_produktion', at: started },
+      ],
+      ...over,
+    } as AnyOrder;
+  }
+
+  function at(hours: number) {
+    vi.setSystemTime(new Date(new Date(started).getTime() + hours * 3_600_000));
+  }
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('visar andelen klar och tiden kvar', () => {
+    vi.useFakeTimers();
+    at(2.5);
+    render(<PrintProgressBar order={printing()} />);
+    expect(screen.getByText('25 %')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '25');
+    expect(screen.getByText(/kvar av/)).toBeInTheDocument();
+  });
+
+  it('säger till när jobbet dragit över tiden', () => {
+    vi.useFakeTimers();
+    at(14);
+    render(<PrintProgressBar order={printing()} />);
+    expect(screen.getByText(/längre tid än/)).toBeInTheDocument();
+  });
+
+  it('visas inte för en order som inte börjat printas', () => {
+    const { container } = render(<PrintProgressBar order={printing({ status: 'mottagen' })} />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('visas inte för ett jobb som är klart', () => {
+    const { container } = render(
+      <PrintProgressBar
+        order={printing({
+          status: 'skickad',
+          history: [
+            { status: 'i_produktion', at: started },
+            { status: 'skickad', at: '2026-10-10T18:00:00.000Z' },
+          ],
+        })}
+      />,
+    );
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('visas inte när printtiden saknas', () => {
+    const { container } = render(
+      <PrintProgressBar order={printing({ productionHours: undefined })} />,
+    );
+    expect(container.firstChild).toBeNull();
   });
 });
