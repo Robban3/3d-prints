@@ -14,6 +14,19 @@ const RUSH_FACTOR = 0.4;
 /** Ett normalstort objekt printar ungefär så här många cm³ per timme. */
 const THROUGHPUT_CM3_PER_HOUR = 16;
 const MIN_ORDER_VALUE = 149;
+/** Densitet för material som saknar eget värde – samma som PLA. */
+export const DEFAULT_DENSITY_G_PER_CM3 = 1.24;
+/**
+ * Skalet kostar alltid material medan fyllningen skalar med fyllnadsgraden.
+ * Samma andel används för pris, tid och vikt, så siffrorna hänger ihop.
+ */
+const SHELL_SHARE = 0.35;
+
+/** Hur mycket plast som faktiskt går ut, givet fyllnadsgraden. */
+export function effectiveVolumeCm3(volumeCm3: number, infillPercent: number): number {
+  const ratio = Math.min(100, Math.max(0, infillPercent)) / 100;
+  return volumeCm3 * (SHELL_SHARE + (1 - SHELL_SHARE) * ratio);
+}
 
 export const QUOTE_LIMITS = {
   volumeCm3: { min: 1, max: 8000 },
@@ -50,11 +63,7 @@ export function calculateQuote(
   quality: QualityLevel,
 ): QuoteBreakdown {
   const quantity = Math.max(1, Math.round(request.quantity));
-  const infillRatio = request.infill / 100;
-
-  // Skalet kostar alltid material, fyllningen skalar med fyllnadsgraden.
-  const shellShare = 0.35;
-  const effectiveVolume = request.volumeCm3 * (shellShare + (1 - shellShare) * infillRatio);
+  const effectiveVolume = effectiveVolumeCm3(request.volumeCm3, request.infill);
 
   const materialCost = effectiveVolume * MATERIAL_PRICE_PER_CM3 * material.priceFactor;
   const printHoursPerUnit = (effectiveVolume / THROUGHPUT_CM3_PER_HOUR) * quality.timeFactor;
@@ -87,6 +96,9 @@ export function calculateQuote(
     total: Math.round(total),
     estimatedPrintHours: round(estimatedPrintHours),
     estimatedDeliveryDays,
+    estimatedWeightGrams: Math.round(
+      effectiveVolume * (material.densityGramsPerCm3 ?? DEFAULT_DENSITY_G_PER_CM3) * quantity,
+    ),
   };
 }
 

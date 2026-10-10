@@ -2,8 +2,9 @@ import { Router } from 'express';
 import type { Request, RequestHandler, Response } from 'express';
 import multer from 'multer';
 import { createReadStream } from 'node:fs';
-import { rm } from 'node:fs/promises';
+import { readFile, rm } from 'node:fs/promises';
 import { pathParam } from './http.ts';
+import { ModelParseError, analyzeModel, isAnalyzableExtension } from './modelAnalysis.ts';
 import { storage as fileStore } from './storage.ts';
 import {
   ALLOWED_EXTENSIONS,
@@ -27,6 +28,7 @@ import {
   uploadExists,
   writeMeta,
 } from './uploads.ts';
+import type { UploadMeta } from './uploads.ts';
 
 export const uploads = Router();
 
@@ -79,6 +81,29 @@ function clientKey(req: Request): string {
 }
 
 /**
+ * Mäter upp modellen så att priset kan räknas på filens riktiga volym i stället
+ * för på en siffra kunden gissat. Uppmätningen är en bonus, inte ett krav: en
+ * fil vi inte kan läsa – ett CAD-format eller en exotisk export – ska fortfarande
+ * gå att beställa, och då får verkstaden sätta volymen manuellt.
+ */
+async function measure(
+  localPath: string,
+  extension: string,
+): Promise<Pick<UploadMeta, 'analysis' | 'analysisError'>> {
+  if (!isAnalyzableExtension(extension)) return {};
+  try {
+    return { analysis: analyzeModel(await readFile(localPath), extension) };
+  } catch (error) {
+    return {
+      analysisError:
+        error instanceof ModelParseError
+          ? error.message
+          : 'Modellen gick inte att mäta upp automatiskt. Vi tittar på den för hand.',
+    };
+  }
+}
+
+/**
  * Multers fel ska bli begripliga meddelanden i formuläret i stället för en 500:a,
  * och en halvskriven fil får aldrig ligga kvar på disken.
  */
@@ -111,7 +136,7 @@ const handleUpload: RequestHandler = (req, res, next) => {
   });
 };
 
-uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
+uploads.post('/uploads', handleUpload, async (req: Request, res: Response) => {
   const file = req.file;
   const id = (req as Request & { uploadId?: string }).uploadId;
   if (!file || !id) {
@@ -120,30 +145,31 @@ uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
   }
 
   const extension = extensionOf(file.originalname);
-  fileStore()
-    .put(storedFileName(id, extension), file.path, 'application/octet-stream')
-    .then(() =>
-      writeMeta({
-        id,
-        originalName: file.originalname.slice(0, 200),
-        extension,
-        size: file.size,
-        createdAt: new Date().toISOString(),
-        claimedBy: null,
-      }),
-    )
-    .then((meta) => {
-      recordUpload(clientKey(req), meta.size);
-      res.status(201).json({
-        upload: {
-          id: meta.id,
-          fileName: meta.originalName,
-          size: meta.size,
-          url: `/api/uploads/${meta.id}`,
-        },
-      });
-    })
-    .catch(next);
+  // Uppmätningen sker före put: med objektlagring finns originalet inte kvar lokalt efteråt.
+  const measured = await measure(file.path, extension);
+  await fileStore().put(storedFileName(id, extension), file.path, 'application/octet-stream');
+  const meta = await writeMeta({
+    id,
+    kind: 'model',
+    originalName: file.originalname.slice(0, 200),
+    extension,
+    size: file.size,
+    createdAt: new Date().toISOString(),
+    claimedBy: null,
+    ...measured,
+  });
+
+  recordUpload(clientKey(req), meta.size);
+  res.status(201).json({
+    upload: {
+      id: meta.id,
+      fileName: meta.originalName,
+      size: meta.size,
+      url: `/api/uploads/${meta.id}`,
+      analysis: meta.analysis,
+      analysisError: meta.analysisError,
+    },
+  });
 });
 
 /**

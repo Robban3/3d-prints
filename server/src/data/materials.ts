@@ -5,6 +5,7 @@ export const materials: Material[] = [
     id: 'pla',
     name: 'PLA',
     priceFactor: 1,
+    densityGramsPerCm3: 1.24,
     description:
       'Vårt standardmaterial. Styvt, måttstabilt och tillverkat av förnybar råvara. Perfekt för inredning och dekor.',
     traits: ['Biobaserad', 'Hög detaljnivå', 'Tål upp till 55 °C'],
@@ -13,6 +14,7 @@ export const materials: Material[] = [
     id: 'petg',
     name: 'PETG',
     priceFactor: 1.25,
+    densityGramsPerCm3: 1.27,
     description:
       'Segare än PLA och tål både fukt och UV. Ett bra val för prylar som används dagligen eller står utomhus.',
     traits: ['Slagtålig', 'Fukttålig', 'Tål upp till 75 °C'],
@@ -21,6 +23,7 @@ export const materials: Material[] = [
     id: 'abs',
     name: 'ABS',
     priceFactor: 1.35,
+    densityGramsPerCm3: 1.04,
     description:
       'Klassisk teknisk plast med hög värmetålighet. Kan efterbearbetas med acetonpolering för blank yta.',
     traits: ['Värmetålig', 'Slipbar', 'Tål upp till 95 °C'],
@@ -29,6 +32,7 @@ export const materials: Material[] = [
     id: 'tpu',
     name: 'TPU (flexibel)',
     priceFactor: 1.6,
+    densityGramsPerCm3: 1.21,
     description:
       'Gummiliknande material med shore 95A. Används för packningar, greppytor och stötdämpande detaljer.',
     traits: ['Flexibel', 'Nötningstålig', 'Halkfri yta'],
@@ -37,6 +41,7 @@ export const materials: Material[] = [
     id: 'resin',
     name: 'Resin (SLA)',
     priceFactor: 2.1,
+    densityGramsPerCm3: 1.15,
     description:
       'Fotopolymer för miniatyrer och prototyper där varje detalj syns. Lagerhöjd ned till 0,025 mm.',
     traits: ['Extrem detaljnivå', 'Slät yta', 'Efterhärdas i UV'],

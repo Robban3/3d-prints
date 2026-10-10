@@ -5,8 +5,11 @@ import {
   parseCustomer,
   parseOrderLines,
   parseQuoteRequest,
+  withMeasuredVolume,
 } from '../src/validation.ts';
 import { products } from '../src/data/products.ts';
+import { analyzeModel } from '../src/modelAnalysis.ts';
+import { binaryStl, box } from './support/mesh.ts';
 
 const validCustomer = {
   name: 'Anna Andersson',
@@ -116,5 +119,49 @@ describe('parseQuoteRequest', () => {
     await assert.rejects(() => parseQuoteRequest({ ...valid, volumeCm3: 99999 }), ValidationError);
     await assert.rejects(() => parseQuoteRequest({ ...valid, infill: 300 }), ValidationError);
     await assert.rejects(() => parseQuoteRequest({ ...valid, material: 'guld' }), ValidationError);
+  });
+});
+
+describe('withMeasuredVolume', () => {
+  const request = {
+    material: 'pla',
+    quality: 'standard',
+    volumeCm3: 40,
+    infill: 20,
+    quantity: 2,
+    rush: false,
+    postProcessing: false,
+  };
+
+  it('lämnar förfrågan orörd när ingen fil är uppmätt', () => {
+    assert.deepEqual(withMeasuredVolume(request, undefined), request);
+  });
+
+  it('låter filens volym gå före den som skickats in', () => {
+    // En kub på 30 mm är 27 cm³, oavsett vad anropet påstår.
+    const analysis = analyzeModel(binaryStl(box(30, 30, 30)), '.stl');
+    const result = withMeasuredVolume({ ...request, volumeCm3: 2 }, analysis);
+    assert.equal(result.volumeCm3, 27);
+    // Resten av valen är kundens och ska inte röras.
+    assert.equal(result.infill, 20);
+    assert.equal(result.quantity, 2);
+    assert.equal(result.material, 'pla');
+  });
+
+  it('höjer en mycket liten modell till minimivolymen', () => {
+    const analysis = analyzeModel(binaryStl(box(4, 4, 4)), '.stl');
+    assert.equal(analysis.volumeCm3, 0.064);
+    assert.equal(withMeasuredVolume(request, analysis).volumeCm3, 1);
+  });
+
+  it('avvisar en modell som är större än vad vi prissätter automatiskt', () => {
+    // 300 mm kub = 27 000 cm³, långt över taket på 8 000.
+    const analysis = analyzeModel(binaryStl(box(300, 300, 300)), '.stl');
+    assert.throws(() => withMeasuredVolume(request, analysis), (error: unknown) => {
+      assert.ok(error instanceof ValidationError);
+      assert.match(error.fields.fileId!, /27000 cm³/);
+      assert.match(error.fields.fileId!, /för hand/);
+      return true;
+    });
   });
 });

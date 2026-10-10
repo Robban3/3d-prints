@@ -1,3 +1,5 @@
+import type { ModelAnalysis } from './modelAnalysis.ts';
+
 export type MaterialId = string;
 
 export interface Material {
@@ -5,6 +7,8 @@ export interface Material {
   name: string;
   /** Prisfaktor jämfört med PLA (1.0). */
   priceFactor: number;
+  /** Densitet i g/cm³, används för att räkna fram vikten. Saknas = PLA:s 1.24. */
+  densityGramsPerCm3?: number;
   description: string;
   /** Egenskaper som visas i UI:t. */
   traits: string[];
@@ -161,6 +165,8 @@ export interface QuoteBreakdown {
   total: number;
   estimatedPrintHours: number;
   estimatedDeliveryDays: number;
+  /** Beräknad vikt för hela jobbet, utifrån materialets densitet. */
+  estimatedWeightGrams: number;
 }
 
 export interface CustomOrder {
@@ -173,6 +179,8 @@ export interface CustomOrder {
   projectName: string;
   /** Id för den uppladdade modellfilen, om kunden bifogade en. */
   fileId?: string;
+  /** Uppmätt geometri från filen. Volymen här är den priset räknats på. */
+  model?: ModelAnalysis;
   fileName?: string;
   fileUrl?: string;
   fileSize?: number;

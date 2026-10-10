@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
 import { storage } from './storage.ts';
+import type { ModelAnalysis } from './modelAnalysis.ts';
 
 /** Format vi kan slica direkt eller konvertera i verkstaden. */
 export const ALLOWED_EXTENSIONS = ['.stl', '.obj', '.3mf', '.step', '.stp', '.f3d'] as const;
@@ -46,6 +47,10 @@ export interface UploadMeta {
   createdAt: string;
   /** Ordernumret som filen hör till, eller null så länge den är oanvänd. */
   claimedBy: string | null;
+  /** Uppmätt geometri, när formatet gick att läsa. Styr priset på kundunika jobb. */
+  analysis?: ModelAnalysis;
+  /** Varför uppmätningen inte gick att göra, när den misslyckades. */
+  analysisError?: string;
 }
 
 export function uploadDir(): string {
