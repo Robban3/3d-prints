@@ -44,5 +44,6 @@ export function orderLines(items: CartItem[]) {
     quantity: item.quantity,
     color: item.color,
     size: item.size,
+    ...(item.parameters ? { parameters: item.parameters } : {}),
   }));
 }

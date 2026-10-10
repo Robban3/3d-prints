@@ -25,13 +25,17 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
       {order.type === 'shop' ? (
         <div style={{ marginTop: 18 }}>
           {order.lines.map((line) => (
-            <div className="summary-row" key={`${line.productId}-${line.color}-${line.size ?? ''}`}>
+            <div
+              className="summary-row"
+              key={`${line.productId}-${line.color}-${line.size ?? ''}-${line.parameterText ?? ''}`}
+            >
               <span>
                 {line.quantity} × {line.name}
                 <br />
                 <span className="dim" style={{ fontSize: '0.82rem' }}>
                   {line.color}
                   {line.size ? ` · ${line.size}` : ''}
+                  {line.parameterText ? ` · ${line.parameterText}` : ''}
                 </span>
               </span>
               <span>{formatPrice(line.unitPrice * line.quantity)}</span>

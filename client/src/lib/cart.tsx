@@ -12,6 +12,9 @@ export interface CartItem {
   color: string;
   size?: string;
   sizeName?: string;
+  /** Kundens egna mått. Servern räknar om priset på dem när ordern läggs. */
+  parameters?: Record<string, number>;
+  parameterText?: string;
   art: Product['art'];
   image?: Product['image'];
 }
@@ -71,6 +74,17 @@ function readChoices(): Choices {
   }
 }
 
+/** Två hyllor i olika bredd ska bli två rader, inte en rad med antal två. */
+function parameterKey(parameters: Record<string, number> | undefined): string {
+  if (!parameters) return '-';
+  const entries = Object.entries(parameters);
+  if (entries.length === 0) return '-';
+  return entries
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([id, value]) => `${id}=${value}`)
+    .join(',');
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(readStorage);
   const [choices, setChoices] = useState<Choices>(readChoices);
@@ -92,8 +106,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [choices]);
 
   const add = useCallback((item: Omit<CartItem, 'key'>) => {
-    // Samma produkt i samma färg och storlek slås ihop till en rad.
-    const key = [item.productId, item.color, item.size ?? '-'].join('|');
+    // Samma produkt i samma färg, storlek och mått slås ihop till en rad.
+    const key = [item.productId, item.color, item.size ?? '-', parameterKey(item.parameters)].join(
+      '|',
+    );
     setItems((current) => {
       const existing = current.find((entry) => entry.key === key);
       if (existing) {

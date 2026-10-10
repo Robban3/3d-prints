@@ -1056,6 +1056,19 @@ textarea {
   gap: 10px;
   align-items: center;
 }
+/* Ett mått kunden får ställa in: många små fält, så de får ett eget kort. */
+.parameter-row {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px;
+  display: grid;
+  gap: 10px;
+}
+.parameter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 10px;
+}
 .chip-remove {
   border: none;
   background: transparent;

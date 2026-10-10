@@ -87,8 +87,13 @@ export function OrderManager({ token, onUnauthorized }: Props) {
                 <ul className="tick-list" style={{ marginTop: 8 }}>
                   {order.type === 'shop' ? (
                     order.lines.map((line) => (
-                      <li key={`${line.productId}-${line.color}-${line.size ?? ''}`}>
+                      <li
+                        key={`${line.productId}-${line.color}-${line.size ?? ''}-${
+                          line.parameterText ?? ''
+                        }`}
+                      >
                         {line.quantity} × {line.name}
+                        {line.parameterText ? ` · ${line.parameterText}` : ''}
                       </li>
                     ))
                   ) : (

@@ -5,11 +5,21 @@ import { ProductCard } from '../components/ProductCard';
 import { Rating } from '../components/Rating';
 import { ReviewSection } from '../components/ReviewSection';
 import { StockWatchForm } from '../components/StockWatchForm';
+import { ParameterControls } from '../components/ParameterControls';
 import { fetchProduct } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import { useCart } from '../lib/cart';
 import { productJsonLd, useDocumentMeta, withAggregateRating } from '../lib/meta';
 import { formatHours, formatPrice } from '../lib/format';
+import {
+  defaultValues,
+  describeValues,
+  dimensionsFor,
+  isParametric,
+  parameterPrice,
+  printTimeFor,
+} from '../lib/parameters';
+import type { ParameterValues } from '../lib/parameters';
 
 export function ProductPage() {
   const { slug = '' } = useParams();
@@ -22,6 +32,7 @@ export function ProductPage() {
   const [sizeId, setSizeId] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [parameters, setParameters] = useState<ParameterValues>({});
 
   useDocumentMeta({
     title: product ? `${product.name} – ${product.tagline}` : 'Produkt',
@@ -37,6 +48,7 @@ export function ProductPage() {
     if (!product) return;
     setColor(product.colors[0] ?? '');
     setSizeId(product.sizes?.[0]?.id ?? '');
+    setParameters(defaultValues(product.parameters));
     setQuantity(1);
     setAdded(false);
   }, [product]);
@@ -60,7 +72,12 @@ export function ProductPage() {
   }
 
   const size = product.sizes?.find((entry) => entry.id === sizeId);
-  const unitPrice = product.price + (size?.priceDelta ?? 0);
+  const parametric = isParametric(product);
+  const unitPrice =
+    product.price + (size?.priceDelta ?? 0) + parameterPrice(product.parameters, parameters);
+  // Måtten och printtiden i specifikationen följer reglagen.
+  const dimensions = dimensionsFor(product, parameters);
+  const printTime = printTimeFor(product, parameters);
   // Slutsålt syns i knappraden: det går inte att lägga i varukorgen, men man
   // kan be om besked när den finns igen.
   const soldOut = product.stock <= 0;
@@ -76,6 +93,9 @@ export function ProductPage() {
       color,
       size: size?.id,
       sizeName: size?.name,
+      ...(parametric
+        ? { parameters, parameterText: describeValues(product.parameters, parameters) }
+        : {}),
       art: product.art,
       image: product.image,
     });
@@ -111,8 +131,7 @@ export function ProductPage() {
                   <tr>
                     <th>Mått (B×D×H)</th>
                     <td>
-                      {product.dimensions.width} × {product.dimensions.depth} ×{' '}
-                      {product.dimensions.height} mm
+                      {dimensions.width} × {dimensions.depth} × {dimensions.height} mm
                     </td>
                   </tr>
                   <tr>
@@ -121,7 +140,7 @@ export function ProductPage() {
                   </tr>
                   <tr>
                     <th>Printtid</th>
-                    <td>{formatHours(product.printTimeHours)}</td>
+                    <td>{formatHours(printTime)}</td>
                   </tr>
                   <tr>
                     <th>Lagerstatus</th>
@@ -197,6 +216,19 @@ export function ProductPage() {
                           </span>
                         </button>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {parametric && (
+                  <div>
+                    <span className="field-label">Dina mått</span>
+                    <div style={{ marginTop: 10 }}>
+                      <ParameterControls
+                        product={product}
+                        values={parameters}
+                        onChange={setParameters}
+                      />
                     </div>
                   </div>
                 )}

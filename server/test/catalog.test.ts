@@ -285,6 +285,88 @@ describe('validering av produktindata', () => {
     );
   });
 
+  it('tar emot valbara mått och ger dem id ur namnet', () => {
+    const parsed = parseProductInput(
+      validInput({
+        parameters: [
+          {
+            name: 'Bredd',
+            unit: 'mm',
+            min: 200,
+            max: 600,
+            step: 20,
+            default: 360,
+            pricePerUnit: 1.234,
+            axis: 'width',
+            description: 'Mät innermåttet.',
+          },
+        ],
+      }),
+      options,
+    );
+    assert.equal(parsed.parameters?.[0]?.id, 'bredd');
+    assert.equal(parsed.parameters?.[0]?.axis, 'width');
+    // Priset per enhet rundas till ören, inte till hela kronor.
+    assert.equal(parsed.parameters?.[0]?.pricePerUnit, 1.23);
+    assert.equal(parsed.parameters?.[0]?.description, 'Mät innermåttet.');
+  });
+
+  it('utelämnar parameterlistan när produkten inte har några mått', () => {
+    assert.equal(parseProductInput(validInput(), options).parameters, undefined);
+    assert.equal(parseProductInput(validInput({ parameters: [] }), options).parameters, undefined);
+  });
+
+  it('avvisar mått som inte går att dra i', () => {
+    const base = {
+      name: 'Bredd',
+      unit: 'mm',
+      min: 200,
+      max: 600,
+      step: 20,
+      default: 360,
+      pricePerUnit: 1,
+    };
+    for (const [patch, field] of [
+      [{ name: '' }, 'parameters.0.name'],
+      [{ min: 600, max: 200 }, 'parameters.0.max'],
+      [{ step: 0 }, 'parameters.0.step'],
+      // Ett steg som är större än spannet ger ett reglage med ett enda läge.
+      [{ step: 1000 }, 'parameters.0.step'],
+      [{ default: 50 }, 'parameters.0.default'],
+      [{ axis: 'diagonal' }, 'parameters.0.axis'],
+      [{ min: 'bred' }, 'parameters.0'],
+    ] as const) {
+      try {
+        parseProductInput(validInput({ parameters: [{ ...base, ...patch }] }), options);
+        assert.fail(`förväntade fel för ${field}`);
+      } catch (error) {
+        assert.ok(error instanceof ProductInputError);
+        assert.ok(error.fields[field], `saknar fel för ${field}: ${JSON.stringify(error.fields)}`);
+      }
+    }
+  });
+
+  it('avvisar två mått med samma id och en lista som inte är en lista', () => {
+    const base = { unit: 'mm', min: 1, max: 10, step: 1, default: 5, pricePerUnit: 1 };
+    assert.throws(
+      () =>
+        parseProductInput(
+          validInput({
+            parameters: [
+              { ...base, name: 'Bredd' },
+              { ...base, name: 'Bredd' },
+            ],
+          }),
+          options,
+        ),
+      ProductInputError,
+    );
+    assert.throws(
+      () => parseProductInput(validInput({ parameters: 'bredd' }), options),
+      ProductInputError,
+    );
+  });
+
   it('städar bort tomma färger och höjdpunkter', () => {
     const parsed = parseProductInput(
       validInput({ colors: ['Svart', '  ', ''], highlights: ['Bra', ''] }),

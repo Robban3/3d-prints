@@ -5,6 +5,7 @@ import type {
   Material,
   MaterialProperties,
   Product,
+  ProductParameter,
   ProductVariantOption,
   QualityLevel,
 } from './types.ts';
@@ -236,6 +237,8 @@ export function parseProductInput(
     }
   }
 
+  const parameters = parseParameters(raw.parameters, errors);
+
   const art = asRecord(raw.art);
   const shape = text(art.shape);
   const tone = text(art.tone);
@@ -262,6 +265,7 @@ export function parseProductInput(
     weightGrams: Math.round(weightGrams),
     colors,
     ...(sizes ? { sizes } : {}),
+    ...(parameters.length > 0 ? { parameters } : {}),
     highlights,
     stock,
     rating: Math.round(rating * 10) / 10,
@@ -418,4 +422,83 @@ function parseMaterialProperties(
     detail: scales.detail,
     outdoor: raw.outdoor === true,
   };
+}
+
+/**
+ * Mått kunden får välja. Ett halvt ifyllt mått är värre än inget: priset skulle
+ * räknas mot ett grundvärde som inte finns, så varje fält kontrolleras.
+ */
+function parseParameters(input: unknown, errors: Record<string, string>): ProductParameter[] {
+  if (input === undefined || input === null) return [];
+  if (!Array.isArray(input)) {
+    errors.parameters = 'Måtten kunde inte tolkas.';
+    return [];
+  }
+
+  const parameters: ProductParameter[] = [];
+  const seen = new Set<string>();
+
+  for (const [index, entry] of input.entries()) {
+    const raw = asRecord(entry);
+    const name = text(raw.name);
+    if (name.length === 0) {
+      errors[`parameters.${index}.name`] = 'Måttet behöver ett namn.';
+      continue;
+    }
+
+    const id = text(raw.id) || slugify(name);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
+      errors[`parameters.${index}.id`] = 'Id:t får bara innehålla små bokstäver och bindestreck.';
+      continue;
+    }
+    if (seen.has(id)) {
+      errors[`parameters.${index}.id`] = 'Två mått kan inte ha samma id.';
+      continue;
+    }
+
+    const min = num(raw.min);
+    const max = num(raw.max);
+    const step = num(raw.step);
+    const fallback = num(raw.default);
+    const pricePerUnit = num(raw.pricePerUnit);
+
+    if (![min, max, step, fallback, pricePerUnit].every(Number.isFinite)) {
+      errors[`parameters.${index}`] = 'Fyll i minimum, maximum, steg, grundvärde och pris.';
+      continue;
+    }
+    if (min >= max) {
+      errors[`parameters.${index}.max`] = 'Maximum måste vara större än minimum.';
+      continue;
+    }
+    if (!(step > 0) || step > max - min) {
+      errors[`parameters.${index}.step`] = 'Steget måste vara större än noll och rymmas i spannet.';
+      continue;
+    }
+    if (fallback < min || fallback > max) {
+      errors[`parameters.${index}.default`] = 'Grundvärdet måste ligga inom spannet.';
+      continue;
+    }
+
+    const axis = text(raw.axis);
+    if (axis && !['width', 'depth', 'height'].includes(axis)) {
+      errors[`parameters.${index}.axis`] = 'Axeln måste vara width, depth eller height.';
+      continue;
+    }
+
+    seen.add(id);
+    parameters.push({
+      id,
+      name,
+      unit: text(raw.unit) || 'mm',
+      min,
+      max,
+      step,
+      default: fallback,
+      pricePerUnit: Math.round(pricePerUnit * 100) / 100,
+      ...(axis ? { axis: axis as ProductParameter['axis'] } : {}),
+      ...(text(raw.description) ? { description: text(raw.description) } : {}),
+    });
+  }
+
+  return parameters;
 }
