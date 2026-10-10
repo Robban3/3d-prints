@@ -147,8 +147,8 @@ export function MaterialManager({ token, onChanged }: Props) {
     <>
       <h2>Material</h2>
       <p className="muted" style={{ fontSize: '0.9rem' }}>
-        Prisfaktorn jämförs med PLA som ligger på 1,0. En ändring slår igenom direkt på priset
-        för kundunika printjobb.
+        Prisfaktorn jämförs med PLA som ligger på 1,0. En ändring slår igenom direkt på priset för
+        kundunika printjobb.
       </p>
       {message && <p className="notice notice-success">{message}</p>}
       {error && <p className="notice notice-error">{error}</p>}
@@ -201,7 +201,7 @@ export function MaterialManager({ token, onChanged }: Props) {
         }}
       >
         <h3>{materialIsNew ? 'Nytt material' : `Redigera ${material.name || material.id}`}</h3>
-        <div className="grid-2">
+        <div className="grid-3">
           <div className="field">
             <label htmlFor="materialnamn">Namn</label>
             <input
@@ -226,6 +226,33 @@ export function MaterialManager({ token, onChanged }: Props) {
               }
             />
             {errors.priceFactor && <span className="error">{errors.priceFactor}</span>}
+          </div>
+          <div className="field">
+            <label htmlFor="densitet">Densitet (g/cm³)</label>
+            <input
+              id="densitet"
+              className="input"
+              type="number"
+              step="0.01"
+              min="0.5"
+              max="5"
+              placeholder="1,24"
+              value={material.densityGramsPerCm3 ?? ''}
+              onChange={(event) =>
+                setMaterial({
+                  ...material,
+                  // Tomt fält betyder "använd standarden", inte noll.
+                  densityGramsPerCm3:
+                    event.target.value === '' ? undefined : Number(event.target.value),
+                })
+              }
+            />
+            <span className="field-hint">
+              Styr vikten i offerten. Lämnas tomt räknar vi som PLA, 1,24 g/cm³.
+            </span>
+            {errors.densityGramsPerCm3 && (
+              <span className="error">{errors.densityGramsPerCm3}</span>
+            )}
           </div>
         </div>
         <div className="field" style={{ marginTop: 14 }}>
@@ -278,8 +305,8 @@ export function MaterialManager({ token, onChanged }: Props) {
 
       <h2 style={{ marginTop: 34 }}>Utskriftskvalitet</h2>
       <p className="muted" style={{ fontSize: '0.9rem' }}>
-        Tidsfaktorn säger hur mycket längre jobbet tar jämfört med standard, och styr maskintiden
-        i offerten.
+        Tidsfaktorn säger hur mycket längre jobbet tar jämfört med standard, och styr maskintiden i
+        offerten.
       </p>
 
       <div className="stack" style={{ gap: 10, marginBottom: 22 }}>
@@ -290,9 +317,7 @@ export function MaterialManager({ token, onChanged }: Props) {
               <span className="dim">{entry.description}</span>
             </div>
             <div className="admin-row-meta">
-              <span className="badge">
-                {entry.layerHeightMm.toString().replace('.', ',')} mm
-              </span>
+              <span className="badge">{entry.layerHeightMm.toString().replace('.', ',')} mm</span>
               <span className="badge badge-accent">
                 ×{entry.timeFactor.toString().replace('.', ',')} tid
               </span>

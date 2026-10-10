@@ -3,9 +3,12 @@ import { Link, useParams, useNavigate } from 'react-router';
 import { ProductImage } from '../components/ProductImage';
 import { ProductCard } from '../components/ProductCard';
 import { Rating } from '../components/Rating';
+import { ReviewSection } from '../components/ReviewSection';
+import { StockWatchForm } from '../components/StockWatchForm';
 import { fetchProduct } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import { useCart } from '../lib/cart';
+import { productJsonLd, useDocumentMeta, withAggregateRating } from '../lib/meta';
 import { formatHours, formatPrice } from '../lib/format';
 
 export function ProductPage() {
@@ -19,6 +22,16 @@ export function ProductPage() {
   const [sizeId, setSizeId] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+
+  useDocumentMeta({
+    title: product ? `${product.name} – ${product.tagline}` : 'Produkt',
+    description: product?.tagline ?? 'En produkt ur vårt sortiment av 3D-printade saker.',
+    type: 'product',
+    ...(product?.image ? { image: `${window.location.origin}${product.image.url}` } : {}),
+    ...(product
+      ? { jsonLd: withAggregateRating(productJsonLd(product), data?.reviewSummary ?? null) }
+      : {}),
+  });
 
   useEffect(() => {
     if (!product) return;
@@ -48,6 +61,9 @@ export function ProductPage() {
 
   const size = product.sizes?.find((entry) => entry.id === sizeId);
   const unitPrice = product.price + (size?.priceDelta ?? 0);
+  // Slutsålt syns i knappraden: det går inte att lägga i varukorgen, men man
+  // kan be om besked när den finns igen.
+  const soldOut = product.stock <= 0;
 
   function addToCart(goToCart: boolean) {
     if (!product) return;
@@ -109,7 +125,9 @@ export function ProductPage() {
                   </tr>
                   <tr>
                     <th>Lagerstatus</th>
-                    <td>{product.stock} st i lager</td>
+                    <td>
+                      {product.stock > 0 ? `${product.stock} st i lager` : 'Slutsåld just nu'}
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -213,18 +231,22 @@ export function ProductPage() {
                   </div>
                 </div>
 
-                <div className="row">
-                  <button type="button" className="btn btn-lg" onClick={() => addToCart(false)}>
-                    Lägg i varukorg
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-ghost btn-lg"
-                    onClick={() => addToCart(true)}
-                  >
-                    Köp nu
-                  </button>
-                </div>
+                {soldOut ? (
+                  <StockWatchForm slug={product.slug} />
+                ) : (
+                  <div className="row">
+                    <button type="button" className="btn btn-lg" onClick={() => addToCart(false)}>
+                      Lägg i varukorg
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-lg"
+                      onClick={() => addToCart(true)}
+                    >
+                      Köp nu
+                    </button>
+                  </div>
+                )}
                 {added && <p className="notice notice-success">Tillagd i varukorgen.</p>}
                 <p className="dim" style={{ margin: 0, fontSize: '0.86rem' }}>
                   Printas på beställning i vår verkstad · Skickas inom 1–3 arbetsdagar · Fri frakt
@@ -245,6 +267,8 @@ export function ProductPage() {
             </div>
           </div>
         </div>
+
+        <ReviewSection slug={product.slug} reviews={data.reviews} summary={data.reviewSummary} />
 
         {data.related.length > 0 && (
           <div style={{ marginTop: 64 }}>

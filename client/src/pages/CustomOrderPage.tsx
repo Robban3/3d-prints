@@ -17,6 +17,7 @@ import type {
   QuoteRequest,
   UploadedFile,
 } from '../types';
+import { useDocumentMeta } from '../lib/meta';
 
 /** Fallback tills /api/config svarat – servern är källan för de riktiga gränserna. */
 const DEFAULT_ACCEPTED = ['.stl', '.obj', '.3mf', '.step', '.stp', '.f3d'];
@@ -44,6 +45,11 @@ const volumePresets = [
 ];
 
 export function CustomOrderPage() {
+  useDocumentMeta({
+    title: 'Beställ eget printjobb',
+    description:
+      'Ladda upp din STL, OBJ eller 3MF. Vi mäter upp modellen, visar den i 3D och räknar fram pris och leveranstid direkt.',
+  });
   const navigate = useNavigate();
   const config = useAsync(() => fetchConfig(), []);
   const location = useLocation();

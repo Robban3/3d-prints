@@ -1,4 +1,5 @@
 import type {
+  AdminReview,
   AnyOrder,
   CustomOrder,
   CustomerDetails,
@@ -15,8 +16,12 @@ import type {
   Quality,
   OrderStatus,
   PaymentSession,
+  DashboardStats,
   ImportResult,
   ProductDraft,
+  Review,
+  ReviewStatus,
+  ReviewSummary,
   ShopOrder,
   UploadedFile,
 } from '../types';
@@ -72,8 +77,38 @@ export function fetchProducts(params: { category?: string; search?: string } = {
   return request(`/products${suffix}`);
 }
 
-export function fetchProduct(slug: string): Promise<{ product: Product; related: Product[] }> {
+export function fetchProduct(slug: string): Promise<{
+  product: Product;
+  related: Product[];
+  reviews: Review[];
+  reviewSummary: ReviewSummary | null;
+}> {
   return request(`/products/${encodeURIComponent(slug)}`);
+}
+
+/**
+ * Lämnar ett omdöme. Det hamnar i kö för granskning, så svaret bekräftar att vi
+ * tagit emot det – inte att det syns i butiken.
+ */
+export function submitReview(
+  slug: string,
+  review: { author: string; email: string; rating: number; title: string; body: string },
+): Promise<{ review: Review; status: string }> {
+  return request(`/products/${encodeURIComponent(slug)}/reviews`, {
+    method: 'POST',
+    body: JSON.stringify(review),
+  });
+}
+
+/** Bevakar en slutsåld produkt. Ger ett mejl när saldot fyllts på. */
+export function watchStock(
+  slug: string,
+  email: string,
+): Promise<{ watching: boolean; productName: string }> {
+  return request(`/products/${encodeURIComponent(slug)}/notify`, {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
 }
 
 /**
@@ -369,4 +404,43 @@ export function fetchHistory(token: string): Promise<{ entries: AuditEntry[] }> 
 
 export async function deleteUpload(id: string): Promise<void> {
   await fetch(`${BASE}/uploads/${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
+
+/* ---------- Omdömen och översikt i panelen ---------- */
+
+export function fetchAdminReviews(
+  token: string,
+  status?: ReviewStatus,
+): Promise<{ reviews: AdminReview[]; waiting: number }> {
+  const query = status ? `?status=${encodeURIComponent(status)}` : '';
+  return request(`/admin/reviews${query}`, adminInit(token));
+}
+
+export function moderateReview(
+  token: string,
+  id: string,
+  status: ReviewStatus,
+  reply?: string,
+): Promise<{ review: AdminReview; waiting: number }> {
+  return request(
+    `/admin/reviews/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'PATCH', body: JSON.stringify({ status, reply }) }),
+  );
+}
+
+export function deleteReview(
+  token: string,
+  id: string,
+): Promise<{ review: AdminReview; waiting: number }> {
+  return request(
+    `/admin/reviews/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+export function fetchStats(
+  token: string,
+  days = 30,
+): Promise<{ stats: DashboardStats; days: number; lowStockThreshold: number }> {
+  return request(`/admin/stats?days=${days}`, adminInit(token));
 }

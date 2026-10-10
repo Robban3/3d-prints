@@ -11,6 +11,7 @@ import { fetchConfig, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import type { IconName } from '../components/Icon';
 import type { UploadedFile } from '../types';
+import { shopJsonLd, useDocumentMeta } from '../lib/meta';
 
 const steps: Array<{ title: string; text: string }> = [
   { title: 'Ladda upp din 3D-fil', text: 'Vi kontrollerar och analyserar modellen' },
@@ -33,6 +34,12 @@ const values: Array<{ icon: IconName; title: string; text: string }> = [
 ];
 
 export function HomePage() {
+  useDocumentMeta({
+    title: '3D-printade produkter och egna printjobb',
+    description:
+      'Svensk 3D-printverkstad. Köp färdiga produkter i egen design eller ladda upp din fil – vi mäter upp modellen och ger pris direkt.',
+    jsonLd: shopJsonLd(),
+  });
   const navigate = useNavigate();
   const { data, loading } = useAsync(() => fetchProducts(), []);
   const config = useAsync(() => fetchConfig(), []);

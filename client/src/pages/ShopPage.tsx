@@ -5,6 +5,7 @@ import { fetchConfig, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import { PageHeader } from '../components/PageHeader';
 import type { Product } from '../types';
+import { useDocumentMeta } from '../lib/meta';
 
 type SortId = 'popular' | 'price-asc' | 'price-desc' | 'name';
 
@@ -23,6 +24,11 @@ const sortLabels: Array<{ id: SortId; label: string }> = [
 ];
 
 export function ShopPage() {
+  useDocumentMeta({
+    title: 'Alla produkter',
+    description:
+      'Hela sortimentet av 3D-printade produkter för hem, kontor och kök. Printade på beställning i PLA, PETG, ABS, TPU och resin.',
+  });
   const [params, setParams] = useSearchParams();
   const category = params.get('kategori') ?? 'alla';
   // Sökningen bor i URL:en, så att headerns sökruta och delade länkar slår

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
+import { Dashboard } from '../components/admin/Dashboard';
 import { OrderManager } from '../components/admin/OrderManager';
+import { ReviewManager } from '../components/admin/ReviewManager';
 import { ProductManager } from '../components/admin/ProductManager';
 import { CategoryManager } from '../components/admin/CategoryManager';
 import { MaterialManager } from '../components/admin/MaterialManager';
@@ -9,16 +11,27 @@ import { HistoryView } from '../components/admin/HistoryView';
 import { ApiError, fetchAdminCategories, fetchAdminMaterials, fetchAdminStatus } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import type { Category, Material } from '../types';
+import { useDocumentMeta } from '../lib/meta';
 
 const STORAGE_KEY = 'formlabb.admin.token';
 
-type Tab = 'ordrar' | 'produkter' | 'kategorier' | 'material' | 'import' | 'historik';
+type Tab =
+  | 'oversikt'
+  | 'ordrar'
+  | 'produkter'
+  | 'kategorier'
+  | 'material'
+  | 'omdomen'
+  | 'import'
+  | 'historik';
 
 const tabs: Array<{ id: Tab; label: string }> = [
+  { id: 'oversikt', label: 'Översikt' },
   { id: 'ordrar', label: 'Ordrar' },
   { id: 'produkter', label: 'Produkter' },
   { id: 'kategorier', label: 'Kategorier' },
   { id: 'material', label: 'Material' },
+  { id: 'omdomen', label: 'Omdömen' },
   { id: 'import', label: 'Import/export' },
   { id: 'historik', label: 'Historik' },
 ];
@@ -28,6 +41,11 @@ const tabs: Array<{ id: Tab; label: string }> = [
  * sessionStorage, så den försvinner när fliken stängs.
  */
 export function AdminPage() {
+  useDocumentMeta({
+    title: 'Verkstaden',
+    description: 'Panelen för ordrar, katalog och omdömen.',
+    noindex: true,
+  });
   const status = useAsync(() => fetchAdminStatus(), []);
   const [token, setToken] = useState(() => {
     try {
@@ -38,7 +56,7 @@ export function AdminPage() {
   });
   const [input, setInput] = useState('');
   const [signInError, setSignInError] = useState<string | null>(null);
-  const [tab, setTab] = useState<Tab>('ordrar');
+  const [tab, setTab] = useState<Tab>('oversikt');
   const [categories, setCategories] = useState<Category[]>([]);
   const [materials, setMaterials] = useState<Material[]>([]);
 
@@ -183,6 +201,7 @@ export function AdminPage() {
             ))}
           </div>
 
+          {tab === 'oversikt' && <Dashboard token={token} />}
           {tab === 'ordrar' && <OrderManager token={token} onUnauthorized={signOut} />}
           {tab === 'produkter' && (
             <ProductManager
@@ -198,6 +217,7 @@ export function AdminPage() {
           {tab === 'material' && (
             <MaterialManager token={token} onChanged={() => void loadCategories()} />
           )}
+          {tab === 'omdomen' && <ReviewManager token={token} />}
           {tab === 'import' && (
             <CatalogTransfer token={token} onImported={() => void loadCategories()} />
           )}

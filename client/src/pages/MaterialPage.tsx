@@ -3,8 +3,14 @@ import { Icon } from '../components/Icon';
 import { fetchConfig } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import { PageHeader } from '../components/PageHeader';
+import { useDocumentMeta } from '../lib/meta';
 
 export function MaterialPage() {
+  useDocumentMeta({
+    title: 'Material och kvaliteter',
+    description:
+      'PLA, PETG, ABS, TPU och resin – egenskaper, värmetålighet och vad de passar till. Lagerhöjd från 0,025 mm.',
+  });
   const { data, loading, error } = useAsync(() => fetchConfig(), []);
 
   return (
