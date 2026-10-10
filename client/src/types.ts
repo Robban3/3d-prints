@@ -513,10 +513,89 @@ export interface AdminMaterial extends Material {
 /** Produktformulärets form – samma fält som Product, men utan id. */
 export type ProductDraft = Omit<Product, 'id'>;
 
+/* ---------- Produktionskö och filament ---------- */
+
+export interface JobMaterial {
+  material: MaterialId;
+  color: string;
+  grams: number;
+}
+
+export interface QueueJob {
+  orderId: string;
+  type: 'shop' | 'custom';
+  label: string;
+  customer: string;
+  createdAt: string;
+  status: 'mottagen' | 'i_produktion';
+  running: boolean;
+  rush: boolean;
+  hours: number;
+  remainingHours: number;
+  materials: JobMaterial[];
+  printer: number;
+  position: number;
+  startsAt: string;
+  readyAt: string;
+  waitingHours: number;
+}
+
+export interface ProductionQueue {
+  jobs: QueueJob[];
+  printers: number;
+  hours: number;
+  running: number;
+  waiting: number;
+  readyAt?: string;
+  demand: JobMaterial[];
+}
+
+export interface Spool {
+  id: string;
+  material: MaterialId;
+  color: string;
+  grams: number;
+  totalGrams: number;
+  addedAt: string;
+  note?: string;
+}
+
+export interface FilamentShortage {
+  material: MaterialId;
+  color: string;
+  needed: number;
+  available: number;
+}
+
+export interface FilamentConsumption {
+  orderId: string;
+  at: string;
+  items: JobMaterial[];
+  shortfall: number;
+}
+
+/** Kundens plats i kön, som den visas på orderspårningen. */
+export interface QueuePlace {
+  position: number;
+  jobs: number;
+  startsAt: string;
+  readyAt: string;
+}
+
 export interface AuditEntry {
   at: string;
   action: 'skapad' | 'ändrad' | 'borttagen' | 'importerad' | 'status';
-  entity: 'produkt' | 'kategori' | 'material' | 'kvalitet' | 'order';
+  entity:
+    | 'produkt'
+    | 'kategori'
+    | 'material'
+    | 'kvalitet'
+    | 'order'
+    | 'omdöme'
+    | 'rabattkod'
+    | 'startsida'
+    | 'kampanj'
+    | 'filament';
   entityId: string;
   summary: string;
   changed?: string[];

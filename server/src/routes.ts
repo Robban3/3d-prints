@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   allCategories,
   allMaterials,
+  allProducts,
   allQualities,
   findProduct,
   findProductBySlug,
@@ -33,6 +34,8 @@ import { expiryFrom, findQuote, saveQuote } from './quotes.ts';
 import { rateLimit } from './rateLimit.ts';
 import { publicHomeContent } from './content.ts';
 import { recommendMaterials } from './materialGuide.ts';
+import { buildQueue, jobFor } from './queue.ts';
+import { printTimeFor } from './parameters.ts';
 import type { Flex, GuideAnswers, Load, Place } from './materialGuide.ts';
 import {
   ReviewError,
@@ -452,10 +455,11 @@ api.post('/orders/:id/reorder', saveLimit, async (req, res) => {
 /** Summerar produkternas printtider för en butiksorder. */
 async function totalPrintHours(lines: OrderLine[]): Promise<number> {
   const products = await Promise.all(lines.map((line) => findProduct(line.productId)));
-  const hours = lines.reduce(
-    (sum, line, index) => sum + (products[index]?.printTimeHours ?? 0) * line.quantity,
-    0,
-  );
+  const hours = lines.reduce((sum, line, index) => {
+    const product = products[index];
+    // En bredare hylla tar längre tid, så måtten måste räknas in här.
+    return sum + (product ? printTimeFor(product, line.parameters ?? {}) * line.quantity : 0);
+  }, 0);
   return Math.round(hours * 10) / 10;
 }
 
@@ -779,5 +783,24 @@ api.get('/orders/:id', async (req, res) => {
     res.status(404).json({ error: 'Ordern hittades inte' });
     return;
   }
-  res.json({ order });
+
+  // Köplatsen är ett svar på den fråga kunden faktiskt ställer: när är den
+  // klar? Bara den egna orderns siffror följer med – kön i övrigt angår inte
+  // den som spårar sin order.
+  let place: { position: number; jobs: number; startsAt: string; readyAt: string } | undefined;
+  if (order.status === 'mottagen') {
+    const [orders, products] = await Promise.all([listOrders(), allProducts()]);
+    const queue = buildQueue({ orders, products });
+    const job = jobFor(queue, order.id);
+    if (job) {
+      place = {
+        position: job.position,
+        jobs: queue.jobs.length,
+        startsAt: job.startsAt,
+        readyAt: job.readyAt,
+      };
+    }
+  }
+
+  res.json({ order, ...(place ? { queue: place } : {}) });
 });

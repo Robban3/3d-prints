@@ -4,6 +4,7 @@ import { ContentManager } from '../components/admin/ContentManager';
 import { Dashboard } from '../components/admin/Dashboard';
 import { DiscountManager } from '../components/admin/DiscountManager';
 import { OrderManager } from '../components/admin/OrderManager';
+import { ProductionQueue } from '../components/admin/ProductionQueue';
 import { ReviewManager } from '../components/admin/ReviewManager';
 import { ProductManager } from '../components/admin/ProductManager';
 import { CategoryManager } from '../components/admin/CategoryManager';
@@ -21,6 +22,7 @@ type Tab =
   | 'oversikt'
   | 'startsida'
   | 'ordrar'
+  | 'produktion'
   | 'produkter'
   | 'kategorier'
   | 'material'
@@ -33,6 +35,7 @@ const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'oversikt', label: 'Översikt' },
   { id: 'startsida', label: 'Startsida' },
   { id: 'ordrar', label: 'Ordrar' },
+  { id: 'produktion', label: 'Produktion' },
   { id: 'produkter', label: 'Produkter' },
   { id: 'kategorier', label: 'Kategorier' },
   { id: 'material', label: 'Material' },
@@ -210,6 +213,9 @@ export function AdminPage() {
           {tab === 'oversikt' && <Dashboard token={token} />}
           {tab === 'startsida' && <ContentManager token={token} />}
           {tab === 'ordrar' && <OrderManager token={token} onUnauthorized={signOut} />}
+          {tab === 'produktion' && (
+            <ProductionQueue token={token} materials={materials.map((material) => material.id)} />
+          )}
           {tab === 'produkter' && (
             <ProductManager
               token={token}

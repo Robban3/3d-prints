@@ -1005,6 +1005,32 @@ textarea {
   border-radius: var(--radius);
   padding: 12px 16px;
 }
+/* En vanlig punktlista, för det som inte är en lista med bockar. */
+.plain-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+.plain-list li {
+  font-size: 0.9rem;
+}
+
+/* Skrivarnumret i produktionskön, i samma spalt som produktbilden annars. */
+.queue-printer {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  text-align: center;
+}
+.queue-printer strong {
+  font-size: 1.3rem;
+  line-height: 1.1;
+  color: var(--accent);
+}
+.admin-row-main .progress {
+  margin-top: 8px;
+}
 .admin-row-art {
   background: linear-gradient(165deg, #1a1e25, #0c0e12);
   border-radius: var(--radius-sm);
@@ -1018,6 +1044,7 @@ textarea {
   font-size: 0.95rem;
 }
 .admin-row-main .dim {
+  display: block;
   font-size: 0.82rem;
 }
 .admin-row-meta {
