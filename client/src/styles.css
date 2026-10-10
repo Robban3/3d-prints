@@ -2479,6 +2479,147 @@ details.faq p {
   color: var(--accent);
 }
 
+/* ---------- Hero-media och kampanjer ---------- */
+
+.hero-media {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  /* Samma proportion som den ritade scenen, så layouten inte hoppar. */
+  aspect-ratio: 4 / 3;
+}
+.hero-media img,
+.hero-media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.campaign-banners,
+.campaign-cards {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+.campaign-cards {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.campaign {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+.campaign-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+@media (max-width: 760px) {
+  .campaign-banner {
+    grid-template-columns: 1fr;
+  }
+}
+/* Utan media tar texten hela bredden i stället för att lämna en tom halva. */
+.campaign-nomedia {
+  grid-template-columns: 1fr;
+}
+
+.campaign-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  object-fit: cover;
+}
+.campaign-kort .campaign-media {
+  aspect-ratio: 16 / 9;
+  height: auto;
+  min-height: 0;
+}
+
+.campaign-body {
+  padding: 24px 26px;
+  display: grid;
+  gap: 10px;
+  align-content: center;
+  justify-items: start;
+}
+.campaign-kort .campaign-body {
+  padding: 18px 20px;
+}
+.campaign-body h3 {
+  margin: 0;
+}
+.campaign-body p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.campaign-code {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px dashed var(--accent);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+.campaign-code strong {
+  letter-spacing: 0.1em;
+}
+
+/* ---------- Media i panelen ---------- */
+
+.media-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+.media-thumb {
+  flex: none;
+  width: 72px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.campaign-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.campaign-list li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  padding: 13px 15px;
+}
+.campaign-list-main {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

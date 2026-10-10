@@ -10,6 +10,16 @@ import { claimWatchers, watcherCounts } from './notify.ts';
 import { buildStats, lowStockThreshold } from './stats.ts';
 import { allDiscounts, removeDiscount, saveDiscount } from './discounts.ts';
 import {
+  findCampaign,
+  homeContent,
+  moveCampaign,
+  parseCampaignInput,
+  parseHeroInput,
+  removeCampaign,
+  saveCampaign,
+  saveHero,
+} from './content.ts';
+import {
   CatalogError,
   allCategories,
   allMaterials,
@@ -594,4 +604,74 @@ admin.delete('/admin/discounts/:code', adminLimit, requireAdmin, async (req, res
     summary: `${discount.code}, inlöst ${discount.uses} gånger`,
   });
   res.json({ discount });
+});
+
+/* ---------- Startsidan ---------- */
+
+admin.get('/admin/content', adminLimit, requireAdmin, async (_req, res) => {
+  res.json(await homeContent());
+});
+
+admin.put('/admin/content/hero', adminLimit, requireAdmin, async (req, res) => {
+  const hero = await saveHero(await parseHeroInput(req.body));
+  await record({
+    action: 'ändrad',
+    entity: 'startsida',
+    entityId: 'hero',
+    summary: hero.media ? `${hero.title} (${hero.media.kind})` : hero.title,
+  });
+  res.json({ hero });
+});
+
+admin.post('/admin/content/campaigns', adminLimit, requireAdmin, async (req, res) => {
+  const campaign = await saveCampaign(await parseCampaignInput(req.body));
+  await record({
+    action: 'skapad',
+    entity: 'kampanj',
+    entityId: campaign.id,
+    summary: campaign.title,
+  });
+  res.status(201).json({ campaign });
+});
+
+admin.patch('/admin/content/campaigns/:id', adminLimit, requireAdmin, async (req, res) => {
+  const existing = await findCampaign(pathParam(req.params.id));
+  if (!existing) {
+    res.status(404).json({ error: 'Kampanjen hittades inte' });
+    return;
+  }
+  // Formuläret skickar hela kampanjen tillbaka, så den valideras i sin helhet.
+  const campaign = await saveCampaign(await parseCampaignInput(req.body, existing));
+  await record({
+    action: 'ändrad',
+    entity: 'kampanj',
+    entityId: campaign.id,
+    summary: campaign.title,
+    changed: changedFields(
+      existing as unknown as Record<string, unknown>,
+      campaign as unknown as Record<string, unknown>,
+    ),
+  });
+  res.json({ campaign });
+});
+
+admin.post('/admin/content/campaigns/:id/move', adminLimit, requireAdmin, async (req, res) => {
+  const direction = (req.body as { direction?: unknown })?.direction === 'ned' ? 1 : -1;
+  const campaigns = await moveCampaign(pathParam(req.params.id), direction);
+  res.json({ campaigns });
+});
+
+admin.delete('/admin/content/campaigns/:id', adminLimit, requireAdmin, async (req, res) => {
+  const campaign = await removeCampaign(pathParam(req.params.id));
+  if (!campaign) {
+    res.status(404).json({ error: 'Kampanjen hittades inte' });
+    return;
+  }
+  await record({
+    action: 'borttagen',
+    entity: 'kampanj',
+    entityId: campaign.id,
+    summary: campaign.title,
+  });
+  res.json({ campaign });
 });

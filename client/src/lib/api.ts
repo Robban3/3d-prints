@@ -2,6 +2,7 @@ import type {
   AdminReview,
   AnyOrder,
   AppliedDiscount,
+  Campaign,
   CustomOrder,
   CustomerDetails,
   Product,
@@ -19,7 +20,10 @@ import type {
   PaymentSession,
   DashboardStats,
   DiscountCode,
+  HeroContent,
+  HomeContent,
   ImportResult,
+  Media,
   ProductDraft,
   Review,
   ReviewStatus,
@@ -66,6 +70,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export function fetchConfig(): Promise<ShopConfig> {
   return request<ShopConfig>('/config');
+}
+
+/** Startsidans hero och de kampanjer som är igång. */
+export function fetchHomeContent(): Promise<HomeContent> {
+  return request('/content/home');
 }
 
 export function fetchProducts(params: { category?: string; search?: string } = {}): Promise<{
@@ -484,6 +493,89 @@ export function saveDiscount(
 export function deleteDiscount(token: string, code: string): Promise<{ discount: DiscountCode }> {
   return request(
     `/admin/discounts/${encodeURIComponent(code)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+/* ---------- Startsidan i panelen ---------- */
+
+/** Laddar upp en bild eller video till startsidan. */
+export function uploadMedia(
+  file: File,
+  onProgress?: (percent: number) => void,
+): { promise: Promise<Media>; abort: () => void } {
+  const xhr = new XMLHttpRequest();
+  const promise = new Promise<Media>((resolve, reject) => {
+    const body = new FormData();
+    body.append('file', file);
+
+    xhr.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable && onProgress) {
+        onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    });
+    xhr.addEventListener('load', () => {
+      let payload: { media?: Media; error?: string } = {};
+      try {
+        payload = JSON.parse(xhr.responseText) as typeof payload;
+      } catch {
+        payload = {};
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && payload.media) resolve(payload.media);
+      else reject(new ApiError(payload.error ?? 'Filen kunde inte laddas upp', xhr.status));
+    });
+    xhr.addEventListener('error', () =>
+      reject(new ApiError('Uppladdningen avbröts. Kontrollera din uppkoppling.', 0)),
+    );
+    xhr.addEventListener('abort', () => reject(new ApiError('Uppladdningen avbröts.', 0)));
+
+    xhr.open('POST', `${BASE}/uploads/media`);
+    xhr.send(body);
+  });
+  return { promise, abort: () => xhr.abort() };
+}
+
+export function fetchAdminContent(token: string): Promise<HomeContent> {
+  return request('/admin/content', adminInit(token));
+}
+
+export function saveHero(token: string, hero: unknown): Promise<{ hero: HeroContent }> {
+  return request(
+    '/admin/content/hero',
+    adminInit(token, { method: 'PUT', body: JSON.stringify(hero) }),
+  );
+}
+
+export function saveCampaign(
+  token: string,
+  campaign: unknown,
+  id?: string,
+): Promise<{ campaign: Campaign }> {
+  return id
+    ? request(
+        `/admin/content/campaigns/${encodeURIComponent(id)}`,
+        adminInit(token, { method: 'PATCH', body: JSON.stringify(campaign) }),
+      )
+    : request(
+        '/admin/content/campaigns',
+        adminInit(token, { method: 'POST', body: JSON.stringify(campaign) }),
+      );
+}
+
+export function moveCampaign(
+  token: string,
+  id: string,
+  direction: 'upp' | 'ned',
+): Promise<{ campaigns: Campaign[] }> {
+  return request(
+    `/admin/content/campaigns/${encodeURIComponent(id)}/move`,
+    adminInit(token, { method: 'POST', body: JSON.stringify({ direction }) }),
+  );
+}
+
+export function deleteCampaign(token: string, id: string): Promise<{ campaign: Campaign }> {
+  return request(
+    `/admin/content/campaigns/${encodeURIComponent(id)}`,
     adminInit(token, { method: 'DELETE' }),
   );
 }

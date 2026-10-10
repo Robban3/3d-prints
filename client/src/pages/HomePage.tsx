@@ -7,11 +7,19 @@ import { TrustBar } from '../components/TrustBar';
 import { StatsRow } from '../components/StatsRow';
 import { UploadDropzone } from '../components/UploadDropzone';
 import { Icon } from '../components/Icon';
-import { fetchConfig, fetchProducts } from '../lib/api';
+import { fetchConfig, fetchHomeContent, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import type { IconName } from '../components/Icon';
 import type { UploadedFile } from '../types';
 import { shopJsonLd, useDocumentMeta } from '../lib/meta';
+import { CampaignBlock } from '../components/CampaignBlock';
+import { HeroMedia } from '../components/HeroMedia';
+
+/** Visas innan innehållet hämtats, och om ingen rört heron i panelen. */
+const DEFAULT_LEAD =
+  'Högkvalitativa 3D-printade produkter och prototyper. Snabbt, hållbart och precis – precis som du vill ha det.';
+const DEFAULT_HIGHLIGHT = 'Byggda för dig.';
+const DEFAULT_SECONDARY = { label: 'Beställ din egen print', href: '/egen-print' };
 
 const steps: Array<{ title: string; text: string }> = [
   { title: 'Ladda upp din 3D-fil', text: 'Vi kontrollerar och analyserar modellen' },
@@ -33,6 +41,25 @@ const values: Array<{ icon: IconName; title: string; text: string }> = [
   { icon: 'heart', title: 'Kundfokus', text: 'Vi finns här för dig hela vägen.' },
 ];
 
+/**
+ * Heroknapparnas adresser kommer från panelen. Interna sökvägar ska gå genom
+ * routern; en https-adress är en vanlig länk ut.
+ */
+function HeroLink({ className, label, href }: { className: string; label: string; href: string }) {
+  if (href.startsWith('/')) {
+    return (
+      <Link className={className} to={href}>
+        {label}
+      </Link>
+    );
+  }
+  return (
+    <a className={className} href={href} rel="noreferrer noopener">
+      {label}
+    </a>
+  );
+}
+
 export function HomePage() {
   useDocumentMeta({
     title: '3D-printade produkter och egna printjobb',
@@ -43,7 +70,17 @@ export function HomePage() {
   const navigate = useNavigate();
   const { data, loading } = useAsync(() => fetchProducts(), []);
   const config = useAsync(() => fetchConfig(), []);
+  const content = useAsync(() => fetchHomeContent(), []);
   const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
+
+  const hero = content.data?.hero;
+  const campaigns = content.data?.campaigns ?? [];
+  const banners = campaigns.filter((campaign) => campaign.layout === 'banner');
+  const cards = campaigns.filter((campaign) => campaign.layout === 'kort');
+
+  // En tom highlight betyder att raden inte ska visas alls.
+  const highlight = hero ? hero.highlight : DEFAULT_HIGHLIGHT;
+  const secondary = hero ? hero.secondary : DEFAULT_SECONDARY;
 
   const products = data?.products ?? [];
   const popular = [...products]
@@ -60,22 +97,30 @@ export function HomePage() {
       <section className="hero">
         <div className="container">
           <div>
+            {hero?.eyebrow && <span className="eyebrow">{hero.eyebrow}</span>}
             <h1>
-              3D-printade produkter.
-              <br />
-              <span className="accent-text">Byggda för dig.</span>
+              {hero?.title ?? '3D-printade produkter.'}
+              {highlight && (
+                <>
+                  <br />
+                  <span className="accent-text">{highlight}</span>
+                </>
+              )}
             </h1>
-            <p className="lead">
-              Högkvalitativa 3D-printade produkter och prototyper. Snabbt, hållbart och precis –
-              precis som du vill ha det.
-            </p>
+            <p className="lead">{hero?.text ?? DEFAULT_LEAD}</p>
             <div className="hero-cta">
-              <Link className="btn btn-lg" to="/produkter">
-                Utforska produkter
-              </Link>
-              <Link className="btn btn-ghost btn-lg" to="/egen-print">
-                Beställ din egen print
-              </Link>
+              <HeroLink
+                className="btn btn-lg"
+                label={hero?.primary.label ?? 'Utforska produkter'}
+                href={hero?.primary.href ?? '/produkter'}
+              />
+              {secondary && (
+                <HeroLink
+                  className="btn btn-ghost btn-lg"
+                  label={secondary.label}
+                  href={secondary.href}
+                />
+              )}
             </div>
             <span className="rating-strip">
               <span className="rating-boxes" aria-hidden="true">
@@ -91,14 +136,34 @@ export function HomePage() {
           </div>
 
           <div className="hero-visual">
-            <HeroScene />
+            {hero?.media ? (
+              <HeroMedia media={hero.media} poster={hero.poster} autoplay={hero.autoplay} />
+            ) : (
+              <HeroScene />
+            )}
           </div>
         </div>
       </section>
 
+      {banners.length > 0 && (
+        <div className="container campaign-banners">
+          {banners.map((campaign) => (
+            <CampaignBlock key={campaign.id} campaign={campaign} />
+          ))}
+        </div>
+      )}
+
       <div className="container">
         <CategoryStrip />
       </div>
+
+      {cards.length > 0 && (
+        <div className="container campaign-cards">
+          {cards.map((campaign) => (
+            <CampaignBlock key={campaign.id} campaign={campaign} />
+          ))}
+        </div>
+      )}
 
       <section className="section">
         <div className="container">

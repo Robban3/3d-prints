@@ -235,6 +235,57 @@ export interface CustomOrder {
 
 export type AnyOrder = ShopOrder | CustomOrder;
 
+/* ---------- Startsidan ---------- */
+
+/** Uppladdad bild eller video. Adressen byggs alltid av serverns id. */
+export interface Media {
+  kind: 'image' | 'video';
+  id: string;
+  url: string;
+  fileName: string;
+}
+
+export interface LinkTarget {
+  label: string;
+  href: string;
+}
+
+export interface HeroContent {
+  eyebrow: string;
+  title: string;
+  /** Raden under titeln som får accentfärg. */
+  highlight: string;
+  text: string;
+  primary: LinkTarget;
+  secondary?: LinkTarget;
+  /** Saknas mediet ritas den genererade scenen i stället. */
+  media?: Media;
+  /** Stillbild bakom videon innan den börjat spela. */
+  poster?: Media;
+  autoplay: boolean;
+}
+
+export type CampaignLayout = 'banner' | 'kort';
+
+export interface Campaign {
+  id: string;
+  title: string;
+  text: string;
+  cta?: LinkTarget;
+  media?: Media;
+  layout: CampaignLayout;
+  discountCode?: string;
+  startsAt?: string;
+  endsAt?: string;
+  active: boolean;
+  order: number;
+}
+
+export interface HomeContent {
+  hero: HeroContent;
+  campaigns: Campaign[];
+}
+
 /* ---------- Frakt och rabatter ---------- */
 
 export interface ShippingOption {

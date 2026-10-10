@@ -22,6 +22,7 @@ import { pathParam } from './http.ts';
 import { release, reserve, stockLevels } from './stock.ts';
 import { orderConfirmation, sendMail } from './mailer.ts';
 import { rateLimit } from './rateLimit.ts';
+import { publicHomeContent } from './content.ts';
 import {
   ReviewError,
   publicReview,
@@ -205,6 +206,11 @@ api.post('/products/:slug/reviews', reviewLimit, async (req, res) => {
  * egna priser, aldrig från det klienten påstår, och beloppet som svaret
  * innehåller är bara till för att visas – ordern räknar om det på nytt.
  */
+/** Startsidans hero och de kampanjer som är igång just nu. */
+api.get('/content/home', async (_req, res) => {
+  res.json(await publicHomeContent());
+});
+
 api.post('/discounts/check', discountLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const lines = await parseOrderLines(body.lines);

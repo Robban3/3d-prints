@@ -12,25 +12,55 @@ export const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
 export const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif'] as const;
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
-const IMAGE_CONTENT_TYPES: Record<string, string> = {
+/**
+ * Video till startsidans hero. Bara format som alla webbläsare spelar – en
+ * .mov från en telefon går inte att visa utan omkodning, och vi kodar inte om.
+ */
+export const VIDEO_EXTENSIONS = ['.mp4', '.webm'] as const;
+/**
+ * En hero-video laddas av varje besökare innan sidan känns klar, så gränsen är
+ * satt lågt med flit. Det här är redan mycket för en kort loop.
+ */
+export const MAX_VIDEO_BYTES = 40 * 1024 * 1024;
+
+const MEDIA_CONTENT_TYPES: Record<string, string> = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
   '.webp': 'image/webp',
   '.avif': 'image/avif',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
 };
 
 export function isImageExtension(extension: string): boolean {
   return (IMAGE_EXTENSIONS as readonly string[]).includes(extension.toLowerCase());
 }
 
+export function isVideoExtension(extension: string): boolean {
+  return (VIDEO_EXTENSIONS as readonly string[]).includes(extension.toLowerCase());
+}
+
+/** Bild eller video – det som får visas öppet i butiken. */
+export function isMediaExtension(extension: string): boolean {
+  return isImageExtension(extension) || isVideoExtension(extension);
+}
+
 export function isAllowedImageName(fileName: string): boolean {
   return isImageExtension(extensionOf(fileName));
 }
 
-export function imageContentType(extension: string): string {
-  return IMAGE_CONTENT_TYPES[extension.toLowerCase()] ?? 'application/octet-stream';
+export function isAllowedMediaName(fileName: string): boolean {
+  return isMediaExtension(extensionOf(fileName));
 }
+
+/** Innehållstypen för en bild eller video vi lagrar. */
+export function mediaContentType(extension: string): string {
+  return MEDIA_CONTENT_TYPES[extension.toLowerCase()] ?? 'application/octet-stream';
+}
+
+/** Behålls under sitt gamla namn; bilder och video delar tabell. */
+export const imageContentType = mediaContentType;
 /** Uppladdningar som aldrig kopplas till en order städas bort efter ett dygn. */
 export const ORPHAN_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
@@ -38,8 +68,8 @@ const ID_PATTERN = /^[0-9a-f]{32}$/;
 
 export interface UploadMeta {
   id: string;
-  /** Produktbilder visas öppet; modellfiler är knutna till en order. */
-  kind?: 'model' | 'image';
+  /** Bilder och video visas öppet; modellfiler är knutna till en order. */
+  kind?: 'model' | 'image' | 'video';
   /** Filnamnet kunden laddade upp – används bara som etikett, aldrig som sökväg. */
   originalName: string;
   extension: string;
@@ -76,12 +106,20 @@ export function isAllowedExtension(extension: string): boolean {
 }
 
 /**
- * Format vi över huvud taget lagrar – modellfiler eller produktbilder. Används
+ * Format vi över huvud taget lagrar – modellfiler, bilder eller video. Används
  * när metadata läses tillbaka, och är avsiktligt bredare än den som avgör vad
  * en kund får skicka in som modellfil.
  */
 export function isStorableExtension(extension: string): boolean {
-  return isAllowedExtension(extension) || isImageExtension(extension);
+  return isAllowedExtension(extension) || isMediaExtension(extension);
+}
+
+/**
+ * True för filer som hör till butikens innehåll i stället för till en order.
+ * De städas aldrig bort som föräldralösa – de har ingen order att knytas till.
+ */
+export function isCatalogAsset(meta: UploadMeta): boolean {
+  return meta.kind === 'image' || meta.kind === 'video';
 }
 
 export function isAllowedFileName(fileName: string): boolean {
@@ -154,8 +192,8 @@ export async function sweepOrphans(
   for (const entry of entries) {
     if (!entry.endsWith('.json')) continue;
     const meta = await readMeta(entry.slice(0, -'.json'.length));
-    // Bilder hör till katalogen och har ingen order att knytas till.
-    if (!meta || meta.claimedBy || meta.kind === 'image') continue;
+    // Bilder och video hör till butikens innehåll och har ingen order att knytas till.
+    if (!meta || meta.claimedBy || isCatalogAsset(meta)) continue;
     if (now - new Date(meta.createdAt).getTime() < maxAgeMs) continue;
     await deleteUpload(meta.id);
     removed += 1;
