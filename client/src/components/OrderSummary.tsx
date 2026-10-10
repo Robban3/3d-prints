@@ -33,8 +33,14 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
               <span>{formatPrice(line.unitPrice * line.quantity)}</span>
             </div>
           ))}
+          {order.discount && (
+            <div className="summary-row discount">
+              <span>Rabatt ({order.discount.label})</span>
+              <span>−{formatPrice(order.discount.amount)}</span>
+            </div>
+          )}
           <div className="summary-row">
-            <span>Frakt</span>
+            <span>Frakt{order.shippingOption ? ` (${order.shippingOption.name})` : ''}</span>
             <span>{order.shipping === 0 ? 'Fri' : formatPrice(order.shipping)}</span>
           </div>
           <div className="summary-row total">

@@ -1,6 +1,10 @@
 import { Link } from 'react-router';
 import { ProductImage } from '../components/ProductImage';
+import { DiscountField } from '../components/DiscountField';
+import { ShippingPicker } from '../components/ShippingPicker';
 import { useCart } from '../lib/cart';
+import { cartTotals } from '../lib/totals';
+import { useDiscount } from '../lib/useDiscount';
 import { formatPrice } from '../lib/format';
 import { fetchConfig } from '../lib/api';
 import { PageHeader } from '../components/PageHeader';
@@ -13,14 +17,27 @@ export function CartPage() {
     description: 'Varorna du valt, innan du går till kassan.',
     noindex: true,
   });
-  const { items, subtotal, setQuantity, remove, clear } = useCart();
+  const {
+    items,
+    subtotal,
+    setQuantity,
+    remove,
+    clear,
+    discountCode,
+    setDiscountCode,
+    shippingOptionId,
+    setShippingOptionId,
+  } = useCart();
   const config = useAsync(() => fetchConfig(), []);
-  const shippingConfig = config.data?.shipping ?? {
-    fee: 59,
-    freeThreshold: 599,
-  };
-  const shipping = subtotal >= shippingConfig.freeThreshold ? 0 : shippingConfig.fee;
-  const missingForFreeShipping = shippingConfig.freeThreshold - subtotal;
+  const shippingOptions = config.data?.shipping.options ?? [];
+  const defaultShipping = config.data?.shipping.defaultId ?? '';
+  const selectedShipping = shippingOptionId || defaultShipping;
+  const option = shippingOptions.find((entry) => entry.id === selectedShipping);
+
+  const { discount, error: discountError, checking } = useDiscount(discountCode, items);
+  const totals = cartTotals({ subtotal, option, discount });
+  const missingForFreeShipping =
+    option?.freeOver !== undefined && totals.shipping > 0 ? option.freeOver - subtotal : 0;
 
   if (items.length === 0) {
     return (
@@ -122,19 +139,46 @@ export function CartPage() {
                 <span>Delsumma</span>
                 <span>{formatPrice(subtotal)}</span>
               </div>
+              {totals.discount > 0 && discount && (
+                <div className="summary-row discount">
+                  <span>Rabatt ({discount.label})</span>
+                  <span>−{formatPrice(totals.discount)}</span>
+                </div>
+              )}
               <div className="summary-row">
-                <span>Frakt</span>
-                <span>{shipping === 0 ? 'Fri' : formatPrice(shipping)}</span>
+                <span>Frakt{option ? ` (${option.name})` : ''}</span>
+                <span>{totals.shipping === 0 ? 'Fri' : formatPrice(totals.shipping)}</span>
               </div>
               <div className="summary-row total">
                 <span>Totalt</span>
-                <span>{formatPrice(subtotal + shipping)}</span>
+                <span>{formatPrice(totals.total)}</span>
               </div>
               {missingForFreeShipping > 0 && (
                 <p className="notice" style={{ marginTop: 14 }}>
                   Handla för {formatPrice(missingForFreeShipping)} till så bjuder vi på frakten.
                 </p>
               )}
+
+              <div style={{ marginTop: 18 }}>
+                <DiscountField
+                  code={discountCode}
+                  discount={discount}
+                  error={discountError}
+                  checking={checking}
+                  onApply={setDiscountCode}
+                  onClear={() => setDiscountCode('')}
+                />
+              </div>
+
+              <div style={{ marginTop: 18 }}>
+                <ShippingPicker
+                  options={shippingOptions}
+                  selected={selectedShipping}
+                  subtotal={subtotal}
+                  freeShipping={discount?.freeShipping}
+                  onSelect={setShippingOptionId}
+                />
+              </div>
               <Link className="btn btn-block btn-lg" to="/kassa" style={{ marginTop: 18 }}>
                 Till kassan
               </Link>

@@ -7,11 +7,13 @@ import { ProductCard } from '../src/components/ProductCard';
 import { OrderTimeline } from '../src/components/OrderTimeline';
 import { UploadDropzone } from '../src/components/UploadDropzone';
 import { ModelFacts } from '../src/components/ModelFacts';
+import { DiscountField } from '../src/components/DiscountField';
 import { ModelPanel } from '../src/components/ModelPanel';
+import { ShippingPicker } from '../src/components/ShippingPicker';
 import { ReviewSection } from '../src/components/ReviewSection';
 import { StockWatchForm } from '../src/components/StockWatchForm';
 import { CartProvider } from '../src/lib/cart';
-import type { AnyOrder, ModelAnalysis, Product, Review } from '../src/types';
+import type { AnyOrder, ModelAnalysis, Product, Review, ShippingOption } from '../src/types';
 
 const product: Product = {
   id: 'p-001',
@@ -435,6 +437,210 @@ describe('ModelPanel', () => {
 
   it('visar ingenting för en order utan fil', () => {
     const { container } = render(<ModelPanel />);
+    expect(container.firstChild).toBeNull();
+  });
+});
+
+describe('DiscountField', () => {
+  const noop = () => undefined;
+
+  it('löser in koden som skrivits', async () => {
+    const onApply = vi.fn();
+    render(
+      <DiscountField
+        code=""
+        discount={null}
+        error=""
+        checking={false}
+        onApply={onApply}
+        onClear={noop}
+      />,
+    );
+    await userEvent.type(screen.getByLabelText('Rabattkod'), 'host20');
+    await userEvent.click(screen.getByRole('button', { name: 'Lös in' }));
+    expect(onApply).toHaveBeenCalledWith('host20');
+  });
+
+  it('håller knappen stängd för ett tomt fält', () => {
+    render(
+      <DiscountField
+        code=""
+        discount={null}
+        error=""
+        checking={false}
+        onApply={noop}
+        onClear={noop}
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'Lös in' })).toBeDisabled();
+  });
+
+  it('visar den inlösta koden och vad den gav', () => {
+    render(
+      <DiscountField
+        code="HOST20"
+        discount={{ code: 'HOST20', label: 'HOST20 · 20 %', amount: 100, freeShipping: false }}
+        error=""
+        checking={false}
+        onApply={noop}
+        onClear={noop}
+      />,
+    );
+    expect(screen.getByText('HOST20')).toBeInTheDocument();
+    expect(screen.getByText(/−100/)).toBeInTheDocument();
+    expect(screen.queryByLabelText('Rabattkod')).toBeNull();
+  });
+
+  it('nämner fri frakt när koden ger det', () => {
+    render(
+      <DiscountField
+        code="FRIFRAKT"
+        discount={{ code: 'FRIFRAKT', label: 'FRIFRAKT', amount: 0, freeShipping: true }}
+        error=""
+        checking={false}
+        onApply={noop}
+        onClear={noop}
+      />,
+    );
+    expect(screen.getByText(/fri frakt/)).toBeInTheDocument();
+  });
+
+  it('visar felet för en kod som inte gäller', () => {
+    render(
+      <DiscountField
+        code="FELKOD"
+        discount={null}
+        error="Vi hittar ingen rabattkod med det namnet."
+        checking={false}
+        onApply={noop}
+        onClear={noop}
+      />,
+    );
+    expect(screen.getByText('Vi hittar ingen rabattkod med det namnet.')).toBeInTheDocument();
+  });
+
+  it('tiger om fel innan någon kod prövats', () => {
+    render(
+      <DiscountField
+        code=""
+        discount={null}
+        error="Något gammalt fel"
+        checking={false}
+        onApply={noop}
+        onClear={noop}
+      />,
+    );
+    expect(screen.queryByText('Något gammalt fel')).toBeNull();
+  });
+
+  it('tar bort en inlöst kod', async () => {
+    const onClear = vi.fn();
+    render(
+      <DiscountField
+        code="HOST20"
+        discount={{ code: 'HOST20', label: 'HOST20', amount: 100, freeShipping: false }}
+        error=""
+        checking={false}
+        onApply={noop}
+        onClear={onClear}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Ta bort' }));
+    expect(onClear).toHaveBeenCalled();
+  });
+});
+
+describe('ShippingPicker', () => {
+  const options: ShippingOption[] = [
+    {
+      id: 'postombud',
+      name: 'Postombud',
+      description: 'Hämtas hos ombud.',
+      fee: 59,
+      freeOver: 599,
+      days: '2–4 arbetsdagar',
+    },
+    {
+      id: 'express',
+      name: 'Express',
+      description: 'Går först.',
+      fee: 179,
+      days: '1–2 arbetsdagar',
+    },
+  ];
+
+  it('visar avgiften som gäller för den här varukorgen', () => {
+    render(
+      <ShippingPicker
+        options={options}
+        selected="postombud"
+        subtotal={400}
+        onSelect={() => undefined}
+      />,
+    );
+    expect(screen.getByText('59 kr')).toBeInTheDocument();
+    expect(screen.getByText('179 kr')).toBeInTheDocument();
+    expect(screen.getByText('199 kr kvar till fri frakt')).toBeInTheDocument();
+  });
+
+  it('skriver Fri när gränsen är passerad', () => {
+    render(
+      <ShippingPicker
+        options={options}
+        selected="postombud"
+        subtotal={700}
+        onSelect={() => undefined}
+      />,
+    );
+    expect(screen.getByText('Fri')).toBeInTheDocument();
+    // Express har ingen gräns och kostar fortfarande.
+    expect(screen.getByText('179 kr')).toBeInTheDocument();
+  });
+
+  it('gör allt fritt när koden ger fri frakt', () => {
+    const { container } = render(
+      <ShippingPicker
+        options={options}
+        selected="express"
+        subtotal={200}
+        freeShipping
+        onSelect={() => undefined}
+      />,
+    );
+    expect(container.querySelectorAll('.shipping-fee')).toHaveLength(2);
+    expect(screen.getAllByText('Fri')).toHaveLength(2);
+    expect(screen.queryByText(/kvar till fri frakt/)).toBeNull();
+  });
+
+  it('markerar det valda alternativet', () => {
+    render(
+      <ShippingPicker
+        options={options}
+        selected="express"
+        subtotal={400}
+        onSelect={() => undefined}
+      />,
+    );
+    expect(screen.getByRole('radio', { name: /Express/ })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('radio', { name: /Postombud/ })).toHaveAttribute(
+      'aria-checked',
+      'false',
+    );
+  });
+
+  it('rapporterar valet', async () => {
+    const onSelect = vi.fn();
+    render(
+      <ShippingPicker options={options} selected="postombud" subtotal={400} onSelect={onSelect} />,
+    );
+    await userEvent.click(screen.getByRole('radio', { name: /Express/ }));
+    expect(onSelect).toHaveBeenCalledWith('express');
+  });
+
+  it('visar ingenting innan alternativen hämtats', () => {
+    const { container } = render(
+      <ShippingPicker options={[]} selected="" subtotal={0} onSelect={() => undefined} />,
+    );
     expect(container.firstChild).toBeNull();
   });
 });

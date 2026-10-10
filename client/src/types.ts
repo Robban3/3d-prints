@@ -113,7 +113,7 @@ export interface ShopConfig {
     infill: { min: number; max: number };
     quantity: { min: number; max: number };
   };
-  shipping: { fee: number; freeThreshold: number };
+  shipping: { options: ShippingOption[]; defaultId: string };
   upload: { maxBytes: number; extensions: string[] };
   payment: { provider: 'klarna'; live: boolean };
 }
@@ -204,6 +204,10 @@ export interface ShopOrder {
   lines: OrderLine[];
   subtotal: number;
   shipping: number;
+  /** Fraktalternativet kunden valde. Saknas på ordrar lagda före fraktvalen. */
+  shippingOption?: { id: string; name: string };
+  /** Rabatten som faktiskt drogs av. */
+  discount?: { code: string; label: string; amount: number };
   total: number;
   payment?: PaymentDetails;
   history: StatusEvent[];
@@ -230,6 +234,44 @@ export interface CustomOrder {
 }
 
 export type AnyOrder = ShopOrder | CustomOrder;
+
+/* ---------- Frakt och rabatter ---------- */
+
+export interface ShippingOption {
+  id: string;
+  name: string;
+  description: string;
+  fee: number;
+  /** Fri frakt från och med det här ordervärdet. Saknas = aldrig fri. */
+  freeOver?: number;
+  days: string;
+}
+
+/** Rabatten som servern räknat fram för den aktuella varukorgen. */
+export interface AppliedDiscount {
+  code: string;
+  label: string;
+  amount: number;
+  freeShipping: boolean;
+}
+
+export type DiscountKind = 'procent' | 'kronor';
+
+/** Rabattkoden som den redigeras i panelen. */
+export interface DiscountCode {
+  code: string;
+  description: string;
+  kind: DiscountKind;
+  value: number;
+  minSubtotal: number;
+  startsAt?: string;
+  endsAt?: string;
+  maxUses: number;
+  uses: number;
+  freeShipping: boolean;
+  active: boolean;
+  createdAt: string;
+}
 
 /* ---------- Omdömen ---------- */
 

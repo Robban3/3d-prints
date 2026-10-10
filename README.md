@@ -103,6 +103,7 @@ accepteras rakt av, varken för butiksorder eller egna jobb.
 | `GET`  | `/api/orders/:id`             | Hämtar en order för spårning                                |
 | `POST` | `/api/products/:slug/reviews` | Lämnar ett omdöme, som läggs i kö för granskning            |
 | `POST` | `/api/products/:slug/notify`  | Bevakar en slutsåld produkt                                 |
+| `POST` | `/api/discounts/check`        | Prövar en rabattkod mot varukorgen                          |
 | `GET`  | `/sitemap.xml`                | Sitemap byggd ur katalogen                                  |
 | `GET`  | `/robots.txt`                 | Indexeringsregler                                           |
 
@@ -187,6 +188,7 @@ Verkstadens panel ligger på `/verkstad` och har åtta flikar:
 - **Kategorier** – lägg till, byt namn på och ta bort kategorier
 - **Material** – material, densitet och kvalitetsnivåer, vars faktorer styr priset på egna printjobb
 - **Omdömen** – granska, publicera, avslå och svara på kundomdömen
+- **Rabatter** – skapa och stäng av rabattkoder, och se hur många som löst in dem
 - **Import/export** – exportera katalogen, ändra många produkter i filen, läs in igen
 - **Historik** – de senaste ändringarna i katalogen och i ordrarnas status
 
@@ -225,6 +227,17 @@ och siffrorna finns också som tabell.
 den och vilken produkt det gäller. Finns det publicerade omdömen är det deras
 snitt butiken visar; annars behåller produkten katalogens eget värde, så en ny
 produkt inte ser ut att ha fått noll i betyg.
+
+**Rabattkoder** räknas alltid om på servern. Koden som kommer från kunden är
+bara en nyckel; hur mycket den är värd beror på varukorgens innehåll och
+bestäms här. Räknaren över inlösen ökas innan betalningen och backas om något
+går fel, precis som lagersaldot, så en kod med en användning kvar inte kan lösas
+in av två kunder samtidigt. Rabatten går in i Klarnas underlag som en egen rad
+med negativt belopp – summan av raderna måste vara exakt det auktoriserade
+beloppet.
+
+Fraktavgiften mäts mot summan **före** rabatt, så att en rabattkod inte tar
+tillbaka den fria frakt kunden redan handlat ihop till.
 
 **Lagerbevakningar** löses ut av panelen: höjer du saldot på en slutsåld produkt
 från noll får alla som bevakat den ett mejl, en gång var. Översikten visar hur
@@ -288,19 +301,21 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 
 ## Miljövariabler
 
-| Variabel              | Standard                | Beskrivning                                          |
-| --------------------- | ----------------------- | ---------------------------------------------------- |
-| `PORT`                | `4000`                  | Port för API-servern                                 |
-| `ORDER_STORE`         | `data/orders.json`      | Fil där ordrar sparas                                |
-| `REVIEW_STORE`        | `data/omdomen.json`     | Fil där omdömen sparas                               |
-| `WATCH_STORE`         | `data/bevakningar.json` | Fil där lagerbevakningar sparas                      |
-| `CLIENT_DIST`         | `../../client/dist`     | Katalog med den byggda klienten                      |
-| `SHOP_URL`            | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på          |
-| `SHOP_TIME_ZONE`      | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror |
-| `BUILD_PLATE_MM`      | `256x256x256`           | Byggvolymen som modeller mäts mot                    |
-| `LOW_STOCK_THRESHOLD` | `5`                     | Saldo som flaggas som lågt i översikten              |
-| `RATE_LIMIT_REVIEWS`  | `5`                     | Omdömen per IP och timme                             |
-| `RATE_LIMIT_WATCHES`  | `10`                    | Lagerbevakningar per IP och timme                    |
+| Variabel               | Standard                | Beskrivning                                          |
+| ---------------------- | ----------------------- | ---------------------------------------------------- |
+| `PORT`                 | `4000`                  | Port för API-servern                                 |
+| `ORDER_STORE`          | `data/orders.json`      | Fil där ordrar sparas                                |
+| `REVIEW_STORE`         | `data/omdomen.json`     | Fil där omdömen sparas                               |
+| `WATCH_STORE`          | `data/bevakningar.json` | Fil där lagerbevakningar sparas                      |
+| `DISCOUNT_STORE`       | `data/rabatter.json`    | Fil där rabattkoder sparas                           |
+| `CLIENT_DIST`          | `../../client/dist`     | Katalog med den byggda klienten                      |
+| `SHOP_URL`             | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på          |
+| `SHOP_TIME_ZONE`       | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror |
+| `BUILD_PLATE_MM`       | `256x256x256`           | Byggvolymen som modeller mäts mot                    |
+| `LOW_STOCK_THRESHOLD`  | `5`                     | Saldo som flaggas som lågt i översikten              |
+| `RATE_LIMIT_REVIEWS`   | `5`                     | Omdömen per IP och timme                             |
+| `RATE_LIMIT_WATCHES`   | `10`                    | Lagerbevakningar per IP och timme                    |
+| `RATE_LIMIT_DISCOUNTS` | `60`                    | Försök med rabattkoder per IP och timme              |
 
 ## Struktur
 
@@ -323,6 +338,8 @@ server/
   src/stats.ts    siffrorna till panelens översikt
   src/notify.ts   bevakningar av slutsålda produkter
   src/seo.ts      sitemap och robots.txt
+  src/shipping.ts fraktalternativ och orderns totalsumma
+  src/discounts.ts rabattkoder
   src/storage.ts  lokal disk eller objektlagring för uppladdade filer
   src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter

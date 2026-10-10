@@ -108,6 +108,14 @@ export function orderConfirmation(order: AnyOrder): Mail {
       'Din beställning:',
       orderRows(order),
       '',
+      ...(order.type === 'shop' && order.discount
+        ? [`Rabatt (${order.discount.label}): −${formatPrice(order.discount.amount)}`]
+        : []),
+      ...(order.type === 'shop' && order.shipping > 0
+        ? [
+            `Frakt${order.shippingOption ? ` (${order.shippingOption.name})` : ''}: ${formatPrice(order.shipping)}`,
+          ]
+        : []),
       `Totalt: ${formatPrice(order.total)}`,
       paymentLine,
       '',

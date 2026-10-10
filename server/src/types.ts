@@ -117,6 +117,13 @@ export interface PaymentDetails {
   test: boolean;
 }
 
+/** Rabatten som faktiskt drogs av, sparad på ordern så kvittot kan visa den. */
+export interface OrderDiscount {
+  code: string;
+  label: string;
+  amount: number;
+}
+
 export interface Order {
   id: string;
   type: 'shop';
@@ -125,7 +132,10 @@ export interface Order {
   customer: CustomerDetails;
   lines: OrderLine[];
   shipping: number;
+  /** Fraktalternativet kunden valde. Saknas på ordrar lagda före fraktvalen. */
+  shippingOption?: { id: string; name: string };
   subtotal: number;
+  discount?: OrderDiscount;
   total: number;
   payment?: PaymentDetails;
   history: StatusEvent[];
