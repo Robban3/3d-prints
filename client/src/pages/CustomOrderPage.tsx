@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { CustomerForm } from '../components/CustomerForm';
+import { ModelFacts } from '../components/ModelFacts';
+import { ModelViewer } from '../components/ModelViewer';
 import { UploadDropzone } from '../components/UploadDropzone';
 import { PageHeader } from '../components/PageHeader';
 import { TextAreaField, TextField } from '../components/Field';
@@ -60,6 +62,8 @@ export function CustomOrderPage() {
   // En fil som laddades upp på startsidan följer med hit via navigeringen.
   const carried = (location.state as { uploaded?: UploadedFile } | null)?.uploaded ?? null;
   const [uploaded, setUploaded] = useState<UploadedFile | null>(carried);
+  // Filen ligger kvar i webbläsaren så att 3D-vyn slipper hämta hem den igen.
+  const [pickedFile, setPickedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
 
@@ -73,7 +77,7 @@ export function CustomOrderPage() {
   useEffect(() => {
     let active = true;
     const timer = window.setTimeout(() => {
-      fetchQuote(request)
+      fetchQuote(request, uploaded?.id)
         .then((result) => {
           if (!active) return;
           setQuote(result.quote);
@@ -89,13 +93,15 @@ export function CustomOrderPage() {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [request]);
+  }, [request, uploaded?.id]);
 
   const accepted = config.data?.upload.extensions ?? DEFAULT_ACCEPTED;
   const maxBytes = config.data?.upload.maxBytes ?? DEFAULT_MAX_BYTES;
   const materials = config.data?.materials ?? [];
   const qualities = config.data?.qualities ?? [];
   const limits = config.data?.quoteLimits;
+  // Är filen uppmätt är det dess volym som gäller, så reglaget döljs.
+  const measured = uploaded?.analysis;
 
   const selectedMaterial = useMemo(
     () => materials.find((entry) => entry.id === request.material),
@@ -161,10 +167,29 @@ export function CustomOrderPage() {
                       maxBytes={maxBytes}
                       uploaded={uploaded}
                       onUploaded={setUploaded}
+                      onFileChosen={setPickedFile}
                       onBusyChange={setUploading}
                       error={errors.fileId}
                     />
                   </div>
+
+                  {uploaded && (
+                    <div className="model-preview">
+                      <ModelViewer
+                        file={pickedFile}
+                        url={uploaded.url}
+                        fileName={uploaded.fileName}
+                      />
+                      {measured ? (
+                        <ModelFacts analysis={measured} />
+                      ) : (
+                        <p className="notice">
+                          {uploaded.analysisError ??
+                            'Det här formatet mäter vi upp för hand. Välj ungefär rätt storlek nedan – vi hör av oss med exakt pris innan produktion.'}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <TextAreaField
                     label="Beskriv jobbet"
@@ -233,38 +258,58 @@ export function CustomOrderPage() {
               <div className="panel">
                 <h2>3. Storlek och antal</h2>
                 <div className="stack" style={{ gap: 22 }}>
-                  <div className="field">
-                    <label htmlFor="volume">
-                      Ungefärlig volym: <strong>{request.volumeCm3} cm³</strong>
-                    </label>
-                    <input
-                      id="volume"
-                      type="range"
-                      min={limits?.volumeCm3.min ?? 1}
-                      max={1500}
-                      step={1}
-                      value={request.volumeCm3}
-                      onChange={(event) => patch({ volumeCm3: Number(event.target.value) })}
-                    />
-                    <div className="chip-row">
-                      {volumePresets.map((preset) => (
-                        <button
-                          key={preset.label}
-                          type="button"
-                          className="chip"
-                          aria-pressed={request.volumeCm3 === preset.volume}
-                          onClick={() => patch({ volumeCm3: preset.volume })}
-                        >
-                          {preset.label} ≈ {preset.volume} cm³
-                        </button>
-                      ))}
+                  {measured ? (
+                    <div className="field">
+                      <span className="field-label">Volym</span>
+                      <p className="measured-volume">
+                        <strong>
+                          {measured.volumeCm3.toLocaleString('sv-SE', {
+                            maximumFractionDigits: 2,
+                          })}{' '}
+                          cm³
+                        </strong>
+                        <span>uppmätt ur {uploaded?.fileName}</span>
+                      </p>
+                      <span className="field-hint">
+                        Vi räknar på filens riktiga volym, så du behöver inte uppskatta något. Byt
+                        fil om du vill prissätta en annan modell.
+                      </span>
+                      {errors.volumeCm3 && <span className="error">{errors.volumeCm3}</span>}
                     </div>
-                    <span className="field-hint">
-                      Vet du inte volymen? Välj ungefär rätt storlek – vi mäter filen och hör av oss
-                      innan produktion om priset ändras.
-                    </span>
-                    {errors.volumeCm3 && <span className="error">{errors.volumeCm3}</span>}
-                  </div>
+                  ) : (
+                    <div className="field">
+                      <label htmlFor="volume">
+                        Ungefärlig volym: <strong>{request.volumeCm3} cm³</strong>
+                      </label>
+                      <input
+                        id="volume"
+                        type="range"
+                        min={limits?.volumeCm3.min ?? 1}
+                        max={1500}
+                        step={1}
+                        value={request.volumeCm3}
+                        onChange={(event) => patch({ volumeCm3: Number(event.target.value) })}
+                      />
+                      <div className="chip-row">
+                        {volumePresets.map((preset) => (
+                          <button
+                            key={preset.label}
+                            type="button"
+                            className="chip"
+                            aria-pressed={request.volumeCm3 === preset.volume}
+                            onClick={() => patch({ volumeCm3: preset.volume })}
+                          >
+                            {preset.label} ≈ {preset.volume} cm³
+                          </button>
+                        ))}
+                      </div>
+                      <span className="field-hint">
+                        Ladda upp en fil så mäter vi volymen exakt. Utan fil: välj ungefär rätt
+                        storlek, vi hör av oss innan produktion om priset ändras.
+                      </span>
+                      {errors.volumeCm3 && <span className="error">{errors.volumeCm3}</span>}
+                    </div>
+                  )}
 
                   <div className="field">
                     <label htmlFor="infill">
@@ -391,6 +436,8 @@ export function CustomOrderPage() {
 
                   <div className="notice">
                     <strong>Beräknad printtid:</strong> {formatHours(quote.estimatedPrintHours)}
+                    <br />
+                    <strong>Materialvikt:</strong> {quote.estimatedWeightGrams} g
                     <br />
                     <strong>Leverans:</strong> {quote.estimatedDeliveryDays} arbetsdagar
                   </div>

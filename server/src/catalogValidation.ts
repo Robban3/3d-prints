@@ -76,7 +76,10 @@ export function slugify(value: string): string {
     .slice(0, 60);
 }
 
-function parseSizes(value: unknown, errors: Record<string, string>): ProductVariantOption[] | undefined {
+function parseSizes(
+  value: unknown,
+  errors: Record<string, string>,
+): ProductVariantOption[] | undefined {
   if (value === undefined || value === null) return undefined;
   if (!Array.isArray(value)) {
     errors.sizes = 'Storlekarna kunde inte tolkas.';

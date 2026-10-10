@@ -6,8 +6,9 @@ import type { ReactElement } from 'react';
 import { ProductCard } from '../src/components/ProductCard';
 import { OrderTimeline } from '../src/components/OrderTimeline';
 import { UploadDropzone } from '../src/components/UploadDropzone';
+import { ModelFacts } from '../src/components/ModelFacts';
 import { CartProvider } from '../src/lib/cart';
-import type { AnyOrder, Product } from '../src/types';
+import type { AnyOrder, ModelAnalysis, Product } from '../src/types';
 
 const product: Product = {
   id: 'p-001',
@@ -188,5 +189,60 @@ describe('UploadDropzone', () => {
       />,
     );
     expect(screen.getByText('Vi hittar inte din uppladdade fil.')).toBeInTheDocument();
+  });
+});
+
+describe('ModelFacts', () => {
+  const analysis: ModelAnalysis = {
+    format: 'stl',
+    volumeCm3: 27.5,
+    surfaceAreaCm2: 54,
+    bounds: { width: 30.5, depth: 30, height: 30 },
+    triangles: 1248,
+    openEdges: 0,
+    nonManifoldEdges: 0,
+    watertight: true,
+    invertedNormals: false,
+    fitsBuildPlate: true,
+    warnings: [],
+  };
+
+  it('visar volym, mått och att meshen är sluten', () => {
+    render(<ModelFacts analysis={analysis} />);
+    expect(screen.getByText('27,5 cm³')).toBeInTheDocument();
+    expect(screen.getByText('30,5 × 30 × 30 mm')).toBeInTheDocument();
+    expect(screen.getByText('Sluten och klar att slica')).toBeInTheDocument();
+    expect(screen.getByText(/filens verkliga volym/)).toBeInTheDocument();
+  });
+
+  it('listar varningarna med rätt allvarsgrad', () => {
+    const { container } = render(
+      <ModelFacts
+        analysis={{
+          ...analysis,
+          watertight: false,
+          openEdges: 4,
+          fitsBuildPlate: false,
+          warnings: [
+            { code: 'for-stor', severity: 'error', message: 'Modellen är större än byggvolymen.' },
+            { code: 'inte-tat', severity: 'warning', message: 'Meshen har 4 öppna kanter.' },
+          ],
+        }}
+      />,
+    );
+    expect(container.querySelectorAll('.model-warning.error')).toHaveLength(1);
+    expect(container.querySelectorAll('.model-warning.warning')).toHaveLength(1);
+    expect(screen.getByText('Behöver lagas – se nedan')).toBeInTheDocument();
+    // Den lugnande texten ska inte stå kvar när det finns varningar.
+    expect(screen.queryByText(/filens verkliga volym/)).not.toBeInTheDocument();
+  });
+
+  it('säger att tätheten inte kontrollerats för en tung mesh', () => {
+    render(
+      <ModelFacts
+        analysis={{ ...analysis, watertight: null, openEdges: null, nonManifoldEdges: null }}
+      />,
+    );
+    expect(screen.getByText('För tung att kontrollera')).toBeInTheDocument();
   });
 });

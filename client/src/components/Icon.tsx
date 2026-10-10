@@ -26,7 +26,9 @@ export type IconName =
   | 'heart'
   | 'users'
   | 'layers'
-  | 'arrowRight';
+  | 'arrowRight'
+  | 'info'
+  | 'alert';
 
 /** Streckade ikoner i ett enhetligt 24-rutnät. Ärver färg och storlek från texten. */
 const paths: Record<IconName, JSX.Element> = {
@@ -152,6 +154,20 @@ const paths: Record<IconName, JSX.Element> = {
       <circle cx="12" cy="12" r="8.5" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="12" cy="12" r="0.8" fill="currentColor" />
+    </>
+  ),
+  info: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5.5" />
+      <circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none" />
+    </>
+  ),
+  alert: (
+    <>
+      <path d="M12 3.5 21.5 20h-19z" />
+      <path d="M12 9.5v4.5" />
+      <circle cx="12" cy="17" r="0.9" fill="currentColor" stroke="none" />
     </>
   ),
   cube: (

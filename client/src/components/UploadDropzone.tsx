@@ -9,6 +9,11 @@ interface Props {
   maxBytes: number;
   uploaded: UploadedFile | null;
   onUploaded: (file: UploadedFile | null) => void;
+  /**
+   * Filen som valdes, kvar i webbläsaren. Används för att visa modellen i 3D
+   * utan att den behöver hämtas ner igen.
+   */
+  onFileChosen?: (file: File | null) => void;
   /** Anropas när uppladdningen startar och slutar, så formuläret kan låsa knappen. */
   onBusyChange?: (busy: boolean) => void;
   error?: string;
@@ -23,6 +28,7 @@ export function UploadDropzone({
   maxBytes,
   uploaded,
   onUploaded,
+  onFileChosen,
   onBusyChange,
   error,
 }: Props) {
@@ -53,8 +59,10 @@ export function UploadDropzone({
     abort.current = upload.abort;
     try {
       onUploaded(await upload.promise);
+      onFileChosen?.(file);
     } catch (caught) {
       onUploaded(null);
+      onFileChosen?.(null);
       setLocalError(
         caught instanceof ApiError ? caught.message : 'Uppladdningen misslyckades. Försök igen.',
       );
@@ -74,6 +82,7 @@ export function UploadDropzone({
     }
     if (uploaded) void deleteUpload(uploaded.id);
     onUploaded(null);
+    onFileChosen?.(null);
     setLocalError('');
   }
 

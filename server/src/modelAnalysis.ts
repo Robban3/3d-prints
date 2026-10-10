@@ -212,7 +212,7 @@ class MeshMeasure implements MeshSink {
     this.edgeCounts!.set(key, (this.edgeCounts!.get(key) ?? 0) + 1);
   }
 
- /**
+  /**
    * En sluten yta delar varje kant mellan exakt två trianglar. En kant med bara
    * en triangel är ett hål; en kant med fler än två betyder att geometrin
    * överlappar sig själv, vilket slicern hanterar på ett helt annat sätt.
@@ -711,7 +711,9 @@ function readModelFromZip(buffer: Buffer): Buffer {
   }
 
   let offset = centralOffset;
-  let best: { name: string; method: number; compressedSize: number; localOffset: number } | undefined;
+  let best:
+    | { name: string; method: number; compressedSize: number; localOffset: number }
+    | undefined;
 
   for (let i = 0; i < entries; i += 1) {
     if (offset + 46 > buffer.length || buffer.readUInt32LE(offset) !== CENTRAL_SIGNATURE) break;
