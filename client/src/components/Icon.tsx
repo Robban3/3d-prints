@@ -28,7 +28,8 @@ export type IconName =
   | 'layers'
   | 'arrowRight'
   | 'info'
-  | 'alert';
+  | 'alert'
+  | 'check';
 
 /** Streckade ikoner i ett enhetligt 24-rutnät. Ärver färg och storlek från texten. */
 const paths: Record<IconName, JSX.Element> = {
@@ -156,6 +157,7 @@ const paths: Record<IconName, JSX.Element> = {
       <circle cx="12" cy="12" r="0.8" fill="currentColor" />
     </>
   ),
+  check: <path d="m4.5 12.5 5 5 10-11" />,
   info: (
     <>
       <circle cx="12" cy="12" r="9" />

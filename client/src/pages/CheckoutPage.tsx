@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { CustomerForm } from '../components/CustomerForm';
+import { DiscountField } from '../components/DiscountField';
+import { ShippingPicker } from '../components/ShippingPicker';
 import { useCart } from '../lib/cart';
+import { cartTotals, orderLines } from '../lib/totals';
+import { useDiscount } from '../lib/useDiscount';
 import { ApiError, createPaymentSession, fetchConfig, placeOrder } from '../lib/api';
 import { KlarnaPayment } from '../components/KlarnaPayment';
 import { loadKlarna, authorize } from '../lib/klarna';
@@ -27,14 +31,26 @@ export function CheckoutPage() {
     description: 'Fyll i dina uppgifter och betala med Klarna.',
     noindex: true,
   });
-  const { items, subtotal, clear } = useCart();
+  const {
+    items,
+    subtotal,
+    clear,
+    discountCode,
+    setDiscountCode,
+    shippingOptionId,
+    setShippingOptionId,
+  } = useCart();
   const navigate = useNavigate();
   const config = useAsync(() => fetchConfig(), []);
-  const shippingConfig = config.data?.shipping ?? {
-    fee: 59,
-    freeThreshold: 599,
-  };
-  const shipping = subtotal >= shippingConfig.freeThreshold ? 0 : shippingConfig.fee;
+  const shippingOptions = config.data?.shipping.options ?? [];
+  const selectedShipping = shippingOptionId || config.data?.shipping.defaultId || '';
+  const option = shippingOptions.find((entry) => entry.id === selectedShipping);
+
+  const { discount, error: discountError, checking } = useDiscount(discountCode, items);
+  const totals = cartTotals({ subtotal, option, discount });
+  // Bara en kod som servern redan godkänt skickas med, så ett felstavat försök
+  // inte stoppar betalsessionen.
+  const activeCode = discount ? discountCode : '';
 
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
   const [session, setSession] = useState<PaymentSession | null>(null);
@@ -46,19 +62,20 @@ export function CheckoutPage() {
 
   // Beloppet i Klarnas widget måste följa varukorgen, så sessionen görs om när
   // innehållet ändras.
-  const cartKey = items.map((item) => `${item.key}x${item.quantity}`).join('|');
+  const cartKey = [
+    items.map((item) => `${item.key}x${item.quantity}`).join('|'),
+    activeCode,
+    selectedShipping,
+  ].join('#');
   useEffect(() => {
     if (items.length === 0) return;
     let active = true;
     setSessionLoading(true);
     createPaymentSession({
       type: 'shop',
-      lines: items.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-        color: item.color,
-        size: item.size,
-      })),
+      lines: orderLines(items),
+      ...(activeCode ? { code: activeCode } : {}),
+      ...(selectedShipping ? { shippingOption: selectedShipping } : {}),
     })
       .then((result) => {
         if (!active) return;
@@ -128,12 +145,9 @@ export function CheckoutPage() {
 
       const result = await placeOrder({
         customer,
-        lines: items.map((item) => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          color: item.color,
-          size: item.size,
-        })),
+        lines: orderLines(items),
+        ...(activeCode ? { code: activeCode } : {}),
+        ...(selectedShipping ? { shippingOption: selectedShipping } : {}),
         authorizationToken,
       });
       clear();
@@ -181,6 +195,16 @@ export function CheckoutPage() {
                   noteLabel="Meddelande till verkstaden (valfritt)"
                   notePlaceholder="Portkod, önskat leveransdatum eller en hälsning om det är en present."
                 />
+
+                <div style={{ marginTop: 22 }}>
+                  <ShippingPicker
+                    options={shippingOptions}
+                    selected={selectedShipping}
+                    subtotal={subtotal}
+                    freeShipping={discount?.freeShipping}
+                    onSelect={setShippingOptionId}
+                  />
+                </div>
               </div>
               <KlarnaPayment session={session} loading={sessionLoading} error={sessionError} />
             </div>
@@ -200,13 +224,30 @@ export function CheckoutPage() {
                   <span>{formatPrice(item.unitPrice * item.quantity)}</span>
                 </div>
               ))}
+              {totals.discount > 0 && discount && (
+                <div className="summary-row discount">
+                  <span>Rabatt ({discount.label})</span>
+                  <span>−{formatPrice(totals.discount)}</span>
+                </div>
+              )}
               <div className="summary-row">
-                <span>Frakt</span>
-                <span>{shipping === 0 ? 'Fri' : formatPrice(shipping)}</span>
+                <span>Frakt{option ? ` (${option.name})` : ''}</span>
+                <span>{totals.shipping === 0 ? 'Fri' : formatPrice(totals.shipping)}</span>
               </div>
               <div className="summary-row total">
                 <span>Att betala</span>
-                <span>{formatPrice(subtotal + shipping)}</span>
+                <span>{formatPrice(totals.total)}</span>
+              </div>
+
+              <div style={{ marginTop: 18 }}>
+                <DiscountField
+                  code={discountCode}
+                  discount={discount}
+                  error={discountError}
+                  checking={checking}
+                  onApply={setDiscountCode}
+                  onClear={() => setDiscountCode('')}
+                />
               </div>
 
               {submitError && (

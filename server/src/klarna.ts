@@ -24,7 +24,7 @@ export interface KlarnaConfig {
 }
 
 export interface KlarnaOrderLine {
-  type: 'physical' | 'shipping_fee' | 'digital';
+  type: 'physical' | 'shipping_fee' | 'digital' | 'discount';
   reference: string;
   name: string;
   quantity: number;
@@ -155,13 +155,39 @@ function shippingLine(shipping: number): KlarnaOrderLine {
   };
 }
 
+/**
+ * En rabatt skrivs som en egen rad med negativt belopp. Klarna kräver att
+ * summan av raderna är exakt order_amount, så rabatten måste finnas i
+ * underlaget – inte bara vara avdragen från totalen.
+ */
+function discountLine(amount: number, label: string): KlarnaOrderLine {
+  const total = -toMinorUnits(amount);
+  return {
+    type: 'discount',
+    reference: 'rabatt',
+    name: label,
+    quantity: 1,
+    unit_price: total,
+    tax_rate: VAT_RATE_BASIS_POINTS,
+    total_amount: total,
+    total_discount_amount: 0,
+    total_tax_amount: taxOf(total),
+  };
+}
+
 /** Bygger Klarnas orderunderlag för en butiksorder. */
 export function payloadForOrder(
-  order: Pick<Order, 'lines' | 'shipping' | 'total'> & { id?: string },
+  order: Pick<Order, 'lines' | 'shipping' | 'total'> & {
+    id?: string;
+    discount?: { amount: number; label: string };
+  },
   config: Pick<KlarnaConfig, 'purchaseCountry' | 'purchaseCurrency' | 'locale'>,
 ): KlarnaOrderPayload {
   const lines = order.lines.map(physicalLine);
   if (order.shipping > 0) lines.push(shippingLine(order.shipping));
+  if (order.discount && order.discount.amount > 0) {
+    lines.push(discountLine(order.discount.amount, order.discount.label));
+  }
   const orderAmount = lines.reduce((sum, line) => sum + line.total_amount, 0);
   return {
     purchase_country: config.purchaseCountry,

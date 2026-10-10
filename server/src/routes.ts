@@ -8,7 +8,14 @@ import {
 } from './catalog.ts';
 
 import { QUOTE_LIMITS, quoteFor } from './pricing.ts';
-import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, shippingFor } from './shipping.ts';
+import {
+  DEFAULT_SHIPPING_ID,
+  SHIPPING_OPTIONS,
+  orderTotals,
+  shippingOptionFor,
+} from './shipping.ts';
+import { evaluateDiscount, findDiscount, redeemDiscount, releaseDiscount } from './discounts.ts';
+import type { AppliedDiscount } from './shipping.ts';
 import { findOrder, generateOrderNumber, listOrders, saveOrder, updateOrder } from './store.ts';
 import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
 import { pathParam } from './http.ts';
@@ -76,6 +83,12 @@ const notifyLimit = rateLimit({
   max: Number(process.env.RATE_LIMIT_WATCHES ?? 10),
   message: 'Många bevakningar från samma nätverk. Försök igen om en stund.',
 });
+const discountLimit = rateLimit({
+  name: 'rabattkoder',
+  windowMs: 60 * 60 * 1000,
+  max: Number(process.env.RATE_LIMIT_DISCOUNTS ?? 60),
+  message: 'För många försök med rabattkoder. Vänta en stund och försök igen.',
+});
 const quoteLimit = rateLimit({
   name: 'quote',
   windowMs: 60 * 1000,
@@ -93,7 +106,7 @@ api.get('/config', async (_req, res) => {
     qualities: await allQualities(),
     categories: await allCategories(),
     quoteLimits: QUOTE_LIMITS,
-    shipping: { fee: SHIPPING_FEE, freeThreshold: FREE_SHIPPING_THRESHOLD },
+    shipping: { options: SHIPPING_OPTIONS, defaultId: DEFAULT_SHIPPING_ID },
     upload: { maxBytes: MAX_UPLOAD_BYTES, extensions: ALLOWED_EXTENSIONS },
     payment: { provider: 'klarna', live: isConfigured() },
   });
@@ -187,6 +200,24 @@ api.post('/products/:slug/reviews', reviewLimit, async (req, res) => {
   }
 });
 
+/**
+ * Prövar en rabattkod mot varukorgen. Ordervärdet räknas ut från katalogens
+ * egna priser, aldrig från det klienten påstår, och beloppet som svaret
+ * innehåller är bara till för att visas – ordern räknar om det på nytt.
+ */
+api.post('/discounts/check', discountLimit, async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const lines = await parseOrderLines(body.lines);
+  const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+
+  const verdict = evaluateDiscount(await findDiscount(body.code), subtotal);
+  if (!verdict.ok) {
+    res.status(400).json({ error: verdict.reason, fields: { code: verdict.reason } });
+    return;
+  }
+  res.json({ discount: verdict.applied, subtotal });
+});
+
 api.post('/quote', quoteLimit, async (req, res) => {
   // Offertanropet tar både själva förfrågan och en inslagen variant med fileId.
   const body = (req.body ?? {}) as Record<string, unknown>;
@@ -231,6 +262,25 @@ api.post('/products/:slug/notify', notifyLimit, async (req, res) => {
     throw error;
   }
 });
+
+/**
+ * Löser upp en rabattkod från kunden. Gäller den inte avbryts hela
+ * beställningen – kunden räknar med rabatten, så att tysta släppa den vore att
+ * ta mer betalt än vad som visades i kassan.
+ */
+async function resolveDiscount(
+  code: unknown,
+  subtotal: number,
+): Promise<(AppliedDiscount & { code: string; label: string }) | undefined> {
+  const wanted = typeof code === 'string' ? code.trim() : '';
+  if (wanted.length === 0) return undefined;
+
+  const verdict = evaluateDiscount(await findDiscount(wanted), subtotal);
+  if (!verdict.ok || !verdict.applied) {
+    throw new ValidationError({ code: verdict.reason ?? 'Rabattkoden gäller inte.' });
+  }
+  return verdict.applied;
+}
 
 /**
  * Finns det riktiga omdömen är det de som gäller. Produkter utan omdömen
@@ -288,7 +338,21 @@ api.post('/payments/session', sessionLimit, async (req, res) => {
   } else {
     const lines = await parseOrderLines(body.lines);
     const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
-    payload = payloadForOrder({ lines, shipping: shippingFor(subtotal), total: subtotal }, config);
+    const resolved = await resolveDiscount(body.code, subtotal);
+    const totals = orderTotals({
+      subtotal,
+      shippingOption: shippingOptionFor(body.shippingOption),
+      discount: resolved,
+    });
+    payload = payloadForOrder(
+      {
+        lines,
+        shipping: totals.shipping,
+        total: totals.total,
+        ...(resolved ? { discount: { amount: totals.discount, label: resolved.label } } : {}),
+      },
+      config,
+    );
   }
 
   const session = await createSession(payload);
@@ -341,24 +405,45 @@ api.post('/orders', orderLimit, async (req, res) => {
   const lines = await parseOrderLines(body.lines);
 
   const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
-  const shipping = shippingFor(subtotal);
+  const shippingOption = shippingOptionFor(body.shippingOption);
+  const resolved = await resolveDiscount(body.code, subtotal);
+  const totals = orderTotals({ subtotal, shippingOption, discount: resolved });
 
   const orderId = generateOrderNumber('S');
   // Saldot dras av innan betalningen, så att två kunder inte kan köpa samma
   // sista exemplar medan Klarna svarar.
   await reserve(lines);
 
+  // Rabatten räknas av på samma sätt och av samma skäl: koden kan ha tagit slut
+  // sedan varukorgen räknades ut.
+  if (resolved) {
+    const claimed = await redeemDiscount(resolved.code);
+    if (!claimed) {
+      await release(lines);
+      throw new ValidationError({
+        code: 'Den koden blev slutanvänd nyss. Ta bort den och försök igen.',
+      });
+    }
+  }
+
   let payment;
   try {
     payment = await settle(
       typeof body.authorizationToken === 'string' ? body.authorizationToken : undefined,
       payloadForOrder(
-        { lines, shipping, total: subtotal + shipping, id: orderId },
+        {
+          lines,
+          shipping: totals.shipping,
+          total: totals.total,
+          id: orderId,
+          ...(resolved ? { discount: { amount: totals.discount, label: resolved.label } } : {}),
+        },
         paymentLocale(),
       ),
     );
   } catch (error) {
     await release(lines);
+    if (resolved) await releaseDiscount(resolved.code);
     throw error;
   }
 
@@ -371,8 +456,12 @@ api.post('/orders', orderLimit, async (req, res) => {
     customer,
     lines,
     subtotal,
-    shipping,
-    total: subtotal + shipping,
+    shipping: totals.shipping,
+    shippingOption: { id: shippingOption.id, name: shippingOption.name },
+    ...(resolved && totals.discount > 0
+      ? { discount: { code: resolved.code, label: resolved.label, amount: totals.discount } }
+      : {}),
+    total: totals.total,
     payment,
   };
 

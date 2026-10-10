@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { Dashboard } from '../components/admin/Dashboard';
+import { DiscountManager } from '../components/admin/DiscountManager';
 import { OrderManager } from '../components/admin/OrderManager';
 import { ReviewManager } from '../components/admin/ReviewManager';
 import { ProductManager } from '../components/admin/ProductManager';
@@ -22,6 +23,7 @@ type Tab =
   | 'kategorier'
   | 'material'
   | 'omdomen'
+  | 'rabatter'
   | 'import'
   | 'historik';
 
@@ -32,6 +34,7 @@ const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'kategorier', label: 'Kategorier' },
   { id: 'material', label: 'Material' },
   { id: 'omdomen', label: 'Omdömen' },
+  { id: 'rabatter', label: 'Rabatter' },
   { id: 'import', label: 'Import/export' },
   { id: 'historik', label: 'Historik' },
 ];
@@ -218,6 +221,7 @@ export function AdminPage() {
             <MaterialManager token={token} onChanged={() => void loadCategories()} />
           )}
           {tab === 'omdomen' && <ReviewManager token={token} />}
+          {tab === 'rabatter' && <DiscountManager token={token} />}
           {tab === 'import' && (
             <CatalogTransfer token={token} onImported={() => void loadCategories()} />
           )}

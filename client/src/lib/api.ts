@@ -1,6 +1,7 @@
 import type {
   AdminReview,
   AnyOrder,
+  AppliedDiscount,
   CustomOrder,
   CustomerDetails,
   Product,
@@ -17,6 +18,7 @@ import type {
   OrderStatus,
   PaymentSession,
   DashboardStats,
+  DiscountCode,
   ImportResult,
   ProductDraft,
   Review,
@@ -125,11 +127,21 @@ export function fetchQuote(
   });
 }
 
+/** Prövar en rabattkod mot varukorgen. Beloppet räknas av servern. */
+export function checkDiscount(
+  code: string,
+  lines: Array<{ productId: string; quantity: number; color: string; size?: string }>,
+): Promise<{ discount: AppliedDiscount; subtotal: number }> {
+  return request('/discounts/check', { method: 'POST', body: JSON.stringify({ code, lines }) });
+}
+
 export function createPaymentSession(
   payload:
     | {
         type: 'shop';
         lines: Array<{ productId: string; quantity: number; color: string; size?: string }>;
+        code?: string;
+        shippingOption?: string;
       }
     | { type: 'custom'; request: QuoteRequest; projectName: string; fileId?: string },
 ): Promise<{ session: PaymentSession; amount: number }> {
@@ -144,6 +156,8 @@ export function placeOrder(payload: {
     color: string;
     size?: string;
   }>;
+  code?: string;
+  shippingOption?: string;
   authorizationToken?: string;
 }): Promise<{ order: ShopOrder }> {
   return request('/orders', { method: 'POST', body: JSON.stringify(payload) });
@@ -443,4 +457,33 @@ export function fetchStats(
   days = 30,
 ): Promise<{ stats: DashboardStats; days: number; lowStockThreshold: number }> {
   return request(`/admin/stats?days=${days}`, adminInit(token));
+}
+
+/* ---------- Rabattkoder i panelen ---------- */
+
+export function fetchDiscounts(token: string): Promise<{ discounts: DiscountCode[] }> {
+  return request('/admin/discounts', adminInit(token));
+}
+
+export function saveDiscount(
+  token: string,
+  discount: Partial<DiscountCode>,
+  existingCode?: string,
+): Promise<{ discount: DiscountCode }> {
+  return existingCode
+    ? request(
+        `/admin/discounts/${encodeURIComponent(existingCode)}`,
+        adminInit(token, { method: 'PATCH', body: JSON.stringify(discount) }),
+      )
+    : request(
+        '/admin/discounts',
+        adminInit(token, { method: 'POST', body: JSON.stringify(discount) }),
+      );
+}
+
+export function deleteDiscount(token: string, code: string): Promise<{ discount: DiscountCode }> {
+  return request(
+    `/admin/discounts/${encodeURIComponent(code)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
 }

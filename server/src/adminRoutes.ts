@@ -8,6 +8,7 @@ import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from '
 import { backInStock, sendMail, statusUpdate } from './mailer.ts';
 import { claimWatchers, watcherCounts } from './notify.ts';
 import { buildStats, lowStockThreshold } from './stats.ts';
+import { allDiscounts, removeDiscount, saveDiscount } from './discounts.ts';
 import {
   CatalogError,
   allCategories,
@@ -550,3 +551,47 @@ async function announceRestock(
   }
   return watchers.length;
 }
+
+/* ---------- Rabattkoder ---------- */
+
+admin.get('/admin/discounts', adminLimit, requireAdmin, async (_req, res) => {
+  res.json({ discounts: await allDiscounts() });
+});
+
+admin.post('/admin/discounts', adminLimit, requireAdmin, async (req, res) => {
+  const discount = await saveDiscount(req.body);
+  await record({
+    action: 'skapad',
+    entity: 'rabattkod',
+    entityId: discount.code,
+    summary: `${discount.code} · ${discount.description}`,
+  });
+  res.status(201).json({ discount });
+});
+
+admin.patch('/admin/discounts/:code', adminLimit, requireAdmin, async (req, res) => {
+  const code = pathParam(req.params.code);
+  const discount = await saveDiscount(req.body, code);
+  await record({
+    action: 'ändrad',
+    entity: 'rabattkod',
+    entityId: discount.code,
+    summary: `${discount.code} · ${discount.active ? 'aktiv' : 'avstängd'}`,
+  });
+  res.json({ discount });
+});
+
+admin.delete('/admin/discounts/:code', adminLimit, requireAdmin, async (req, res) => {
+  const discount = await removeDiscount(pathParam(req.params.code));
+  if (!discount) {
+    res.status(404).json({ error: 'Rabattkoden hittades inte' });
+    return;
+  }
+  await record({
+    action: 'borttagen',
+    entity: 'rabattkod',
+    entityId: discount.code,
+    summary: `${discount.code}, inlöst ${discount.uses} gånger`,
+  });
+  res.json({ discount });
+});
