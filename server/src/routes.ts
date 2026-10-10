@@ -371,7 +371,7 @@ api.post('/quotes', saveLimit, async (req, res) => {
 
   const mail = email
     ? await sendMail(
-        savedQuoteMail({
+        await savedQuoteMail({
           to: email,
           id: saved.id,
           projectName: saved.projectName,
@@ -593,7 +593,7 @@ async function settle(
 /** Bekräftelsemejlet får aldrig fälla en order som redan är betald och sparad. */
 async function notify(order: Order | CustomOrder): Promise<void> {
   try {
-    await sendMail(orderConfirmation(order));
+    await sendMail(await orderConfirmation(order));
   } catch (error) {
     console.error('Kunde inte skicka orderbekräftelse', error);
   }

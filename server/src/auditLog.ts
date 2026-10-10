@@ -27,7 +27,8 @@ export interface AuditEntry {
     | 'startsida'
     | 'kampanj'
     | 'filament'
-    | 'användare';
+    | 'användare'
+    | 'mejlmall';
   entityId: string;
   summary: string;
   /** Vem som gjorde det. Saknas på händelser loggade före inloggningen fanns. */

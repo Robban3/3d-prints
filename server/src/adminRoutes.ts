@@ -9,6 +9,14 @@ import { claimWatchers, watcherCounts } from './notify.ts';
 import { buildStats, lowStockThreshold } from './stats.ts';
 import { buildQueue, printerCount } from './queue.ts';
 import { buildPickList } from './picking.ts';
+import { buildCustomers, findCustomer, searchCustomers, summarize } from './customers.ts';
+import {
+  allTemplates,
+  renderTemplate,
+  resetTemplate,
+  saveTemplate,
+  templateSpec,
+} from './mailTemplates.ts';
 import {
   ROLE_LABELS,
   ROLE_PERMISSIONS,
@@ -349,7 +357,7 @@ async function applyStatus(
     by,
   });
 
-  const mail = statusUpdate(updated);
+  const mail = await statusUpdate(updated);
   let mailResult: MailResult | undefined;
   if (mail) {
     try {
@@ -853,6 +861,93 @@ admin.get('/admin/stats', adminLimit, mayStats, async (req, res) => {
   });
 });
 
+/* ---------- Kundregister ---------- */
+
+/**
+ * Kunderna räknas fram ur ordrarna varje gång. Det är orderdata, så det är
+ * ordrarnas behörighet som gäller – redaktören har inget på kundernas adresser
+ * att göra.
+ */
+admin.get('/admin/customers', adminLimit, mayOrders, async (req, res) => {
+  const search = typeof req.query.search === 'string' ? req.query.search : '';
+  const all = buildCustomers(await listOrders());
+  res.json({
+    customers: searchCustomers(all, search),
+    summary: summarize(all),
+    total: all.length,
+  });
+});
+
+admin.get('/admin/customers/:email', adminLimit, mayOrders, async (req, res) => {
+  const orders = await listOrders();
+  const customer = findCustomer(buildCustomers(orders), pathParam(req.params.email));
+  if (!customer) {
+    res.status(404).json({ error: 'Kunden hittades inte' });
+    return;
+  }
+  const own = new Set(customer.orderIds);
+  res.json({
+    customer,
+    orders: orders
+      .filter((order) => own.has(order.id))
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+  });
+});
+
+/* ---------- Mejlmallar ---------- */
+
+admin.get('/admin/mail-templates', adminLimit, mayContent, async (_req, res) => {
+  res.json({ templates: await allTemplates() });
+});
+
+admin.put('/admin/mail-templates/:id', adminLimit, mayContent, async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const template = await saveTemplate(pathParam(req.params.id), body);
+  await record({
+    action: 'ändrad',
+    entity: 'mejlmall',
+    entityId: template.id,
+    summary: `${template.name}${template.custom ? '' : ' (tillbaka till utgångsläget)'}`,
+    by: actor(res).name,
+  });
+  res.json({ template });
+});
+
+admin.delete('/admin/mail-templates/:id', adminLimit, mayContent, async (req, res) => {
+  const template = await resetTemplate(pathParam(req.params.id));
+  if (!template) {
+    res.status(404).json({ error: 'Mallen hittades inte' });
+    return;
+  }
+  await record({
+    action: 'ändrad',
+    entity: 'mejlmall',
+    entityId: template.id,
+    summary: `${template.name} tillbaka till utgångsläget`,
+    by: actor(res).name,
+  });
+  res.json({ template });
+});
+
+/**
+ * Visar hur brevet ser ut med påhittade värden, så man slipper lägga en
+ * testorder för att se vad kunden får.
+ */
+admin.post('/admin/mail-templates/:id/preview', adminLimit, mayContent, async (req, res) => {
+  const id = pathParam(req.params.id);
+  const spec = templateSpec(id);
+  if (!spec) {
+    res.status(404).json({ error: 'Mallen hittades inte' });
+    return;
+  }
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const values = (body.values ?? {}) as Record<string, string>;
+  const filled = Object.fromEntries(
+    spec.variables.map((name) => [name, values[name] ?? `‹${name}›`]),
+  );
+  res.json({ preview: await renderTemplate(id, filled) });
+});
+
 /* ---------- Produktionskö och filament ---------- */
 
 admin.get('/admin/queue', adminLimit, mayProduction, async (_req, res) => {
@@ -944,7 +1039,7 @@ async function announceRestock(
   const watchers = await claimWatchers(product.id);
   for (const watcher of watchers) {
     await sendMail(
-      backInStock({
+      await backInStock({
         to: watcher.email,
         productName: product.name,
         slug: product.slug,

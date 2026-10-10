@@ -12,6 +12,8 @@ import { MaterialManager } from '../components/admin/MaterialManager';
 import { CatalogTransfer } from '../components/admin/CatalogTransfer';
 import { HistoryView } from '../components/admin/HistoryView';
 import { UserManager } from '../components/admin/UserManager';
+import { CustomerManager } from '../components/admin/CustomerManager';
+import { MailTemplateManager } from '../components/admin/MailTemplateManager';
 import {
   ApiError,
   adminLogin,
@@ -32,6 +34,7 @@ type Tab =
   | 'oversikt'
   | 'startsida'
   | 'ordrar'
+  | 'kunder'
   | 'produktion'
   | 'produkter'
   | 'kategorier'
@@ -40,6 +43,7 @@ type Tab =
   | 'rabatter'
   | 'import'
   | 'historik'
+  | 'mejlmallar'
   | 'anvandare';
 
 /**
@@ -51,6 +55,7 @@ const tabs: Array<{ id: Tab; label: string; needs: Permission | null }> = [
   { id: 'oversikt', label: 'Översikt', needs: 'statistik' },
   { id: 'startsida', label: 'Startsida', needs: 'innehall' },
   { id: 'ordrar', label: 'Ordrar', needs: 'ordrar' },
+  { id: 'kunder', label: 'Kunder', needs: 'ordrar' },
   { id: 'produktion', label: 'Produktion', needs: 'produktion' },
   { id: 'produkter', label: 'Produkter', needs: 'katalog' },
   { id: 'kategorier', label: 'Kategorier', needs: 'katalog' },
@@ -58,6 +63,7 @@ const tabs: Array<{ id: Tab; label: string; needs: Permission | null }> = [
   { id: 'omdomen', label: 'Omdömen', needs: 'innehall' },
   { id: 'rabatter', label: 'Rabatter', needs: 'innehall' },
   { id: 'import', label: 'Import/export', needs: 'katalog' },
+  { id: 'mejlmallar', label: 'Mejlmallar', needs: 'innehall' },
   { id: 'historik', label: 'Historik', needs: null },
   { id: 'anvandare', label: 'Användare', needs: 'anvandare' },
 ];
@@ -354,6 +360,7 @@ export function AdminPage() {
           {tab === 'oversikt' && <Dashboard token={token} />}
           {tab === 'startsida' && <ContentManager token={token} />}
           {tab === 'ordrar' && <OrderManager token={token} onUnauthorized={forget} />}
+          {tab === 'kunder' && <CustomerManager token={token} />}
           {tab === 'produktion' && <ProductionQueue token={token} />}
           {tab === 'produkter' && (
             <ProductManager
@@ -374,6 +381,7 @@ export function AdminPage() {
           {tab === 'import' && (
             <CatalogTransfer token={token} onImported={() => void loadCategories()} />
           )}
+          {tab === 'mejlmallar' && <MailTemplateManager token={token} />}
           {tab === 'historik' && <HistoryView token={token} />}
           {tab === 'anvandare' && <UserManager token={token} me={me} />}
         </div>

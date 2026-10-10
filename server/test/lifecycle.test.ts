@@ -3,8 +3,14 @@ import { afterEach, beforeEach, describe, it } from 'node:test';
 import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from '../src/lifecycle.ts';
+import {
+  canTransition,
+  isOrderStatus,
+  nextStatuses,
+  shouldRestoreStock,
+} from '../src/lifecycle.ts';
 import { orderConfirmation, resetMailer, sendMail, statusUpdate } from '../src/mailer.ts';
+import { resetTemplateCache } from '../src/mailTemplates.ts';
 import type { Order, OrderStatus } from '../src/types.ts';
 
 const order: Order = {
@@ -77,18 +83,23 @@ describe('brev', () => {
   beforeEach(async () => {
     dir = await mkdtemp(join(tmpdir(), 'formlabb-mail-'));
     process.env.MAIL_OUTBOX = dir;
+    // Breven ska prövas mot texterna i koden, inte mot verkstadens ändringar.
+    process.env.MAIL_TEMPLATE_STORE = join(dir, 'mejlmallar.json');
     delete process.env.SMTP_HOST;
     resetMailer();
+    resetTemplateCache();
   });
 
   afterEach(async () => {
     await rm(dir, { recursive: true, force: true });
     delete process.env.MAIL_OUTBOX;
+    delete process.env.MAIL_TEMPLATE_STORE;
     resetMailer();
+    resetTemplateCache();
   });
 
-  it('bekräftelsen innehåller ordernummer, rader och summa', () => {
-    const mail = orderConfirmation(order);
+  it('bekräftelsen innehåller ordernummer, rader och summa', async () => {
+    const mail = await orderConfirmation(order);
     assert.equal(mail.to, 'anna@example.com');
     assert.match(mail.subject, /S2026-ABC123/);
     assert.match(mail.text, /2 × Terra växtkruka/);
@@ -96,33 +107,33 @@ describe('brev', () => {
     assert.match(mail.text, /Storgatan 1/);
   });
 
-  it('säger ifrån när ingen betalning har skett', () => {
-    const mail = orderConfirmation({
+  it('säger ifrån när ingen betalning har skett', async () => {
+    const mail = await orderConfirmation({
       ...order,
       payment: { provider: 'klarna', status: 'avvaktar', test: true },
     });
     assert.match(mail.text, /ingen betalning har genomförts/);
   });
 
-  it('skriver ut Klarnas referens för en riktig betalning', () => {
-    const mail = orderConfirmation({
+  it('skriver ut Klarnas referens för en riktig betalning', async () => {
+    const mail = await orderConfirmation({
       ...order,
       payment: { provider: 'klarna', status: 'auktoriserad', reference: 'kl-123', test: false },
     });
     assert.match(mail.text, /referens kl-123/);
   });
 
-  it('ger ett brev per statusbyte som kunden bryr sig om', () => {
-    assert.match(statusUpdate({ ...order, status: 'skickad' })!.subject, /på väg/);
-    assert.match(statusUpdate({ ...order, status: 'levererad' })!.subject, /levererad/);
-    assert.match(statusUpdate({ ...order, status: 'i_produktion' })!.subject, /produktion/);
+  it('ger ett brev per statusbyte som kunden bryr sig om', async () => {
+    assert.match((await statusUpdate({ ...order, status: 'skickad' }))!.subject, /på väg/);
+    assert.match((await statusUpdate({ ...order, status: 'levererad' }))!.subject, /levererad/);
+    assert.match((await statusUpdate({ ...order, status: 'i_produktion' }))!.subject, /produktion/);
     // Mottagen täcks av bekräftelsen, och avbrott hanteras manuellt.
-    assert.equal(statusUpdate({ ...order, status: 'mottagen' }), undefined);
-    assert.equal(statusUpdate({ ...order, status: 'avbruten' }), undefined);
+    assert.equal(await statusUpdate({ ...order, status: 'mottagen' }), undefined);
+    assert.equal(await statusUpdate({ ...order, status: 'avbruten' }), undefined);
   });
 
   it('lägger brevet i utkorgen när SMTP saknas', async () => {
-    const result = await sendMail(orderConfirmation(order));
+    const result = await sendMail(await orderConfirmation(order));
     assert.equal(result.delivered, false);
     const files = await readdir(dir);
     assert.equal(files.length, 1);

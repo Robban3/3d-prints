@@ -14,6 +14,9 @@ import type {
   AdminMaterial,
   AuditEntry,
   Category,
+  CustomerRecord,
+  CustomerSummary,
+  MailTemplate,
   Material,
   ModelAnalysis,
   Quality,
@@ -314,6 +317,56 @@ export function adminLogout(token: string): Promise<{ ok: true }> {
 /** Vem token hör till, och vad den får göra. Samma svar för startnyckeln. */
 export function fetchAdminMe(token: string): Promise<{ user: Actor; permissions: Permission[] }> {
   return request('/admin/me', adminInit(token));
+}
+
+/* ---------- Kunder och mejlmallar ---------- */
+
+export function fetchCustomers(
+  token: string,
+  search = '',
+): Promise<{ customers: CustomerRecord[]; summary: CustomerSummary; total: number }> {
+  const query = search.trim() ? `?search=${encodeURIComponent(search.trim())}` : '';
+  return request(`/admin/customers${query}`, adminInit(token));
+}
+
+export function fetchCustomer(
+  token: string,
+  email: string,
+): Promise<{ customer: CustomerRecord; orders: AnyOrder[] }> {
+  return request(`/admin/customers/${encodeURIComponent(email)}`, adminInit(token));
+}
+
+export function fetchMailTemplates(token: string): Promise<{ templates: MailTemplate[] }> {
+  return request('/admin/mail-templates', adminInit(token));
+}
+
+export function saveMailTemplate(
+  token: string,
+  id: string,
+  template: { subject: string; body: string },
+): Promise<{ template: MailTemplate }> {
+  return request(
+    `/admin/mail-templates/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'PUT', body: JSON.stringify(template) }),
+  );
+}
+
+export function resetMailTemplate(token: string, id: string): Promise<{ template: MailTemplate }> {
+  return request(
+    `/admin/mail-templates/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+export function previewMailTemplate(
+  token: string,
+  id: string,
+  values: Record<string, string> = {},
+): Promise<{ preview: { subject: string; text: string } }> {
+  return request(
+    `/admin/mail-templates/${encodeURIComponent(id)}/preview`,
+    adminInit(token, { method: 'POST', body: JSON.stringify({ values }) }),
+  );
 }
 
 /* ---------- Användare i panelen ---------- */
