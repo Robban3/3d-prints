@@ -8,6 +8,18 @@ import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from '
 import { backInStock, sendMail, statusUpdate } from './mailer.ts';
 import { claimWatchers, watcherCounts } from './notify.ts';
 import { buildStats, lowStockThreshold } from './stats.ts';
+import { buildQueue, printerCount } from './queue.ts';
+import {
+  addSpool,
+  allSpools,
+  consume,
+  consumptionLog,
+  lowFilamentGrams,
+  parseSpoolInput,
+  removeSpool,
+  shortages,
+  updateSpool,
+} from './filament.ts';
 import { allDiscounts, removeDiscount, saveDiscount } from './discounts.ts';
 import {
   findCampaign,
@@ -151,6 +163,15 @@ admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, re
     await release(updated.lines);
   }
 
+  // Plasten bokförs när jobbet går i produktion. Går ordern ut och in igen
+  // bokförs den ändå bara en gång – consume är idempotent på ordernumret.
+  let filament: Awaited<ReturnType<typeof consume>> | undefined;
+  if (target === 'i_produktion') {
+    const products = await allProducts();
+    const job = buildQueue({ orders: [updated], products }).jobs[0];
+    if (job && job.materials.length > 0) filament = await consume(updated.id, job.materials);
+  }
+
   await record({
     action: 'status',
     entity: 'order',
@@ -169,7 +190,12 @@ admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, re
     }
   }
 
-  res.json({ order: updated, next: nextStatuses(updated.status), mail: mailResult });
+  res.json({
+    order: updated,
+    next: nextStatuses(updated.status),
+    mail: mailResult,
+    ...(filament ? { filament } : {}),
+  });
 });
 
 /* ---------- Katalog ---------- */
@@ -524,6 +550,78 @@ admin.get('/admin/stats', adminLimit, requireAdmin, async (req, res) => {
     days,
     lowStockThreshold: lowStockThreshold(),
   });
+});
+
+/* ---------- Produktionskö och filament ---------- */
+
+admin.get('/admin/queue', adminLimit, requireAdmin, async (_req, res) => {
+  const [orders, products, spools] = await Promise.all([listOrders(), allProducts(), allSpools()]);
+  const queue = buildQueue({ orders, products });
+
+  res.json({
+    queue,
+    spools,
+    shortages: shortages(queue.demand, spools),
+    lowFilamentGrams: lowFilamentGrams(),
+    printers: printerCount(),
+  });
+});
+
+admin.get('/admin/filament', adminLimit, requireAdmin, async (_req, res) => {
+  const [spools, log] = await Promise.all([allSpools(), consumptionLog()]);
+  res.json({ spools, log, lowFilamentGrams: lowFilamentGrams() });
+});
+
+admin.post('/admin/filament', adminLimit, requireAdmin, async (req, res) => {
+  const materials = await allMaterials();
+  const spool = await addSpool(
+    parseSpoolInput(
+      req.body ?? {},
+      materials.map((material) => material.id),
+    ),
+  );
+  await record({
+    action: 'skapad',
+    entity: 'filament',
+    entityId: spool.id,
+    summary: `${spool.material.toUpperCase()} ${spool.color}, ${spool.grams} g`,
+  });
+  res.status(201).json({ spool });
+});
+
+admin.patch('/admin/filament/:id', adminLimit, requireAdmin, async (req, res) => {
+  const materials = await allMaterials();
+  const parsed = parseSpoolInput(
+    req.body ?? {},
+    materials.map((material) => material.id),
+  );
+  const spool = await updateSpool(pathParam(req.params.id), parsed);
+  if (!spool) {
+    res.status(404).json({ error: 'Rullen hittades inte' });
+    return;
+  }
+  await record({
+    action: 'ändrad',
+    entity: 'filament',
+    entityId: spool.id,
+    summary: `${spool.material.toUpperCase()} ${spool.color}, ${spool.grams} g kvar`,
+  });
+  res.json({ spool });
+});
+
+admin.delete('/admin/filament/:id', adminLimit, requireAdmin, async (req, res) => {
+  const id = pathParam(req.params.id);
+  if (!(await removeSpool(id))) {
+    res.status(404).json({ error: 'Rullen hittades inte' });
+    return;
+  }
+  await record({
+    action: 'borttagen',
+    entity: 'filament',
+    entityId: id,
+    summary: 'Rulle borttagen',
+  });
+  res.json({ ok: true });
 });
 
 /**

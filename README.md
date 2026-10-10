@@ -51,6 +51,7 @@ npm start          # http://localhost:4000
 - Orderspårning på ordernummer med tidslinje över var ordern befinner sig
 - **Live printstatus** på spårningen: en framstegsmätare som räknas ur den
   beräknade printtiden och tidpunkten jobbet gick i produktion
+- **Plats i produktionskön** på spårningen, med beräknad start och sluttid
 - **Materialguiden**: tre frågor om hur delen ska användas, och ett
   rekommenderat material med skäl och varningar
 - Bekräftelse- och statusmejl till kunden
@@ -106,7 +107,7 @@ accepteras rakt av, varken för butiksorder eller egna jobb.
 | `POST` | `/api/quote`                  | Prisförslag för ett kundunikt printjobb                     |
 | `POST` | `/api/orders`                 | Lägger en butiksorder                                       |
 | `POST` | `/api/custom-orders`          | Lägger en order för ett eget printjobb                      |
-| `GET`  | `/api/orders/:id`             | Hämtar en order för spårning                                |
+| `GET`  | `/api/orders/:id`             | Hämtar en order för spårning, med plats i kön               |
 | `POST` | `/api/products/:slug/reviews` | Lämnar ett omdöme, som läggs i kö för granskning            |
 | `POST` | `/api/products/:slug/notify`  | Bevakar en slutsåld produkt                                 |
 | `POST` | `/api/discounts/check`        | Prövar en rabattkod mot varukorgen                          |
@@ -258,6 +259,7 @@ Verkstadens panel ligger på `/verkstad` och har åtta flikar:
 - **Kategorier** – lägg till, byt namn på och ta bort kategorier
 - **Material** – material, densitet och kvalitetsnivåer, vars faktorer styr priset på egna printjobb
 - **Omdömen** – granska, publicera, avslå och svara på kundomdömen
+- **Produktion** – produktionskön och filamentlagret
 - **Rabatter** – skapa och stäng av rabattkoder, och se hur många som löst in dem
 - **Import/export** – exportera katalogen, ändra många produkter i filen, läs in igen
 - **Historik** – de senaste ändringarna i katalogen och i ordrarnas status
@@ -319,6 +321,22 @@ beloppet.
 
 Fraktavgiften mäts mot summan **före** rabatt, så att en rabattkod inte tar
 tillbaka den fria frakt kunden redan handlat ihop till.
+
+**Produktionskön** räknas fram ur ordrarna varje gång, inte ur ett eget
+register – en kö som är en egen sanning hinner alltid bli osann. Jobb som redan
+printar upptar sin skrivare tills de är klara, resten läggs på den skrivare som
+blir ledig först, och expressjobb går före i kön men aldrig före något som redan
+börjat. Panelen visar maskintid kvar, vilken skrivare varje jobb ligger på och
+när allt är klart; kunden ser sin egen plats i kön på orderspårningen, och
+ingenting annat ur kön.
+
+**Filamentlagret** är rullar, inte ett saldo per material: två rullar svart PLA
+tar slut var för sig, och det är rullen man byter. Åtgången bokförs när ordern
+går i produktion, en gång per ordernummer – samma order två gånger vore att tro
+att plasten tog slut dubbelt upp. Räcker inte plasten bokförs åtgången ändå och
+bristen rapporteras; verkstaden ska inte hindras av bokföringen, men den ska se
+att en rulle behöver bytas. Panelen jämför kön mot hyllan och säger hur många
+gram som behöver köpas in.
 
 **Valbara mått** är det en 3D-printbutik kan som en lagerhållande butik inte
 kan: hyllan görs i den bredd kunden faktiskt behöver. Varje mått har ett
@@ -396,24 +414,27 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 
 ## Miljövariabler
 
-| Variabel                  | Standard                | Beskrivning                                          |
-| ------------------------- | ----------------------- | ---------------------------------------------------- |
-| `PORT`                    | `4000`                  | Port för API-servern                                 |
-| `ORDER_STORE`             | `data/orders.json`      | Fil där ordrar sparas                                |
-| `REVIEW_STORE`            | `data/omdomen.json`     | Fil där omdömen sparas                               |
-| `WATCH_STORE`             | `data/bevakningar.json` | Fil där lagerbevakningar sparas                      |
-| `DISCOUNT_STORE`          | `data/rabatter.json`    | Fil där rabattkoder sparas                           |
-| `CONTENT_STORE`           | `data/startsida.json`   | Fil där startsidans innehåll sparas                  |
-| `QUOTE_STORE`             | `data/offerter.json`    | Fil där sparade offerter sparas                      |
-| `CLIENT_DIST`             | `../../client/dist`     | Katalog med den byggda klienten                      |
-| `SHOP_URL`                | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på          |
-| `SHOP_TIME_ZONE`          | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror |
-| `BUILD_PLATE_MM`          | `256x256x256`           | Byggvolymen som modeller mäts mot                    |
-| `LOW_STOCK_THRESHOLD`     | `5`                     | Saldo som flaggas som lågt i översikten              |
-| `RATE_LIMIT_REVIEWS`      | `5`                     | Omdömen per IP och timme                             |
-| `RATE_LIMIT_WATCHES`      | `10`                    | Lagerbevakningar per IP och timme                    |
-| `RATE_LIMIT_DISCOUNTS`    | `60`                    | Försök med rabattkoder per IP och timme              |
-| `RATE_LIMIT_SAVED_QUOTES` | `20`                    | Sparade offerter per IP och timme                    |
+| Variabel                  | Standard                | Beskrivning                                            |
+| ------------------------- | ----------------------- | ------------------------------------------------------ |
+| `PORT`                    | `4000`                  | Port för API-servern                                   |
+| `ORDER_STORE`             | `data/orders.json`      | Fil där ordrar sparas                                  |
+| `REVIEW_STORE`            | `data/omdomen.json`     | Fil där omdömen sparas                                 |
+| `WATCH_STORE`             | `data/bevakningar.json` | Fil där lagerbevakningar sparas                        |
+| `DISCOUNT_STORE`          | `data/rabatter.json`    | Fil där rabattkoder sparas                             |
+| `CONTENT_STORE`           | `data/startsida.json`   | Fil där startsidans innehåll sparas                    |
+| `QUOTE_STORE`             | `data/offerter.json`    | Fil där sparade offerter sparas                        |
+| `FILAMENT_STORE`          | `data/filament.json`    | Fil där filamentrullar och åtgång sparas               |
+| `CLIENT_DIST`             | `../../client/dist`     | Katalog med den byggda klienten                        |
+| `SHOP_URL`                | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på            |
+| `SHOP_TIME_ZONE`          | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror   |
+| `BUILD_PLATE_MM`          | `256x256x256`           | Byggvolymen som modeller mäts mot                      |
+| `LOW_STOCK_THRESHOLD`     | `5`                     | Saldo som flaggas som lågt i översikten                |
+| `LOW_FILAMENT_GRAMS`      | `250`                   | Gram kvar på en rulle innan den flaggas                |
+| `PRINTERS`                | `2`                     | Antal skrivare, dvs. hur många jobb som går parallellt |
+| `RATE_LIMIT_REVIEWS`      | `5`                     | Omdömen per IP och timme                               |
+| `RATE_LIMIT_WATCHES`      | `10`                    | Lagerbevakningar per IP och timme                      |
+| `RATE_LIMIT_DISCOUNTS`    | `60`                    | Försök med rabattkoder per IP och timme                |
+| `RATE_LIMIT_SAVED_QUOTES` | `20`                    | Sparade offerter per IP och timme                      |
 
 ## Struktur
 
@@ -437,6 +458,8 @@ server/
   src/notify.ts   bevakningar av slutsålda produkter
   src/seo.ts      sitemap och robots.txt
   src/parameters.ts  mått kunden ställer in själv, och vad de kostar
+  src/queue.ts    produktionskön: vad som printas, var och när
+  src/filament.ts filamentrullarna och vad som gått åt
   src/shipping.ts fraktalternativ och orderns totalsumma
   src/discounts.ts rabattkoder
   src/content.ts  startsidans hero och kampanjer

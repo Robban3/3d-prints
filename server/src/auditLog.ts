@@ -23,7 +23,8 @@ export interface AuditEntry {
     | 'omdöme'
     | 'rabattkod'
     | 'startsida'
-    | 'kampanj';
+    | 'kampanj'
+    | 'filament';
   entityId: string;
   summary: string;
   /** Fälten som faktiskt ändrades, för en ändring. */

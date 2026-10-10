@@ -92,6 +92,18 @@ export function printTimeFor(product: Product, values: ParameterValues): number 
   return Math.max(0.5, Math.round(product.printTimeHours * factor * 10) / 10);
 }
 
+/**
+ * Vikten skalad på samma sätt som printtiden. Verkstaden planerar filament på
+ * den här siffran, så en bredare hylla måste väga mer än en smal.
+ */
+export function weightFor(product: Product, values: ParameterValues): number {
+  if (!product.parameters || product.parameters.length === 0 || product.price <= 0) {
+    return product.weightGrams;
+  }
+  const factor = priceFor(product, values) / product.price;
+  return Math.max(1, Math.round(product.weightGrams * factor));
+}
+
 /** Måtten i klartext, som de visas på ordern: "Bredd 400 mm · Djup 120 mm". */
 export function describeValues(
   parameters: ProductParameter[] | undefined,

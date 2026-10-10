@@ -26,7 +26,12 @@ import type {
   HomeContent,
   ImportResult,
   Media,
+  FilamentConsumption,
+  FilamentShortage,
   ProductDraft,
+  ProductionQueue,
+  QueuePlace,
+  Spool,
   ReorderDraft,
   Review,
   ReviewStatus,
@@ -229,7 +234,7 @@ export function reorderCustomOrder(
   return request(`/orders/${encodeURIComponent(id)}/reorder`, { method: 'POST' });
 }
 
-export function fetchOrder(id: string): Promise<{ order: AnyOrder }> {
+export function fetchOrder(id: string): Promise<{ order: AnyOrder; queue?: QueuePlace }> {
   return request(`/orders/${encodeURIComponent(id)}`);
 }
 
@@ -536,6 +541,46 @@ export function saveDiscount(
 export function deleteDiscount(token: string, code: string): Promise<{ discount: DiscountCode }> {
   return request(
     `/admin/discounts/${encodeURIComponent(code)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+/* ---------- Produktionskö och filament ---------- */
+
+export function fetchQueue(token: string): Promise<{
+  queue: ProductionQueue;
+  spools: Spool[];
+  shortages: FilamentShortage[];
+  lowFilamentGrams: number;
+  printers: number;
+}> {
+  return request('/admin/queue', adminInit(token));
+}
+
+export function fetchFilament(token: string): Promise<{
+  spools: Spool[];
+  log: FilamentConsumption[];
+  lowFilamentGrams: number;
+}> {
+  return request('/admin/filament', adminInit(token));
+}
+
+export function saveSpool(
+  token: string,
+  spool: { material: string; color: string; grams: number; totalGrams: number; note?: string },
+  id?: string,
+): Promise<{ spool: Spool }> {
+  return id
+    ? request(
+        `/admin/filament/${encodeURIComponent(id)}`,
+        adminInit(token, { method: 'PATCH', body: JSON.stringify(spool) }),
+      )
+    : request('/admin/filament', adminInit(token, { method: 'POST', body: JSON.stringify(spool) }));
+}
+
+export function deleteSpool(token: string, id: string): Promise<{ ok: true }> {
+  return request(
+    `/admin/filament/${encodeURIComponent(id)}`,
     adminInit(token, { method: 'DELETE' }),
   );
 }
