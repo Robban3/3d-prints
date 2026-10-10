@@ -132,6 +132,38 @@ export function orderConfirmation(order: AnyOrder): Mail {
   };
 }
 
+/** En sparad offert, skickad till den som vill återkomma eller skicka vidare. */
+export function savedQuoteMail(options: {
+  to: string;
+  id: string;
+  projectName: string;
+  total: number;
+  deliveryDays: number;
+  expiresAt: string;
+}): Mail {
+  const link = `${shopUrl()}/offert/${options.id}`;
+  return {
+    to: options.to,
+    subject: `Din offert på ${options.projectName}`,
+    text: [
+      'Hej!',
+      '',
+      `Här är offerten på ${options.projectName}.`,
+      '',
+      `Pris: ${formatPrice(options.total)} inkl. moms`,
+      `Leverans: ${options.deliveryDays} arbetsdagar efter beställning`,
+      '',
+      `Öppna och beställ här: ${link}`,
+      '',
+      `Offerten gäller till ${formatDate(options.expiresAt)}. Länken går att skicka vidare till`,
+      'den som ska godkänna köpet.',
+      '',
+      'Hälsningar',
+      'Formlabb',
+    ].join('\n'),
+  };
+}
+
 /** Beskedet till den som bevakat en slutsåld produkt. */
 export function backInStock(options: {
   to: string;

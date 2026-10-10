@@ -25,9 +25,11 @@ import type {
   ImportResult,
   Media,
   ProductDraft,
+  ReorderDraft,
   Review,
   ReviewStatus,
   ReviewSummary,
+  SavedQuote,
   ShopOrder,
   UploadedFile,
 } from '../types';
@@ -184,6 +186,38 @@ export function placeCustomOrder(payload: {
     method: 'POST',
     body: JSON.stringify(payload),
   });
+}
+
+/** Sparar den uträknade offerten bakom en egen länk, och mejlar den på begäran. */
+export function saveQuote(payload: {
+  request: QuoteRequest;
+  projectName: string;
+  description: string;
+  fileId?: string;
+  email?: string;
+}): Promise<{
+  quote: SavedQuote;
+  /** Sökvägen till offerten. Adressen byggs av klienten, som vet sitt ursprung. */
+  path: string;
+  mail?: { delivered: boolean; path?: string };
+}> {
+  return request('/quotes', { method: 'POST', body: JSON.stringify(payload) });
+}
+
+/** Hämtar en sparad offert, med dagens pris vid sidan om det sparade. */
+export function fetchSavedQuote(id: string): Promise<{
+  quote: SavedQuote;
+  current: QuoteBreakdown | null;
+  changed: boolean;
+}> {
+  return request(`/quotes/${encodeURIComponent(id)}`);
+}
+
+/** Förbereder en ny beställning av ett tidigare kundunikt jobb. */
+export function reorderCustomOrder(
+  id: string,
+): Promise<{ draft: ReorderDraft; quote: QuoteBreakdown }> {
+  return request(`/orders/${encodeURIComponent(id)}/reorder`, { method: 'POST' });
 }
 
 export function fetchOrder(id: string): Promise<{ order: AnyOrder }> {

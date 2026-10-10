@@ -1,6 +1,8 @@
 import { randomBytes } from 'node:crypto';
+import { createWriteStream } from 'node:fs';
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
+import { pipeline } from 'node:stream/promises';
 import { storage } from './storage.ts';
 import type { ModelAnalysis } from './modelAnalysis.ts';
 
@@ -77,6 +79,12 @@ export interface UploadMeta {
   createdAt: string;
   /** Ordernumret som filen hör till, eller null så länge den är oanvänd. */
   claimedBy: string | null;
+  /**
+   * Skydd mot städningen fram till den här tidpunkten. En sparad offert
+   * refererar till en fil som ingen order ännu äger, och den får inte
+   * försvinna medan offerten fortfarande gäller.
+   */
+  heldUntil?: string;
   /** Uppmätt geometri, när formatet gick att läsa. Styr priset på kundunika jobb. */
   analysis?: ModelAnalysis;
   /** Varför uppmätningen inte gick att göra, när den misslyckades. */
@@ -158,6 +166,55 @@ export function filePathFor(meta: UploadMeta): string {
   return pathsFor(meta.id, meta.extension).file;
 }
 
+/**
+ * Skjuter upp städningen av en fil som ingen order äger än. Används av sparade
+ * offerter, som ska gå att beställa så länge de gäller.
+ */
+export async function holdUpload(id: string, until: Date): Promise<UploadMeta | undefined> {
+  const meta = await readMeta(id);
+  if (!meta) return undefined;
+  const stamp = until.toISOString();
+  // Ett längre skydd får aldrig kortas av ett senare, kortare.
+  if (meta.heldUntil && meta.heldUntil >= stamp) return meta;
+  return writeMeta({ ...meta, heldUntil: stamp });
+}
+
+/**
+ * Kopierar en uppladdning till ett nytt id, så att samma modell kan beställas
+ * igen. Originalet hör till sin order och lämnas i fred – en fil äger en order
+ * och bara en, annars går det inte att se vilken beställning en fil tillhör.
+ */
+export async function cloneUpload(id: string): Promise<UploadMeta | undefined> {
+  const source = await readMeta(id);
+  if (!source) return undefined;
+
+  const copyId = generateUploadId();
+  const paths = pathsFor(copyId, source.extension);
+  const object = await storage().get(
+    storedFileName(source.id, source.extension),
+    filePathFor(source),
+  );
+  if (!object) return undefined;
+
+  await ensureUploadDir();
+  await pipeline(object.body, createWriteStream(paths.file));
+  await storage().put(
+    storedFileName(copyId, source.extension),
+    paths.file,
+    'application/octet-stream',
+  );
+
+  // Kopian är ny och oanvänd: inget skydd och ingen order. Uppmätningen följer
+  // med, eftersom det är samma fil och alltså samma siffror.
+  const { heldUntil: _held, ...rest } = source;
+  return writeMeta({
+    ...rest,
+    id: copyId,
+    claimedBy: null,
+    createdAt: new Date().toISOString(),
+  });
+}
+
 /** Kopplar en uppladdning till en order så att den inte städas bort eller återanvänds. */
 export async function claimUpload(id: string, orderId: string): Promise<UploadMeta | undefined> {
   const meta = await readMeta(id);
@@ -194,6 +251,8 @@ export async function sweepOrphans(
     const meta = await readMeta(entry.slice(0, -'.json'.length));
     // Bilder och video hör till butikens innehåll och har ingen order att knytas till.
     if (!meta || meta.claimedBy || isCatalogAsset(meta)) continue;
+    // En fil som en sparad offert pekar på får ligga kvar så länge offerten gäller.
+    if (meta.heldUntil && new Date(meta.heldUntil).getTime() > now) continue;
     if (now - new Date(meta.createdAt).getTime() < maxAgeMs) continue;
     await deleteUpload(meta.id);
     removed += 1;

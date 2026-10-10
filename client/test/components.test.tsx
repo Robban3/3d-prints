@@ -9,6 +9,7 @@ import { UploadDropzone } from '../src/components/UploadDropzone';
 import { ModelFacts } from '../src/components/ModelFacts';
 import { DiscountField } from '../src/components/DiscountField';
 import { ModelPanel } from '../src/components/ModelPanel';
+import { QuoteSummary } from '../src/components/QuoteSummary';
 import { ShippingPicker } from '../src/components/ShippingPicker';
 import { ReviewSection } from '../src/components/ReviewSection';
 import { StockWatchForm } from '../src/components/StockWatchForm';
@@ -642,5 +643,58 @@ describe('ShippingPicker', () => {
       <ShippingPicker options={[]} selected="" subtotal={0} onSelect={() => undefined} />,
     );
     expect(container.firstChild).toBeNull();
+  });
+});
+
+describe('QuoteSummary', () => {
+  const quote = {
+    materialCost: 48,
+    machineCost: 62,
+    setupFee: 95,
+    postProcessingCost: 0,
+    rushSurcharge: 0,
+    volumeDiscount: 0,
+    unitPrice: 110,
+    total: 315,
+    estimatedPrintHours: 2.5,
+    estimatedDeliveryDays: 4,
+    estimatedWeightGrams: 48,
+  };
+
+  it('visar total, styckpris och antal', () => {
+    render(<QuoteSummary quote={quote} quantity={2} materialName="PLA" />);
+    expect(screen.getByText('315 kr')).toBeInTheDocument();
+    expect(screen.getByText(/2 st/)).toBeInTheDocument();
+    expect(screen.getByText('Material (PLA)')).toBeInTheDocument();
+  });
+
+  it('döljer rader som är noll', () => {
+    render(<QuoteSummary quote={quote} quantity={1} />);
+    expect(screen.queryByText('Efterbearbetning')).toBeNull();
+    expect(screen.queryByText('Expresstillägg')).toBeNull();
+    expect(screen.queryByText('Volymrabatt')).toBeNull();
+  });
+
+  it('visar tilläggen när de finns', () => {
+    render(
+      <QuoteSummary
+        quote={{ ...quote, postProcessingCost: 85, rushSurcharge: 120, volumeDiscount: 40 }}
+        quantity={5}
+      />,
+    );
+    expect(screen.getByText('Efterbearbetning')).toBeInTheDocument();
+    expect(screen.getByText('Expresstillägg')).toBeInTheDocument();
+    expect(screen.getByText('Volymrabatt')).toBeInTheDocument();
+  });
+
+  it('skriver materialraden utan namn innan katalogen hämtats', () => {
+    render(<QuoteSummary quote={quote} quantity={1} />);
+    expect(screen.getByText('Material')).toBeInTheDocument();
+  });
+
+  it('visar printtid, vikt och leverans', () => {
+    render(<QuoteSummary quote={quote} quantity={1} />);
+    expect(screen.getByText(/48 g/)).toBeInTheDocument();
+    expect(screen.getByText(/4 arbetsdagar/)).toBeInTheDocument();
   });
 });

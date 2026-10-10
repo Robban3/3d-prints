@@ -104,6 +104,10 @@ accepteras rakt av, varken för butiksorder eller egna jobb.
 | `POST` | `/api/products/:slug/reviews` | Lämnar ett omdöme, som läggs i kö för granskning            |
 | `POST` | `/api/products/:slug/notify`  | Bevakar en slutsåld produkt                                 |
 | `POST` | `/api/discounts/check`        | Prövar en rabattkod mot varukorgen                          |
+| `GET`  | `/api/content/home`           | Startsidans hero och de kampanjer som är igång              |
+| `POST` | `/api/quotes`                 | Sparar en offert bakom en egen länk                         |
+| `GET`  | `/api/quotes/:id`             | Hämtar en sparad offert, med dagens pris vid sidan om       |
+| `POST` | `/api/orders/:id/reorder`     | Förbereder en ny beställning av ett tidigare jobb           |
 | `GET`  | `/sitemap.xml`                | Sitemap byggd ur katalogen                                  |
 | `GET`  | `/robots.txt`                 | Indexeringsregler                                           |
 
@@ -142,6 +146,25 @@ Så här hanteras filerna:
 
 Byt lagringen mot S3 eller motsvarande genom att ersätta `server/src/uploads.ts` –
 resten av koden går bara via funktionerna där.
+
+## Offerter och ombeställning
+
+En **sparad offert** ligger bakom en länk med 96 slumpade bitar i id:t – länken
+är själva behörigheten, precis som för uppladdade modellfiler. Offerten gäller i
+30 dagar, och när den öppnas räknas priset också om mot dagens siffror: har
+något ändrats står det i klartext i stället för att kunden möts av ett annat
+pris i kassan.
+
+Filen som offerten pekar på skyddas från städningen av föräldralösa
+uppladdningar så länge offerten gäller (`heldUntil` i uppladdningens metadata).
+Annars hade modellen försvunnit inom ett dygn medan offerten fortfarande såg
+giltig ut.
+
+**Beställ samma igen** kopierar modellfilen till ett nytt id i stället för att
+återanvända originalet. En fil hör till en order och bara en, annars går det
+inte att se vilken beställning en fil tillhör. Själva ordern läggs sedan genom
+det vanliga formuläret, så den går igenom samma validering, lagerreservation och
+betalning som alla andra.
 
 ## Betalning med Klarna
 
@@ -312,22 +335,24 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 
 ## Miljövariabler
 
-| Variabel               | Standard                | Beskrivning                                          |
-| ---------------------- | ----------------------- | ---------------------------------------------------- |
-| `PORT`                 | `4000`                  | Port för API-servern                                 |
-| `ORDER_STORE`          | `data/orders.json`      | Fil där ordrar sparas                                |
-| `REVIEW_STORE`         | `data/omdomen.json`     | Fil där omdömen sparas                               |
-| `WATCH_STORE`          | `data/bevakningar.json` | Fil där lagerbevakningar sparas                      |
-| `DISCOUNT_STORE`       | `data/rabatter.json`    | Fil där rabattkoder sparas                           |
-| `CONTENT_STORE`        | `data/startsida.json`   | Fil där startsidans innehåll sparas                  |
-| `CLIENT_DIST`          | `../../client/dist`     | Katalog med den byggda klienten                      |
-| `SHOP_URL`             | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på          |
-| `SHOP_TIME_ZONE`       | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror |
-| `BUILD_PLATE_MM`       | `256x256x256`           | Byggvolymen som modeller mäts mot                    |
-| `LOW_STOCK_THRESHOLD`  | `5`                     | Saldo som flaggas som lågt i översikten              |
-| `RATE_LIMIT_REVIEWS`   | `5`                     | Omdömen per IP och timme                             |
-| `RATE_LIMIT_WATCHES`   | `10`                    | Lagerbevakningar per IP och timme                    |
-| `RATE_LIMIT_DISCOUNTS` | `60`                    | Försök med rabattkoder per IP och timme              |
+| Variabel                  | Standard                | Beskrivning                                          |
+| ------------------------- | ----------------------- | ---------------------------------------------------- |
+| `PORT`                    | `4000`                  | Port för API-servern                                 |
+| `ORDER_STORE`             | `data/orders.json`      | Fil där ordrar sparas                                |
+| `REVIEW_STORE`            | `data/omdomen.json`     | Fil där omdömen sparas                               |
+| `WATCH_STORE`             | `data/bevakningar.json` | Fil där lagerbevakningar sparas                      |
+| `DISCOUNT_STORE`          | `data/rabatter.json`    | Fil där rabattkoder sparas                           |
+| `CONTENT_STORE`           | `data/startsida.json`   | Fil där startsidans innehåll sparas                  |
+| `QUOTE_STORE`             | `data/offerter.json`    | Fil där sparade offerter sparas                      |
+| `CLIENT_DIST`             | `../../client/dist`     | Katalog med den byggda klienten                      |
+| `SHOP_URL`                | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på          |
+| `SHOP_TIME_ZONE`          | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror |
+| `BUILD_PLATE_MM`          | `256x256x256`           | Byggvolymen som modeller mäts mot                    |
+| `LOW_STOCK_THRESHOLD`     | `5`                     | Saldo som flaggas som lågt i översikten              |
+| `RATE_LIMIT_REVIEWS`      | `5`                     | Omdömen per IP och timme                             |
+| `RATE_LIMIT_WATCHES`      | `10`                    | Lagerbevakningar per IP och timme                    |
+| `RATE_LIMIT_DISCOUNTS`    | `60`                    | Försök med rabattkoder per IP och timme              |
+| `RATE_LIMIT_SAVED_QUOTES` | `20`                    | Sparade offerter per IP och timme                    |
 
 ## Struktur
 
@@ -353,6 +378,7 @@ server/
   src/shipping.ts fraktalternativ och orderns totalsumma
   src/discounts.ts rabattkoder
   src/content.ts  startsidans hero och kampanjer
+  src/quotes.ts   sparade offerter med egen länk
   src/storage.ts  lokal disk eller objektlagring för uppladdade filer
   src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter

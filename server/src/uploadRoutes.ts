@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import type { Request, RequestHandler, Response } from 'express';
 import multer from 'multer';
-import { createReadStream } from 'node:fs';
 import { readFile, rm } from 'node:fs/promises';
 import { pathParam } from './http.ts';
 import { ModelParseError, analyzeModel, isAnalyzableExtension } from './modelAnalysis.ts';
@@ -30,7 +29,6 @@ import {
   recordUpload,
   storedFileName,
   uploadDir,
-  uploadExists,
   writeMeta,
 } from './uploads.ts';
 import type { UploadMeta } from './uploads.ts';
