@@ -3,6 +3,7 @@ import type {
   ArtTone,
   Category,
   Material,
+  MaterialProperties,
   Product,
   ProductVariantOption,
   QualityLevel,
@@ -50,6 +51,14 @@ function asRecord(value: unknown): Rec {
 
 function text(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+/**
+ * Sant när fältet faktiskt fyllts i. Kan inte uttryckas med text(), som ger
+ * tom sträng för allt som inte är en sträng – inklusive tal.
+ */
+function given(value: unknown): boolean {
+  return value !== undefined && value !== null && value !== '';
 }
 
 function num(value: unknown): number {
@@ -301,8 +310,7 @@ export function parseMaterialInput(input: unknown, existingId?: string): Materia
   if (description.length < 10) errors.description = 'Beskriv materialet kort.';
 
   // Densiteten är frivillig. Lämnas den tom räknar vi vikten som för PLA.
-  const hasDensity = raw.densityGramsPerCm3 !== undefined && text(raw.densityGramsPerCm3) !== '';
-  const density = hasDensity ? num(raw.densityGramsPerCm3) : undefined;
+  const density = given(raw.densityGramsPerCm3) ? num(raw.densityGramsPerCm3) : undefined;
   if (density !== undefined && !(density >= 0.5 && density <= 5)) {
     errors.densityGramsPerCm3 = 'Densiteten ska vara mellan 0,5 och 5 g/cm³.';
   }
@@ -311,12 +319,17 @@ export function parseMaterialInput(input: unknown, existingId?: string): Materia
     ? raw.traits.map((entry) => text(entry)).filter((entry) => entry.length > 0)
     : [];
 
+  // Egenskaperna är frivilliga, men anges de måste alla fem vara med – ett
+  // halvt ifyllt material kan inte vägas mot kundens behov.
+  const properties = parseMaterialProperties(raw.properties, errors);
+
   if (Object.keys(errors).length > 0) throw new ProductInputError(errors);
 
   return {
     id,
     name,
     priceFactor: Math.round(priceFactor * 100) / 100,
+    ...(properties ? { properties } : {}),
     ...(density === undefined ? {} : { densityGramsPerCm3: Math.round(density * 100) / 100 }),
     description,
     traits,
@@ -356,5 +369,48 @@ export function parseQualityInput(input: unknown, existingId?: string): QualityL
     layerHeightMm: Math.round(layerHeightMm * 1000) / 1000,
     timeFactor: Math.round(timeFactor * 100) / 100,
     description,
+  };
+}
+
+/** Skalorna i materialguiden går från 1 till 5, temperaturen i grader. */
+function parseMaterialProperties(
+  input: unknown,
+  errors: Record<string, string>,
+): MaterialProperties | undefined {
+  if (input === undefined || input === null) return undefined;
+  const raw = asRecord(input);
+
+  // Ett tomt objekt betyder att egenskaperna inte angetts.
+  const filled = ['maxTempC', 'strength', 'flexibility', 'detail'].filter((key) => given(raw[key]));
+  if (filled.length === 0) return undefined;
+  if (filled.length < 4) {
+    errors.properties = 'Fyll i alla fyra egenskaper, eller lämna dem helt tomma.';
+    return undefined;
+  }
+
+  const maxTempC = num(raw.maxTempC);
+  if (!(maxTempC >= 20 && maxTempC <= 400)) {
+    errors.properties = 'Temperaturen ska vara mellan 20 och 400 °C.';
+    return undefined;
+  }
+
+  const scales = {
+    strength: num(raw.strength),
+    flexibility: num(raw.flexibility),
+    detail: num(raw.detail),
+  };
+  for (const [key, value] of Object.entries(scales)) {
+    if (!(Number.isInteger(value) && value >= 1 && value <= 5)) {
+      errors.properties = `${key} ska vara ett heltal mellan 1 och 5.`;
+      return undefined;
+    }
+  }
+
+  return {
+    maxTempC: Math.round(maxTempC),
+    strength: scales.strength,
+    flexibility: scales.flexibility,
+    detail: scales.detail,
+    outdoor: raw.outdoor === true,
   };
 }

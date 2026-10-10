@@ -3,6 +3,7 @@ import {
   allCategories,
   allMaterials,
   allQualities,
+  findProduct,
   findProductBySlug,
   publishedProducts,
 } from './catalog.ts';
@@ -31,6 +32,8 @@ import { orderConfirmation, savedQuoteMail, sendMail } from './mailer.ts';
 import { expiryFrom, findQuote, saveQuote } from './quotes.ts';
 import { rateLimit } from './rateLimit.ts';
 import { publicHomeContent } from './content.ts';
+import { recommendMaterials } from './materialGuide.ts';
+import type { Flex, GuideAnswers, Load, Place } from './materialGuide.ts';
 import {
   ReviewError,
   publicReview,
@@ -57,7 +60,7 @@ import {
   parseQuoteRequest,
   withMeasuredVolume,
 } from './validation.ts';
-import type { CustomOrder, Order, PaymentDetails } from './types.ts';
+import type { CustomOrder, Order, OrderLine, PaymentDetails } from './types.ts';
 
 export const api = Router();
 
@@ -219,6 +222,31 @@ api.post('/products/:slug/reviews', reviewLimit, async (req, res) => {
  * egna priser, aldrig från det klienten påstår, och beloppet som svaret
  * innehåller är bara till för att visas – ordern räknar om det på nytt.
  */
+const PLACES: Place[] = ['inomhus', 'utomhus', 'varmt'];
+const LOADS: Load[] = ['dekor', 'daglig', 'last'];
+const FLEXES: Flex[] = ['styv', 'nagot', 'mjuk'];
+
+function oneOf<T extends string>(value: unknown, allowed: T[], fallback: T): T {
+  return typeof value === 'string' && (allowed as string[]).includes(value)
+    ? (value as T)
+    : fallback;
+}
+
+/**
+ * Materialguiden. Uträkningen ligger kvar på servern i stället för att
+ * dubbleras i klienten, så den bara finns på ett ställe och följer materialens
+ * egenskaper som de redigeras i panelen.
+ */
+api.post('/materials/guide', quoteLimit, async (req, res) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const answers: GuideAnswers = {
+    place: oneOf(body.place, PLACES, 'inomhus'),
+    load: oneOf(body.load, LOADS, 'daglig'),
+    flex: oneOf(body.flex, FLEXES, 'styv'),
+  };
+  res.json({ answers, results: recommendMaterials(await allMaterials(), answers) });
+});
+
 /** Startsidans hero och de kampanjer som är igång just nu. */
 api.get('/content/home', async (_req, res) => {
   res.json(await publicHomeContent());
@@ -415,6 +443,16 @@ api.post('/orders/:id/reorder', saveLimit, async (req, res) => {
   });
 });
 
+/** Summerar produkternas printtider för en butiksorder. */
+async function totalPrintHours(lines: OrderLine[]): Promise<number> {
+  const products = await Promise.all(lines.map((line) => findProduct(line.productId)));
+  const hours = lines.reduce(
+    (sum, line, index) => sum + (products[index]?.printTimeHours ?? 0) * line.quantity,
+    0,
+  );
+  return Math.round(hours * 10) / 10;
+}
+
 /**
  * Löser upp en rabattkod från kunden. Gäller den inte avbryts hela
  * beställningen – kunden räknar med rabatten, så att tysta släppa den vore att
@@ -557,6 +595,9 @@ api.post('/orders', orderLimit, async (req, res) => {
   const lines = await parseOrderLines(body.lines);
 
   const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+  // Printtiden summeras när ordern läggs, så framstegsmätaren har något att
+  // räkna på utan att verkstaden rapporterar något.
+  const productionHours = await totalPrintHours(lines);
   const shippingOption = shippingOptionFor(body.shippingOption);
   const resolved = await resolveDiscount(body.code, subtotal);
   const totals = orderTotals({ subtotal, shippingOption, discount: resolved });
@@ -608,6 +649,7 @@ api.post('/orders', orderLimit, async (req, res) => {
     customer,
     lines,
     subtotal,
+    ...(productionHours > 0 ? { productionHours } : {}),
     shipping: totals.shipping,
     shippingOption: { id: shippingOption.id, name: shippingOption.name },
     ...(resolved && totals.discount > 0

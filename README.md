@@ -47,6 +47,10 @@ npm start          # http://localhost:4000
 - Lagersaldo som dras av vid köp och hindrar överförsäljning
 - Kassa med validering, fri frakt över 599 kr, Klarna-betalning och orderbekräftelse
 - Orderspårning på ordernummer med tidslinje över var ordern befinner sig
+- **Live printstatus** på spårningen: en framstegsmätare som räknas ur den
+  beräknade printtiden och tidpunkten jobbet gick i produktion
+- **Materialguiden**: tre frågor om hur delen ska användas, och ett
+  rekommenderat material med skäl och varningar
 - Bekräftelse- och statusmejl till kunden
 - Kundomdömen med betygsfördelning, verifierat köp och svar från verkstaden –
   modererade, så inget syns förrän det godkänts
@@ -105,6 +109,7 @@ accepteras rakt av, varken för butiksorder eller egna jobb.
 | `POST` | `/api/products/:slug/notify`  | Bevakar en slutsåld produkt                                 |
 | `POST` | `/api/discounts/check`        | Prövar en rabattkod mot varukorgen                          |
 | `GET`  | `/api/content/home`           | Startsidans hero och de kampanjer som är igång              |
+| `POST` | `/api/materials/guide`        | Rekommenderar material utifrån tre frågor                   |
 | `POST` | `/api/quotes`                 | Sparar en offert bakom en egen länk                         |
 | `GET`  | `/api/quotes/:id`             | Hämtar en sparad offert, med dagens pris vid sidan om       |
 | `POST` | `/api/orders/:id/reorder`     | Förbereder en ny beställning av ett tidigare jobb           |
@@ -146,6 +151,26 @@ Så här hanteras filerna:
 
 Byt lagringen mot S3 eller motsvarande genom att ersätta `server/src/uploads.ts` –
 resten av koden går bara via funktionerna där.
+
+## Printstatus och materialguiden
+
+**Framstegsmätaren** behöver ingen rapportering från verkstaden. Printtiden
+summeras när ordern läggs (`productionHours` på butiksordern, offertens
+`estimatedPrintHours` på ett kundunikt jobb), och tidpunkten då ordern gick i
+produktion står redan i dess historik. Mätaren stannar på 99 % så länge jobbet
+pågår – att visa 100 % på något som inte är klart är ett löfte vi inte kan
+hålla – och säger till när tiden passerats.
+
+Uträkningen finns i både `server/src/progress.ts` och `client/src/lib/progress.ts`:
+mätaren måste röra sig medan sidan är öppen, så den kan inte hämtas från
+servern en gång i sekunden. Båda testerna använder samma siffror, så en
+avvikelse syns.
+
+**Materialguiden** väger materialens egna egenskaper – högsta temperatur,
+hållfasthet, böjlighet, detaljnivå och om de tål att stå ute – mot tre frågor om
+hur delen ska användas. Egenskaperna redigeras i panelen, så ett nytt material
+kommer med i guiden utan att någon kod ändras. Uträkningen ligger bara på
+servern; klienten frågar.
 
 ## Offerter och ombeställning
 
@@ -379,6 +404,8 @@ server/
   src/discounts.ts rabattkoder
   src/content.ts  startsidans hero och kampanjer
   src/quotes.ts   sparade offerter med egen länk
+  src/materialGuide.ts  rekommenderar material utifrån hur delen ska användas
+  src/progress.ts  hur långt ett printjobb har kommit
   src/storage.ts  lokal disk eller objektlagring för uppladdade filer
   src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter

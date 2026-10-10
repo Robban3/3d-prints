@@ -6,6 +6,7 @@ export const materials: Material[] = [
     name: 'PLA',
     priceFactor: 1,
     densityGramsPerCm3: 1.24,
+    properties: { maxTempC: 55, strength: 3, flexibility: 1, detail: 4, outdoor: false },
     description:
       'Vårt standardmaterial. Styvt, måttstabilt och tillverkat av förnybar råvara. Perfekt för inredning och dekor.',
     traits: ['Biobaserad', 'Hög detaljnivå', 'Tål upp till 55 °C'],
@@ -15,6 +16,7 @@ export const materials: Material[] = [
     name: 'PETG',
     priceFactor: 1.25,
     densityGramsPerCm3: 1.27,
+    properties: { maxTempC: 75, strength: 4, flexibility: 2, detail: 3, outdoor: true },
     description:
       'Segare än PLA och tål både fukt och UV. Ett bra val för prylar som används dagligen eller står utomhus.',
     traits: ['Slagtålig', 'Fukttålig', 'Tål upp till 75 °C'],
@@ -24,6 +26,7 @@ export const materials: Material[] = [
     name: 'ABS',
     priceFactor: 1.35,
     densityGramsPerCm3: 1.04,
+    properties: { maxTempC: 95, strength: 4, flexibility: 2, detail: 3, outdoor: false },
     description:
       'Klassisk teknisk plast med hög värmetålighet. Kan efterbearbetas med acetonpolering för blank yta.',
     traits: ['Värmetålig', 'Slipbar', 'Tål upp till 95 °C'],
@@ -33,6 +36,7 @@ export const materials: Material[] = [
     name: 'TPU (flexibel)',
     priceFactor: 1.6,
     densityGramsPerCm3: 1.21,
+    properties: { maxTempC: 70, strength: 3, flexibility: 5, detail: 2, outdoor: true },
     description:
       'Gummiliknande material med shore 95A. Används för packningar, greppytor och stötdämpande detaljer.',
     traits: ['Flexibel', 'Nötningstålig', 'Halkfri yta'],
@@ -42,6 +46,7 @@ export const materials: Material[] = [
     name: 'Resin (SLA)',
     priceFactor: 2.1,
     densityGramsPerCm3: 1.15,
+    properties: { maxTempC: 60, strength: 2, flexibility: 1, detail: 5, outdoor: false },
     description:
       'Fotopolymer för miniatyrer och prototyper där varje detalj syns. Lagerhöjd ned till 0,025 mm.',
     traits: ['Extrem detaljnivå', 'Slät yta', 'Efterhärdas i UV'],

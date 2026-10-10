@@ -223,3 +223,136 @@ describe('produkt mot nytt material', () => {
     assert.equal(product.material, 'tra-pla');
   });
 });
+
+describe('densitet', () => {
+  const base = {
+    name: 'Testmaterial',
+    priceFactor: 1,
+    description: 'Ett material för testerna.',
+  };
+
+  it('tar emot densiteten som tal, vilket är vad formuläret skickar', () => {
+    assert.equal(
+      parseMaterialInput({ ...base, densityGramsPerCm3: 1.27 }).densityGramsPerCm3,
+      1.27,
+    );
+  });
+
+  it('tar emot densiteten som sträng', () => {
+    assert.equal(
+      parseMaterialInput({ ...base, densityGramsPerCm3: '1.04' }).densityGramsPerCm3,
+      1.04,
+    );
+  });
+
+  it('lämnar densiteten tom när fältet inte fyllts i', () => {
+    assert.equal('densityGramsPerCm3' in parseMaterialInput(base), false);
+    assert.equal(
+      'densityGramsPerCm3' in parseMaterialInput({ ...base, densityGramsPerCm3: '' }),
+      false,
+    );
+  });
+
+  it('avvisar orimliga densiteter', () => {
+    assert.throws(
+      () => parseMaterialInput({ ...base, densityGramsPerCm3: 0.1 }),
+      ProductInputError,
+    );
+    assert.throws(() => parseMaterialInput({ ...base, densityGramsPerCm3: 9 }), ProductInputError);
+  });
+
+  it('avrundar till två decimaler', () => {
+    assert.equal(
+      parseMaterialInput({ ...base, densityGramsPerCm3: 1.23456 }).densityGramsPerCm3,
+      1.23,
+    );
+  });
+});
+
+describe('materialegenskaper', () => {
+  const base = {
+    name: 'Testmaterial',
+    priceFactor: 1,
+    description: 'Ett material för testerna.',
+  };
+
+  it('tar emot alla fem egenskaperna', () => {
+    const material = parseMaterialInput({
+      ...base,
+      properties: { maxTempC: 80, strength: 4, flexibility: 2, detail: 3, outdoor: true },
+    });
+    assert.deepEqual(material.properties, {
+      maxTempC: 80,
+      strength: 4,
+      flexibility: 2,
+      detail: 3,
+      outdoor: true,
+    });
+  });
+
+  it('låter egenskaperna vara helt tomma', () => {
+    assert.equal('properties' in parseMaterialInput(base), false);
+    assert.equal('properties' in parseMaterialInput({ ...base, properties: {} }), false);
+  });
+
+  it('säger till när bara några egenskaper fyllts i', () => {
+    // Ett halvt ifyllt material kan inte vägas mot kundens behov.
+    assert.throws(
+      () => parseMaterialInput({ ...base, properties: { maxTempC: 80, strength: 4 } }),
+      (error: unknown) => {
+        assert.ok(error instanceof ProductInputError);
+        assert.match(error.fields.properties!, /alla fyra/);
+        return true;
+      },
+    );
+  });
+
+  it('håller temperaturen i ett rimligt spann', () => {
+    assert.throws(
+      () =>
+        parseMaterialInput({
+          ...base,
+          properties: { maxTempC: 5, strength: 3, flexibility: 1, detail: 3 },
+        }),
+      ProductInputError,
+    );
+    assert.throws(
+      () =>
+        parseMaterialInput({
+          ...base,
+          properties: { maxTempC: 900, strength: 3, flexibility: 1, detail: 3 },
+        }),
+      ProductInputError,
+    );
+  });
+
+  it('kräver heltal mellan 1 och 5 på skalorna', () => {
+    for (const bad of [0, 6, 2.5]) {
+      assert.throws(
+        () =>
+          parseMaterialInput({
+            ...base,
+            properties: { maxTempC: 60, strength: bad, flexibility: 1, detail: 3 },
+          }),
+        ProductInputError,
+        `strength ${bad}`,
+      );
+    }
+  });
+
+  it('räknar utomhus som nej när det inte angetts', () => {
+    const material = parseMaterialInput({
+      ...base,
+      properties: { maxTempC: 60, strength: 3, flexibility: 1, detail: 3 },
+    });
+    assert.equal(material.properties?.outdoor, false);
+  });
+
+  it('avrundar temperaturen till hela grader', () => {
+    const material = parseMaterialInput({
+      ...base,
+      properties: { maxTempC: 74.6, strength: 3, flexibility: 1, detail: 3 },
+    });
+    assert.equal(material.properties?.maxTempC, 75);
+  });
+});

@@ -19,12 +19,23 @@ export type ArtShape =
 
 export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla';
 
+/** Mätbara egenskaper som materialguiden väger. Skalorna går från 1 till 5. */
+export interface MaterialProperties {
+  maxTempC: number;
+  strength: number;
+  flexibility: number;
+  detail: number;
+  outdoor: boolean;
+}
+
 export interface Material {
   id: MaterialId;
   name: string;
   priceFactor: number;
   /** Densitet i g/cm³. Saknas den räknas vikten som för PLA. */
   densityGramsPerCm3?: number;
+  /** Saknas de kan materialet inte rekommenderas av guiden. */
+  properties?: MaterialProperties;
   description: string;
   traits: string[];
 }
@@ -198,6 +209,8 @@ export interface StatusEvent {
 export interface ShopOrder {
   id: string;
   type: 'shop';
+  /** Beräknad printtid för hela ordern, summerad när ordern lades. */
+  productionHours?: number;
   createdAt: string;
   status: OrderStatus;
   customer: CustomerDetails;
@@ -234,6 +247,26 @@ export interface CustomOrder {
 }
 
 export type AnyOrder = ShopOrder | CustomOrder;
+
+/* ---------- Materialguiden ---------- */
+
+export type GuidePlace = 'inomhus' | 'utomhus' | 'varmt';
+export type GuideLoad = 'dekor' | 'daglig' | 'last';
+export type GuideFlex = 'styv' | 'nagot' | 'mjuk';
+
+export interface GuideAnswers {
+  place: GuidePlace;
+  load: GuideLoad;
+  flex: GuideFlex;
+}
+
+export interface GuideResult {
+  material: Material;
+  /** 0–100, där 100 är en perfekt träff på alla tre svaren. */
+  score: number;
+  reasons: string[];
+  warnings: string[];
+}
 
 /* ---------- Sparade offerter ---------- */
 

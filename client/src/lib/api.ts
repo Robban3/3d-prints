@@ -20,6 +20,8 @@ import type {
   PaymentSession,
   DashboardStats,
   DiscountCode,
+  GuideAnswers,
+  GuideResult,
   HeroContent,
   HomeContent,
   ImportResult,
@@ -72,6 +74,13 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export function fetchConfig(): Promise<ShopConfig> {
   return request<ShopConfig>('/config');
+}
+
+/** Materialguidens förslag. Uträkningen ligger på servern. */
+export function fetchMaterialGuide(
+  answers: GuideAnswers,
+): Promise<{ answers: GuideAnswers; results: GuideResult[] }> {
+  return request('/materials/guide', { method: 'POST', body: JSON.stringify(answers) });
 }
 
 /** Startsidans hero och de kampanjer som är igång. */
