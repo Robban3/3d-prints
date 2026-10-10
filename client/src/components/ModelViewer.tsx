@@ -252,9 +252,13 @@ export function ModelViewer({ file, url, fileName }: Props) {
       }
     };
 
-    const render = () => {
+    const render = () => renderer.draw(yaw, pitch, zoom);
+
+    // Storleken läses bara om när rutan faktiskt ändras. Att mäta i varje
+    // bildruta tvingar webbläsaren att räkna om layouten sextio gånger i sekunden.
+    const resize = () => {
       size();
-      renderer.draw(yaw, pitch, zoom);
+      render();
     };
 
     const tick = () => {
@@ -294,12 +298,11 @@ export function ModelViewer({ file, url, fileName }: Props) {
     canvas.addEventListener('pointerup', up);
     canvas.addEventListener('pointercancel', up);
     canvas.addEventListener('wheel', wheel, { passive: false });
-    const observer =
-      typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(() => render());
+    const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(resize);
     observer?.observe(canvas);
 
-    if (still) render();
-    else frame = window.requestAnimationFrame(tick);
+    resize();
+    if (!still) frame = window.requestAnimationFrame(tick);
 
     return () => {
       window.cancelAnimationFrame(frame);

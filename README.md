@@ -48,12 +48,26 @@ npm start          # http://localhost:4000
 - Kassa med validering, fri frakt över 599 kr, Klarna-betalning och orderbekräftelse
 - Orderspårning på ordernummer med tidslinje över var ordern befinner sig
 - Bekräftelse- och statusmejl till kunden
+- Kundomdömen med betygsfördelning, verifierat köp och svar från verkstaden –
+  modererade, så inget syns förrän det godkänts
+- Bevakning av slutsålda produkter: ett mejl när saldot fyllts på
+- Egen titel, beskrivning och delningsbild per sida, plus `sitemap.xml`,
+  `robots.txt` och strukturerad data för produkterna
 
 **Egna printjobb**
 
 - Uppladdning av STL, OBJ, 3MF, STEP eller F3D (drag-and-drop)
+- **Automatisk uppmätning** av STL, OBJ och 3MF: volym, yttermått, yta och
+  täthet läses ur filen, och volymen är den priset räknas på – kunden behöver
+  inte uppskatta något, och priset går inte att pruta ner genom att skicka in en
+  mindre volym än modellen har
+- **3D-förhandsvisning** av den uppladdade modellen, ritad med WebGL i
+  webbläsaren
+- Varningar när modellen inte får plats på byggplattan, har hål i ytan,
+  överlappar sig själv eller verkar exporterad i fel enhet
 - Val av material (PLA, PETG, ABS, TPU, resin) och lagerhöjd
-- Reglage för volym och fyllnadsgrad, antal, efterbearbetning och express
+- Reglage för fyllnadsgrad, antal, efterbearbetning och express (volymreglaget
+  ersätts av den uppmätta volymen när filen gått att läsa)
 - Prisförslag som räknas om löpande mot servern, med full specifikation av
   materialkostnad, maskintid, startavgift, volymrabatt och leveranstid
 - Nedladdningslänk till modellfilen på orderbekräftelsen och i orderspårningen
@@ -77,16 +91,20 @@ accepteras rakt av, varken för butiksorder eller egna jobb.
 
 ## API
 
-| Metod  | Väg                   | Beskrivning                                                 |
-| ------ | --------------------- | ----------------------------------------------------------- |
-| `GET`  | `/api/health`         | Enkel statuskontroll                                        |
-| `GET`  | `/api/config`         | Material, kvaliteter, kategorier, gränsvärden, fraktvillkor |
-| `GET`  | `/api/products`       | Produktlista, filtrerbar med `category` och `search`        |
-| `GET`  | `/api/products/:slug` | En produkt plus relaterade produkter                        |
-| `POST` | `/api/quote`          | Prisförslag för ett kundunikt printjobb                     |
-| `POST` | `/api/orders`         | Lägger en butiksorder                                       |
-| `POST` | `/api/custom-orders`  | Lägger en order för ett eget printjobb                      |
-| `GET`  | `/api/orders/:id`     | Hämtar en order för spårning                                |
+| Metod  | Väg                           | Beskrivning                                                 |
+| ------ | ----------------------------- | ----------------------------------------------------------- |
+| `GET`  | `/api/health`                 | Enkel statuskontroll                                        |
+| `GET`  | `/api/config`                 | Material, kvaliteter, kategorier, gränsvärden, fraktvillkor |
+| `GET`  | `/api/products`               | Produktlista, filtrerbar med `category` och `search`        |
+| `GET`  | `/api/products/:slug`         | En produkt plus relaterade produkter                        |
+| `POST` | `/api/quote`                  | Prisförslag för ett kundunikt printjobb                     |
+| `POST` | `/api/orders`                 | Lägger en butiksorder                                       |
+| `POST` | `/api/custom-orders`          | Lägger en order för ett eget printjobb                      |
+| `GET`  | `/api/orders/:id`             | Hämtar en order för spårning                                |
+| `POST` | `/api/products/:slug/reviews` | Lämnar ett omdöme, som läggs i kö för granskning            |
+| `POST` | `/api/products/:slug/notify`  | Bevakar en slutsåld produkt                                 |
+| `GET`  | `/sitemap.xml`                | Sitemap byggd ur katalogen                                  |
+| `GET`  | `/robots.txt`                 | Indexeringsregler                                           |
 
 Valideringsfel besvaras med `400` och ett `fields`-objekt som pekar ut de fält som
 behöver rättas, vilket formulären visar direkt vid respektive fält.
@@ -161,12 +179,14 @@ behöver.
 
 ## Adminpanelen
 
-Verkstadens panel ligger på `/verkstad` och har tre flikar:
+Verkstadens panel ligger på `/verkstad` och har åtta flikar:
 
+- **Översikt** – omsättning per dag, ordrar per status, bästsäljare och lågt lager
 - **Ordrar** – flytta ordrar framåt i produktionen, se tidslinjen per order
 - **Produkter** – lägg till, redigera och ta bort produkter, med foto eller ritad bild
 - **Kategorier** – lägg till, byt namn på och ta bort kategorier
-- **Material** – material och kvalitetsnivåer, vars faktorer styr priset på egna printjobb
+- **Material** – material, densitet och kvalitetsnivåer, vars faktorer styr priset på egna printjobb
+- **Omdömen** – granska, publicera, avslå och svara på kundomdömen
 - **Import/export** – exportera katalogen, ändra många produkter i filen, läs in igen
 - **Historik** – de senaste ändringarna i katalogen och i ordrarnas status
 
@@ -195,6 +215,20 @@ saldo som ändrats av köp skrivs inte över när produkten redigeras.
 Att ta bort en produkt påverkar inte lagda ordrar – varje orderrad bär sin egen
 kopia av namn och pris. En kategori som fortfarande har produkter i sig går inte
 att ta bort; flytta produkterna först.
+
+**Översiktens siffror** räknas fram ur ordrarna vid varje anrop i stället för att
+hållas i en egen räknare, så de kan inte hamna i otakt. Avbrutna ordrar räknas
+inte som omsättning men syns i statusfördelningen. Varje diagram visar en serie,
+och siffrorna finns också som tabell.
+
+**Omdömen** publiceras aldrig automatiskt. Kön visar hela texten, vem som skrivit
+den och vilken produkt det gäller. Finns det publicerade omdömen är det deras
+snitt butiken visar; annars behåller produkten katalogens eget värde, så en ny
+produkt inte ser ut att ha fått noll i betyg.
+
+**Lagerbevakningar** löses ut av panelen: höjer du saldot på en slutsåld produkt
+från noll får alla som bevakat den ett mejl, en gång var. Översikten visar hur
+många som väntar per produkt.
 
 ## Orderns livscykel
 
@@ -254,11 +288,19 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 
 ## Miljövariabler
 
-| Variabel      | Standard            | Beskrivning                     |
-| ------------- | ------------------- | ------------------------------- |
-| `PORT`        | `4000`              | Port för API-servern            |
-| `ORDER_STORE` | `data/orders.json`  | Fil där ordrar sparas           |
-| `CLIENT_DIST` | `../../client/dist` | Katalog med den byggda klienten |
+| Variabel              | Standard                | Beskrivning                                          |
+| --------------------- | ----------------------- | ---------------------------------------------------- |
+| `PORT`                | `4000`                  | Port för API-servern                                 |
+| `ORDER_STORE`         | `data/orders.json`      | Fil där ordrar sparas                                |
+| `REVIEW_STORE`        | `data/omdomen.json`     | Fil där omdömen sparas                               |
+| `WATCH_STORE`         | `data/bevakningar.json` | Fil där lagerbevakningar sparas                      |
+| `CLIENT_DIST`         | `../../client/dist`     | Katalog med den byggda klienten                      |
+| `SHOP_URL`            | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på          |
+| `SHOP_TIME_ZONE`      | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror |
+| `BUILD_PLATE_MM`      | `256x256x256`           | Byggvolymen som modeller mäts mot                    |
+| `LOW_STOCK_THRESHOLD` | `5`                     | Saldo som flaggas som lågt i översikten              |
+| `RATE_LIMIT_REVIEWS`  | `5`                     | Omdömen per IP och timme                             |
+| `RATE_LIMIT_WATCHES`  | `10`                    | Lagerbevakningar per IP och timme                    |
 
 ## Struktur
 
@@ -276,6 +318,11 @@ server/
   src/catalogValidation.ts  validering av produktformuläret
   src/catalogTransfer.ts  export och import av katalogen
   src/auditLog.ts  ändringshistorik
+  src/modelAnalysis.ts  uppmätning av STL, OBJ och 3MF
+  src/reviews.ts  omdömen med moderering
+  src/stats.ts    siffrorna till panelens översikt
+  src/notify.ts   bevakningar av slutsålda produkter
+  src/seo.ts      sitemap och robots.txt
   src/storage.ts  lokal disk eller objektlagring för uppladdade filer
   src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter
@@ -284,7 +331,8 @@ client/
   src/pages/      en fil per vy
   src/components/ delade komponenter, bl.a. de genererade produktbilderna
   src/components/admin/  adminpanelens vyer och produktformulär
-  src/lib/        API-klient, varukorg och formatering
+  src/lib/        API-klient, varukorg, formatering och sidornas metadata
+  src/lib/mesh.ts modellfiler tolkade i webbläsaren, för 3D-vyn
   test/           komponent- och enhetstester (Vitest + Testing Library)
 ```
 
