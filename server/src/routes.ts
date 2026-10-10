@@ -34,7 +34,6 @@ import {
 } from './validation.ts';
 import type { CustomOrder, Order, PaymentDetails } from './types.ts';
 
-
 export const api = Router();
 
 const orderLimit = rateLimit({
@@ -127,7 +126,10 @@ api.post('/quote', quoteLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const fileId = String(body.fileId ?? '').trim();
   const upload = fileId ? await readMeta(fileId) : undefined;
-  const request = withMeasuredVolume(await parseQuoteRequest(body.request ?? body), upload?.analysis);
+  const request = withMeasuredVolume(
+    await parseQuoteRequest(body.request ?? body),
+    upload?.analysis,
+  );
   res.json({ request, quote: await quoteFor(request), model: upload?.analysis });
 });
 

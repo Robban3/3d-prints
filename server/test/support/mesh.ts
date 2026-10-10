@@ -100,11 +100,7 @@ function triangles(mesh: Mesh): Array<[number, number, number][]> {
   const out: Array<[number, number, number][]> = [];
   for (const face of mesh.faces) {
     for (let i = 1; i + 1 < face.length; i += 1) {
-      out.push([
-        mesh.vertices[face[0]!]!,
-        mesh.vertices[face[i]!]!,
-        mesh.vertices[face[i + 1]!]!,
-      ]);
+      out.push([mesh.vertices[face[0]!]!, mesh.vertices[face[i]!]!, mesh.vertices[face[i + 1]!]!]);
     }
   }
   return out;
@@ -205,7 +201,8 @@ ${triangleRows}
   const count = options.items ?? 1;
   const items = Array.from({ length: count }, (_unused, index) => {
     const base = options.transform ?? [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
-    const placed = index === 0 ? base : [...base.slice(0, 9), base[9]! + index * 60, base[10]!, base[11]!];
+    const placed =
+      index === 0 ? base : [...base.slice(0, 9), base[9]! + index * 60, base[10]!, base[11]!];
     return count === 1 && !options.transform
       ? `    <item objectid="${builtId}"/>`
       : `    <item objectid="${builtId}" transform="${placed.join(' ')}"/>`;

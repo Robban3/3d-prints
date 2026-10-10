@@ -23,8 +23,39 @@ export interface Material {
   id: MaterialId;
   name: string;
   priceFactor: number;
+  /** Densitet i g/cm³. Saknas den räknas vikten som för PLA. */
+  densityGramsPerCm3?: number;
   description: string;
   traits: string[];
+}
+
+/** Uppmätt geometri från en uppladdad modellfil. Speglar serverns ModelAnalysis. */
+export interface ModelAnalysis {
+  format: 'stl' | 'obj' | '3mf';
+  volumeCm3: number;
+  surfaceAreaCm2: number;
+  bounds: { width: number; depth: number; height: number };
+  triangles: number;
+  openEdges: number | null;
+  nonManifoldEdges: number | null;
+  watertight: boolean | null;
+  invertedNormals: boolean;
+  fitsBuildPlate: boolean;
+  warnings: ModelWarning[];
+}
+
+export interface ModelWarning {
+  code:
+    | 'inte-tat'
+    | 'icke-manifold'
+    | 'for-stor'
+    | 'misstankt-liten'
+    | 'inverterade-normaler'
+    | 'tom-volym'
+    | 'tung-mesh'
+    | 'flera-delar';
+  severity: 'info' | 'warning' | 'error';
+  message: string;
 }
 
 export interface Quality {
@@ -107,6 +138,10 @@ export interface UploadedFile {
   fileName: string;
   size: number;
   url: string;
+  /** Uppmätt geometri, när formatet gick att läsa. */
+  analysis?: ModelAnalysis;
+  /** Varför uppmätningen inte gick att göra. */
+  analysisError?: string;
 }
 
 export interface QuoteRequest {
@@ -130,6 +165,7 @@ export interface QuoteBreakdown {
   total: number;
   estimatedPrintHours: number;
   estimatedDeliveryDays: number;
+  estimatedWeightGrams: number;
 }
 
 export interface CustomerDetails {
@@ -182,6 +218,7 @@ export interface CustomOrder {
   request: QuoteRequest;
   projectName: string;
   fileId?: string;
+  model?: ModelAnalysis;
   fileName?: string;
   fileUrl?: string;
   fileSize?: number;

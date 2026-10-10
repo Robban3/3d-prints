@@ -11,6 +11,7 @@ import type {
   AuditEntry,
   Category,
   Material,
+  ModelAnalysis,
   Quality,
   OrderStatus,
   PaymentSession,
@@ -75,10 +76,18 @@ export function fetchProduct(slug: string): Promise<{ product: Product; related:
   return request(`/products/${encodeURIComponent(slug)}`);
 }
 
+/**
+ * Har kunden laddat upp en fil skickas dess id med, och servern räknar på den
+ * uppmätta volymen i stället för den som ligger i formuläret.
+ */
 export function fetchQuote(
   payload: QuoteRequest,
-): Promise<{ request: QuoteRequest; quote: QuoteBreakdown }> {
-  return request('/quote', { method: 'POST', body: JSON.stringify(payload) });
+  fileId?: string,
+): Promise<{ request: QuoteRequest; quote: QuoteBreakdown; model?: ModelAnalysis }> {
+  return request('/quote', {
+    method: 'POST',
+    body: JSON.stringify(fileId ? { request: payload, fileId } : payload),
+  });
 }
 
 export function createPaymentSession(
@@ -201,10 +210,7 @@ export function fetchAdminProducts(token: string): Promise<{ products: Product[]
   return request('/admin/products', adminInit(token));
 }
 
-export function createProduct(
-  token: string,
-  draft: ProductDraft,
-): Promise<{ product: Product }> {
+export function createProduct(token: string, draft: ProductDraft): Promise<{ product: Product }> {
   return request(
     '/admin/products',
     adminInit(token, { method: 'POST', body: JSON.stringify(draft) }),
@@ -262,9 +268,10 @@ export function deleteCategory(token: string, id: string): Promise<{ category: C
 }
 
 /** Laddar upp en produktbild. Returnerar id och adress att spara på produkten. */
-export function uploadProductImage(
-  file: File,
-): { promise: Promise<{ id: string; url: string; fileName: string }>; abort: () => void } {
+export function uploadProductImage(file: File): {
+  promise: Promise<{ id: string; url: string; fileName: string }>;
+  abort: () => void;
+} {
   const xhr = new XMLHttpRequest();
   const promise = new Promise<{ id: string; url: string; fileName: string }>((resolve, reject) => {
     const body = new FormData();
@@ -300,7 +307,10 @@ export function saveMaterial(
   isNew: boolean,
 ): Promise<{ material: Material }> {
   return isNew
-    ? request('/admin/materials', adminInit(token, { method: 'POST', body: JSON.stringify(material) }))
+    ? request(
+        '/admin/materials',
+        adminInit(token, { method: 'POST', body: JSON.stringify(material) }),
+      )
     : request(
         `/admin/materials/${encodeURIComponent(material.id)}`,
         adminInit(token, { method: 'PATCH', body: JSON.stringify(material) }),
@@ -320,7 +330,10 @@ export function saveQuality(
   isNew: boolean,
 ): Promise<{ quality: Quality }> {
   return isNew
-    ? request('/admin/qualities', adminInit(token, { method: 'POST', body: JSON.stringify(quality) }))
+    ? request(
+        '/admin/qualities',
+        adminInit(token, { method: 'POST', body: JSON.stringify(quality) }),
+      )
     : request(
         `/admin/qualities/${encodeURIComponent(quality.id)}`,
         adminInit(token, { method: 'PATCH', body: JSON.stringify(quality) }),

@@ -157,11 +157,14 @@ describe('withMeasuredVolume', () => {
   it('avvisar en modell som är större än vad vi prissätter automatiskt', () => {
     // 300 mm kub = 27 000 cm³, långt över taket på 8 000.
     const analysis = analyzeModel(binaryStl(box(300, 300, 300)), '.stl');
-    assert.throws(() => withMeasuredVolume(request, analysis), (error: unknown) => {
-      assert.ok(error instanceof ValidationError);
-      assert.match(error.fields.fileId!, /27000 cm³/);
-      assert.match(error.fields.fileId!, /för hand/);
-      return true;
-    });
+    assert.throws(
+      () => withMeasuredVolume(request, analysis),
+      (error: unknown) => {
+        assert.ok(error instanceof ValidationError);
+        assert.match(error.fields.fileId!, /27000 cm³/);
+        assert.match(error.fields.fileId!, /för hand/);
+        return true;
+      },
+    );
   });
 });
