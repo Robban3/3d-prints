@@ -254,7 +254,8 @@ behöver.
 Verkstadens panel ligger på `/verkstad` och har åtta flikar:
 
 - **Översikt** – omsättning per dag, ordrar per status, bästsäljare och lågt lager
-- **Ordrar** – flytta ordrar framåt i produktionen, se tidslinjen per order
+- **Ordrar** – flytta ordrar framåt i produktionen, en i taget eller flera på
+  en gång, filtrera på status och skriv ut en plocklista
 - **Produkter** – lägg till, redigera och ta bort produkter, med foto eller ritad bild
 - **Kategorier** – lägg till, byt namn på och ta bort kategorier
 - **Material** – material, densitet och kvalitetsnivåer, vars faktorer styr priset på egna printjobb
@@ -321,6 +322,20 @@ beloppet.
 
 Fraktavgiften mäts mot summan **före** rabatt, så att en rabattkod inte tar
 tillbaka den fria frakt kunden redan handlat ihop till.
+
+**Plocklistan** slår ihop raderna över ordrarna på produkt, färg, storlek och
+mått, så varje sak hämtas en gång i stället för en gång per order – men varje
+rad bär med sig vilka ordrar den gäller, för plocket är meningslöst om sakerna
+sedan hamnar i fel låda. Egna printjobb slås inte ihop; de är unika per order
+och ligger i en egen lista. Listan är gjord för att skrivas ut: rutan längst
+till vänster är till för pennan, och utskriften tar bara med själva listan.
+
+**Bulkbytet** flyttar flera ordrar till samma status i ett svep. Knappen
+erbjuds bara för de statusar som _varje_ markerad order kan gå till – ett
+bulkbyte som är till hälften gjort är värre än inget alls. Varje order prövas
+ändå för sig på servern, och de som inte gick rapporteras tillbaka med skälet.
+Lager, filament, logg och mejl hanteras precis som vid ett enskilt statusbyte,
+för det är samma kod som kör.
 
 **Produktionskön** räknas fram ur ordrarna varje gång, inte ur ett eget
 register – en kö som är en egen sanning hinner alltid bli osann. Jobb som redan
@@ -459,6 +474,7 @@ server/
   src/seo.ts      sitemap och robots.txt
   src/parameters.ts  mått kunden ställer in själv, och vad de kostar
   src/queue.ts    produktionskön: vad som printas, var och när
+  src/picking.ts  plocklistan, sammanslagen över ordrarna
   src/filament.ts filamentrullarna och vad som gått åt
   src/shipping.ts fraktalternativ och orderns totalsumma
   src/discounts.ts rabattkoder

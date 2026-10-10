@@ -27,6 +27,7 @@ import type {
   ImportResult,
   Media,
   FilamentConsumption,
+  PickList,
   FilamentShortage,
   ProductDraft,
   ProductionQueue,
@@ -303,6 +304,40 @@ export function setOrderStatus(
     method: 'PATCH',
     headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify({ status, note }),
+  });
+}
+
+/**
+ * Flyttar flera ordrar i ett svep. Varje order prövas för sig på servern, så
+ * svaret innehåller både de som flyttades och de som inte kunde flyttas.
+ */
+export function setOrderStatuses(
+  token: string,
+  ids: string[],
+  status: OrderStatus,
+  note?: string,
+): Promise<{
+  moved: Array<AnyOrder & { next: OrderStatus[] }>;
+  failed: Array<{ id: string; reason: string }>;
+  status: OrderStatus;
+}> {
+  return request('/admin/orders/status', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ ids, status, note }),
+  });
+}
+
+export function fetchPickList(
+  token: string,
+  selection: { ids?: string[]; status?: OrderStatus } = {},
+): Promise<{ list: PickList }> {
+  const params = new URLSearchParams();
+  if (selection.ids && selection.ids.length > 0) params.set('ids', selection.ids.join(','));
+  else if (selection.status) params.set('status', selection.status);
+  const query = params.toString();
+  return request(`/admin/picklist${query ? `?${query}` : ''}`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 

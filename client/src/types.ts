@@ -574,6 +574,45 @@ export interface FilamentConsumption {
   shortfall: number;
 }
 
+export interface PickOrderRef {
+  id: string;
+  customer: string;
+  quantity: number;
+}
+
+export interface PickRow {
+  key: string;
+  productId: string;
+  name: string;
+  color: string;
+  size?: string;
+  parameterText?: string;
+  quantity: number;
+  material?: MaterialId;
+  grams?: number;
+  orders: PickOrderRef[];
+}
+
+export interface PickJob {
+  orderId: string;
+  customer: string;
+  projectName: string;
+  material: MaterialId;
+  quality: string;
+  quantity: number;
+  fileName?: string;
+  description: string;
+}
+
+export interface PickList {
+  generatedAt: string;
+  statuses: OrderStatus[];
+  rows: PickRow[];
+  jobs: PickJob[];
+  orders: number;
+  items: number;
+}
+
 /** Kundens plats i kön, som den visas på orderspårningen. */
 export interface QueuePlace {
   position: number;
