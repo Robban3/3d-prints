@@ -86,6 +86,46 @@ describe('parseOrderLines', () => {
     );
   });
 
+  it('prissätter valbara mått själv och skriver ut dem i klartext', async () => {
+    const shelf = products.find((entry) => (entry.parameters?.length ?? 0) > 0)!;
+    const width = shelf.parameters![0]!;
+    const lines = await parseOrderLines([
+      {
+        productId: shelf.id,
+        quantity: 1,
+        color: shelf.colors[0],
+        parameters: { [width.id]: width.max },
+      },
+    ]);
+    const expected = Math.round((width.max - width.default) * width.pricePerUnit);
+    assert.equal(lines[0]!.unitPrice, shelf.price + expected);
+    assert.equal(lines[0]!.parameters?.[width.id], width.max);
+    assert.match(lines[0]!.parameterText ?? '', new RegExp(`${width.name} ${width.max}`));
+  });
+
+  it('snäpper måtten till spannet och struntar i påhittade mått', async () => {
+    const shelf = products.find((entry) => (entry.parameters?.length ?? 0) > 0)!;
+    const width = shelf.parameters![0]!;
+    const lines = await parseOrderLines([
+      {
+        productId: shelf.id,
+        quantity: 1,
+        color: shelf.colors[0],
+        parameters: { [width.id]: 99999, pahittat: 12 },
+      },
+    ]);
+    assert.equal(lines[0]!.parameters?.[width.id], width.max);
+    assert.equal(lines[0]!.parameters?.pahittat, undefined);
+  });
+
+  it('lämnar måtten tomma för en produkt utan valbara mått', async () => {
+    const lines = await parseOrderLines([
+      { productId: product.id, quantity: 1, color: product.colors[0], parameters: { bredd: 400 } },
+    ]);
+    assert.equal(lines[0]!.parameterText, undefined);
+    assert.equal(lines[0]!.parameters, undefined);
+  });
+
   it('avvisar orimliga antal', async () => {
     await assert.rejects(
       () => parseOrderLines([{ productId: product.id, quantity: 0 }]),

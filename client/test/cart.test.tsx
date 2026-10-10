@@ -54,6 +54,25 @@ describe('varukorgen', () => {
     expect(result.current.items).toHaveLength(3);
   });
 
+  it('håller isär samma produkt i olika mått', () => {
+    const { result } = setup();
+    act(() =>
+      result.current.add({ ...base, parameters: { bredd: 360 }, parameterText: 'Bredd 360 mm' }),
+    );
+    act(() =>
+      result.current.add({ ...base, parameters: { bredd: 500 }, parameterText: 'Bredd 500 mm' }),
+    );
+    expect(result.current.items).toHaveLength(2);
+  });
+
+  it('slår ihop samma mått även om nycklarna kommer i annan ordning', () => {
+    const { result } = setup();
+    act(() => result.current.add({ ...base, parameters: { bredd: 360, hojd: 120 } }));
+    act(() => result.current.add({ ...base, parameters: { hojd: 120, bredd: 360 } }));
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0]?.quantity).toBe(2);
+  });
+
   it('taket är 99 exemplar per rad', () => {
     const { result } = setup();
     act(() => result.current.add({ ...base, quantity: 60 }));

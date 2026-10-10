@@ -43,6 +43,8 @@ npm start          # http://localhost:4000
 - 22 unika produkter i åtta kategorier, varav tre utgör julkollektionen
 - Filtrering per kategori, fritextsökning och sortering på pris, namn eller popularitet
 - Produktsida med färg- och storleksval, antal och löpande totalpris
+- **Måttanpassade produkter**: reglage för bredd och höjd där pris, mått och
+  printtid räknas om medan kunden drar
 - Varukorg som sparas i `localStorage` och överlever omladdning
 - Lagersaldo som dras av vid köp och hindrar överförsäljning
 - Kassa med validering, fri frakt över 599 kr, Klarna-betalning och orderbekräftelse
@@ -262,7 +264,7 @@ Verkstadens panel ligger på `/verkstad` och har åtta flikar:
 
 Allt i en produkt går att ändra: namn, webbadress, säljande rad, beskrivning,
 kategori, pris, material, ytfinish, mått, vikt, printtid, lagersaldo, färger,
-storlekar med pristillägg, höjdpunkter, samt vilken form och yta
+storlekar med pristillägg, valbara mått, höjdpunkter, samt vilken form och yta
 produktbilden ritas i – med levande förhandsvisning medan du väljer.
 
 Varje produkt kan ha ett **uppladdat foto**; utan foto ritas illustrationen.
@@ -317,6 +319,20 @@ beloppet.
 
 Fraktavgiften mäts mot summan **före** rabatt, så att en rabattkod inte tar
 tillbaka den fria frakt kunden redan handlat ihop till.
+
+**Valbara mått** är det en 3D-printbutik kan som en lagerhållande butik inte
+kan: hyllan görs i den bredd kunden faktiskt behöver. Varje mått har ett
+standardvärde som ingår i grundpriset, och ett pris per enhet som gäller åt båda
+hållen – en smalare hylla kostar mindre. Kopplas måttet till en axel skrivs
+produktens mått om efter kundens val, och printtiden skalas mot hur mycket
+större delen blivit.
+
+Reglagen på produktsidan är ett besked, inte ett avtal: servern snäpper alltid
+värdena till spannet och räknar om priset när ordern läggs, så `server/src/parameters.ts`
+och dess spegling i `client/src/lib/parameters.ts` måste ge samma svar. Testerna
+på båda sidor räknar på samma siffror för att fånga det den dagen de glider isär.
+Måtten följer med ordern i klartext hela vägen till verkstadens lista och
+orderbekräftelsen, och två olika bredder blir två rader i varukorgen.
 
 **Lagerbevakningar** löses ut av panelen: höjer du saldot på en slutsåld produkt
 från noll får alla som bevakat den ett mejl, en gång var. Översikten visar hur
@@ -420,6 +436,7 @@ server/
   src/stats.ts    siffrorna till panelens översikt
   src/notify.ts   bevakningar av slutsålda produkter
   src/seo.ts      sitemap och robots.txt
+  src/parameters.ts  mått kunden ställer in själv, och vad de kostar
   src/shipping.ts fraktalternativ och orderns totalsumma
   src/discounts.ts rabattkoder
   src/content.ts  startsidans hero och kampanjer

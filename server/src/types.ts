@@ -33,6 +33,26 @@ export interface MaterialProperties {
   outdoor: boolean;
 }
 
+/**
+ * Ett mått kunden får välja. Grundvärdet ingår i produktens pris; avvikelsen
+ * därifrån kostar pricePerUnit per enhet, åt båda hållen.
+ */
+export interface ProductParameter {
+  id: string;
+  name: string;
+  /** Enheten som visas, t.ex. mm. */
+  unit: string;
+  min: number;
+  max: number;
+  step: number;
+  default: number;
+  pricePerUnit: number;
+  /** Måttet parametern styr, så specifikationen kan visa rätt siffror. */
+  axis?: 'width' | 'depth' | 'height';
+  /** En rad som förklarar vad måttet gör. */
+  description?: string;
+}
+
 export interface ProductVariantOption {
   id: string;
   name: string;
@@ -58,6 +78,8 @@ export interface Product {
   weightGrams: number;
   colors: string[];
   sizes?: ProductVariantOption[];
+  /** Mått kunden får välja. Priset följer med. */
+  parameters?: ProductParameter[];
   highlights: string[];
   stock: number;
   rating: number;
@@ -118,6 +140,10 @@ export interface OrderLine {
   unitPrice: number;
   color: string;
   size?: string;
+  /** Valda mått, när produkten har sådana. */
+  parameters?: Record<string, number>;
+  /** Måtten i klartext, sparade på ordern så att verkstaden ser dem. */
+  parameterText?: string;
 }
 
 export interface CustomerDetails {

@@ -4,6 +4,7 @@ import { ProductImage } from './ProductImage';
 import { Icon } from './Icon';
 import { formatPrice } from '../lib/format';
 import { useCart } from '../lib/cart';
+import { defaultValues, describeValues, isParametric } from '../lib/parameters';
 import type { Product } from '../types';
 
 export function ProductCard({ product }: { product: Product }) {
@@ -21,6 +22,13 @@ export function ProductCard({ product }: { product: Product }) {
       color: product.colors[0] ?? '',
       size: product.sizes?.[0]?.id,
       sizeName: product.sizes?.[0]?.name,
+      // Måttanpassade produkter läggs till i standardmåttet; reglagen finns på produktsidan.
+      ...(isParametric(product)
+        ? {
+            parameters: defaultValues(product.parameters),
+            parameterText: describeValues(product.parameters, defaultValues(product.parameters)),
+          }
+        : {}),
       art: product.art,
       image: product.image,
     });
@@ -40,6 +48,7 @@ export function ProductCard({ product }: { product: Product }) {
         </h3>
         <p className="sub">
           {product.material.toUpperCase()} {product.finish}
+          {isParametric(product) ? ' · måttanpassas' : ''}
         </p>
         <div className="price-row">
           <span className="price">{formatPrice(product.price)}</span>

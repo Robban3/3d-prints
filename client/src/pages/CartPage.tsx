@@ -96,6 +96,12 @@ export function CartPage() {
                       {item.color}
                       {item.sizeName ? ` · ${item.sizeName}` : ''} · {formatPrice(item.unitPrice)}
                       /st
+                      {item.parameterText && (
+                        <>
+                          <br />
+                          {item.parameterText}
+                        </>
+                      )}
                     </p>
                     <div className="row">
                       <div className="qty">

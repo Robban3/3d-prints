@@ -102,6 +102,19 @@ export interface SizeOption {
   priceDelta: number;
 }
 
+export interface ProductParameter {
+  id: string;
+  name: string;
+  unit: string;
+  min: number;
+  max: number;
+  step: number;
+  default: number;
+  pricePerUnit: number;
+  axis?: 'width' | 'depth' | 'height';
+  description?: string;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -117,6 +130,8 @@ export interface Product {
   weightGrams: number;
   colors: string[];
   sizes?: SizeOption[];
+  /** Mått kunden får ställa in själv. Priset räknas alltid om av servern. */
+  parameters?: ProductParameter[];
   highlights: string[];
   stock: number;
   rating: number;
@@ -209,6 +224,8 @@ export interface OrderLine {
   unitPrice: number;
   color: string;
   size?: string;
+  parameters?: Record<string, number>;
+  parameterText?: string;
 }
 
 export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad' | 'avbruten';

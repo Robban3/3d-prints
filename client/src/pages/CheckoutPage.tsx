@@ -219,6 +219,7 @@ export function CheckoutPage() {
                     <span className="dim" style={{ fontSize: '0.82rem' }}>
                       {item.color}
                       {item.sizeName ? ` · ${item.sizeName}` : ''}
+                      {item.parameterText ? ` · ${item.parameterText}` : ''}
                     </span>
                   </span>
                   <span>{formatPrice(item.unitPrice * item.quantity)}</span>

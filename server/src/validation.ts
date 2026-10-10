@@ -1,5 +1,6 @@
 import { findMaterial, findProduct, findQuality } from './catalog.ts';
 import { QUOTE_LIMITS } from './pricing.ts';
+import { describeValues, normalizeValues, parameterPrice } from './parameters.ts';
 import type { ModelAnalysis } from './modelAnalysis.ts';
 import type { CustomQuoteRequest, CustomerDetails, OrderLine } from './types.ts';
 
@@ -96,14 +97,23 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
       continue;
     }
 
+    // Måtten normaliseras mot produktens egna gränser, så ett påhittat värde
+    // blir det närmaste tillåtna i stället för ett pris kunden satt själv.
+    const parameters = normalizeValues(product.parameters, raw.parameters);
+    const parameterText = describeValues(product.parameters, parameters);
+
     // Priset hämtas alltid från katalogen, aldrig från klienten.
     lines.push({
       productId: product.id,
       name: product.name,
       quantity,
-      unitPrice: product.price + priceDelta,
+      unitPrice: Math.max(
+        0,
+        product.price + priceDelta + parameterPrice(product.parameters, parameters),
+      ),
       color,
       size,
+      ...(parameterText ? { parameters, parameterText } : {}),
     });
   }
 
