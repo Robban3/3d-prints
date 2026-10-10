@@ -11,9 +11,14 @@ import {
   IMAGE_EXTENSIONS,
   MAX_IMAGE_BYTES,
   MAX_UPLOAD_BYTES,
-  imageContentType,
+  MAX_VIDEO_BYTES,
+  VIDEO_EXTENSIONS,
   isAllowedImageName,
-  isImageExtension,
+  isAllowedMediaName,
+  isCatalogAsset,
+  isMediaExtension,
+  isVideoExtension,
+  mediaContentType,
   deleteUpload,
   ensureUploadDir,
   extensionOf,
@@ -70,6 +75,26 @@ const imageUpload = multer({
   fileFilter: (_req, file, callback) => {
     if (!isAllowedImageName(file.originalname)) {
       callback(new UploadRejected(`Bilden måste vara ${IMAGE_EXTENSIONS.join(', ')}.`));
+      return;
+    }
+    callback(null, true);
+  },
+});
+
+/**
+ * Startsidans hero och kampanjer tar både bild och video. Gränsen sätts efter
+ * video, så en bild som ändå är mindre påverkas inte.
+ */
+const mediaUpload = multer({
+  storage,
+  limits: { fileSize: MAX_VIDEO_BYTES, files: 1, fields: 4 },
+  fileFilter: (_req, file, callback) => {
+    if (!isAllowedMediaName(file.originalname)) {
+      callback(
+        new UploadRejected(
+          `Filen måste vara ${[...IMAGE_EXTENSIONS, ...VIDEO_EXTENSIONS].join(', ')}.`,
+        ),
+      );
       return;
     }
     callback(null, true);
@@ -188,20 +213,24 @@ uploads.get('/uploads/:id', (req, res, next) => {
         return;
       }
       const safeName = meta.originalName.replace(/["\\\r\n]/g, '_');
-      const isImage = meta.kind === 'image' || isImageExtension(meta.extension);
-      // Bilder ska visas i butiken; modellfiler ska aldrig renderas av webbläsaren.
+      const isMedia = isCatalogAsset(meta) || isMediaExtension(meta.extension);
+      // Bilder och video ska visas i butiken; modellfiler ska aldrig renderas
+      // av webbläsaren.
       res.setHeader(
         'Content-Type',
-        isImage ? imageContentType(meta.extension) : 'application/octet-stream',
+        isMedia ? mediaContentType(meta.extension) : 'application/octet-stream',
       );
       res.setHeader('X-Content-Type-Options', 'nosniff');
       res.setHeader(
         'Content-Disposition',
-        isImage
+        isMedia
           ? `inline; filename="${safeName}"`
           : `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(meta.originalName)}`,
       );
-      if (isImage) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      if (isMedia) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      // Vi svarar inte på delintervall. En kort hero-loop spelas ändå, men
+      // webbläsaren ska inte tro att den kan spola i filen.
+      if (isVideoExtension(meta.extension)) res.setHeader('Accept-Ranges', 'none');
       res.setHeader('Content-Length', String(meta.size));
       object.body.on('error', next).pipe(res);
     })
@@ -258,6 +287,71 @@ const handleImage: RequestHandler = (req, res, next) => {
   });
 };
 
+/**
+ * Media till startsidan: bild eller video. Ligger för sig från produktbilderna,
+ * som ska vara bilder och inget annat.
+ */
+const handleMedia: RequestHandler = (req, res, next) => {
+  const limit = rateLimitStatus(clientKey(req));
+  if (!limit.allowed) {
+    res.status(429).json({ error: limit.reason });
+    return;
+  }
+
+  mediaUpload.single('file')(req, res, (error: unknown) => {
+    if (!error) {
+      next();
+      return;
+    }
+    if (req.file?.path) void rm(req.file.path, { force: true });
+
+    if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
+      res.status(413).json({
+        error: `Filen är större än ${Math.round(MAX_VIDEO_BYTES / 1024 / 1024)} MB. Korta ner videon eller komprimera den hårdare.`,
+      });
+      return;
+    }
+    if (error instanceof UploadRejected) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
+    next(error);
+  });
+};
+
+uploads.post('/uploads/media', handleMedia, async (req: Request, res: Response) => {
+  const file = req.file;
+  const id = (req as Request & { uploadId?: string }).uploadId;
+  if (!file || !id) {
+    res.status(400).json({ error: 'Ingen fil togs emot.' });
+    return;
+  }
+
+  const extension = extensionOf(file.originalname);
+  const kind = isVideoExtension(extension) ? 'video' : 'image';
+  await fileStore().put(storedFileName(id, extension), file.path, mediaContentType(extension));
+  const meta = await writeMeta({
+    id,
+    kind,
+    originalName: file.originalname.slice(0, 200),
+    extension,
+    size: file.size,
+    createdAt: new Date().toISOString(),
+    claimedBy: null,
+  });
+
+  recordUpload(clientKey(req), meta.size);
+  res.status(201).json({
+    media: {
+      kind,
+      id: meta.id,
+      fileName: meta.originalName,
+      size: meta.size,
+      url: `/api/uploads/${meta.id}`,
+    },
+  });
+});
+
 uploads.post('/uploads/images', handleImage, (req: Request, res: Response, next) => {
   const file = req.file;
   const id = (req as Request & { uploadId?: string }).uploadId;
@@ -268,7 +362,7 @@ uploads.post('/uploads/images', handleImage, (req: Request, res: Response, next)
 
   const extension = extensionOf(file.originalname);
   fileStore()
-    .put(storedFileName(id, extension), file.path, imageContentType(extension))
+    .put(storedFileName(id, extension), file.path, mediaContentType(extension))
     .then(() =>
       writeMeta({
         id,

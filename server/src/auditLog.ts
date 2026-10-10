@@ -14,7 +14,16 @@ const MAX_ENTRIES = 500;
 export interface AuditEntry {
   at: string;
   action: 'skapad' | 'ändrad' | 'borttagen' | 'importerad' | 'status';
-  entity: 'produkt' | 'kategori' | 'material' | 'kvalitet' | 'order' | 'omdöme' | 'rabattkod';
+  entity:
+    | 'produkt'
+    | 'kategori'
+    | 'material'
+    | 'kvalitet'
+    | 'order'
+    | 'omdöme'
+    | 'rabattkod'
+    | 'startsida'
+    | 'kampanj';
   entityId: string;
   summary: string;
   /** Fälten som faktiskt ändrades, för en ändring. */

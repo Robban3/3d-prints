@@ -16,6 +16,7 @@ import { OutOfStockError } from './stock.ts';
 import { CatalogError } from './catalog.ts';
 import { ProductInputError } from './catalogValidation.ts';
 import { DiscountError } from './discounts.ts';
+import { ContentError } from './content.ts';
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
@@ -90,6 +91,11 @@ const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   }
 
   if (error instanceof DiscountError) {
+    res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
+    return;
+  }
+
+  if (error instanceof ContentError) {
     res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
     return;
   }

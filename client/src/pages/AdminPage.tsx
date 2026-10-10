@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
+import { ContentManager } from '../components/admin/ContentManager';
 import { Dashboard } from '../components/admin/Dashboard';
 import { DiscountManager } from '../components/admin/DiscountManager';
 import { OrderManager } from '../components/admin/OrderManager';
@@ -18,6 +19,7 @@ const STORAGE_KEY = 'formlabb.admin.token';
 
 type Tab =
   | 'oversikt'
+  | 'startsida'
   | 'ordrar'
   | 'produkter'
   | 'kategorier'
@@ -29,6 +31,7 @@ type Tab =
 
 const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'oversikt', label: 'Översikt' },
+  { id: 'startsida', label: 'Startsida' },
   { id: 'ordrar', label: 'Ordrar' },
   { id: 'produkter', label: 'Produkter' },
   { id: 'kategorier', label: 'Kategorier' },
@@ -205,6 +208,7 @@ export function AdminPage() {
           </div>
 
           {tab === 'oversikt' && <Dashboard token={token} />}
+          {tab === 'startsida' && <ContentManager token={token} />}
           {tab === 'ordrar' && <OrderManager token={token} onUnauthorized={signOut} />}
           {tab === 'produkter' && (
             <ProductManager

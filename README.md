@@ -228,6 +228,17 @@ den och vilken produkt det gäller. Finns det publicerade omdömen är det deras
 snitt butiken visar; annars behåller produkten katalogens eget värde, så en ny
 produkt inte ser ut att ha fått noll i betyg.
 
+**Startsidan** är redigerbar. Heron tar en uppladdad bild eller en video; utan
+media ritas den genererade scenen, och utgångstexten är densamma som stod i
+koden förut – startsidan ser alltså likadan ut tills någon ändrar den. En video
+spelas ljudlöst i loop, vilket är det enda webbläsare startar av sig själva, och
+den som bett om minskad rörelse får stillbilden och en spelknapp i stället.
+
+Adresser som skrivs in i panelen måste vara interna sökvägar eller https. En
+länk som får vara vad som helst i ett adminfält är en väg in för
+`javascript:`-adresser. Mediets adress byggs alltid av uppladdningens id på
+servern, aldrig av det klienten skickar.
+
 **Rabattkoder** räknas alltid om på servern. Koden som kommer från kunden är
 bara en nyckel; hur mycket den är värd beror på varukorgens innehåll och
 bestäms här. Räknaren över inlösen ökas innan betalningen och backas om något
@@ -308,6 +319,7 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 | `REVIEW_STORE`         | `data/omdomen.json`     | Fil där omdömen sparas                               |
 | `WATCH_STORE`          | `data/bevakningar.json` | Fil där lagerbevakningar sparas                      |
 | `DISCOUNT_STORE`       | `data/rabatter.json`    | Fil där rabattkoder sparas                           |
+| `CONTENT_STORE`        | `data/startsida.json`   | Fil där startsidans innehåll sparas                  |
 | `CLIENT_DIST`          | `../../client/dist`     | Katalog med den byggda klienten                      |
 | `SHOP_URL`             | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på          |
 | `SHOP_TIME_ZONE`       | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror |
@@ -340,6 +352,7 @@ server/
   src/seo.ts      sitemap och robots.txt
   src/shipping.ts fraktalternativ och orderns totalsumma
   src/discounts.ts rabattkoder
+  src/content.ts  startsidans hero och kampanjer
   src/storage.ts  lokal disk eller objektlagring för uppladdade filer
   src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter
