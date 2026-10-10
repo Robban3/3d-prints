@@ -43,6 +43,7 @@ export const ART_SHAPES: ArtShape[] = [
   'ornamentBall',
   'starBurst',
   'nameOrnament',
+  'giftBox',
 ];
 
 export const ART_TONES: ArtTone[] = ['grafit', 'benvit', 'stal', 'bla', 'gran', 'vinrod'];

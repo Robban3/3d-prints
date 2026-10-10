@@ -95,6 +95,22 @@ function gearPath(cx: number, cy: number, outer: number, inner: number, teeth: n
 
 /** Formerna ritas i ett 200×200-rutnät med golvet på y=170. */
 const shapes: Record<ArtShape, JSX.Element> = {
+  giftBox: (
+    <>
+      <path d="M44 94h112v74a6 6 0 0 1-6 6H50a6 6 0 0 1-6-6z" className="shell" />
+      <path d="M38 78h124v22H38z" className="top" />
+      {/* Bandet går runt både lock och ask, som på ett riktigt paket. */}
+      <path d="M90 78h20v96H90z" className="part" />
+      <path d="M38 86h124" className="cut" />
+      <path d="M44 120h112M44 146h112" className="cut" />
+      <path
+        d="M100 74c-14-10-30-8-30 1s18 8 30-1zM100 74c14-10 30-8 30 1s-18 8-30-1z"
+        className="part"
+      />
+      <circle cx="100" cy="74" r="7" className="part" />
+      <ellipse cx="100" cy="178" rx="58" ry="5" className="base" />
+    </>
+  ),
   christmasTree: (
     <>
       <rect x="92" y="150" width="16" height="18" className="base" />

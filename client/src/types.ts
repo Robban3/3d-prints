@@ -1,6 +1,14 @@
 export type MaterialId = 'pla' | 'petg' | 'abs' | 'tpu' | 'resin';
 export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
-export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor' | 'jul';
+export type CategoryId =
+  | 'inredning'
+  | 'kontor'
+  | 'kok'
+  | 'prylar'
+  | 'tillbehor'
+  | 'julpynt-personligt'
+  | 'jul-dekorationer'
+  | 'julklappar';
 export type ArtShape =
   | 'planter'
   | 'headphoneStand'
@@ -19,7 +27,8 @@ export type ArtShape =
   | 'christmasTree'
   | 'ornamentBall'
   | 'starBurst'
-  | 'nameOrnament';
+  | 'nameOrnament'
+  | 'giftBox';
 
 export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla' | 'gran' | 'vinrod';
 

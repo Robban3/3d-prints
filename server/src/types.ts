@@ -89,12 +89,21 @@ export type ArtShape =
   | 'christmasTree'
   | 'ornamentBall'
   | 'starBurst'
-  | 'nameOrnament';
+  | 'nameOrnament'
+  | 'giftBox';
 
 /** Ytan produkten visas i – motsvarar hur den faktiskt printas. */
 export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla' | 'gran' | 'vinrod';
 
-export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor' | 'jul';
+export type CategoryId =
+  | 'inredning'
+  | 'kontor'
+  | 'kok'
+  | 'prylar'
+  | 'tillbehor'
+  | 'julpynt-personligt'
+  | 'jul-dekorationer'
+  | 'julklappar';
 
 export interface Category {
   id: CategoryId;
