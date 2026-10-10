@@ -26,22 +26,29 @@ function Cta({ label, href }: { label: string; href: string }) {
   );
 }
 
+/**
+ * Mediet ligger i en egen ram. Annars skulle bildens egna proportioner avgöra
+ * hur hög bannern blir, i stället för tvärtom.
+ */
 function Media({ campaign }: { campaign: Campaign }) {
   if (!campaign.media) return null;
-  if (campaign.media.kind === 'video') {
-    return (
-      <video
-        className="campaign-media"
-        src={campaign.media.url}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-      />
-    );
-  }
-  return <img className="campaign-media" src={campaign.media.url} alt="" loading="lazy" />;
+  return (
+    <div className="campaign-figure">
+      {campaign.media.kind === 'video' ? (
+        <video
+          className="campaign-media"
+          src={campaign.media.url}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        />
+      ) : (
+        <img className="campaign-media" src={campaign.media.url} alt="" loading="lazy" />
+      )}
+    </div>
+  );
 }
 
 export function CampaignBlock({ campaign }: { campaign: Campaign }) {
@@ -51,6 +58,7 @@ export function CampaignBlock({ campaign }: { campaign: Campaign }) {
     >
       <Media campaign={campaign} />
       <div className="campaign-body">
+        {campaign.eyebrow && <span className="eyebrow">{campaign.eyebrow}</span>}
         {campaign.discountCode && (
           <span className="campaign-code">
             Kod: <strong>{campaign.discountCode}</strong>

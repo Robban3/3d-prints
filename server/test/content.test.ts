@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import {
   ContentError,
+  DEFAULT_CAMPAIGNS,
   DEFAULT_HERO,
   findCampaign,
   homeContent,
@@ -12,8 +13,10 @@ import {
   parseCampaignInput,
   parseHeroInput,
   parseHref,
+  parseMedia,
   publicHomeContent,
   removeCampaign,
+  resetContent,
   saveCampaign,
   saveHero,
 } from '../src/content.ts';
@@ -27,6 +30,9 @@ beforeEach(async () => {
   dir = await mkdtemp(join(tmpdir(), 'formlabb-innehall-'));
   process.env.CONTENT_STORE = join(dir, 'startsida.json');
   process.env.UPLOAD_DIR = join(dir, 'uploads');
+  // Skriver filen, så testerna utgår från en butik som redan sparat sitt
+  // innehåll. Kampanjen som följer med bygget testas för sig.
+  await resetContent();
 });
 
 afterEach(async () => {
@@ -370,5 +376,70 @@ describe('moveCampaign', () => {
   it('tål ett id som inte finns', async () => {
     await three();
     assert.equal((await moveCampaign('finns-inte', 1)).length, 3);
+  });
+});
+
+describe('kampanjen som följer med', () => {
+  it('finns innan någon rört startsidan', async () => {
+    // Ingen innehållsfil alls: det är då utgångsvärdena gäller.
+    process.env.CONTENT_STORE = join(dir, 'finns-inte', 'startsida.json');
+    const content = await publicHomeContent(new Date('2026-10-10T12:00:00.000Z'));
+    assert.equal(content.campaigns.length, 1);
+    assert.equal(content.campaigns[0]!.eyebrow, 'Julkollektionen');
+    assert.equal(content.campaigns[0]!.title, 'En jul med personlig prägel');
+    assert.equal(content.campaigns[0]!.cta?.href, '/produkter?kategori=jul');
+  });
+
+  it('kommer inte tillbaka när butiken tagit bort den', async () => {
+    const campaign = await saveCampaign(await parseCampaignInput(campaignInput));
+    await removeCampaign(campaign.id);
+    // En tom lista är ett val, inte ett saknat värde.
+    assert.deepEqual((await homeContent()).campaigns, []);
+  });
+
+  it('överlever en rundtur genom valideringen', async () => {
+    const seeded = DEFAULT_CAMPAIGNS[0]!;
+    const saved = await parseCampaignInput(seeded, seeded);
+    assert.equal(saved.media?.url, '/kampanjer/julkollektionen.jpg');
+    assert.equal(saved.media?.kind, 'image');
+    assert.equal(saved.eyebrow, 'Julkollektionen');
+  });
+});
+
+describe('media som följer med bygget', () => {
+  it('godtar en intern bildsökväg utan uppladdnings-id', async () => {
+    const media = await parseMedia({ id: '', url: '/kampanjer/jul.jpg' });
+    assert.equal(media?.kind, 'image');
+    assert.equal(media?.id, '');
+    assert.equal(media?.fileName, 'jul.jpg');
+  });
+
+  it('läser typen ur filändelsen', async () => {
+    assert.equal((await parseMedia({ id: '', url: '/kampanjer/loop.mp4' }))?.kind, 'video');
+  });
+
+  it('avvisar adresser som pekar bort från butiken', async () => {
+    for (const url of [
+      '//evil.example/x.jpg',
+      'https://evil.example/x.jpg',
+      'javascript:alert(1)',
+      '/../../etc/passwd.jpg',
+    ]) {
+      assert.equal(await parseMedia({ id: '', url }), undefined, url);
+    }
+  });
+
+  it('avvisar uppladdningarnas eget område, som kräver id', async () => {
+    assert.equal(await parseMedia({ id: '', url: '/api/uploads/abc' }), undefined);
+  });
+
+  it('avvisar format vi inte visar', async () => {
+    assert.equal(await parseMedia({ id: '', url: '/kampanjer/skript.svg' }), undefined);
+    assert.equal(await parseMedia({ id: '', url: '/kampanjer/fil.pdf' }), undefined);
+  });
+
+  it('svarar undefined för tom adress och tomt id', async () => {
+    assert.equal(await parseMedia({ id: '', url: '' }), undefined);
+    assert.equal(await parseMedia({}), undefined);
   });
 });

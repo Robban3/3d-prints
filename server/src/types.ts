@@ -85,12 +85,16 @@ export type ArtShape =
   | 'cableClip'
   | 'spiralVase'
   | 'gearFidget'
-  | 'spiceShelf';
+  | 'spiceShelf'
+  | 'christmasTree'
+  | 'ornamentBall'
+  | 'starBurst'
+  | 'nameOrnament';
 
 /** Ytan produkten visas i – motsvarar hur den faktiskt printas. */
-export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla';
+export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla' | 'gran' | 'vinrod';
 
-export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
+export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor' | 'jul';
 
 export interface Category {
   id: CategoryId;

@@ -18,6 +18,11 @@ import {
   updateCategory,
   updateProduct,
 } from '../src/catalog.ts';
+import { categories as seedCategories, products as seedProducts } from '../src/data/products.ts';
+
+/** Testerna mäter mot sortimentet, inte mot fasta tal som åldras. */
+const SEED_PRODUCTS = seedProducts.length;
+const SEED_CATEGORIES = seedCategories.length;
 import { ProductInputError, parseProductInput, slugify } from '../src/catalogValidation.ts';
 
 let dir: string;
@@ -61,8 +66,8 @@ afterEach(async () => {
 describe('katalogen', () => {
   it('sås från det ursprungliga sortimentet', async () => {
     const products = await allProducts();
-    assert.equal(products.length, 14);
-    assert.equal((await allCategories()).length, 5);
+    assert.equal(products.length, SEED_PRODUCTS);
+    assert.equal((await allCategories()).length, SEED_CATEGORIES);
   });
 
   it('rör inte konstanten när något ändras', async () => {
@@ -80,7 +85,7 @@ describe('skapa produkt', () => {
   it('lägger till produkten och ger den ett id', async () => {
     const created = await createProduct(parseProductInput(validInput(), options));
     assert.match(created.id, /^p-\d{3}$/);
-    assert.equal((await allProducts()).length, 15);
+    assert.equal((await allProducts()).length, SEED_PRODUCTS + 1);
     assert.equal((await findProduct(created.id))?.name, 'Testprodukt');
   });
 
@@ -134,12 +139,12 @@ describe('ändra produkt', () => {
 describe('publicering', () => {
   it('döljer opublicerade produkter för kunderna men inte i admin', async () => {
     await updateProduct('p-001', { published: false });
-    assert.equal((await publishedProducts()).length, 13);
-    assert.equal((await allProducts()).length, 14);
+    assert.equal((await publishedProducts()).length, SEED_PRODUCTS - 1);
+    assert.equal((await allProducts()).length, SEED_PRODUCTS);
   });
 
   it('räknar produkter utan flagga som publicerade', async () => {
-    assert.equal((await publishedProducts()).length, 14);
+    assert.equal((await publishedProducts()).length, SEED_PRODUCTS);
   });
 });
 
@@ -147,7 +152,7 @@ describe('ta bort produkt', () => {
   it('plockar ut produkten ur katalogen', async () => {
     const removed = await deleteProduct('p-001');
     assert.equal(removed.id, 'p-001');
-    assert.equal((await allProducts()).length, 13);
+    assert.equal((await allProducts()).length, SEED_PRODUCTS - 1);
     assert.equal(await findProduct('p-001'), undefined);
   });
 
@@ -164,7 +169,7 @@ describe('kategorier', () => {
       description: 'Saker att ge bort',
     });
     assert.equal(created.id, 'present');
-    assert.equal((await allCategories()).length, 6);
+    assert.equal((await allCategories()).length, SEED_CATEGORIES + 1);
   });
 
   it('avvisar ett id som redan finns', async () => {
@@ -194,7 +199,7 @@ describe('kategorier', () => {
   it('tar bort en tom kategori', async () => {
     await createCategory({ id: 'tom', name: 'Tom', description: 'Inga produkter här' });
     await deleteCategory('tom');
-    assert.equal((await allCategories()).length, 5);
+    assert.equal((await allCategories()).length, SEED_CATEGORIES);
   });
 });
 
@@ -209,7 +214,13 @@ describe('validering av produktindata', () => {
   it('pekar ut varje fält som är fel', () => {
     try {
       parseProductInput(
-        validInput({ name: '', price: -5, category: 'finns-inte', description: 'kort', colors: [] }),
+        validInput({
+          name: '',
+          price: -5,
+          category: 'finns-inte',
+          description: 'kort',
+          colors: [],
+        }),
         options,
       );
       assert.fail('förväntade ProductInputError');
@@ -235,17 +246,26 @@ describe('validering av produktindata', () => {
     const parsed = parseProductInput(validInput({ price: 299.6 }), options);
     assert.equal(parsed.price, 300);
     assert.throws(
-      () => parseProductInput(validInput({ dimensions: { width: 0, depth: 1, height: 1 } }), options),
+      () =>
+        parseProductInput(validInput({ dimensions: { width: 0, depth: 1, height: 1 } }), options),
       ProductInputError,
     );
   });
 
   it('tar emot storlekar och ger dem id ur namnet', () => {
     const parsed = parseProductInput(
-      validInput({ sizes: [{ name: 'Liten', priceDelta: -50 }, { name: 'Stor', priceDelta: 120 }] }),
+      validInput({
+        sizes: [
+          { name: 'Liten', priceDelta: -50 },
+          { name: 'Stor', priceDelta: 120 },
+        ],
+      }),
       options,
     );
-    assert.deepEqual(parsed.sizes?.map((size) => size.id), ['liten', 'stor']);
+    assert.deepEqual(
+      parsed.sizes?.map((size) => size.id),
+      ['liten', 'stor'],
+    );
     assert.equal(parsed.sizes?.[0]?.priceDelta, -50);
   });
 
@@ -253,7 +273,12 @@ describe('validering av produktindata', () => {
     assert.throws(
       () =>
         parseProductInput(
-          validInput({ sizes: [{ id: 'a', name: 'En' }, { id: 'a', name: 'Två' }] }),
+          validInput({
+            sizes: [
+              { id: 'a', name: 'En' },
+              { id: 'a', name: 'Två' },
+            ],
+          }),
           options,
         ),
       ProductInputError,

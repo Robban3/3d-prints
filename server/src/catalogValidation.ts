@@ -39,9 +39,13 @@ export const ART_SHAPES: ArtShape[] = [
   'spiralVase',
   'gearFidget',
   'spiceShelf',
+  'christmasTree',
+  'ornamentBall',
+  'starBurst',
+  'nameOrnament',
 ];
 
-export const ART_TONES: ArtTone[] = ['grafit', 'benvit', 'stal', 'bla'];
+export const ART_TONES: ArtTone[] = ['grafit', 'benvit', 'stal', 'bla', 'gran', 'vinrod'];
 
 type Rec = Record<string, unknown>;
 

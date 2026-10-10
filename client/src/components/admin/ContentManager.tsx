@@ -32,6 +32,7 @@ type HeroDraft = {
 };
 
 type CampaignDraft = {
+  eyebrow: string;
   title: string;
   text: string;
   cta: { label: string; href: string };
@@ -44,6 +45,7 @@ type CampaignDraft = {
 };
 
 const blankCampaign: CampaignDraft = {
+  eyebrow: '',
   title: '',
   text: '',
   cta: { label: '', href: '' },
@@ -74,6 +76,7 @@ function heroDraft(hero: HeroContent): HeroDraft {
 
 function campaignDraft(campaign: Campaign): CampaignDraft {
   return {
+    eyebrow: campaign.eyebrow ?? '',
     title: campaign.title,
     text: campaign.text,
     cta: campaign.cta ? { ...campaign.cta } : { label: '', href: '' },
@@ -348,7 +351,17 @@ export function ContentManager({ token }: { token: string }) {
       <form className="panel" onSubmit={submitCampaign} noValidate>
         <h3 style={{ marginTop: 0 }}>{editing ? 'Ändra kampanjen' : 'Ny kampanj'}</h3>
 
-        <div className="grid-2">
+        <div className="grid-3">
+          <div className="field">
+            <label htmlFor="kampanj-overrad">Överrad (valfritt)</label>
+            <input
+              id="kampanj-overrad"
+              className="input"
+              placeholder="JULKOLLEKTIONEN"
+              value={draft.eyebrow}
+              onChange={(event) => setDraft({ ...draft, eyebrow: event.target.value })}
+            />
+          </div>
           <div className="field">
             <label htmlFor="kampanj-rubrik">Rubrik</label>
             <input
