@@ -18,7 +18,58 @@ const tones: Record<ArtTone, { light: string; mid: string; dark: string; line: s
   benvit: { light: '#f2f3f5', mid: '#d3d6dc', dark: '#a8adb6', line: '#8d939d' },
   stal: { light: '#aeb6c1', mid: '#828b98', dark: '#59616c', line: '#41474f' },
   bla: { light: '#5b9dff', mid: '#2f7bf6', dark: '#1a58c4', line: '#124092' },
+  // Julkollektionens två ytor, hämtade ur granen och sammetsbandet.
+  gran: { light: '#6ba583', mid: '#427354', dark: '#2a4a37', line: '#1b3024' },
+  vinrod: { light: '#c25a6c', mid: '#8f3747', dark: '#632330', line: '#431720' },
 };
+
+/**
+ * En av granens våningar: en trapets vars underkant är sågtandad, som de
+ * pressade vecken på en printad pappersgran.
+ */
+function treeTier(
+  yTop: number,
+  yBottom: number,
+  halfTop: number,
+  halfBottom: number,
+  notches: number,
+): string {
+  const cx = 100;
+  const points = [`M${cx - halfTop} ${yTop}`, `L${cx + halfTop} ${yTop}`];
+  const steps = notches * 2;
+  for (let i = 0; i <= steps; i += 1) {
+    const x = cx + halfBottom - (i * halfBottom * 2) / steps;
+    // Varannan punkt dras upp, så kanten blir en sågtand.
+    const y = i % 2 === 0 ? yBottom : yBottom - 5;
+    points.push(`L${x.toFixed(1)} ${y.toFixed(1)}`);
+  }
+  return `${points.join(' ')} Z`;
+}
+
+/** En stjärna med jämnt fördelade uddar, växelvis yttre och inre radie. */
+function starPath(cx: number, cy: number, outer: number, inner: number, points: number): string {
+  const path: string[] = [];
+  for (let i = 0; i < points * 2; i += 1) {
+    const radius = i % 2 === 0 ? outer : inner;
+    const angle = (i * Math.PI) / points - Math.PI / 2;
+    const x = cx + Math.cos(angle) * radius;
+    const y = cy + Math.sin(angle) * radius;
+    path.push(`${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`);
+  }
+  return `${path.join(' ')} Z`;
+}
+
+/** Fasettlinjerna från stjärnans mitt ut till varje udd. */
+function starFacets(cx: number, cy: number, outer: number, points: number): string {
+  const path: string[] = [];
+  for (let i = 0; i < points; i += 1) {
+    const angle = (i * 2 * Math.PI) / points - Math.PI / 2;
+    path.push(
+      `M${cx} ${cy} L${(cx + Math.cos(angle) * outer).toFixed(1)} ${(cy + Math.sin(angle) * outer).toFixed(1)}`,
+    );
+  }
+  return path.join(' ');
+}
 
 /** Bygger konturen på ett kugghjul med raka, jämnt fördelade tänder. */
 function gearPath(cx: number, cy: number, outer: number, inner: number, teeth: number): string {
@@ -44,6 +95,57 @@ function gearPath(cx: number, cy: number, outer: number, inner: number, teeth: n
 
 /** Formerna ritas i ett 200×200-rutnät med golvet på y=170. */
 const shapes: Record<ArtShape, JSX.Element> = {
+  christmasTree: (
+    <>
+      <rect x="92" y="150" width="16" height="18" className="base" />
+      <path d={treeTier(124, 160, 42, 64, 6)} className="shell" />
+      <path d={treeTier(96, 130, 30, 52, 5)} className="shell" />
+      <path d={treeTier(70, 102, 20, 40, 4)} className="shell" />
+      <path d={treeTier(46, 76, 10, 28, 3)} className="shell" />
+      <path d={treeTier(26, 52, 2, 16, 2)} className="shell" />
+      <path d="M100 28v132" className="cut" />
+      <path
+        d="M88 50l-8 22M112 50l8 22M82 76l-12 22M118 76l12 22M74 104l-14 22M126 104l14 22"
+        className="cut"
+      />
+      <ellipse cx="100" cy="170" rx="28" ry="5" className="base" />
+    </>
+  ),
+  ornamentBall: (
+    <>
+      <circle cx="100" cy="38" r="11" className="wire" />
+      <rect x="90" y="48" width="20" height="16" rx="4" className="part" />
+      <path d="M90 54h20" className="cut" />
+      <circle cx="100" cy="116" r="52" className="shell" />
+      {/* Rutmönstret som ger den printade kulan sin fasettering. */}
+      <ellipse cx="100" cy="116" rx="18" ry="52" className="cut" />
+      <ellipse cx="100" cy="116" rx="36" ry="52" className="cut" />
+      <path d="M50 100h100M48 116h104M50 132h100" className="cut" />
+      <path d="M62 80a52 52 0 0 1 36-16" className="top" />
+    </>
+  ),
+  starBurst: (
+    <>
+      <path d={starPath(100, 100, 72, 27, 8)} className="shell" />
+      <path d={starFacets(100, 100, 70, 8)} className="cut" />
+      <circle cx="100" cy="100" r="9" className="part" />
+      <ellipse cx="100" cy="176" rx="34" ry="5" className="base" />
+    </>
+  ),
+  nameOrnament: (
+    <>
+      <path d="M100 18v16" className="wire" />
+      <path d="M100 38 78 28v20zM100 38l22-10v20z" className="part" />
+      <circle cx="100" cy="38" r="5.5" className="part" />
+      <circle cx="100" cy="114" r="46" className="tube" />
+      {/* Namnet kunden väljer, antytt som ett svepande drag. */}
+      <path d="M74 106c8-15 16 11 25-2s14 9 25-5" className="wire" />
+      <path d="M82 148l-8 14h16zM82 140l-6 11h12z" className="part" />
+      <path d="M100 150l-9 16h18zM100 141l-7 12h14z" className="part" />
+      <path d="M118 148l-8 14h16zM118 140l-6 11h12z" className="part" />
+      <path d="M68 166h64" className="cut" />
+    </>
+  ),
   planter: (
     <>
       <path d="M64 96h72l-9 62a10 10 0 0 1-10 9H83a10 10 0 0 1-10-9z" className="shell" />

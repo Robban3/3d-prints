@@ -29,7 +29,8 @@ export type IconName =
   | 'arrowRight'
   | 'info'
   | 'alert'
-  | 'check';
+  | 'check'
+  | 'tree';
 
 /** Streckade ikoner i ett enhetligt 24-rutnät. Ärver färg och storlek från texten. */
 const paths: Record<IconName, JSX.Element> = {
@@ -158,6 +159,12 @@ const paths: Record<IconName, JSX.Element> = {
     </>
   ),
   check: <path d="m4.5 12.5 5 5 10-11" />,
+  tree: (
+    <>
+      <path d="M12 3 7 10h10zM12 8l-7 9h14zM12 13l-9 8h18z" />
+      <path d="M12 21v1.5" />
+    </>
+  ),
   info: (
     <>
       <circle cx="12" cy="12" r="9" />

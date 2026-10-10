@@ -106,6 +106,36 @@ describe('CampaignBlock', () => {
     expect(screen.getByText('20 % på allt i oktober.')).toBeInTheDocument();
   });
 
+  it('visar överraden ovanför rubriken', () => {
+    withRouter(<CampaignBlock campaign={{ ...campaign, eyebrow: 'Julkollektionen' }} />);
+    expect(screen.getByText('Julkollektionen')).toBeInTheDocument();
+  });
+
+  it('visar ingen överrad när den inte satts', () => {
+    const { container } = withRouter(<CampaignBlock campaign={campaign} />);
+    expect(container.querySelector('.eyebrow')).toBeNull();
+  });
+
+  it('visar en bild som följer med bygget', () => {
+    const { container } = withRouter(
+      <CampaignBlock
+        campaign={{
+          ...campaign,
+          media: {
+            kind: 'image',
+            id: '',
+            url: '/kampanjer/julkollektionen.jpg',
+            fileName: 'julkollektionen.jpg',
+          },
+        }}
+      />,
+    );
+    expect(container.querySelector('img.campaign-media')).toHaveAttribute(
+      'src',
+      '/kampanjer/julkollektionen.jpg',
+    );
+  });
+
   it('visar rabattkoden när kampanjen hör till en', () => {
     withRouter(<CampaignBlock campaign={{ ...campaign, discountCode: 'HOST20' }} />);
     expect(screen.getByText('HOST20')).toBeInTheDocument();

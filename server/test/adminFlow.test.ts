@@ -70,9 +70,7 @@ describe('lägga till en produkt', () => {
     assert.ok(visible.some((entry) => entry.id === product.id));
 
     // … den går att lägga i en order till rätt pris …
-    const lines = await parseOrderLines([
-      { productId: product.id, quantity: 2, color: 'Benvit' },
-    ]);
+    const lines = await parseOrderLines([{ productId: product.id, quantity: 2, color: 'Benvit' }]);
     assert.equal(lines[0]?.unitPrice, 449);
     assert.equal(lines[0]?.name, 'Fönsterhylla');
 
@@ -88,7 +86,13 @@ describe('lägga till en produkt', () => {
     assert.equal(await stockFor(product.id), 0);
     await assert.rejects(() =>
       reserve([
-        { productId: product.id, name: 'Fönsterhylla', quantity: 1, unitPrice: 449, color: 'Benvit' },
+        {
+          productId: product.id,
+          name: 'Fönsterhylla',
+          quantity: 1,
+          unitPrice: 449,
+          color: 'Benvit',
+        },
       ]),
     );
   });
@@ -96,7 +100,10 @@ describe('lägga till en produkt', () => {
   it('håller ett utkast borta från butiken men går att beställa först när det publiceras', async () => {
     const product = await addProduct({ published: false });
     const visible = await publishedProducts();
-    assert.equal(visible.some((entry) => entry.id === product.id), false);
+    assert.equal(
+      visible.some((entry) => entry.id === product.id),
+      false,
+    );
 
     // Ett utkast ska inte gå att lägga i en order.
     await assert.rejects(() =>
@@ -104,9 +111,7 @@ describe('lägga till en produkt', () => {
     );
 
     await updateProduct(product.id, { published: true });
-    const lines = await parseOrderLines([
-      { productId: product.id, quantity: 1, color: 'Benvit' },
-    ]);
+    const lines = await parseOrderLines([{ productId: product.id, quantity: 1, color: 'Benvit' }]);
     assert.equal(lines.length, 1);
   });
 });
@@ -115,9 +120,7 @@ describe('ändra en produkt', () => {
   it('slår igenom på priset i nya ordrar', async () => {
     const product = await addProduct();
     await updateProduct(product.id, { price: 529 });
-    const lines = await parseOrderLines([
-      { productId: product.id, quantity: 1, color: 'Benvit' },
-    ]);
+    const lines = await parseOrderLines([{ productId: product.id, quantity: 1, color: 'Benvit' }]);
     assert.equal(lines[0]?.unitPrice, 529);
   });
 
@@ -127,9 +130,7 @@ describe('ändra en produkt', () => {
     await assert.rejects(() =>
       parseOrderLines([{ productId: product.id, quantity: 1, color: 'Benvit' }]),
     );
-    const lines = await parseOrderLines([
-      { productId: product.id, quantity: 1, color: 'Tegel' },
-    ]);
+    const lines = await parseOrderLines([{ productId: product.id, quantity: 1, color: 'Tegel' }]);
     assert.equal(lines[0]?.color, 'Tegel');
   });
 
@@ -154,7 +155,10 @@ describe('ta bort en produkt', () => {
     await deleteProduct(product.id);
     await removeStock(product.id);
 
-    assert.equal((await allProducts()).some((entry) => entry.id === product.id), false);
+    assert.equal(
+      (await allProducts()).some((entry) => entry.id === product.id),
+      false,
+    );
     assert.equal(await stockFor(product.id), 0);
     await assert.rejects(() =>
       parseOrderLines([{ productId: product.id, quantity: 1, color: 'Benvit' }]),
@@ -162,8 +166,9 @@ describe('ta bort en produkt', () => {
   });
 
   it('rör inte det ursprungliga sortimentet', async () => {
+    const before = (await allProducts()).length;
     const product = await addProduct();
     await deleteProduct(product.id);
-    assert.equal((await allProducts()).length, 14);
+    assert.equal((await allProducts()).length, before);
   });
 });

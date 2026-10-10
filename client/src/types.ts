@@ -1,6 +1,6 @@
 export type MaterialId = 'pla' | 'petg' | 'abs' | 'tpu' | 'resin';
 export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
-export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
+export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor' | 'jul';
 export type ArtShape =
   | 'planter'
   | 'headphoneStand'
@@ -15,9 +15,13 @@ export type ArtShape =
   | 'cableClip'
   | 'spiralVase'
   | 'gearFidget'
-  | 'spiceShelf';
+  | 'spiceShelf'
+  | 'christmasTree'
+  | 'ornamentBall'
+  | 'starBurst'
+  | 'nameOrnament';
 
-export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla';
+export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla' | 'gran' | 'vinrod';
 
 /** Mätbara egenskaper som materialguiden väger. Skalorna går från 1 till 5. */
 export interface MaterialProperties {
@@ -304,9 +308,10 @@ export interface ReorderDraft {
 
 /* ---------- Startsidan ---------- */
 
-/** Uppladdad bild eller video. Adressen byggs alltid av serverns id. */
+/** Uppladdad bild eller video, eller en fil som följer med bygget. */
 export interface Media {
   kind: 'image' | 'video';
+  /** Uppladdningens id, eller tomt för en fil som följer med bygget. */
   id: string;
   url: string;
   fileName: string;
@@ -336,6 +341,8 @@ export type CampaignLayout = 'banner' | 'kort';
 
 export interface Campaign {
   id: string;
+  /** Liten rad ovanför rubriken, som JULKOLLEKTIONEN. */
+  eyebrow?: string;
   title: string;
   text: string;
   cta?: LinkTarget;

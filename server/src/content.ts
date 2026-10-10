@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
-import { isVideoExtension, readMeta } from './uploads.ts';
+import { isMediaExtension, isVideoExtension, readMeta } from './uploads.ts';
 
 /**
  * Startsidans innehåll: heron och kampanjblocken.
@@ -21,6 +21,7 @@ const STORE = () => resolve(process.env.CONTENT_STORE ?? 'data/startsida.json');
 
 export interface Media {
   kind: 'image' | 'video';
+  /** Uppladdningens id, eller tomt för en fil som följer med bygget. */
   id: string;
   url: string;
   fileName: string;
@@ -91,6 +92,30 @@ export const DEFAULT_HERO: HeroContent = {
   autoplay: true,
 };
 
+/**
+ * Kampanjen som ligger med från start. Den används bara när innehållsfilen inte
+ * finns – när butiken väl sparat sitt innehåll är det den listan som gäller,
+ * även om den är tom.
+ */
+export const DEFAULT_CAMPAIGNS: Campaign[] = [
+  {
+    id: 'julkollektionen',
+    eyebrow: 'Julkollektionen',
+    title: 'En jul med personlig prägel',
+    text: 'Gör julen till din med 3D-printade dekorationer och personliga presenter. Upptäck stilrena granar, dekorativa stjärnor och julgranspynt med namnen du tycker allra mest om.',
+    cta: { label: 'Upptäck julkollektionen', href: '/produkter?kategori=jul' },
+    media: {
+      kind: 'image',
+      id: '',
+      url: '/kampanjer/julkollektionen.jpg',
+      fileName: 'julkollektionen.jpg',
+    },
+    layout: 'banner',
+    active: true,
+    order: 0,
+  },
+];
+
 let queue: Promise<unknown> = Promise.resolve();
 
 function serialize<T>(task: () => Promise<T>): Promise<T> {
@@ -105,10 +130,11 @@ async function readStore(): Promise<HomeContent> {
     const parsed = JSON.parse(raw) as Partial<HomeContent>;
     return {
       hero: { ...DEFAULT_HERO, ...(parsed.hero ?? {}) },
-      campaigns: Array.isArray(parsed.campaigns) ? parsed.campaigns : [],
+      // En tom lista är ett giltigt val: butiken kan ha tagit bort kampanjen.
+      campaigns: Array.isArray(parsed.campaigns) ? parsed.campaigns : DEFAULT_CAMPAIGNS,
     };
   } catch {
-    return { hero: DEFAULT_HERO, campaigns: [] };
+    return { hero: DEFAULT_HERO, campaigns: DEFAULT_CAMPAIGNS };
   }
 }
 
@@ -160,13 +186,37 @@ function parseLink(
 }
 
 /**
+ * En bild som följer med bygget, till exempel en kampanjbild i klientens
+ * public-katalog. Den har inget uppladdnings-id, så adressen är allt vi har –
+ * och den kontrolleras därför hårt: intern sökväg, ingen klättring uppåt, och
+ * inte under /api, som är uppladdningarnas område.
+ */
+function staticMedia(url: string): Media | undefined {
+  if (!url.startsWith('/') || url.startsWith('//')) return undefined;
+  if (url.includes('..') || url.startsWith('/api/')) return undefined;
+
+  const extension = url.slice(url.lastIndexOf('.')).toLowerCase();
+  if (!isMediaExtension(extension)) return undefined;
+  return {
+    kind: isVideoExtension(extension) ? 'video' : 'image',
+    id: '',
+    url,
+    fileName: url.slice(url.lastIndexOf('/') + 1),
+  };
+}
+
+/**
  * Slår upp en uppladdning och bygger mediet av den. Adressen kommer aldrig från
  * klienten, utan byggs av id:t – då kan den inte peka någon annanstans.
  */
 export async function parseMedia(value: unknown): Promise<Media | undefined> {
   const raw = (value ?? {}) as Record<string, unknown>;
   const id = typeof raw.id === 'string' ? raw.id.trim() : '';
-  if (id.length === 0) return undefined;
+  if (id.length === 0) {
+    // Utan id kan det ändå vara en fil som följer med bygget.
+    const url = typeof raw.url === 'string' ? raw.url.trim() : '';
+    return url.length === 0 ? undefined : staticMedia(url);
+  }
 
   const meta = await readMeta(id);
   if (!meta)
@@ -235,6 +285,7 @@ export async function parseCampaignInput(input: unknown, existing?: Campaign): P
   const raw = (input ?? {}) as Record<string, unknown>;
   const errors: Record<string, string> = {};
 
+  const eyebrow = text(raw.eyebrow, 60);
   const title = text(raw.title, 120);
   if (title.length < 2) errors.title = 'Kampanjen behöver en rubrik.';
 
@@ -256,6 +307,7 @@ export async function parseCampaignInput(input: unknown, existing?: Campaign): P
   const order = Number(raw.order);
   return {
     id: existing?.id ?? randomUUID(),
+    ...(eyebrow ? { eyebrow } : {}),
     title,
     text: body,
     layout: raw.layout === 'kort' ? 'kort' : 'banner',

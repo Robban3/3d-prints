@@ -5,12 +5,15 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { buildExport, planImport } from '../src/catalogTransfer.ts';
 import { allProducts, resetCatalogCache } from '../src/catalog.ts';
+import { categories as seedCategories } from '../src/data/products.ts';
+import { materials as seedMaterials } from '../src/data/materials.ts';
 import { changedFields, clearHistory, history, record } from '../src/auditLog.ts';
 
 let dir: string;
+// Hämtas ur sortimentet, så en ny kategori inte gör testerna till arbete.
 const options = {
-  categoryIds: ['inredning', 'kontor', 'kok', 'prylar', 'tillbehor'],
-  materialIds: ['pla', 'petg', 'abs', 'tpu', 'resin'],
+  categoryIds: seedCategories.map((category) => category.id),
+  materialIds: seedMaterials.map((material) => material.id),
 };
 
 beforeEach(async () => {
@@ -33,7 +36,7 @@ describe('export', () => {
     const products = await allProducts();
     const payload = buildExport({ products, categories: [], materials: [], qualities: [] });
     assert.equal(payload.version, 1);
-    assert.equal(payload.products.length, 14);
+    assert.equal(payload.products.length, products.length);
     assert.ok(payload.exportedAt);
   });
 });
@@ -44,7 +47,7 @@ describe('import', () => {
     const payload = buildExport({ products, categories: [], materials: [], qualities: [] });
     const plan = planImport(payload, products, options);
     assert.equal(plan.failed, 0);
-    assert.equal(plan.ok, 14);
+    assert.equal(plan.ok, products.length);
     assert.ok(plan.rows.every((row) => row.status === 'ändrad'));
   });
 
