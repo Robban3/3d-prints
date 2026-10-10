@@ -36,8 +36,9 @@ export function HistoryView({ token }: { token: string }) {
     <>
       <h2>Historik</h2>
       <p className="muted" style={{ fontSize: '0.9rem' }}>
-        De senaste ändringarna i katalogen och i ordrarnas status. Panelen har en gemensam nyckel
-        och ingen inloggning per person, så vem som gjorde ändringen loggas inte.
+        De senaste ändringarna i katalogen och i ordrarnas status, med vem som gjorde dem. Händelser
+        utan namn är från tiden före inloggningen, eller sådant som sker av sig självt – som
+        beskedet till dem som bevakat en slutsåld produkt.
       </p>
 
       {error && <p className="notice notice-error">{error}</p>}
@@ -54,6 +55,11 @@ export function HistoryView({ token }: { token: string }) {
               {entry.entity}
             </span>
             <strong>{entry.summary}</strong>
+            {entry.by && (
+              <span className="dim" style={{ fontSize: '0.82rem' }}>
+                av {entry.by}
+              </span>
+            )}
             {entry.changed && entry.changed.length > 0 && (
               <span className="dim" style={{ fontSize: '0.82rem' }}>
                 {entry.changed.join(', ')}

@@ -15,6 +15,7 @@ import { KlarnaError } from './klarna.ts';
 import { OutOfStockError } from './stock.ts';
 import { CatalogError } from './catalog.ts';
 import { FilamentError } from './filament.ts';
+import { UserError } from './users.ts';
 import { ProductInputError } from './catalogValidation.ts';
 import { DiscountError } from './discounts.ts';
 import { ContentError } from './content.ts';
@@ -98,6 +99,14 @@ const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
 
   if (error instanceof ContentError) {
     res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
+    return;
+  }
+
+  if (error instanceof UserError) {
+    res.status(error.status).json({
+      error: error.message,
+      ...(Object.keys(error.fields).length > 0 ? { fields: error.fields } : {}),
+    });
     return;
   }
 

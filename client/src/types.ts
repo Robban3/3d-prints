@@ -621,6 +621,43 @@ export interface QueuePlace {
   readyAt: string;
 }
 
+/* ---------- Användare och roller ---------- */
+
+export type Role = 'agare' | 'verkstad' | 'redaktor';
+
+export type Permission =
+  | 'ordrar'
+  | 'produktion'
+  | 'katalog'
+  | 'innehall'
+  | 'statistik'
+  | 'anvandare';
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+  active: boolean;
+  createdAt: string;
+  lastLoginAt?: string;
+}
+
+/** Den inloggade. `key: true` är startnyckeln, inte en person. */
+export interface Actor {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  key: boolean;
+}
+
+export const roleLabels: Record<Role, string> = {
+  agare: 'Ägare',
+  verkstad: 'Verkstad',
+  redaktor: 'Redaktör',
+};
+
 export interface AuditEntry {
   at: string;
   action: 'skapad' | 'ändrad' | 'borttagen' | 'importerad' | 'status';
@@ -634,9 +671,11 @@ export interface AuditEntry {
     | 'rabattkod'
     | 'startsida'
     | 'kampanj'
-    | 'filament';
+    | 'användare';
   entityId: string;
   summary: string;
+  /** Vem som gjorde det. Saknas på händelser från tiden före inloggningen. */
+  by?: string;
   changed?: string[];
 }
 

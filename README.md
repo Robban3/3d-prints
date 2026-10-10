@@ -262,6 +262,7 @@ Verkstadens panel ligger på `/verkstad` och har åtta flikar:
 - **Omdömen** – granska, publicera, avslå och svara på kundomdömen
 - **Produktion** – produktionskön och filamentlagret
 - **Rabatter** – skapa och stäng av rabattkoder, och se hur många som löst in dem
+- **Användare** – konton, roller och avstängningar (bara för ägaren)
 - **Import/export** – exportera katalogen, ändra många produkter i filen, läs in igen
 - **Historik** – de senaste ändringarna i katalogen och i ordrarnas status
 
@@ -379,14 +380,48 @@ hoppa över ett steg eller gå bakåt. Varje byte sparas i orderns historik, som
 kunden ser som en tidslinje under **Spåra order**. Avbryts en butiksorder
 lämnas exemplaren tillbaka till lagret.
 
-Verkstaden flyttar ordrar i vyn på `/verkstad`. Den är **avstängd tills
-`ADMIN_TOKEN` sätts** – ett saknat värde ger ingen åtkomst alls i stället för
-en gissningsbar standardnyckel. Nyckeln måste vara minst 16 tecken och jämförs
-i konstant tid.
+Verkstaden flyttar ordrar i vyn på `/verkstad`, en i taget eller flera på en
+gång.
+
+## Inloggning och roller
+
+Panelen har **användare med roller**, inte en delad nyckel. En nyckel som alla
+känner till kan inte tas ifrån någon, och loggen visar bara att "admin" gjorde
+något. Med användare går det att se vem som flyttade ordern, och att stänga av
+en person utan att alla andra måste byta nyckel.
+
+| Roll         | Får                                                   |
+| ------------ | ----------------------------------------------------- |
+| **Ägare**    | Allt, inklusive användare och roller                  |
+| **Verkstad** | Ordrar, produktionskö och filamentlager               |
+| **Redaktör** | Katalog, startsida, omdömen, rabatter och statistiken |
+
+Rollerna är få med flit: tre som betyder något är lättare att förvalta än tjugo
+kryssrutor som ingen orkar hålla rätt på. Historiken är öppen för alla
+inloggade – att veta vem som gjorde vad är hela poängen med att ha användare.
+
+**Första gången** finns ingen användare att logga in som. Då gäller startnyckeln
+i `ADMIN_TOKEN`, minst 16 tecken och jämförd i konstant tid:
 
 ```bash
 export ADMIN_TOKEN=$(openssl rand -hex 24)
 ```
+
+Logga in med nyckeln och skapa den första ägaren. I samma stund slutar nyckeln
+fungera – den är till för att komma igång, inte för att leva vid sidan av
+inloggningen. Utan både nyckel och användare är panelen helt avstängd.
+
+**Lösenord** sparas som scrypt-hash med eget salt per användare, och kravet är
+enbart längd: minst tolv tecken. Regler om stora bokstäver och tecken får folk
+att skriva lappar. En inloggning som inte går igenom svarar likadant vare sig
+adressen finns eller inte, och räknar ändå på ett låtsassalt så att svarstiden
+inte skvallrar.
+
+**Sessioner** sparas som sha256 av sin token – filen ska inte innehålla något
+som går att logga in med om den kommer på villovägar – och gäller tolv timmar.
+Ett byte av lösenord eller en avstängning loggar ut personens sessioner direkt,
+inte när de råkar löpa ut. Den sista aktiva ägaren går varken att degradera,
+stänga av eller ta bort: då stod panelen utan någon som kan släppa in folk igen.
 
 ## E-post
 
@@ -439,6 +474,7 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 | `CONTENT_STORE`           | `data/startsida.json`   | Fil där startsidans innehåll sparas                    |
 | `QUOTE_STORE`             | `data/offerter.json`    | Fil där sparade offerter sparas                        |
 | `FILAMENT_STORE`          | `data/filament.json`    | Fil där filamentrullar och åtgång sparas               |
+| `USER_STORE`              | `data/anvandare.json`   | Fil där användare och sessioner sparas                 |
 | `CLIENT_DIST`             | `../../client/dist`     | Katalog med den byggda klienten                        |
 | `SHOP_URL`                | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på            |
 | `SHOP_TIME_ZONE`          | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror   |
@@ -446,6 +482,7 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 | `LOW_STOCK_THRESHOLD`     | `5`                     | Saldo som flaggas som lågt i översikten                |
 | `LOW_FILAMENT_GRAMS`      | `250`                   | Gram kvar på en rulle innan den flaggas                |
 | `PRINTERS`                | `2`                     | Antal skrivare, dvs. hur många jobb som går parallellt |
+| `SESSION_HOURS`           | `12`                    | Hur länge en inloggning gäller                         |
 | `RATE_LIMIT_REVIEWS`      | `5`                     | Omdömen per IP och timme                               |
 | `RATE_LIMIT_WATCHES`      | `10`                    | Lagerbevakningar per IP och timme                      |
 | `RATE_LIMIT_DISCOUNTS`    | `60`                    | Försök med rabattkoder per IP och timme                |
@@ -475,6 +512,7 @@ server/
   src/parameters.ts  mått kunden ställer in själv, och vad de kostar
   src/queue.ts    produktionskön: vad som printas, var och när
   src/picking.ts  plocklistan, sammanslagen över ordrarna
+  src/users.ts    användare, roller, lösenord och sessioner
   src/filament.ts filamentrullarna och vad som gått åt
   src/shipping.ts fraktalternativ och orderns totalsumma
   src/discounts.ts rabattkoder

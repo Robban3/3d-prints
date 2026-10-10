@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ApiError, deleteSpool, fetchQueue, saveSpool } from '../../lib/api';
+import { ApiError, deleteSpool, fetchConfig, fetchQueue, saveSpool } from '../../lib/api';
 import { formatDate, formatHours, formatNumber } from '../../lib/format';
 import type { FilamentShortage, ProductionQueue as Queue, QueueJob, Spool } from '../../types';
 
@@ -137,8 +137,11 @@ function SpoolRow({
   );
 }
 
-export function ProductionQueue({ token, materials }: { token: string; materials: string[] }) {
+export function ProductionQueue({ token }: { token: string }) {
   const [queue, setQueue] = useState<Queue | null>(null);
+  // Materialen kommer ur den öppna konfigurationen: verkstadsrollen har ingen
+  // behörighet till katalogen, men behöver ändå veta vilka plaster som finns.
+  const [materials, setMaterials] = useState<string[]>([]);
   const [spools, setSpools] = useState<Spool[]>([]);
   const [short, setShort] = useState<FilamentShortage[]>([]);
   const [lowGrams, setLowGrams] = useState(250);
@@ -167,6 +170,20 @@ export function ProductionQueue({ token, materials }: { token: string; materials
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    let current = true;
+    void fetchConfig()
+      .then((config) => {
+        if (current) setMaterials(config.materials.map((material) => material.id));
+      })
+      .catch(() => {
+        // Utan listan går rullar ändå att spara; servern avgör vad som gäller.
+      });
+    return () => {
+      current = false;
+    };
+  }, []);
 
   const reset = useCallback(() => {
     setDraft({ ...blank, material: materials[0] ?? 'pla' });
