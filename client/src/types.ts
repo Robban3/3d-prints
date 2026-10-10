@@ -621,6 +621,53 @@ export interface QueuePlace {
   readyAt: string;
 }
 
+/* ---------- Kundregister ---------- */
+
+export interface CustomerFavourite {
+  productId: string;
+  name: string;
+  quantity: number;
+}
+
+export interface CustomerRecord {
+  email: string;
+  name: string;
+  phone?: string;
+  address: string;
+  postalCode: string;
+  city: string;
+  orders: number;
+  spent: number;
+  firstOrderAt: string;
+  lastOrderAt: string;
+  orderIds: string[];
+  statuses: Partial<Record<OrderStatus, number>>;
+  favourites: CustomerFavourite[];
+  returning: boolean;
+}
+
+export interface CustomerSummary {
+  customers: number;
+  returning: number;
+  averageOrder: number;
+}
+
+/* ---------- Mejlmallar ---------- */
+
+export interface MailTemplate {
+  id: string;
+  name: string;
+  description: string;
+  variables: string[];
+  subject: string;
+  body: string;
+  /** True när texten ändrats i panelen och inte längre är utgångsläget. */
+  custom: boolean;
+  savedAt?: string;
+  defaultSubject: string;
+  defaultBody: string;
+}
+
 /* ---------- Användare och roller ---------- */
 
 export type Role = 'agare' | 'verkstad' | 'redaktor';

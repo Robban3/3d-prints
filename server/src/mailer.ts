@@ -5,6 +5,7 @@ import type { Transporter } from 'nodemailer';
 import { formatDate, formatPrice } from './format.ts';
 import type { AnyOrder } from './types.ts';
 import { shopUrl } from './http.ts';
+import { renderTemplate } from './mailTemplates.ts';
 
 /**
  * Utan SMTP-uppgifter skrivs breven till en katalog i stället för att skickas.
@@ -90,140 +91,100 @@ function orderRows(order: AnyOrder): string {
   ].join('\n');
 }
 
-export function orderConfirmation(order: AnyOrder): Mail {
+/** Första namnet, som brevet hälsar på. */
+function firstName(name: string): string {
+  return name.split(' ')[0] ?? name;
+}
+
+export async function orderConfirmation(order: AnyOrder): Promise<Mail> {
   const paymentLine = order.payment
     ? order.payment.test
       ? 'Betalning: ingen betalning har genomförts (butiken kör i testläge).'
       : `Betalning: Klarna${order.payment.reference ? `, referens ${order.payment.reference}` : ''}.`
     : 'Betalning: du får en separat betalningslänk.';
 
-  return {
-    to: order.customer.email,
-    subject: `Tack för din beställning ${order.id}`,
-    text: [
-      `Hej ${order.customer.name.split(' ')[0]}!`,
-      '',
-      `Vi har tagit emot din beställning ${order.id} den ${formatDate(order.createdAt)}.`,
-      '',
-      'Din beställning:',
-      orderRows(order),
-      '',
-      ...(order.type === 'shop' && order.discount
-        ? [`Rabatt (${order.discount.label}): −${formatPrice(order.discount.amount)}`]
-        : []),
-      ...(order.type === 'shop' && order.shipping > 0
-        ? [
-            `Frakt${order.shippingOption ? ` (${order.shippingOption.name})` : ''}: ${formatPrice(order.shipping)}`,
-          ]
-        : []),
-      `Totalt: ${formatPrice(order.total)}`,
-      paymentLine,
-      '',
-      'Levereras till:',
+  const summary = [
+    ...(order.type === 'shop' && order.discount
+      ? [`Rabatt (${order.discount.label}): −${formatPrice(order.discount.amount)}`]
+      : []),
+    ...(order.type === 'shop' && order.shipping > 0
+      ? [
+          `Frakt${order.shippingOption ? ` (${order.shippingOption.name})` : ''}: ${formatPrice(order.shipping)}`,
+        ]
+      : []),
+    `Totalt: ${formatPrice(order.total)}`,
+  ].join('\n');
+
+  const rendered = await renderTemplate('orderbekraftelse', {
+    kund: firstName(order.customer.name),
+    ordernummer: order.id,
+    datum: formatDate(order.createdAt),
+    rader: orderRows(order),
+    summering: summary,
+    betalning: paymentLine,
+    adress: [
       `  ${order.customer.name}`,
       `  ${order.customer.address}`,
       `  ${order.customer.postalCode} ${order.customer.city}`,
-      '',
-      `Följ din order: ${shopUrl()}/spara-order?id=${order.id}`,
-      '',
-      'Hälsningar,',
-      'Formlabb, Tredje Långgatan 14, Göteborg',
     ].join('\n'),
-  };
+    lank: `${shopUrl()}/spara-order?id=${order.id}`,
+  });
+
+  return { to: order.customer.email, ...rendered };
 }
 
 /** En sparad offert, skickad till den som vill återkomma eller skicka vidare. */
-export function savedQuoteMail(options: {
+export async function savedQuoteMail(options: {
   to: string;
   id: string;
   projectName: string;
   total: number;
   deliveryDays: number;
   expiresAt: string;
-}): Mail {
-  const link = `${shopUrl()}/offert/${options.id}`;
-  return {
-    to: options.to,
-    subject: `Din offert på ${options.projectName}`,
-    text: [
-      'Hej!',
-      '',
-      `Här är offerten på ${options.projectName}.`,
-      '',
-      `Pris: ${formatPrice(options.total)} inkl. moms`,
-      `Leverans: ${options.deliveryDays} arbetsdagar efter beställning`,
-      '',
-      `Öppna och beställ här: ${link}`,
-      '',
-      `Offerten gäller till ${formatDate(options.expiresAt)}. Länken går att skicka vidare till`,
-      'den som ska godkänna köpet.',
-      '',
-      'Hälsningar',
-      'Formlabb',
-    ].join('\n'),
-  };
+}): Promise<Mail> {
+  const rendered = await renderTemplate('offert', {
+    projekt: options.projectName,
+    pris: formatPrice(options.total),
+    leveransdagar: String(options.deliveryDays),
+    lank: `${shopUrl()}/offert/${options.id}`,
+    giltigtill: formatDate(options.expiresAt),
+  });
+  return { to: options.to, ...rendered };
 }
 
 /** Beskedet till den som bevakat en slutsåld produkt. */
-export function backInStock(options: {
+export async function backInStock(options: {
   to: string;
   productName: string;
   slug: string;
   stock: number;
-}): Mail {
-  const link = `${shopUrl()}/produkter/${options.slug}`;
-  return {
-    to: options.to,
-    subject: `${options.productName} finns i lager igen`,
-    text: [
-      'Hej!',
-      '',
-      `Du ville få besked när ${options.productName} fanns igen – nu står den i hyllan.`,
+}): Promise<Mail> {
+  const rendered = await renderTemplate('lagerbesked', {
+    produkt: options.productName,
+    saldo:
       options.stock <= 3
         ? `Det är bara ${options.stock} kvar, så det kan gå fort.`
         : `Vi har ${options.stock} i lager.`,
-      '',
-      `Beställ här: ${link}`,
-      '',
-      'Det här är enda mejlet du får om den här bevakningen – vi hör inte av oss igen.',
-      '',
-      'Hälsningar',
-      'Formlabb',
-    ].join('\n'),
-  };
+    lank: `${shopUrl()}/produkter/${options.slug}`,
+  });
+  return { to: options.to, ...rendered };
 }
 
-const statusMessages: Record<string, { subject: string; body: string }> = {
-  i_produktion: {
-    subject: 'Din order har gått i produktion',
-    body: 'Din order ligger nu i printkön och produktionen har startat. Vi hör av oss igen när den skickas.',
-  },
-  skickad: {
-    subject: 'Din order är på väg',
-    body: 'Din order har lämnat verkstaden och är på väg med PostNord. Den brukar komma fram inom två arbetsdagar.',
-  },
-  levererad: {
-    subject: 'Din order är levererad',
-    body: 'Din order är levererad. Hoppas den blev som du tänkte dig – hör av dig om något inte stämmer.',
-  },
+/** Statusar som kunden får brev om. Mottagen och avbruten gör det inte. */
+const statusTemplates: Record<string, string> = {
+  i_produktion: 'status_i_produktion',
+  skickad: 'status_skickad',
+  levererad: 'status_levererad',
 };
 
-export function statusUpdate(order: AnyOrder): Mail | undefined {
-  const message = statusMessages[order.status];
-  if (!message) return undefined;
-  return {
-    to: order.customer.email,
-    subject: `${message.subject} (${order.id})`,
-    text: [
-      `Hej ${order.customer.name.split(' ')[0]}!`,
-      '',
-      message.body,
-      '',
-      `Ordernummer: ${order.id}`,
-      `Följ din order: ${shopUrl()}/spara-order?id=${order.id}`,
-      '',
-      'Hälsningar,',
-      'Formlabb',
-    ].join('\n'),
-  };
+export async function statusUpdate(order: AnyOrder): Promise<Mail | undefined> {
+  const templateId = statusTemplates[order.status];
+  if (!templateId) return undefined;
+
+  const rendered = await renderTemplate(templateId, {
+    kund: firstName(order.customer.name),
+    ordernummer: order.id,
+    lank: `${shopUrl()}/spara-order?id=${order.id}`,
+  });
+  return { to: order.customer.email, ...rendered };
 }

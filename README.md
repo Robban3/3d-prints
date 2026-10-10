@@ -262,6 +262,8 @@ Verkstadens panel ligger på `/verkstad` och har åtta flikar:
 - **Omdömen** – granska, publicera, avslå och svara på kundomdömen
 - **Produktion** – produktionskön och filamentlagret
 - **Rabatter** – skapa och stäng av rabattkoder, och se hur många som löst in dem
+- **Kunder** – vem som handlat, hur ofta, för hur mycket och vad de köper helst
+- **Mejlmallar** – skriv om breven som går ut till kunden
 - **Användare** – konton, roller och avstängningar (bara för ägaren)
 - **Import/export** – exportera katalogen, ändra många produkter i filen, läs in igen
 - **Historik** – de senaste ändringarna i katalogen och i ordrarnas status
@@ -323,6 +325,23 @@ beloppet.
 
 Fraktavgiften mäts mot summan **före** rabatt, så att en rabattkod inte tar
 tillbaka den fria frakt kunden redan handlat ihop till.
+
+**Kundregistret** räknas fram ur ordrarna, precis som kön. Det finns inget
+register vid sidan om att hålla i synk, och det är med flit: en kund är någon
+som lagt en order, och adressen som gäller är den på den senaste – folk flyttar.
+Nyckeln är mejladressen i gemener; samma person med två adresser blir två
+kunder, vilket är ärligare än att gissa att de hör ihop. Avbrutna ordrar räknas
+inte som omsättning men syns i statusfördelningen. Registret ligger bakom
+orderbehörigheten: redaktören har inget på kundernas adresser att göra.
+
+**Mejlmallarna** gör texterna i koden till ett utgångsläge, inte en sanning.
+Verkstaden skriver om ett brev i panelen utan att någon rör en fil. Det som är
+uträknat – orderrader, summa, adress – är platshållare i klamrar, för dem kan
+ingen skriva för hand. En platshållare som inte finns avvisas när mallen sparas:
+alternativet vore att skicka `{{kudn}}` till en riktig kund, och det upptäcks
+först när det är för sent. Förhandsvisningen visar brevet med påhittade värden,
+så man slipper lägga en testorder, och varje mall går att lägga tillbaka i sitt
+utgångsläge.
 
 **Plocklistan** slår ihop raderna över ordrarna på produkt, färg, storlek och
 mått, så varje sak hämtas en gång i stället för en gång per order – men varje
@@ -426,7 +445,9 @@ stänga av eller ta bort: då stod panelen utan någon som kan släppa in folk i
 ## E-post
 
 Kunden får ett bekräftelsemejl när ordern läggs, och ett brev vid varje
-statusbyte som rör hen (i produktion, skickad, levererad).
+statusbyte som rör hen (i produktion, skickad, levererad). Alla brev – de två
+ovan, offertlänken och lagerbeskedet – går att skriva om under **Mejlmallar**
+i panelen.
 
 **Utan SMTP-uppgifter skrivs breven till `data/utkorg` som `.eml`-filer** i
 stället för att skickas. Då syns exakt vad kunden skulle ha fått, utan att
@@ -475,6 +496,7 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 | `QUOTE_STORE`             | `data/offerter.json`    | Fil där sparade offerter sparas                        |
 | `FILAMENT_STORE`          | `data/filament.json`    | Fil där filamentrullar och åtgång sparas               |
 | `USER_STORE`              | `data/anvandare.json`   | Fil där användare och sessioner sparas                 |
+| `MAIL_TEMPLATE_STORE`     | `data/mejlmallar.json`  | Fil där ändrade mejlmallar sparas                      |
 | `CLIENT_DIST`             | `../../client/dist`     | Katalog med den byggda klienten                        |
 | `SHOP_URL`                | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på            |
 | `SHOP_TIME_ZONE`          | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror   |
@@ -513,6 +535,8 @@ server/
   src/queue.ts    produktionskön: vad som printas, var och när
   src/picking.ts  plocklistan, sammanslagen över ordrarna
   src/users.ts    användare, roller, lösenord och sessioner
+  src/customers.ts  kundregistret, räknat ur ordrarna
+  src/mailTemplates.ts  breven till kunden, redigerbara i panelen
   src/filament.ts filamentrullarna och vad som gått åt
   src/shipping.ts fraktalternativ och orderns totalsumma
   src/discounts.ts rabattkoder
