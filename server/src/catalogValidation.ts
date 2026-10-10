@@ -297,6 +297,13 @@ export function parseMaterialInput(input: unknown, existingId?: string): Materia
   const description = text(raw.description);
   if (description.length < 10) errors.description = 'Beskriv materialet kort.';
 
+  // Densiteten är frivillig. Lämnas den tom räknar vi vikten som för PLA.
+  const hasDensity = raw.densityGramsPerCm3 !== undefined && text(raw.densityGramsPerCm3) !== '';
+  const density = hasDensity ? num(raw.densityGramsPerCm3) : undefined;
+  if (density !== undefined && !(density >= 0.5 && density <= 5)) {
+    errors.densityGramsPerCm3 = 'Densiteten ska vara mellan 0,5 och 5 g/cm³.';
+  }
+
   const traits = Array.isArray(raw.traits)
     ? raw.traits.map((entry) => text(entry)).filter((entry) => entry.length > 0)
     : [];
@@ -307,6 +314,7 @@ export function parseMaterialInput(input: unknown, existingId?: string): Materia
     id,
     name,
     priceFactor: Math.round(priceFactor * 100) / 100,
+    ...(density === undefined ? {} : { densityGramsPerCm3: Math.round(density * 100) / 100 }),
     description,
     traits,
   };

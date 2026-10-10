@@ -30,8 +30,10 @@ import {
   parseCustomer,
   parseOrderLines,
   parseQuoteRequest,
+  withMeasuredVolume,
 } from './validation.ts';
 import type { CustomOrder, Order, PaymentDetails } from './types.ts';
+
 
 export const api = Router();
 
@@ -120,9 +122,13 @@ api.get('/products/:slug', async (req, res) => {
   res.json({ product: withStock(product), related: related.map(withStock) });
 });
 
-api.post('/quote', quoteLimit, (req, res) => {
-  const request = await parseQuoteRequest(req.body);
-  res.json({ request, quote: await quoteFor(request) });
+api.post('/quote', quoteLimit, async (req, res) => {
+  // Offertanropet tar både själva förfrågan och en inslagen variant med fileId.
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const fileId = String(body.fileId ?? '').trim();
+  const upload = fileId ? await readMeta(fileId) : undefined;
+  const request = withMeasuredVolume(await parseQuoteRequest(body.request ?? body), upload?.analysis);
+  res.json({ request, quote: await quoteFor(request), model: upload?.analysis });
 });
 
 /** Standardvärden när Klarna-nycklar saknas, så testläget kan räkna likadant. */
@@ -248,7 +254,7 @@ api.post('/orders', orderLimit, async (req, res) => {
 api.post('/custom-orders', orderLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const customer = parseCustomer(body.customer);
-  const request = await parseQuoteRequest(body.request);
+  const requested = await parseQuoteRequest(body.request);
 
   const projectName = String(body.projectName ?? '').trim();
   const description = String(body.description ?? '').trim();
@@ -266,6 +272,7 @@ api.post('/custom-orders', orderLimit, async (req, res) => {
   }
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
 
+  const request = withMeasuredVolume(requested, upload?.analysis);
   const quote = await quoteFor(request);
   const orderId = generateOrderNumber('C');
 
@@ -293,6 +300,7 @@ api.post('/custom-orders', orderLimit, async (req, res) => {
     request,
     projectName,
     fileId: upload?.id,
+    model: upload?.analysis,
     fileName: upload?.originalName,
     fileUrl: upload ? `/api/uploads/${upload.id}` : undefined,
     fileSize: upload?.size,
