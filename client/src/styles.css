@@ -25,8 +25,8 @@
   --radius-lg: 16px;
   --maxw: 1280px;
   --font:
-    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --mono: var(--font);
 }
 
 * {
@@ -105,7 +105,7 @@ textarea {
   color: var(--text-dim);
 }
 .mono {
-  font-family: var(--mono);
+  font-family: var(--font);
 }
 .center {
   text-align: center;
@@ -1571,7 +1571,7 @@ input[type='range'] {
   margin: 0 auto;
 }
 .order-id {
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: 1.25rem;
   letter-spacing: 0.06em;
   color: var(--accent);
@@ -1930,7 +1930,7 @@ h1, h2 { letter-spacing: -.055em; font-weight: 650; }
 .eyebrow { display: flex; align-items: center; gap: 10px; font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
 .eyebrow::before { content: ''; width: 24px; height: 1px; background: currentColor; }
 .hero h1 { font-size: clamp(3rem,5.3vw,5rem); line-height: 1.02; margin-bottom: 26px; }
-.hero h1 .accent-text { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; font-style: italic; }
+.hero h1 .accent-text { font-family: var(--font); font-weight: 400; font-style: italic; }
 .hero p.lead { font-size: 1.04rem; line-height: 1.8; max-width: 43ch; }
 .hero-cta { margin: 30px 0; gap: 12px; }
 .btn { transition: background .2s, transform .2s; }
@@ -1986,7 +1986,7 @@ h1, h2 { letter-spacing: -.055em; font-weight: 650; }
 .christmas-banner img { width: 100%; height: auto; display: block; }
 .christmas-banner:focus-visible { outline: 3px solid #f5e8ce; outline-offset: -6px; }
 .christmas-mobile-copy { display: none; }
-.season-intro h2, .section-head h2, .custom-pitch h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: -.035em; }
+.season-intro h2, .section-head h2, .custom-pitch h2 { font-family: var(--font); font-weight: 400; letter-spacing: -.035em; }
 .season-card-custom { background: #e4e8da; border-color: #d2d9c5; color: #23392d; }
 @media (max-width:620px) {
   .christmas-hero { display: flex; flex-direction: column; }
@@ -1994,7 +1994,7 @@ h1, h2 { letter-spacing: -.055em; font-weight: 650; }
   .christmas-banner img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
   .christmas-mobile-copy { display: block; padding: 28px 24px 36px; color: #f8eedc; }
   .christmas-mobile-copy .season-label { color: #dbcba8; }
-  .christmas-mobile-copy h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2.3rem,9vw,3.2rem); font-weight: 400; letter-spacing: -.035em; }
+  .christmas-mobile-copy h1 { font-family: var(--font); font-size: clamp(2.3rem,9vw,3.2rem); font-weight: 400; letter-spacing: -.035em; }
   .christmas-mobile-copy p { color: #dedfcb; max-width: 30ch; }
   .christmas-mobile-copy .btn { border-radius: 999px; background: #f5e8ce; color: #183020; }
   .christmas-mobile-copy .btn:hover { background: #e7d7b6; }
