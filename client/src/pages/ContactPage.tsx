@@ -6,10 +6,10 @@ import { Icon } from '../components/Icon';
 import type { IconName } from '../components/Icon';
 
 const channels: Array<{ icon: IconName; title: string; lines: string[] }> = [
-  { icon: 'headset', title: 'Kundsupport', lines: ['hej@formlabb.se', '031-12 34 56'] },
+  { icon: 'headset', title: 'Kundsupport', lines: ['support@formlabb.se', '031-12 34 56'] },
   { icon: 'clock', title: 'Öppettider', lines: ['Vardagar 09–17', 'Lunchstängt 12–13'] },
   { icon: 'home', title: 'Verkstaden', lines: ['Tredje Långgatan 14', '413 03 Göteborg'] },
-  { icon: 'file', title: 'Fakturafrågor', lines: ['faktura@formlabb.se', 'Org.nr 559xxx-xxxx'] },
+  { icon: 'file', title: 'Fakturafrågor', lines: ['support@formlabb.se', 'Org.nr 559xxx-xxxx'] },
 ];
 
 export function ContactPage() {
