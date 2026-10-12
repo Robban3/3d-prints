@@ -5,6 +5,7 @@ import { createReadStream } from 'node:fs';
 import { rm } from 'node:fs/promises';
 import { pathParam } from './http.ts';
 import { storage as fileStore } from './storage.ts';
+import { requireAdmin } from './adminRoutes.ts';
 import {
   ALLOWED_EXTENSIONS,
   IMAGE_EXTENSIONS,
@@ -146,6 +147,19 @@ uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
     .catch(next);
 });
 
+uploads.post('/admin/files', requireAdmin, handleUpload, async (req, res, next) => {
+  const file = req.file;
+  const id = (req as Request & { uploadId?: string }).uploadId;
+  if (!file || !id) { res.status(400).json({ error: 'Välj en printfil att ladda upp.' }); return; }
+  try {
+    const extension = extensionOf(file.originalname);
+    await fileStore().put(storedFileName(id, extension), file.path, 'application/octet-stream');
+    const meta = await writeMeta({ id, kind: 'library', originalName: file.originalname.slice(0, 200), extension,
+      size: file.size, createdAt: new Date().toISOString(), claimedBy: null });
+    res.status(201).json({ id: meta.id });
+  } catch (error) { next(error); }
+});
+
 /**
  * Nedladdningslänken är själva behörigheten: id:t är 128 slumpade bitar och går
  * inte att gissa. Filen skickas alltid som nedladdning, aldrig för visning i
@@ -154,6 +168,7 @@ uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
 uploads.get('/uploads/:id', (req, res, next) => {
   readMeta(pathParam(req.params.id))
     .then(async (meta) => {
+      if (meta?.kind === 'library') { res.status(404).json({ error: 'Filen hittades inte' }); return; }
       const object = meta
         ? await fileStore().get(storedFileName(meta.id, meta.extension), filePathFor(meta))
         : undefined;
@@ -189,7 +204,7 @@ uploads.delete('/uploads/:id', (req, res, next) => {
         res.status(404).json({ error: 'Filen hittades inte' });
         return;
       }
-      if (meta.claimedBy) {
+      if (meta.claimedBy || meta.kind === 'library') {
         // Filen hör till en lagd order och ska finnas kvar för produktionen.
         res.status(409).json({ error: 'Filen hör till en beställning och kan inte tas bort här.' });
         return;

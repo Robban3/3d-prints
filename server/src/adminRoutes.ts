@@ -36,6 +36,8 @@ import {
 } from './catalogValidation.ts';
 import { release, removeStock, setStock, stockLevels } from './stock.ts';
 import type { AnyOrder, StatusEvent } from './types.ts';
+import { filePathFor, listModelFiles, readMeta, storedFileName } from './uploads.ts';
+import { storage } from './storage.ts';
 
 export const admin = Router();
 
@@ -64,7 +66,7 @@ const adminLimit = rateLimit({
   message: 'För många försök. Vänta en stund.',
 });
 
-const requireAdmin: RequestHandler = async (req, res, next) => {
+export const requireAdmin: RequestHandler = async (req, res, next) => {
   if (req.get('authorization') === 'Bearer session' && validSession(req)) { next(); return; }
   const expected = adminToken();
   if (!expected && !await readAccount()) {
@@ -142,6 +144,31 @@ admin.get('/admin/orders', requireAdmin, async (_req, res) => {
     orders: orders.map((order) => ({ ...order, next: nextStatuses(order.status) })),
     total: orders.length,
   });
+});
+
+admin.get('/admin/files', requireAdmin, async (_req, res) => {
+  const [files, orders] = await Promise.all([listModelFiles(), listOrders()]);
+  res.json({ files: files.map(file => {
+    const order = orders.find(order => order.id === file.claimedBy);
+    return { id: file.id, fileName: file.originalName, size: file.size, createdAt: file.createdAt,
+      source: file.kind === 'library' ? 'own' : 'customer', orderId: file.claimedBy,
+      projectName: order?.type === 'custom' ? order.projectName : undefined };
+  }) });
+});
+
+admin.get('/admin/files/:id/download', requireAdmin, async (req, res, next) => {
+  try {
+    const meta = await readMeta(pathParam(req.params.id));
+    if (!meta || meta.kind === 'image') { res.status(404).json({ error: 'Printfilen hittades inte.' }); return; }
+    const object = await storage().get(storedFileName(meta.id, meta.extension), filePathFor(meta));
+    if (!object) { res.status(404).json({ error: 'Printfilen hittades inte.' }); return; }
+    res.attachment(meta.originalName);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Content-Length', String(object.size));
+    object.body.on('error', next).pipe(res);
+  } catch (error) { next(error); }
 });
 
 admin.patch('/admin/orders/:id/status', requireAdmin, async (req, res) => {
