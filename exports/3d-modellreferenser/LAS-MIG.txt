@@ -1,0 +1,6 @@
+94 PNG-bilder för 3D-modellering, ett frilagt föremål per fil.
+Krukor och vaser är tomma. Växter, lösa tillbehör och bakgrunder är borttagna.
+Flerpack och utvalda separata delar har delats upp. Identiska krokar, kabelhållare, servettringar och glasunderlägg visas med ett representativt exemplar.
+Bilderna har skapats med det inbyggda image_gen-verktyget utifrån butikens produktbilder.
+Instruktionerna per bild finns i bildlista.json. PNG-kontrollen finns i filkontroll.csv.
+Bilderna är AI-bearbetade formreferenser. Dolda ytor och tidigare skymda partier är tolkade, inte uppmätta. Mått, passningar och baksidor behöver bestämmas separat vid 3D-modellering.

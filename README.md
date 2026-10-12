@@ -1,5 +1,7 @@
 # Formlabb – webbshop för 3D-printade produkter
 
+För hela webbshoppen hos Cloudflare: se [driftsguiden](CLOUDFLARE.md).
+
 En komplett webbutik för 3D-printade produkter med två köpflöden: färdiga produkter
 ur sortimentet och kundunika printjobb där kunden laddar upp sin egen modellfil och
 får pris direkt.
@@ -38,6 +40,19 @@ npm start          # http://localhost:4000
 
 ## Funktioner
 
+### Design och teman
+
+Öppna `/verkstad` och välj **Design & teman**. Nordisk jul är standardtemat;
+Färgglad formstudio, Mörk designbutik och Personlig julverkstad kan förhandsvisas
+och aktiveras. Förhandsvisning gäller bara den aktuella sidan. **Aktivera tema**
+sparar valet på servern för alla besökare, även efter omstart.
+Inställningen ligger i `server/data/appearance.json` (eller `APPEARANCE_STORE`).
+Kampanjbilderna är AI-genererade inspirationsbilder; produktkort och priser
+hämtas från den verkliga katalogen.
+
+Lokal adminnyckel kan anges i `server/.env` som `ADMIN_TOKEN` (minst 16 tecken).
+`npm run dev:server` läser filen automatiskt. Filen är ignorerad av Git.
+
 **Butiken**
 
 - 14 unika produkter i fem kategorier med egna färger, storlekar och specifikationer
@@ -45,7 +60,7 @@ npm start          # http://localhost:4000
 - Produktsida med färg- och storleksval, antal och löpande totalpris
 - Varukorg som sparas i `localStorage` och överlever omladdning
 - Lagersaldo som dras av vid köp och hindrar överförsäljning
-- Kassa med validering, fri frakt över 599 kr, Klarna-betalning och orderbekräftelse
+- Kassa med validering, fri frakt över 699 kr, Klarna-betalning och orderbekräftelse
 - Orderspårning på ordernummer med tidslinje över var ordern befinner sig
 - Bekräftelse- och statusmejl till kunden
 
@@ -291,3 +306,19 @@ client/
 Produktbilderna är genererade SVG:er (`client/src/components/ProductArt.tsx`) i
 stället för fotografier, så butiken har ett enhetligt uttryck och inga externa
 bildberoenden.
+# Julkollektionen från designförslaget
+
+## Admin med e-post och lösenord
+
+Öppna `/verkstad`. Kontots e-post är `admin@formlabb.se` (kan ställas in med `ADMIN_EMAIL` före aktivering). Välj ett lösenord på 12–128 tecken och bekräfta det. Första aktiveringen kräver befintlig `ADMIN_TOKEN`; en redan inloggad flik återanvänder nyckeln. Efter aktiveringen sker inloggning med e-post och lösenord. Lösenord lagras som saltad scrypt-hash i `server/data/admin-account.json`, aldrig i klartext. Sessionscookie är HttpOnly, SameSite=Strict och gäller åtta timmar; omstart kräver ny inloggning. Utloggning spärrar sessionen på servern.
+
+”Glömt lösenord?” skickar en länk som gäller i 30 minuter, kan användas en gång och spärrar tidigare sessioner när lösenordet ändras. Utan SMTP sparas brevet i `server/data/utkorg` för lokal utveckling. I produktion behövs SMTP-inställningar, HTTPS och `PUBLIC_URL` med butikens exakta ursprung, exempelvis `https://formlabb.se`. `ADMIN_ACCOUNT_STORE` kan ange en annan sökväg för kontolagringen. Den befintliga adminnyckeln fungerar fortsatt för administrativa scripts; håll den hemlig.
+
+Startsidan visar Vas Signe (349 kr), Julgran – 2-pack (199 kr), Stjärna (149 kr) och Kruka Elise (279 kr). Separata bildvisualiseringar finns i `client/public/images/campaign`. Importera dem idempotent till den lokala katalogen med `node scripts/add-christmas-collection.mjs` när servern kör på port 4000 och `server/.env` innehåller adminnyckeln. Befintliga produkter ändras inte av importen.
+
+Produkterna börjar med lagersaldo 0 och utan recensioner. Produktionsmått, vikt och printtid lämnas okända och visas som ”Fastställs inför produktion” tills de fylls i via admin. Bilderna är designvisualiseringar, inte fotografier av provprintade exemplar.
+## Variantbilder
+
+Varje produkt kan ha `variantImages` för en färg eller kombination av färg och storleks-id. Produktsidan väljer först exakt kombination, sedan en bild för färgen och till sist huvudbilden. Samma val används på produktkort och sparas i varukorgen. I adminens produktformulär finns uppladdning och borttagning per kombination.
+
+Genererade variantbilder finns i `client/public/images/variants`. Lokal import körs från `server/` med `node --env-file-if-exists=.env --experimental-strip-types ../scripts/import-variant-images.mjs`. Scriptet använder ordinarie lagring och katalogvalidering och ändrar inte lagersaldon. Starta om utvecklingsservern efter import så att katalogcachen uppdateras.

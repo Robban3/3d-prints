@@ -15,6 +15,7 @@ export interface ProductVariantOption {
   name: string;
   /** Tillägg på grundpriset i kronor. */
   priceDelta: number;
+  dimensions?: { width: number; depth: number; height: number };
 }
 
 export interface Product {
@@ -35,6 +36,7 @@ export interface Product {
   weightGrams: number;
   colors: string[];
   sizes?: ProductVariantOption[];
+  optionLabel?: string;
   highlights: string[];
   stock: number;
   rating: number;
@@ -42,10 +44,15 @@ export interface Product {
   featured: boolean;
   /** Opublicerade produkter syns bara i adminpanelen. Saknas = publicerad. */
   published?: boolean;
+  /** Konceptprodukter saknar ännu uppmätta produktionsuppgifter. */
+  specificationsPending?: boolean;
+  dimensionsEstimated?: boolean;
+  dimensionsNote?: string;
   /** Nyckel till den genererade SVG-illustrationen, som används utan foto. */
   art: { shape: ArtShape; tone: ArtTone };
   /** Uppladdad produktbild. Visas i stället för den ritade illustrationen. */
   image?: { id: string; url: string; fileName: string };
+  variantImages?: Array<{ color: string; size?: string; image: { id: string; url: string; fileName: string } }>;
 }
 
 export type ArtShape =
@@ -61,13 +68,14 @@ export type ArtShape =
   | 'phoneStand'
   | 'cableClip'
   | 'spiralVase'
+  | 'nexoVase'
   | 'gearFidget'
   | 'spiceShelf';
 
 /** Ytan produkten visas i – motsvarar hur den faktiskt printas. */
 export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla';
 
-export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
+export type CategoryId = string;
 
 export interface Category {
   id: CategoryId;

@@ -8,8 +8,7 @@ export function Footer() {
         <div className="footer-grid">
           <div>
             <Link to="/" className="brand" style={{ marginBottom: 12 }}>
-              <Logo size={30} />
-              FORMLABB
+              <Logo />
             </Link>
             <p style={{ maxWidth: '34ch' }}>
               Vi designar och printar i egen verkstad i Göteborg. Åtta maskiner, ingen mellanhand
@@ -64,7 +63,7 @@ export function Footer() {
         </div>
         <div className="footer-bottom spread">
           <span>© {new Date().getFullYear()} Formlabb AB · Org.nr 559xxx-xxxx</span>
-          <span>Priser inkl. moms · Fri frakt över 599 kr</span>
+          <span>Priser inkl. moms · Fri frakt över 699 kr</span>
         </div>
       </div>
     </footer>

@@ -25,6 +25,8 @@ const sortLabels: Array<{ id: SortId; label: string }> = [
 export function ShopPage() {
   const [params, setParams] = useSearchParams();
   const category = params.get('kategori') ?? 'alla';
+  const christmas = category === 'julkollektionen';
+  const halloween = category === 'halloween';
   // Sökningen bor i URL:en, så att headerns sökruta och delade länkar slår
   // igenom även när butiken redan är öppen.
   const search = params.get('sok') ?? '';
@@ -69,7 +71,19 @@ export function ShopPage() {
 
   return (
     <>
-      <PageHeader
+      {christmas ? <section className="collection-banner" aria-label="Julkollektionen">
+        <a href="#collection-products" aria-label="Upptäck julkollektionen – visa produkterna"><img src="/images/campaign/julkollektionen-banner.webp" alt="En jul med personlig prägel – gröna och vinröda julkulor, benvita granar, stjärna och ett personligt namnornament" width="1357" height="762" /></a>
+        <div className="collection-banner-mobile"><h1>En jul med personlig prägel</h1><p>3D-printat julpynt och personliga presenter.</p><a className="btn" href="#collection-products">Upptäck julkollektionen</a></div>
+        <h1 className="sr-only collection-banner-desktop-title">Julkollektionen</h1>
+      </section> : halloween ? <section className="container halloween-collection-banner" aria-label="Halloweenkollektionen">
+        <div className="halloween-collection-copy">
+          <span className="eyebrow">Halloween hos Formlabb</span>
+          <h1>Lite kusligare.<br />Mycket mer du.</h1>
+          <p>3D-printade detaljer för höstens mysigaste och kusligaste stunder.</p>
+          <a className="btn" href="#collection-products">Upptäck Halloween <span aria-hidden="true">→</span></a>
+        </div>
+        <img src="/images/campaign/halloween-collection.webp" alt="Orange pumpa, benvitt spöke och mörka fladdermöss i ett varmt Halloween-stilleben" width="1536" height="1024" />
+      </section> : <PageHeader
         eyebrow="Butik"
         title={active ? active.name : 'Alla produkter'}
         text={
@@ -78,8 +92,8 @@ export function ShopPage() {
             : 'Allt vi designar och printar i egen verkstad, redo att skickas.'
         }
         crumbs={active ? [{ to: '/produkter', label: 'Produkter' }] : undefined}
-      />
-      <section className="section">
+      />}
+      <section className={`section${christmas || halloween ? ' christmas-products' : ''}`} id="collection-products">
         <div className="container">
           <div className="toolbar">
             <select

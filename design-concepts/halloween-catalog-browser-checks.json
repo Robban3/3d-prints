@@ -1,0 +1,138 @@
+[
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Portalpumpan",
+    "price": "349 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/1cea95409d60e47ac86c9503d3d1e162"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Spökduon – 2-pack",
+    "price": "249 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/ebd2efc4930133cbb0e8793399f01eb6"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Korpens vas",
+    "price": "449 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/dd744e47d711069e4efbd0f24d3fb46e"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Månskugga",
+    "price": "249 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/49a71213beb756062056a0d4998d8845"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Häxans gömma",
+    "price": "279 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/ebf90d5f0b9fdfc7c64b3308ebce2273"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Gravbiblioteket – bokstöd",
+    "price": "399 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/8c8345935caafe900b95ddf4d1237326"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Skuggkatten",
+    "price": "229 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/d205b807733ecacfcb58b554f98ef127"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Pumpatornet",
+    "price": "299 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/4a14cc0b9b1491a5a961e29dc10ea505"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Spökporten",
+    "price": "499 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/0cab2f4abf1833b4b748103a56aedf96"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Midnattsgömman",
+    "price": "249 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/fe2a933a7ad2b0f907bf34f47398d847"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Runolyktan",
+    "price": "349 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/577c23b1f986ad45cec9f68184bb7eba"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Ritualbrickan",
+    "price": "199 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/7a7ea618750d34302076291eef395928"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Ribbad pumpa",
+    "price": "149 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/3a2fda8e8c868e8d759526c10d6c53d5"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Spöket Boo",
+    "price": "99 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/0a40fdcb822035ab7afb3aaf15814323"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Fladdermus – 3-pack",
+    "price": "129 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/3b494f3270783a0a83332af0c1a4fea3"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Dödskallekruka",
+    "price": "249 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/3ed9230ff7545dbca71ca6528d80cab6"
+  },
+  {
+    "canBuy": true,
+    "imageLoaded": true,
+    "name": "Spindelnät – 4-pack",
+    "price": "149 kr",
+    "sizeOptions": 0,
+    "src": "/api/uploads/49daa2a30d60bf7d81c7bd959e83bac2"
+  }
+]

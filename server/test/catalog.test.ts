@@ -26,6 +26,27 @@ const categoryIds = ['inredning', 'kontor', 'kok', 'prylar', 'tillbehor'];
 const materialIds = ['pla', 'petg', 'abs', 'tpu', 'resin'];
 const options = { categoryIds, materialIds };
 
+it('behåller preliminära mått och validerar mått för varje storlek', () => {
+  const dimensions = { width: 140, depth: 120, height: 240 };
+  const input = validInput({ dimensionsEstimated: true, dimensionsNote: 'Yttermått.', optionLabel: 'Utförande', sizes: [{ id: 'stor', name: 'Stor', priceDelta: 100, dimensions }] });
+  const parsed = parseProductInput(input, options);
+  assert.equal(parsed.dimensionsEstimated, true);
+  assert.equal(parsed.dimensionsNote, 'Yttermått.');
+  assert.equal(parsed.optionLabel, 'Utförande');
+  assert.deepEqual(parsed.sizes?.[0]?.dimensions, dimensions);
+  assert.throws(() => parseProductInput({ ...input, sizes: [{ id: 'stor', name: 'Stor', dimensions: { ...dimensions, width: -1 } }] }, options), ProductInputError);
+});
+
+it('validerar variantbilder mot färger och storlekar och härleder säker bild-URL', () => {
+  const image = { id: 'a'.repeat(32), url: 'https://untrusted.invalid/image', fileName: 'variant.webp' };
+  const input = validInput({ sizes: [{ id: 'stor', name: 'Stor', priceDelta: 0 }], variantImages: [{ color: 'Benvit', size: 'stor', image }] });
+  assert.equal(parseProductInput(input, options).variantImages?.[0]?.image.url, `/api/uploads/${image.id}`);
+  assert.deepEqual(parseProductInput({ ...input, variantImages: [] }, options).variantImages, []);
+  assert.throws(() => parseProductInput({ ...input, variantImages: [{ color: 'Röd', image }] }, options), ProductInputError);
+  assert.throws(() => parseProductInput({ ...input, variantImages: [{ color: 'Benvit', size: 'okänd', image }] }, options), ProductInputError);
+  assert.throws(() => parseProductInput({ ...input, variantImages: [{ color: 'Benvit', size: 'stor', image }, { color: 'Benvit', size: 'stor', image }] }, options), ProductInputError);
+});
+
 function validInput(overrides: Record<string, unknown> = {}) {
   return {
     name: 'Testprodukt',
@@ -199,6 +220,13 @@ describe('kategorier', () => {
 });
 
 describe('validering av produktindata', () => {
+  it('behåller okända produktionsuppgifter för koncept och tar bort markeringen när de fylls i', () => {
+    const pending = validInput({ specificationsPending: true, dimensions: { width: 0, depth: 0, height: 0 }, printTimeHours: 0, weightGrams: 0 });
+    assert.equal(parseProductInput(pending, options).specificationsPending, true);
+    assert.throws(() => parseProductInput({ ...pending, specificationsPending: false }, options), ProductInputError);
+    assert.equal(parseProductInput(validInput({ specificationsPending: true }), options).specificationsPending, undefined);
+    assert.throws(() => parseProductInput({ ...pending, dimensions: { width: -1, depth: 0, height: 0 } }, options), ProductInputError);
+  });
   it('tar emot ett komplett formulär', () => {
     const parsed = parseProductInput(validInput(), options);
     assert.equal(parsed.name, 'Testprodukt');

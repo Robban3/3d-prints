@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { ProductImage } from './ProductImage';
 import { Icon } from './Icon';
 import { formatPrice } from '../lib/format';
+import { selectedProductImage } from '../lib/productImage';
 import { useCart } from '../lib/cart';
 import type { Product } from '../types';
 
@@ -22,7 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
       size: product.sizes?.[0]?.id,
       sizeName: product.sizes?.[0]?.name,
       art: product.art,
-      image: product.image,
+      image: selectedProductImage(product),
     });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
@@ -31,8 +32,9 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="product-card">
       <Link to={`/produkter/${product.slug}`} className="art" tabIndex={-1} aria-hidden="true">
-        <ProductImage product={product} />
-        {product.stock <= 20 && <span className="flag flag-warn">Få kvar</span>}
+        <ProductImage product={{ ...product, image: selectedProductImage(product) }} />
+        {product.stock > 0 && product.stock <= 20 && <span className="flag flag-warn">Få kvar</span>}
+        {product.stock <= 0 && product.specificationsPending && <span className="flag">Kommer snart</span>}
       </Link>
       <div className="body">
         <h3>
@@ -47,9 +49,10 @@ export function ProductCard({ product }: { product: Product }) {
             type="button"
             className={added ? 'add-btn done' : 'add-btn'}
             onClick={quickAdd}
+            disabled={product.stock <= 0}
             aria-label={`Lägg ${product.name} i varukorgen`}
           >
-            <Icon name={added ? 'shield' : 'cartPlus'} size={17} />
+            <Icon name="bag" size={17} />
           </button>
         </div>
       </div>

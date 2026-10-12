@@ -3,8 +3,8 @@ import { Link, NavLink, useNavigate } from 'react-router';
 import { useCart } from '../lib/cart';
 import { fetchConfig } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
-import { Logo } from './Logo';
 import { Icon } from './Icon';
+import { Logo } from './Logo';
 
 const links = [
   { to: '/material', label: 'Material' },
@@ -57,13 +57,9 @@ export function Header() {
       <div className="container">
         <Link to="/" className="brand">
           <Logo />
-          FORMLABB
         </Link>
 
         <nav className="nav" aria-label="Huvudmeny">
-          <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
-            Hem
-          </NavLink>
           <div className="nav-group" ref={shopRef}>
             <button
               type="button"
@@ -94,7 +90,8 @@ export function Header() {
               </div>
             )}
           </div>
-          {links.map((link) => (
+          <NavLink to="/egen-print" className={({ isActive }) => (isActive ? 'active' : '')}>Egen print</NavLink>
+          {links.filter((link) => link.to === '/om-oss').map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -115,16 +112,13 @@ export function Header() {
           >
             <Icon name="search" />
           </button>
-          <Link to="/spara-order" className="icon-btn" aria-label="Spåra din order">
-            <Icon name="user" />
-          </Link>
           <Link
             to="/varukorg"
             className="icon-btn"
             aria-label={`Varukorg med ${itemCount} artiklar`}
           >
-            <Icon name="cart" />
-            {itemCount > 0 && <span className="cart-badge">{itemCount}</span>}
+            <Icon name="bag" size={24} />
+            <span className="cart-badge">{itemCount}</span>
           </Link>
         </div>
       </div>

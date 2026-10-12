@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
+import { readFile, writeFile } from './stateFiles.ts';
 import { dirname, resolve } from 'node:path';
 
 /**
@@ -14,7 +15,7 @@ const MAX_ENTRIES = 500;
 export interface AuditEntry {
   at: string;
   action: 'skapad' | 'ändrad' | 'borttagen' | 'importerad' | 'status';
-  entity: 'produkt' | 'kategori' | 'material' | 'kvalitet' | 'order';
+  entity: 'produkt' | 'kategori' | 'material' | 'kvalitet' | 'order' | 'tema';
   entityId: string;
   summary: string;
   /** Fälten som faktiskt ändrades, för en ändring. */
@@ -34,7 +35,8 @@ async function readAll(): Promise<AuditEntry[]> {
     const raw = await readFile(LOG_FILE(), 'utf8');
     const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed) ? (parsed as AuditEntry[]) : [];
-  } catch {
+  } catch (error) {
+    if (process.env.STATE_BUCKET && (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     return [];
   }
 }

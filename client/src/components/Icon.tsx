@@ -5,8 +5,8 @@ export type IconName =
   | 'headset'
   | 'search'
   | 'user'
-  | 'cart'
-  | 'cartPlus'
+  | 'bag'
+  | 'tree'
   | 'chevronDown'
   | 'grid'
   | 'home'
@@ -30,6 +30,8 @@ export type IconName =
 
 /** Streckade ikoner i ett enhetligt 24-rutnät. Ärver färg och storlek från texten. */
 const paths: Record<IconName, JSX.Element> = {
+  bag: <><path d="M5 7.5h14l.5 13H4.5z" /><path d="M8.5 9V6a3.5 3.5 0 0 1 7 0v3" /></>,
+  tree: <><path d="M12 2 8 8h2l-4 5h3l-4 5h14l-4-5h3l-4-5h2z" fill="currentColor" stroke="none" /><path d="M12 18v4" /></>,
   bolt: <path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z" />,
   shield: (
     <>
@@ -60,21 +62,6 @@ const paths: Record<IconName, JSX.Element> = {
     <>
       <circle cx="12" cy="8.5" r="3.75" />
       <path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" />
-    </>
-  ),
-  cart: (
-    <>
-      <path d="M3 4h2.2l2.3 11.2a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2L21 8H6" />
-      <circle cx="9.5" cy="20" r="1.3" />
-      <circle cx="17.5" cy="20" r="1.3" />
-    </>
-  ),
-  cartPlus: (
-    <>
-      <path d="M3 4h2.2l2.3 11.2a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2L21 8H6" />
-      <circle cx="9.5" cy="20" r="1.3" />
-      <circle cx="17.5" cy="20" r="1.3" />
-      <path d="M13.5 9.5v4M11.5 11.5h4" />
     </>
   ),
   chevronDown: <path d="m6 9.5 6 6 6-6" />,

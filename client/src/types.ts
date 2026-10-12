@@ -1,6 +1,8 @@
-export type MaterialId = 'pla' | 'petg' | 'abs' | 'tpu' | 'resin';
-export type PrintQuality = 'utkast' | 'standard' | 'fin' | 'ultrafin';
-export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
+export type MaterialId = string;
+export type ThemeId = 'nordic' | 'studio' | 'gallery' | 'workshop';
+export interface Appearance { theme: ThemeId }
+export type PrintQuality = string;
+export type CategoryId = string;
 export type ArtShape =
   | 'planter'
   | 'headphoneStand'
@@ -14,6 +16,7 @@ export type ArtShape =
   | 'phoneStand'
   | 'cableClip'
   | 'spiralVase'
+  | 'nexoVase'
   | 'gearFidget'
   | 'spiceShelf';
 
@@ -45,6 +48,7 @@ export interface SizeOption {
   id: string;
   name: string;
   priceDelta: number;
+  dimensions?: { width: number; depth: number; height: number };
 }
 
 export interface Product {
@@ -62,6 +66,7 @@ export interface Product {
   weightGrams: number;
   colors: string[];
   sizes?: SizeOption[];
+  optionLabel?: string;
   highlights: string[];
   stock: number;
   rating: number;
@@ -69,8 +74,12 @@ export interface Product {
   featured: boolean;
   /** Opublicerade produkter syns bara i adminpanelen. */
   published?: boolean;
+  specificationsPending?: boolean;
+  dimensionsEstimated?: boolean;
+  dimensionsNote?: string;
   art: { shape: ArtShape; tone: ArtTone };
   image?: { id: string; url: string; fileName: string };
+  variantImages?: Array<{ color: string; size?: string; image: { id: string; url: string; fileName: string } }>;
 }
 
 export interface ShopConfig {
@@ -208,7 +217,7 @@ export type ProductDraft = Omit<Product, 'id'>;
 export interface AuditEntry {
   at: string;
   action: 'skapad' | 'ändrad' | 'borttagen' | 'importerad' | 'status';
-  entity: 'produkt' | 'kategori' | 'material' | 'kvalitet' | 'order';
+  entity: 'produkt' | 'kategori' | 'material' | 'kvalitet' | 'order' | 'tema';
   entityId: string;
   summary: string;
   changed?: string[];

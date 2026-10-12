@@ -1,0 +1,152 @@
+[
+  {
+    "file": "terra-vaxtkruka-c1-s0",
+    "base": "terra-vaxtkruka-c0-s0",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 1,
+    "sizeIndex": 0,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to matte dark graphite gray. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-0a3ef77d-a4f8-4fb6-9114-30ab92072670.png"
+  },
+  {
+    "file": "terra-vaxtkruka-c2-s0",
+    "base": "terra-vaxtkruka-c0-s0",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 2,
+    "sizeIndex": 0,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to muted sage green. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-93f32108-fade-4d70-80f2-1c8d6cb3a158.png"
+  },
+  {
+    "file": "terra-vaxtkruka-c3-s0",
+    "base": "terra-vaxtkruka-c0-s0",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 3,
+    "sizeIndex": 0,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to warm ivory off-white. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-df1cd99d-1bdc-48bc-864d-11f682e8e213.png"
+  },
+  {
+    "file": "terra-vaxtkruka-c1-s1",
+    "base": "terra-vaxtkruka-c0-s1",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 1,
+    "sizeIndex": 1,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to matte dark graphite gray. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-ca72eabb-ba3b-4ed8-bcbb-06a227bc8021.png"
+  },
+  {
+    "file": "terra-vaxtkruka-c2-s1",
+    "base": "terra-vaxtkruka-c0-s1",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 2,
+    "sizeIndex": 1,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to muted sage green. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-6b594cac-06fd-4a55-bc52-74fdc0fc733e.png"
+  },
+  {
+    "file": "terra-vaxtkruka-c3-s1",
+    "base": "terra-vaxtkruka-c0-s1",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 3,
+    "sizeIndex": 1,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to warm ivory off-white. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-354e5088-648b-4003-99bf-f223d2447f68.png"
+  },
+  {
+    "file": "terra-vaxtkruka-c1-s2",
+    "base": "terra-vaxtkruka-c0-s2",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 1,
+    "sizeIndex": 2,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to matte dark graphite gray. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-8e583cc9-0ae0-409e-adf7-a700c697972d.png"
+  },
+  {
+    "file": "terra-vaxtkruka-c2-s2",
+    "base": "terra-vaxtkruka-c0-s2",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 2,
+    "sizeIndex": 2,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to muted sage green. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-3a59ee8b-2233-4590-b8eb-65b00df3b29f.png"
+  },
+  {
+    "file": "terra-vaxtkruka-c3-s2",
+    "base": "terra-vaxtkruka-c0-s2",
+    "slug": "terra-vaxtkruka",
+    "colorIndex": 3,
+    "sizeIndex": 2,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the faceted plant pot AND its matching saucer in image 1 to warm ivory off-white. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-2f07a867-cd8d-4543-a3dc-90e2b693081e.png"
+  },
+  {
+    "file": "flexi-drake-c1-s0",
+    "base": "flexi-drake-c0-s0",
+    "slug": "flexi-drake",
+    "colorIndex": 1,
+    "sizeIndex": 0,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the articulated dragon in image 1 to silky metallic lilac purple. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-cccd762e-3658-4d54-928c-4ec111832fbc.png"
+  },
+  {
+    "file": "flexi-drake-c2-s0",
+    "base": "flexi-drake-c0-s0",
+    "slug": "flexi-drake",
+    "colorIndex": 2,
+    "sizeIndex": 0,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the articulated dragon in image 1 to rainbow gradient: purple head, blue neck, teal, green, yellow body, orange-red tail. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-5143cd39-fce4-48ec-ba04-f1c608fcade9.png"
+  },
+  {
+    "file": "flexi-drake-c3-s0",
+    "base": "flexi-drake-c0-s0",
+    "slug": "flexi-drake",
+    "colorIndex": 3,
+    "sizeIndex": 0,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the articulated dragon in image 1 to pale luminous lime green glow-in-the-dark filament. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-7cd45f6d-d5a0-4d17-96c1-03e2d2200acd.png"
+  },
+  {
+    "file": "flexi-drake-c1-s1",
+    "base": "flexi-drake-c0-s1",
+    "slug": "flexi-drake",
+    "colorIndex": 1,
+    "sizeIndex": 1,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the articulated dragon in image 1 to silky metallic lilac purple. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-c625c8a5-e61e-4c9e-8ddc-01a531020b45.png"
+  },
+  {
+    "file": "flexi-drake-c2-s1",
+    "base": "flexi-drake-c0-s1",
+    "slug": "flexi-drake",
+    "colorIndex": 2,
+    "sizeIndex": 1,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the articulated dragon in image 1 to rainbow gradient: purple head, blue neck, teal, green, yellow body, orange-red tail. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-7469c824-95e2-406f-b478-aabd5039d6aa.png"
+  },
+  {
+    "file": "flexi-drake-c3-s1",
+    "base": "flexi-drake-c0-s1",
+    "slug": "flexi-drake",
+    "colorIndex": 3,
+    "sizeIndex": 1,
+    "prompt": "Use-case: precise-object-edit. Edit target is image 1. Image 2 is ONLY a reference for the requested color. Recolor ONLY the articulated dragon in image 1 to pale luminous lime green glow-in-the-dark filament. Preserve EXACT same product silhouette, dimensions in pixels, bounding box, scale, position, shape, design, details, camera angle, perspective and crop as image 1. Do not enlarge, shrink, move or redesign anything. Preserve every plant leaf, props, background, wood grain, light, shadows and product proportions. Retain original square aspect ratio. Image 1 geometry is authoritative; NEVER adopt the different size/composition from image 2. Output identical photograph except product color.",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-b29f245f-9950-4db0-8f73-e46fb2b6a5a5.png"
+  },
+  {
+    "file": "flexi-drake-c1-s2",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-c1ecc36a-6cc6-407e-b3d7-756972df5ac9.png",
+    "prompt": "Edit target: image 1, copper flexi dragon product photograph. Image 2 is COLOR REFERENCE ONLY. Replace ONLY the copper dragon material color with silky metallic lilac purple, matching the purple color reference. Crucial invariants: preserve EXACT pixel composition, dragon silhouette, size, scale, head and horn height, position of every foot and tail tip, perspective, crop, camera distance and pose from image 1. Keep background, wooden tabletop, stone steps, chair, light and shadows unchanged. This must be the identical large dragon from image 1 recolored, not a different dragon or new composition. Square ecommerce photograph. No text or measurements. Use-case: precise-object-edit."
+  },
+  {
+    "file": "flexi-drake-c2-s2",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-dbac40d9-f1f2-436c-8585-b8a3e963a4f2.png",
+    "prompt": "Edit target: image 1, copper flexi dragon product photograph. Image 2 is COLOR REFERENCE ONLY. Replace ONLY the copper dragon material color with rainbow gradient from purple at head through blue, teal, green and yellow to orange-red at the tail, matching the color reference. Crucial invariants: preserve EXACT pixel composition, dragon silhouette, size, scale, head and horn height, position of every foot and tail tip, perspective, crop, camera distance and pose from image 1. Keep background, wooden tabletop, stone steps, chair, light and shadows unchanged. This must be the identical large dragon from image 1 recolored, not a different dragon or new composition. Square ecommerce photograph. No text or measurements. Use-case: precise-object-edit."
+  },
+  {
+    "file": "flexi-drake-c3-s2",
+    "path": "C:\\Users\\robvan\\.codex\\generated_images\\01a12555-e430-7eb3-b4a6-5a6728b17651\\exec-b11ae512-26a2-429f-bc09-73c59f12cb50.png",
+    "prompt": "Edit target: image 1, copper flexi dragon product photograph. Image 2 is COLOR REFERENCE ONLY. Replace ONLY the copper dragon material color with pale luminous lime green glow-in-the-dark filament, matching the color reference. Crucial invariants: preserve EXACT pixel composition, dragon silhouette, size, scale, head and horn height, position of every foot and tail tip, perspective, crop, camera distance and pose from image 1. Keep background, wooden tabletop, stone steps, chair, light and shadows unchanged. This must be the identical large dragon from image 1 recolored, not a different dragon or new composition. Square ecommerce photograph. No text or measurements. Use-case: precise-object-edit."
+  }
+]

@@ -1,0 +1,479 @@
+{
+  "tool": "Built-in image_gen",
+  "purpose": "3D modeling image references",
+  "format": "PNG with alpha",
+  "sharedPrompt": "Extract exactly one object, remove all plants, props and background, preserve visible geometry, color and perspective, center with margin. Complete occluded surfaces conservatively. No new features, shadows or captions.",
+  "limitations": "AI-edited image references. Hidden surfaces and removed occlusions are interpreted, not measured. Images do not establish scale or manufacturing geometry.",
+  "images": [
+    {
+      "product": "Terra växtkruka",
+      "file": "terra-vaxtkruka-kruka.png",
+      "instruction": "Only terracotta faceted empty planter. Remove plant, soil and separate saucer; preserve open rim and visible interior."
+    },
+    {
+      "product": "Terra växtkruka",
+      "file": "terra-vaxtkruka-fat.png",
+      "instruction": "Only terracotta matching round saucer underneath planter. Remove planter and plant. Show entire shallow saucer with raised lip."
+    },
+    {
+      "product": "Arc hörlursställ",
+      "file": "arc-horlursstall.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Grid skrivbordsorganiserare",
+      "file": "grid-skrivbordsorganiserare-pennkopp.png",
+      "instruction": "Only tall gray rectangular pen cup on left, empty."
+    },
+    {
+      "product": "Grid skrivbordsorganiserare",
+      "file": "grid-skrivbordsorganiserare-rund-kopp.png",
+      "instruction": "Only round gray middle cup, empty."
+    },
+    {
+      "product": "Grid skrivbordsorganiserare",
+      "file": "grid-skrivbordsorganiserare-telefonhallare.png",
+      "instruction": "Only gray phone holder at right, remove phone."
+    },
+    {
+      "product": "Grid skrivbordsorganiserare",
+      "file": "grid-skrivbordsorganiserare-bricka.png",
+      "instruction": "Only underlying elongated gray tray, remove all cups and phone holder."
+    },
+    {
+      "product": "Flexi drake",
+      "file": "flexi-drake.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Luna månlampa",
+      "file": "luna-manlampa.png",
+      "instruction": "Only moon lamp and functional base, assembled as single lamp."
+    },
+    {
+      "product": "Hex pennställ",
+      "file": "hex-pennstall-hog-kopp.png",
+      "instruction": "Only tallest central black hexagonal cup, empty."
+    },
+    {
+      "product": "Hex pennställ",
+      "file": "hex-pennstall-vanster-kopp.png",
+      "instruction": "Only medium black hexagonal cup on left, empty."
+    },
+    {
+      "product": "Hex pennställ",
+      "file": "hex-pennstall-hoger-kopp.png",
+      "instruction": "Only medium black hexagonal cup on right, empty."
+    },
+    {
+      "product": "Hex pennställ",
+      "file": "hex-pennstall-lag-kopp.png",
+      "instruction": "Only shortest empty hexagonal cup front left."
+    },
+    {
+      "product": "Hex pennställ",
+      "file": "hex-pennstall-framre-kopp.png",
+      "instruction": "Only short hexagonal cup front right, empty."
+    },
+    {
+      "product": "Wave väggkrokar (3-pack)",
+      "file": "wave-vaggkrokar-krok.png",
+      "instruction": "Only one black curved hook, select fully visible leftmost hook. No bag."
+    },
+    {
+      "product": "Brew kaffedripp",
+      "file": "brew-kaffedripp-stall.png",
+      "instruction": "Only black dripper support stand and integrated drip tray, no white dripper, mug, filter or coffee."
+    },
+    {
+      "product": "Brew kaffedripp",
+      "file": "brew-kaffedripp-tratt.png",
+      "instruction": "Only white ribbed dripper funnel, empty. Remove paper filter and coffee."
+    },
+    {
+      "product": "Keep tärningstorn",
+      "file": "keep-tarningstorn.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Fold telefonställ",
+      "file": "fold-telefonstall.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Coil kabelhållare (5-pack)",
+      "file": "coil-kabelhallare-hallare.png",
+      "instruction": "Only one black spherical slotted cable holder, select unobscured front middle holder. No cable."
+    },
+    {
+      "product": "Spiral vas",
+      "file": "spiral-vas.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Orbit fidget",
+      "file": "orbit-fidget.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Shelf kryddställ",
+      "file": "shelf-kryddstall.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Vas Signe",
+      "file": "vas-signe.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Julgran – 2-pack",
+      "file": "julgran-2-pack-stor.png",
+      "instruction": "Only taller green pleated tree ornament on left. Remove gold hanging cord; keep integral cap and mounting eye."
+    },
+    {
+      "product": "Julgran – 2-pack",
+      "file": "julgran-2-pack-liten.png",
+      "instruction": "Only smaller green pleated tree ornament right. Remove gold hanging cord; keep integral cap and mounting eye."
+    },
+    {
+      "product": "Stjärna",
+      "file": "stjarna.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Kruka Elise",
+      "file": "kruka-elise.png",
+      "instruction": "Only empty cream faceted planter, no plant or soil."
+    },
+    {
+      "product": "Julkula Virvel",
+      "file": "kula-virvel.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Julkula Diamant",
+      "file": "kula-diamant.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Gran Frost – 2-pack",
+      "file": "gran-frost-stor.png",
+      "instruction": "Only taller cream pleated tree on left."
+    },
+    {
+      "product": "Gran Frost – 2-pack",
+      "file": "gran-frost-liten.png",
+      "instruction": "Only smaller cream pleated tree on right."
+    },
+    {
+      "product": "Stjärna Polaris",
+      "file": "stjarna-polaris.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Personligt namnornament",
+      "file": "namnornament.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Måla din jul – 4-pack",
+      "file": "mala-din-jul-snoflinga.png",
+      "instruction": "Only green bauble on left with snowflake relief."
+    },
+    {
+      "product": "Måla din jul – 4-pack",
+      "file": "mala-din-jul-stjarnor.png",
+      "instruction": "Only red bauble at back with star relief."
+    },
+    {
+      "product": "Måla din jul – 4-pack",
+      "file": "mala-din-jul-spiral.png",
+      "instruction": "Only cream front bauble with spiral ribs."
+    },
+    {
+      "product": "Måla din jul – 4-pack",
+      "file": "mala-din-jul-prickar.png",
+      "instruction": "Only black bauble on right with raised dots."
+    },
+    {
+      "product": "Julkula med namn",
+      "file": "julkula-med-namn.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Vår första jul",
+      "file": "var-forsta-jul.png",
+      "instruction": "Only cream circular ornament, houses, bow, exact text Vår första jul. No ribbon."
+    },
+    {
+      "product": "Snöflinga – 3-pack",
+      "file": "snoflinga-3-pack-stjarna.png",
+      "instruction": "Only cream angular star on left."
+    },
+    {
+      "product": "Snöflinga – 3-pack",
+      "file": "snoflinga-3-pack-snoflinga.png",
+      "instruction": "Only central cream six-arm snowflake."
+    },
+    {
+      "product": "Snöflinga – 3-pack",
+      "file": "snoflinga-3-pack-blomform.png",
+      "instruction": "Only cream looped flower-like snowflake right."
+    },
+    {
+      "product": "Ängel Alma – 2-pack",
+      "file": "angel-alma-stor.png",
+      "instruction": "Only taller cream angel left."
+    },
+    {
+      "product": "Ängel Alma – 2-pack",
+      "file": "angel-alma-liten.png",
+      "instruction": "Only smaller cream angel right."
+    },
+    {
+      "product": "Ren Vilgot",
+      "file": "ren-vilgot.png",
+      "instruction": "Only cream faceted reindeer."
+    },
+    {
+      "product": "Julby – 3 små hus",
+      "file": "julby-litet-hus.png",
+      "instruction": "Only smallest cream house left, unlit and empty."
+    },
+    {
+      "product": "Julby – 3 små hus",
+      "file": "julby-hogt-hus.png",
+      "instruction": "Only tall cream house center, unlit and empty."
+    },
+    {
+      "product": "Julby – 3 små hus",
+      "file": "julby-mellanhus.png",
+      "instruction": "Only medium cream house right, unlit and empty."
+    },
+    {
+      "product": "Servettring Noel – 4-pack",
+      "file": "servettring-noel-ring.png",
+      "instruction": "Only one green lattice napkin ring with cream stars, select front one. Empty ring, no napkin or plate."
+    },
+    {
+      "product": "Namnskylt till julbordet",
+      "file": "namnskyltar-emma.png",
+      "instruction": "Only freestanding cream name Emma, exact lettering."
+    },
+    {
+      "product": "Namnskylt till julbordet",
+      "file": "namnskyltar-elsa.png",
+      "instruction": "Only freestanding cream name Elsa, exact lettering."
+    },
+    {
+      "product": "Namnskylt till julbordet",
+      "file": "namnskyltar-hugo.png",
+      "instruction": "Only freestanding cream name Hugo, exact lettering."
+    },
+    {
+      "product": "Paketetiketter – 6-pack",
+      "file": "paketetiketter-god-jul-01.png",
+      "instruction": "Only large rectangular cream tag upper left, exact words God jul and three trees."
+    },
+    {
+      "product": "Paketetiketter – 6-pack",
+      "file": "paketetiketter-gran.png",
+      "instruction": "Only rectangular cream tag upper right with single tree relief."
+    },
+    {
+      "product": "Paketetiketter – 6-pack",
+      "file": "paketetiketter-snoflinga.png",
+      "instruction": "Only cream rectangular tag front left with snowflake relief."
+    },
+    {
+      "product": "Paketetiketter – 6-pack",
+      "file": "paketetiketter-stjarna-01.png",
+      "instruction": "Only cream star-shaped tag left of center."
+    },
+    {
+      "product": "Paketetiketter – 6-pack",
+      "file": "paketetiketter-stjarna-02.png",
+      "instruction": "Only cream star-shaped tag right of center."
+    },
+    {
+      "product": "Paketetiketter – 6-pack",
+      "file": "paketetiketter-god-jul-02.png",
+      "instruction": "Only rectangular cream tag front right with words God jul."
+    },
+    {
+      "product": "Presentask med gömma",
+      "file": "presentask-gomma-ask.png",
+      "instruction": "Only empty green round box body at left. No lid."
+    },
+    {
+      "product": "Presentask med gömma",
+      "file": "presentask-gomma-lock.png",
+      "instruction": "Only green rounded lid with integral red sculpted bow at right. No box body."
+    },
+    {
+      "product": "Julpyssel – måla själv",
+      "file": "julpyssel-gran-stor.png",
+      "instruction": "Only taller cream pleated tree at back left."
+    },
+    {
+      "product": "Julpyssel – måla själv",
+      "file": "julpyssel-gran-liten.png",
+      "instruction": "Only smaller cream pleated tree at back center."
+    },
+    {
+      "product": "Julpyssel – måla själv",
+      "file": "julpyssel-stjarna-01.png",
+      "instruction": "Only cream star left foreground."
+    },
+    {
+      "product": "Julpyssel – måla själv",
+      "file": "julpyssel-stjarna-02.png",
+      "instruction": "Only cream star front center."
+    },
+    {
+      "product": "Julpyssel – måla själv",
+      "file": "julpyssel-hjarta-01.png",
+      "instruction": "Only cream ribbed heart front center-right."
+    },
+    {
+      "product": "Julpyssel – måla själv",
+      "file": "julpyssel-hjarta-02.png",
+      "instruction": "Only cream ribbed heart rear right."
+    },
+    {
+      "product": "Vas Nexo",
+      "file": "vas-nexo.png",
+      "instruction": "ONLY cream sculptural curved outer vase frame, completely empty. Remove the clear glass cylinder insert as a separate object, and remove all flowers. All openings in the frame fully transparent."
+    },
+    {
+      "product": "Portalpumpan",
+      "file": "portalpumpan.png",
+      "instruction": "Only orange portal pumpkin with integral interior staircase and arches, no candles or flames."
+    },
+    {
+      "product": "Spökduon – 2-pack",
+      "file": "spokduon-boo.png",
+      "instruction": "Only tall cream ghost left with integral sign Boo; exact text."
+    },
+    {
+      "product": "Spökduon – 2-pack",
+      "file": "spokduon-bus.png",
+      "instruction": "Only shorter cream ghost right with integral sign Bus; exact text."
+    },
+    {
+      "product": "Korpens vas",
+      "file": "korpens-vas.png",
+      "instruction": "Only empty black feathered vase, no flowers or stems."
+    },
+    {
+      "product": "Månskugga",
+      "file": "manskugga-mane.png",
+      "instruction": "Only purple faceted crescent moon; remove chains cords hooks and all bats."
+    },
+    {
+      "product": "Månskugga",
+      "file": "manskugga-fladdermus.png",
+      "instruction": "Only single black faceted bat center within moon. Remove chains and other parts."
+    },
+    {
+      "product": "Häxans gömma",
+      "file": "haxans-gomma.png",
+      "instruction": "Only black witch hat shaped organizer, empty; remove all jewelry."
+    },
+    {
+      "product": "Gravbiblioteket – bokstöd",
+      "file": "gravbiblioteket-vanster.png",
+      "instruction": "Only black gothic left bookend, remove books and right bookend."
+    },
+    {
+      "product": "Gravbiblioteket – bokstöd",
+      "file": "gravbiblioteket-hoger.png",
+      "instruction": "Only black gothic right bookend, remove books and left bookend."
+    },
+    {
+      "product": "Skuggkatten",
+      "file": "skuggkatten.png",
+      "instruction": "Only black faceted cat, remove gold rings."
+    },
+    {
+      "product": "Pumpatornet",
+      "file": "pumpatornet-orange.png",
+      "instruction": "Only top orange faceted pumpkin including black stem, separate from stack."
+    },
+    {
+      "product": "Pumpatornet",
+      "file": "pumpatornet-vit.png",
+      "instruction": "Only middle cream faceted pumpkin, separate from stack."
+    },
+    {
+      "product": "Pumpatornet",
+      "file": "pumpatornet-lila.png",
+      "instruction": "Only bottom purple faceted pumpkin, separate from stack."
+    },
+    {
+      "product": "Spökporten",
+      "file": "spokporten.png",
+      "instruction": "Only black gothic ghost portal book nook with integral tiny white ghost, steps and tree scene. Remove books, candle and flame."
+    },
+    {
+      "product": "Midnattsgömman",
+      "file": "midnattsgomman-ask.png",
+      "instruction": "Only empty purple coffin-shaped box body; remove lid and jewelry."
+    },
+    {
+      "product": "Midnattsgömman",
+      "file": "midnattsgomman-lock.png",
+      "instruction": "Only purple coffin-shaped lid with radial faceted motif; remove box body and jewelry."
+    },
+    {
+      "product": "Runolyktan",
+      "file": "runolyktan.png",
+      "instruction": "Only cream gothic lantern, empty, remove candle and flame."
+    },
+    {
+      "product": "Ritualbrickan",
+      "file": "ritualbrickan.png",
+      "instruction": "Only black crescent compartment tray and integral raised star; remove gold rings and key."
+    },
+    {
+      "product": "Ribbad pumpa",
+      "file": "ribbad-pumpa.png",
+      "instruction": "Only orange ribbed pumpkin and black stem."
+    },
+    {
+      "product": "Spöket Boo",
+      "file": "spoket-boo.png",
+      "instruction": "Only cream ghost figurine."
+    },
+    {
+      "product": "Fladdermus – 3-pack",
+      "file": "fladdermus-3-pack-stor.png",
+      "instruction": "Only largest black faceted bat top."
+    },
+    {
+      "product": "Fladdermus – 3-pack",
+      "file": "fladdermus-3-pack-mellan.png",
+      "instruction": "Only medium black faceted bat middle."
+    },
+    {
+      "product": "Fladdermus – 3-pack",
+      "file": "fladdermus-3-pack-liten.png",
+      "instruction": "Only smallest black faceted bat bottom."
+    },
+    {
+      "product": "Dödskallekruka",
+      "file": "dodskallekruka.png",
+      "instruction": "Only the single named product, unchanged."
+    },
+    {
+      "product": "Spindelnät – 4-pack",
+      "file": "spindelnat-4-pack-underlag.png",
+      "instruction": "Only one complete black hexagonal spiderweb coaster, choose unobscured front left coaster."
+    },
+    {
+      "product": "Vas Nexo",
+      "file": "vas-nexo-glasinsats.png",
+      "instruction": "ONLY clear cylindrical glass insert from center of vase, empty. Remove cream sculptural outer vase frame completely. No flowers. Preserve the transparent clear glass rim walls and base."
+    }
+  ]
+}

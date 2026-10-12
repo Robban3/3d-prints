@@ -1,4 +1,6 @@
 import type {
+  Appearance,
+  ThemeId,
   AnyOrder,
   CustomOrder,
   CustomerDetails,
@@ -168,7 +170,7 @@ export function uploadModelFile(
   return { promise, abort: () => request.abort() };
 }
 
-export function fetchAdminStatus(): Promise<{ enabled: boolean }> {
+export function fetchAdminStatus(): Promise<{ enabled: boolean; passwordConfigured: boolean; email: string; authenticated: boolean; recoveryByEmail: boolean }> {
   return request('/admin/status');
 }
 
@@ -195,6 +197,24 @@ export function setOrderStatus(
 
 function adminInit(token: string, init: RequestInit = {}): RequestInit {
   return { ...init, headers: { ...init.headers, Authorization: `Bearer ${token}` } };
+}
+
+export function adminLogin(email: string, password: string) { return request('/admin/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }); }
+export function adminSetup(key: string, password: string) { return request('/admin/auth/setup', { method: 'POST', headers: { Authorization: `Bearer ${key}` }, body: JSON.stringify({ password }) }); }
+export function adminLogout() { return request('/admin/auth/logout', { method: 'POST', body: '{}' }); }
+export function adminForgot(email: string) { return request('/admin/auth/forgot', { method: 'POST', body: JSON.stringify({ email }) }); }
+export function adminReset(token: string, password: string) { return request('/admin/auth/reset', { method: 'POST', body: JSON.stringify({ token, password }) }); }
+
+export function fetchAppearance(): Promise<{ appearance: Appearance }> {
+  return request('/appearance');
+}
+
+export function fetchAdminAppearance(token: string): Promise<{ appearance: Appearance }> {
+  return request('/admin/appearance', adminInit(token));
+}
+
+export function saveAppearance(token: string, theme: ThemeId): Promise<{ appearance: Appearance }> {
+  return request('/admin/appearance', adminInit(token, { method: 'PUT', body: JSON.stringify({ theme }) }));
 }
 
 export function fetchAdminProducts(token: string): Promise<{ products: Product[]; total: number }> {

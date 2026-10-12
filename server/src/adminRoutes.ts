@@ -1,11 +1,13 @@
 import { Router } from 'express';
+import { isThemeId, readAppearance, saveAppearance } from './appearance.ts';
 import type { RequestHandler } from 'express';
 import { timingSafeEqual } from 'node:crypto';
 import { pathParam } from './http.ts';
 import { rateLimit } from './rateLimit.ts';
 import { findOrder, listOrders, updateOrder } from './store.ts';
 import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from './lifecycle.ts';
-import { sendMail, statusUpdate } from './mailer.ts';
+import { sendMail, statusUpdate, mailIsConfigured } from './mailer.ts';
+import { activateAccount, adminEmail, createReset, endSession, readAccount, resetPassword, startSession, validPassword, validSession, verifyPassword } from './adminAuth.ts';
 import {
   CatalogError,
   allCategories,
@@ -62,26 +64,79 @@ const adminLimit = rateLimit({
   message: 'För många försök. Vänta en stund.',
 });
 
-const requireAdmin: RequestHandler = (req, res, next) => {
+const requireAdmin: RequestHandler = async (req, res, next) => {
+  if (req.get('authorization') === 'Bearer session' && validSession(req)) { next(); return; }
   const expected = adminToken();
-  if (!expected) {
+  if (!expected && !await readAccount()) {
     res.status(503).json({ error: 'Adminläget är inte aktiverat på den här servern.' });
     return;
   }
   const header = req.get('authorization') ?? '';
   const provided = header.startsWith('Bearer ') ? header.slice(7) : '';
-  if (!provided || !matches(provided, expected)) {
-    res.status(401).json({ error: 'Fel eller saknad adminnyckel.' });
+  if (!expected || !provided || !matches(provided, expected)) {
+    adminLimit(req, res, () => {
+      res.status(401).json({ error: 'Fel eller saknad adminnyckel.' });
+    });
     return;
   }
   next();
 };
 
-admin.get('/admin/status', (_req, res) => {
-  res.json({ enabled: adminToken() !== undefined });
+admin.get('/admin/status', async (req, res) => {
+  const account = await readAccount();
+  res.set('Cache-Control', 'no-store').json({ enabled: !!account || adminToken() !== undefined, passwordConfigured: !!account, email: account?.email ?? adminEmail(), authenticated: validSession(req), recoveryByEmail: mailIsConfigured() });
 });
 
-admin.get('/admin/orders', adminLimit, requireAdmin, async (_req, res) => {
+const loginLimit = rateLimit({ name: 'admin-login', windowMs: 15 * 60 * 1000, max: 10, message: 'För många inloggningsförsök. Försök igen om 15 minuter.' });
+const recoveryLimit = rateLimit({ name: 'admin-recovery', windowMs: 15 * 60 * 1000, max: 5, message: 'För många försök. Försök igen om 15 minuter.' });
+admin.use('/admin/auth', (req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  const origin = req.get('origin');
+  const allowed = process.env.PUBLIC_URL ?? (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5173');
+  if (origin && origin !== `${req.protocol}://${req.get('host')}` && origin !== allowed) { res.status(403).json({ error: 'Ogiltigt ursprung.' }); return; }
+  next();
+});
+admin.post('/admin/auth/setup', loginLimit, requireAdmin, async (req, res) => {
+  if (!validPassword(req.body?.password)) { res.status(400).json({ error: 'Välj ett lösenord med 12–128 tecken.' }); return; }
+  if (!await activateAccount(req.body.password)) { res.status(409).json({ error: 'Kontot är redan aktiverat. Logga in med ditt lösenord.' }); return; }
+  startSession(res); res.status(201).json({ email: adminEmail() });
+});
+admin.post('/admin/auth/login', loginLimit, async (req, res) => {
+  if (!await verifyPassword(req.body?.email, req.body?.password)) { res.status(401).json({ error: 'Fel e-postadress eller lösenord.' }); return; }
+  startSession(res); res.json({ success: true });
+});
+admin.post('/admin/auth/logout', (_req, res) => { endSession(_req, res); res.json({ success: true }); });
+admin.post('/admin/auth/forgot', recoveryLimit, async (req, res) => {
+  if (process.env.NODE_ENV === 'production' && !process.env.PUBLIC_URL) { res.status(503).json({ error: 'Återställning är inte konfigurerad. Kontakta administratören.' }); return; }
+  const reset = await createReset(req.body?.email);
+  if (reset) {
+    const base = process.env.PUBLIC_URL ?? 'http://localhost:5173';
+    await sendMail({ to: reset.email, subject: 'Återställ ditt adminlösenord – Formlabb', text: `Välj ett nytt lösenord: ${base}/verkstad#aterstall=${reset.token}\n\nLänken gäller i 30 minuter och kan användas en gång. Om du inte begärde detta kan du ignorera meddelandet.` });
+  }
+  res.json({ success: true });
+});
+admin.post('/admin/auth/reset', recoveryLimit, async (req, res) => {
+  if (!validPassword(req.body?.password)) { res.status(400).json({ error: 'Välj ett lösenord med 12–128 tecken.' }); return; }
+  if (!await resetPassword(req.body?.token, req.body.password)) { res.status(400).json({ error: 'Länken är ogiltig eller har gått ut. Begär en ny återställningslänk.' }); return; }
+  startSession(res); res.json({ success: true });
+});
+
+admin.get('/admin/appearance', requireAdmin, async (_req, res) => {
+  res.set('Cache-Control', 'no-store').json({ appearance: await readAppearance() });
+});
+
+admin.put('/admin/appearance', requireAdmin, async (req, res) => {
+  const theme: unknown = req.body?.theme;
+  if (!isThemeId(theme)) {
+    res.status(400).json({ error: 'Välj ett av de fyra tillgängliga temana.' });
+    return;
+  }
+  const appearance = await saveAppearance(theme);
+  await record({ action: 'ändrad', entity: 'tema', entityId: theme, summary: `Butikens tema ändrades till ${theme}.`, changed: ['theme'] });
+  res.json({ appearance });
+});
+
+admin.get('/admin/orders', requireAdmin, async (_req, res) => {
   const orders = await listOrders();
   res.json({
     orders: orders.map((order) => ({ ...order, next: nextStatuses(order.status) })),
@@ -89,7 +144,7 @@ admin.get('/admin/orders', adminLimit, requireAdmin, async (_req, res) => {
   });
 });
 
-admin.patch('/admin/orders/:id/status', adminLimit, requireAdmin, async (req, res) => {
+admin.patch('/admin/orders/:id/status', requireAdmin, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const id = pathParam(req.params.id);
   const target = body.status;
@@ -175,12 +230,12 @@ async function withLiveStock() {
   return products.map((product) => ({ ...product, stock: levels.get(product.id) ?? 0 }));
 }
 
-admin.get('/admin/products', adminLimit, requireAdmin, async (_req, res) => {
+admin.get('/admin/products', requireAdmin, async (_req, res) => {
   const products = await withLiveStock();
   res.json({ products, total: products.length });
 });
 
-admin.post('/admin/products', adminLimit, requireAdmin, async (req, res) => {
+admin.post('/admin/products', requireAdmin, async (req, res) => {
   const input = parseProductInput(req.body, await inputOptions());
   const product = await createProduct(input);
   // Lagersaldot är föränderligt och sätts i sin egen lagring.
@@ -194,7 +249,7 @@ admin.post('/admin/products', adminLimit, requireAdmin, async (req, res) => {
   res.status(201).json({ product });
 });
 
-admin.patch('/admin/products/:id', adminLimit, requireAdmin, async (req, res) => {
+admin.patch('/admin/products/:id', requireAdmin, async (req, res) => {
   const id = pathParam(req.params.id);
   const existing = await findProduct(id);
   if (!existing) {
@@ -205,7 +260,8 @@ admin.patch('/admin/products/:id', adminLimit, requireAdmin, async (req, res) =>
   // Formuläret skickar hela produkten tillbaka, så den valideras i sin helhet.
   const input = parseProductInput({ ...existing, ...(req.body as object) }, await inputOptions());
   const product = await updateProduct(id, input);
-  await setStock(id, input.stock);
+  // Bild-/kategoriuppdateringar ska inte återställa ett lager som ändrats av köp.
+  if (Object.hasOwn(req.body ?? {}, 'stock')) await setStock(id, input.stock);
   await record({
     action: 'ändrad',
     entity: 'produkt',
@@ -219,7 +275,7 @@ admin.patch('/admin/products/:id', adminLimit, requireAdmin, async (req, res) =>
   res.json({ product });
 });
 
-admin.delete('/admin/products/:id', adminLimit, requireAdmin, async (req, res) => {
+admin.delete('/admin/products/:id', requireAdmin, async (req, res) => {
   const id = pathParam(req.params.id);
   const product = await deleteProduct(id);
   await removeStock(id);
@@ -233,7 +289,7 @@ admin.delete('/admin/products/:id', adminLimit, requireAdmin, async (req, res) =
   res.json({ product });
 });
 
-admin.get('/admin/categories', adminLimit, requireAdmin, async (_req, res) => {
+admin.get('/admin/categories', requireAdmin, async (_req, res) => {
   const [categories, products] = await Promise.all([allCategories(), allProducts()]);
   res.json({
     categories: categories.map((category) => ({
@@ -243,7 +299,7 @@ admin.get('/admin/categories', adminLimit, requireAdmin, async (_req, res) => {
   });
 });
 
-admin.post('/admin/categories', adminLimit, requireAdmin, async (req, res) => {
+admin.post('/admin/categories', requireAdmin, async (req, res) => {
   const category = await createCategory(parseCategoryInput(req.body));
   await record({
     action: 'skapad',
@@ -254,14 +310,14 @@ admin.post('/admin/categories', adminLimit, requireAdmin, async (req, res) => {
   res.status(201).json({ category });
 });
 
-admin.patch('/admin/categories/:id', adminLimit, requireAdmin, async (req, res) => {
+admin.patch('/admin/categories/:id', requireAdmin, async (req, res) => {
   const id = pathParam(req.params.id);
   const category = await updateCategory(id, parseCategoryInput(req.body, id));
   await record({ action: 'ändrad', entity: 'kategori', entityId: id, summary: category.name });
   res.json({ category });
 });
 
-admin.delete('/admin/categories/:id', adminLimit, requireAdmin, async (req, res) => {
+admin.delete('/admin/categories/:id', requireAdmin, async (req, res) => {
   const category = await deleteCategory(pathParam(req.params.id));
   await record({
     action: 'borttagen',
@@ -274,7 +330,7 @@ admin.delete('/admin/categories/:id', adminLimit, requireAdmin, async (req, res)
 
 /* ---------- Material och kvalitetsnivåer ---------- */
 
-admin.get('/admin/materials', adminLimit, requireAdmin, async (_req, res) => {
+admin.get('/admin/materials', requireAdmin, async (_req, res) => {
   const [materials, qualities, products] = await Promise.all([
     allMaterials(),
     allQualities(),
@@ -289,7 +345,7 @@ admin.get('/admin/materials', adminLimit, requireAdmin, async (_req, res) => {
   });
 });
 
-admin.post('/admin/materials', adminLimit, requireAdmin, async (req, res) => {
+admin.post('/admin/materials', requireAdmin, async (req, res) => {
   const material = await saveMaterial(parseMaterialInput(req.body));
   await record({
     action: 'skapad',
@@ -300,7 +356,7 @@ admin.post('/admin/materials', adminLimit, requireAdmin, async (req, res) => {
   res.status(201).json({ material });
 });
 
-admin.patch('/admin/materials/:id', adminLimit, requireAdmin, async (req, res) => {
+admin.patch('/admin/materials/:id', requireAdmin, async (req, res) => {
   const id = pathParam(req.params.id);
   const material = await saveMaterial(parseMaterialInput(req.body, id));
   await record({
@@ -312,7 +368,7 @@ admin.patch('/admin/materials/:id', adminLimit, requireAdmin, async (req, res) =
   res.json({ material });
 });
 
-admin.delete('/admin/materials/:id', adminLimit, requireAdmin, async (req, res) => {
+admin.delete('/admin/materials/:id', requireAdmin, async (req, res) => {
   const material = await deleteMaterial(pathParam(req.params.id));
   await record({
     action: 'borttagen',
@@ -323,12 +379,12 @@ admin.delete('/admin/materials/:id', adminLimit, requireAdmin, async (req, res) 
   res.json({ material });
 });
 
-admin.post('/admin/qualities', adminLimit, requireAdmin, async (req, res) => {
+admin.post('/admin/qualities', requireAdmin, async (req, res) => {
   const quality = await saveQuality(parseQualityInput(req.body));
   res.status(201).json({ quality });
 });
 
-admin.patch('/admin/qualities/:id', adminLimit, requireAdmin, async (req, res) => {
+admin.patch('/admin/qualities/:id', requireAdmin, async (req, res) => {
   const id = pathParam(req.params.id);
   const quality = await saveQuality(parseQualityInput(req.body, id));
   await record({
@@ -340,14 +396,14 @@ admin.patch('/admin/qualities/:id', adminLimit, requireAdmin, async (req, res) =
   res.json({ quality });
 });
 
-admin.delete('/admin/qualities/:id', adminLimit, requireAdmin, async (req, res) => {
+admin.delete('/admin/qualities/:id', requireAdmin, async (req, res) => {
   const quality = await deleteQuality(pathParam(req.params.id));
   res.json({ quality });
 });
 
 /* ---------- Export, import och historik ---------- */
 
-admin.get('/admin/catalog/export', adminLimit, requireAdmin, async (_req, res) => {
+admin.get('/admin/catalog/export', requireAdmin, async (_req, res) => {
   const [products, categories, materials, qualities] = await Promise.all([
     allProducts(),
     allCategories(),
@@ -364,7 +420,7 @@ admin.get('/admin/catalog/export', adminLimit, requireAdmin, async (_req, res) =
  * går att se vad som skulle hända innan något skrivs. Är någon rad felaktig
  * skrivs ingenting alls – halva kataloger är värre än inga.
  */
-admin.post('/admin/catalog/import', adminLimit, requireAdmin, async (req, res) => {
+admin.post('/admin/catalog/import', requireAdmin, async (req, res) => {
   const body = (req.body ?? {}) as { apply?: unknown; catalog?: unknown };
   const existing = await allProducts();
   const plan = planImport(body.catalog, existing, await inputOptions());
@@ -402,7 +458,7 @@ admin.post('/admin/catalog/import', adminLimit, requireAdmin, async (req, res) =
   res.json({ applied: true, rows: plan.rows, created, updated, ok: plan.ok, failed: 0 });
 });
 
-admin.get('/admin/history', adminLimit, requireAdmin, async (req, res) => {
+admin.get('/admin/history', requireAdmin, async (req, res) => {
   const limit = Math.min(200, Math.max(1, Number(req.query.limit ?? 100) || 100));
   res.json({ entries: await history(limit) });
 });

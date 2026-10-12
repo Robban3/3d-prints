@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile as readDiskFile } from 'node:fs/promises';
+import { readFile, writeFile } from './stateFiles.ts';
 import { dirname, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { categories as seedCategories, products as seedProducts } from './data/products.ts';
@@ -52,16 +53,19 @@ async function load(): Promise<CatalogFile> {
       materials: Array.isArray(parsed.materials) ? parsed.materials : fallback.materials,
       qualities: Array.isArray(parsed.qualities) ? parsed.qualities : fallback.qualities,
     };
-  } catch {
-    cache = seed();
+  } catch (error) {
+    if (process.env.STATE_BUCKET && (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    cache = process.env.CATALOG_SEED
+      ? JSON.parse(await readDiskFile(process.env.CATALOG_SEED, 'utf8')) as CatalogFile
+      : seed();
   }
   return cache;
 }
 
 async function persist(data: CatalogFile): Promise<void> {
-  cache = data;
   await mkdir(dirname(CATALOG_FILE()), { recursive: true });
   await writeFile(CATALOG_FILE(), JSON.stringify(data, null, 2), 'utf8');
+  cache = data;
 }
 
 export class CatalogError extends Error {

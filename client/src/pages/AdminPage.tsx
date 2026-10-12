@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router';
 import { PageHeader } from '../components/PageHeader';
 import { OrderManager } from '../components/admin/OrderManager';
 import { ProductManager } from '../components/admin/ProductManager';
@@ -6,13 +7,15 @@ import { CategoryManager } from '../components/admin/CategoryManager';
 import { MaterialManager } from '../components/admin/MaterialManager';
 import { CatalogTransfer } from '../components/admin/CatalogTransfer';
 import { HistoryView } from '../components/admin/HistoryView';
-import { ApiError, fetchAdminCategories, fetchAdminMaterials, fetchAdminStatus } from '../lib/api';
+import { ThemeManager } from '../components/admin/ThemeManager';
+import { AdminSignIn } from '../components/admin/AdminSignIn';
+import { ApiError, adminLogout, fetchAdminCategories, fetchAdminMaterials, fetchAdminStatus } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import type { Category, Material } from '../types';
 
 const STORAGE_KEY = 'formlabb.admin.token';
 
-type Tab = 'ordrar' | 'produkter' | 'kategorier' | 'material' | 'import' | 'historik';
+type Tab = 'ordrar' | 'produkter' | 'kategorier' | 'material' | 'import' | 'historik' | 'teman';
 
 const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'ordrar', label: 'Ordrar' },
@@ -21,14 +24,16 @@ const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'material', label: 'Material' },
   { id: 'import', label: 'Import/export' },
   { id: 'historik', label: 'Historik' },
+  { id: 'teman', label: 'Design & teman' },
 ];
 
 /**
- * Verkstadens panel: ordrar, sortiment och kategorier. Nyckeln ligger i
- * sessionStorage, så den försvinner när fliken stängs.
+ * Verkstadens panel använder en HttpOnly-sessionscookie. En äldre nyckel
+ * kan återanvändas för första kontoaktiveringen och tas sedan bort.
  */
 export function AdminPage() {
-  const status = useAsync(() => fetchAdminStatus(), []);
+  const [authRevision, setAuthRevision] = useState(0);
+  const status = useAsync(() => fetchAdminStatus(), [authRevision]);
   const [token, setToken] = useState(() => {
     try {
       return window.sessionStorage.getItem(STORAGE_KEY) ?? '';
@@ -36,9 +41,14 @@ export function AdminPage() {
       return '';
     }
   });
-  const [input, setInput] = useState('');
   const [signInError, setSignInError] = useState<string | null>(null);
-  const [tab, setTab] = useState<Tab>('ordrar');
+  const [params, setParams] = useSearchParams();
+  const tab: Tab = tabs.find((entry) => entry.id === params.get('vy'))?.id ?? 'ordrar';
+  function setTab(next: Tab) {
+    const updated = new URLSearchParams(params);
+    updated.set('vy', next);
+    setParams(updated, { replace: true });
+  }
   const [categories, setCategories] = useState<Category[]>([]);
   const [materials, setMaterials] = useState<Material[]>([]);
 
@@ -65,29 +75,29 @@ export function AdminPage() {
     void loadCategories();
   }, [loadCategories]);
 
-  function signOut() {
+  async function signOut() {
+    try { await adminLogout(); } catch { setSignInError('Kunde inte logga ut. Kontrollera anslutningen och försök igen.'); return; }
     try {
       window.sessionStorage.removeItem(STORAGE_KEY);
     } catch {
       // Nyckeln försvinner ändå vid omladdning.
     }
     setToken('');
+    setAuthRevision(value => value + 1);
     setCategories([]);
     setMaterials([]);
   }
 
-  function signIn(event: React.FormEvent) {
-    event.preventDefault();
-    const key = input.trim();
-    if (!key) return;
-    try {
-      window.sessionStorage.setItem(STORAGE_KEY, key);
-    } catch {
-      // Utan lagring lever nyckeln i minnet under sidans livstid.
-    }
-    setToken(key);
-    setInput('');
+  function signedIn() {
+    try { window.sessionStorage.removeItem(STORAGE_KEY); } catch { /* Inloggningen använder cookie. */ }
+    setToken('session');
+    setSignInError(null);
+    setAuthRevision(value => value + 1);
   }
+
+  useEffect(() => {
+    if (status.data?.authenticated) setToken('session');
+  }, [status.data]);
 
   if (status.data && !status.data.enabled) {
     return (
@@ -111,46 +121,10 @@ export function AdminPage() {
     );
   }
 
-  if (!token) {
-    return (
-      <>
-        <PageHeader
-          eyebrow="Verkstaden"
-          title="Logga in"
-          text="Ange adminnyckeln för att se ordrar och sortiment."
-        />
-        <section className="section">
-          <div className="container receipt">
-            <form className="panel" onSubmit={signIn}>
-              <div className="field">
-                <label htmlFor="adminToken">Adminnyckel</label>
-                <input
-                  id="adminToken"
-                  className="input"
-                  type="password"
-                  autoComplete="off"
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                />
-              </div>
-              {signInError && (
-                <p className="notice notice-error" style={{ marginTop: 14 }}>
-                  {signInError}
-                </p>
-              )}
-              <button
-                type="submit"
-                className="btn"
-                style={{ marginTop: 16 }}
-                disabled={!input.trim()}
-              >
-                Logga in
-              </button>
-            </form>
-          </div>
-        </section>
-      </>
-    );
+  if (status.loading && !status.data) return <section className="section container"><p role="status">Hämtar inloggning…</p></section>;
+  if (status.error && !status.data) return <section className="section container"><p className="notice notice-error" role="alert">{status.error}</p></section>;
+  if (status.data && (!status.data.passwordConfigured || !token || window.location.hash.includes('aterstall='))) {
+    return <AdminSignIn email={status.data.email} setup={!status.data.passwordConfigured} bootstrapKey={token} recoveryByEmail={status.data.recoveryByEmail} onSignedIn={signedIn} />;
   }
 
   return (
@@ -160,28 +134,34 @@ export function AdminPage() {
         title="Adminpanel"
         text="Hantera ordrar, sortiment och kategorier."
         aside={
-          <button type="button" className="btn btn-ghost" onClick={signOut}>
+          <button type="button" className="btn btn-ghost" onClick={() => void signOut()}>
             Logga ut
           </button>
         }
       />
 
-      <section className="section">
-        <div className="container">
-          <div className="admin-tabs" role="tablist" aria-label="Adminvyer">
+      {signInError && <p className="container notice notice-error" role="alert">{signInError}</p>}
+      <section className="section admin-section">
+        <div className="container admin-layout">
+          <aside className="admin-sidebar" aria-label="Adminmeny">
+            <span className="admin-sidebar-title">Verkstaden</span>
+            <nav className="admin-sidebar-nav" aria-label="Adminvyer">
             {tabs.map((entry) => (
               <button
                 key={entry.id}
                 type="button"
-                role="tab"
-                aria-selected={tab === entry.id}
-                className="admin-tab"
+                aria-current={tab === entry.id ? 'page' : undefined}
+                className={`admin-sidebar-link${tab === entry.id ? ' is-active' : ''}`}
                 onClick={() => setTab(entry.id)}
               >
                 {entry.label}
               </button>
             ))}
-          </div>
+            </nav>
+            <Link className="admin-sidebar-shop" to="/">← Till webbutiken</Link>
+          </aside>
+
+          <div className="admin-content">
 
           {tab === 'ordrar' && <OrderManager token={token} onUnauthorized={signOut} />}
           {tab === 'produkter' && (
@@ -202,6 +182,8 @@ export function AdminPage() {
             <CatalogTransfer token={token} onImported={() => void loadCategories()} />
           )}
           {tab === 'historik' && <HistoryView token={token} />}
+          {tab === 'teman' && <ThemeManager token={token} onUnauthorized={signOut} />}
+          </div>
         </div>
       </section>
     </>

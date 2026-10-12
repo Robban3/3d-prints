@@ -17,12 +17,16 @@
     "test": "npm run test --workspace server && npm run test --workspace client",
     "typecheck": "npm run typecheck --workspace server && npm run typecheck --workspace client",
     "test:server": "npm run test --workspace server",
-    "test:client": "npm run test --workspace client"
+    "test:client": "npm run test --workspace client",
+    "deploy:cloudflare": "wrangler deploy",
+    "export:deployment-catalog": "node scripts/export-deployment-catalog.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
-    "concurrently": "^10.0.5"
+    "@cloudflare/workers-types": "^5.20261012.1",
+    "concurrently": "^10.0.5",
+    "wrangler": "^4.149.0"
   }
 }

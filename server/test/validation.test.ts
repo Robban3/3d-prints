@@ -7,6 +7,7 @@ import {
   parseQuoteRequest,
 } from '../src/validation.ts';
 import { products } from '../src/data/products.ts';
+import { findProduct } from '../src/catalog.ts';
 
 const validCustomer = {
   name: 'Anna Andersson',
@@ -43,6 +44,7 @@ describe('parseOrderLines', () => {
   const product = products[0]!;
 
   it('hämtar priset från katalogen och ignorerar klientens pris', async () => {
+    const current = (await findProduct(product.id))!;
     const lines = await parseOrderLines([
       {
         productId: product.id,
@@ -52,11 +54,12 @@ describe('parseOrderLines', () => {
       },
     ]);
     assert.equal(lines.length, 1);
-    assert.equal(lines[0]!.unitPrice, product.price + product.sizes![0]!.priceDelta);
+    assert.equal(lines[0]!.unitPrice, current.price + current.sizes![0]!.priceDelta);
   });
 
   it('lägger till storlekstillägg', async () => {
-    const large = product.sizes!.at(-1)!;
+    const current = (await findProduct(product.id))!;
+    const large = current.sizes!.at(-1)!;
     const lines = await parseOrderLines([
       {
         productId: product.id,
@@ -65,7 +68,7 @@ describe('parseOrderLines', () => {
         size: large.id,
       },
     ]);
-    assert.equal(lines[0]!.unitPrice, product.price + large.priceDelta);
+    assert.equal(lines[0]!.unitPrice, current.price + large.priceDelta);
   });
 
   it('avvisar tom varukorg', async () => {

@@ -3,11 +3,12 @@ import { ProductArt } from '../ProductArt';
 import { ApiError, uploadProductImage } from '../../lib/api';
 import { TextAreaField, TextField } from '../Field';
 import { formatPrice } from '../../lib/format';
-import type { ArtShape, ArtTone, Category, Material, Product, ProductDraft } from '../../types';
+import type { ArtShape, ArtTone, Category, Material, Product, ProductDraft, SizeOption } from '../../types';
 
 const SHAPES: Array<{ id: ArtShape; name: string }> = [
   { id: 'planter', name: 'Kruka' },
   { id: 'spiralVase', name: 'Vas' },
+  { id: 'nexoVase', name: 'Skulptural bandvas' },
   { id: 'moonLamp', name: 'Lampa' },
   { id: 'headphoneStand', name: 'Hörlursställ' },
   { id: 'organizer', name: 'Organiserare' },
@@ -160,7 +161,19 @@ export function ProductForm({
     }
   }
 
-  function setSize(index: number, patch: Partial<{ id: string; name: string; priceDelta: number }>) {
+  async function pickVariantImage(file: File | undefined, color: string, size: string) {
+    if (!file) return;
+    setUploading(true); setImageError('');
+    try {
+      const image = await uploadProductImage(file).promise;
+      const variants = (draft.variantImages ?? []).filter(variant => !(variant.color === color && (variant.size ?? '') === size));
+      onChange({ variantImages: [...variants, { color, ...(size ? { size } : {}), image }] });
+    } catch (caught) {
+      setImageError(caught instanceof ApiError ? caught.message : 'Variantbilden kunde inte laddas upp.');
+    } finally { setUploading(false); }
+  }
+
+  function setSize(index: number, patch: Partial<SizeOption>) {
     const next = sizes.map((size, i) => (i === index ? { ...size, ...patch } : size));
     onChange({ sizes: next });
   }
@@ -170,6 +183,7 @@ export function ProductForm({
       className="panel"
       onSubmit={(event) => {
         event.preventDefault();
+        if (uploading || saving) return;
         onSave();
       }}
     >
@@ -271,7 +285,7 @@ export function ProductForm({
             values={draft.colors}
             placeholder="t.ex. Matt svart"
             error={errors.colors}
-            onChange={(colors) => onChange({ colors })}
+            onChange={(colors) => onChange({ colors, variantImages: draft.variantImages?.filter(variant => colors.includes(variant.color)) })}
           />
           <ListEditor
             label="Höjdpunkter"
@@ -282,7 +296,24 @@ export function ProductForm({
         </div>
 
         <div className="stack">
-          <h3>Bild</h3>
+          <h3>Variantbilder</h3>
+          {imageError && <p className="error" role="alert">{imageError}</p>}
+          <p className="dim">Bilden följer kundens val av färg och storlek. Utan variantbild visas huvudbilden.</p>
+          {draft.colors.flatMap(color => (sizes.length ? sizes : [{ id: '', name: 'Standard' }]).map(size => {
+            const variant = draft.variantImages?.find(entry => entry.color === color && (entry.size ?? '') === size.id);
+            const label = `${color}${size.id ? ` – ${size.name}` : ''}`;
+            return <div key={JSON.stringify([color, size.id])} className="panel panel-tight stack">
+              <strong>{label}</strong>
+              {variant && <img src={variant.image.url} alt={label} style={{ width: 120, borderRadius: 8 }} />}
+              <label className="field">{variant ? 'Byt variantbild' : 'Ladda upp variantbild'}
+                <input type="file" accept=".jpg,.jpeg,.png,.webp,.avif" disabled={uploading || saving} onChange={event => { void pickVariantImage(event.target.files?.[0], color, size.id); event.target.value = ''; }} />
+              </label>
+              {variant && <button type="button" className="btn-quiet" onClick={() => onChange({ variantImages: draft.variantImages?.filter(entry => entry !== variant) })}>Ta bort variantbild</button>}
+            </div>;
+          }))}
+          {errors.variantImages && <p className="error">{errors.variantImages}</p>}
+          {Object.entries(errors).filter(([key]) => key.startsWith('variantImages.')).map(([key, message]) => <p key={key} className="error">{message}</p>)}
+          <h3>Huvudbild</h3>
           {draft.image ? (
             <div className="admin-image-preview">
               <img src={draft.image.url} alt="" />
@@ -327,7 +358,6 @@ export function ProductForm({
                   Utan foto ritas illustrationen nedan. JPG, PNG, WEBP eller AVIF, max 8 MB.
                 </span>
               </div>
-              {imageError && <span className="error">{imageError}</span>}
             </>
           )}
           <div className="grid-2">
@@ -372,6 +402,9 @@ export function ProductForm({
           </div>
 
           <h3 style={{ marginTop: 10 }}>Specifikation</h3>
+          <label className="checkbox"><input type="checkbox" checked={draft.dimensionsEstimated === true} onChange={event => onChange({ dimensionsEstimated: event.target.checked })} /><span>Preliminära designmått</span></label>
+          <TextField label="Förklaring till måtten" name="dimensionsNote" value={draft.dimensionsNote ?? ''} onChange={event => onChange({ dimensionsNote: event.target.value })} hint="Till exempel: mått per kula; upphängningsband ingår inte i måttet." />
+          {draft.specificationsPending && <p className="notice">Produktionsuppgifter saknas ännu. Fyll i mått, vikt och printtid när produkten är provprintad. Nollvärden visas som ”Fastställs inför produktion” i butiken.</p>}
           <div className="grid-3">
             <TextField
               label="Bredd (mm)"
@@ -434,6 +467,7 @@ export function ProductForm({
           </div>
 
           <h3 style={{ marginTop: 10 }}>Storlekar</h3>
+          <TextField label="Rubrik för produktval" name="optionLabel" value={draft.optionLabel ?? 'Storlek'} onChange={event => onChange({ optionLabel: event.target.value })} hint="Till exempel Storlek eller Utförande." />
           <p className="field-hint" style={{ marginTop: -6 }}>
             Lämna tomt om produkten bara finns i en storlek. Pristillägget läggs på grundpriset.
           </p>
@@ -458,10 +492,13 @@ export function ProductForm({
               <button
                 type="button"
                 className="btn-quiet"
-                onClick={() => onChange({ sizes: sizes.filter((_, i) => i !== index) })}
+                onClick={() => onChange({ sizes: sizes.filter((_, i) => i !== index), variantImages: draft.variantImages?.filter(variant => variant.size !== size.id) })}
               >
                 Ta bort
               </button>
+              <div className="grid-3" style={{ gridColumn: '1 / -1' }}>
+                {(['width', 'depth', 'height'] as const).map((axis, dimensionIndex) => <TextField key={axis} label={`${['Bredd', 'Djup', 'Höjd'][dimensionIndex]} för ${size.name || 'storleken'} (mm)`} name={`size-${index}-${axis}`} type="number" min={1} value={size.dimensions?.[axis] ?? ''} placeholder={String(draft.dimensions[axis])} onChange={event => setSize(index, { dimensions: { ...(size.dimensions ?? draft.dimensions), [axis]: Number(event.target.value) } })} />)}
+              </div>
             </div>
           ))}
           {Object.keys(errors)
@@ -507,7 +544,7 @@ export function ProductForm({
       </div>
 
       <div className="row" style={{ marginTop: 22 }}>
-        <button type="submit" className="btn btn-lg" disabled={saving}>
+        <button type="submit" className="btn btn-lg" disabled={saving || uploading}>
           {saving ? 'Sparar…' : 'Spara produkt'}
         </button>
         <button type="button" className="btn btn-ghost" onClick={onCancel} disabled={saving}>

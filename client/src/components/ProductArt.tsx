@@ -188,6 +188,17 @@ const shapes: Record<ArtShape, JSX.Element> = {
       <path d="M84 44h32l-3 18H87z" className="top" />
     </>
   ),
+  nexoVase: (
+    <>
+      <rect x="86" y="47" width="28" height="115" rx="5" fill="#ffffff" opacity=".28" stroke="var(--edge)" strokeWidth="2" />
+      <g fill="none" stroke="var(--edge)" strokeWidth="13" strokeLinecap="round">
+        <path d="M82 165C30 151 51 88 87 57C106 39 133 38 126 67C117 110 54 113 74 149" />
+        <path d="M116 165C166 155 148 116 123 99C98 82 101 48 119 47" />
+        <path d="M96 167C132 130 139 69 99 54" />
+      </g>
+      <ellipse cx="100" cy="168" rx="40" ry="8" fill="var(--body)" />
+    </>
+  ),
   gearFidget: (
     <>
       <path d={gearPath(100, 100, 64, 52, 10)} className="shell" />

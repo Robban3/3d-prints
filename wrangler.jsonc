@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "formlabb-shop",
+  "main": "cloudflare/worker.ts",
+  "compatibility_date": "2026-10-12",
+  "observability": { "enabled": true },
+  "containers": [{
+    "class_name": "Shop",
+    "scheduling_policy": "durable_object",
+    "images": { "shop": { "dockerfile": "./Dockerfile" } }
+  }],
+  "durable_objects": { "bindings": [{ "name": "SHOP", "class_name": "Shop" }] },
+  "exports": { "Shop": { "type": "durable-object", "storage": "sqlite" } }
+}

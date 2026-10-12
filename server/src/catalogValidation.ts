@@ -36,6 +36,7 @@ export const ART_SHAPES: ArtShape[] = [
   'phoneStand',
   'cableClip',
   'spiralVase',
+  'nexoVase',
   'gearFidget',
   'spiceShelf',
 ];
@@ -109,7 +110,14 @@ function parseSizes(value: unknown, errors: Record<string, string>): ProductVari
       return;
     }
     seen.add(id);
-    sizes.push({ id, name, priceDelta: Math.round(priceDelta) });
+    let dimensions: ProductVariantOption['dimensions'];
+    if (raw.dimensions !== undefined) {
+      const d = asRecord(raw.dimensions);
+      dimensions = { width: num(d.width), depth: num(d.depth), height: num(d.height) };
+      if (Object.values(dimensions).some(value => !(value > 0 && value <= 2000))) errors[`sizes.${index}.dimensions`] = 'Storlekens mått ska vara mellan 1 och 2000 mm.';
+      dimensions = { width: Math.round(dimensions.width), depth: Math.round(dimensions.depth), height: Math.round(dimensions.height) };
+    }
+    sizes.push({ id, name, priceDelta: Math.round(priceDelta), ...(dimensions ? { dimensions } : {}) });
   });
 
   return sizes.length > 0 ? sizes : undefined;
@@ -163,7 +171,8 @@ export function parseProductInput(
   const finish = text(raw.finish) || 'Matte';
 
   const printTimeHours = num(raw.printTimeHours);
-  if (!(printTimeHours > 0 && printTimeHours <= 500)) {
+  const pending = raw.specificationsPending === true;
+  if (!(printTimeHours >= (pending ? 0 : Number.EPSILON) && printTimeHours <= 500)) {
     errors.printTimeHours = 'Printtiden ska vara mellan 0 och 500 timmar.';
   }
 
@@ -174,13 +183,13 @@ export function parseProductInput(
     height: num(dimensionsRaw.height),
   };
   for (const [key, value] of Object.entries(dimensions)) {
-    if (!(value > 0 && value <= 2000)) {
+    if (!(value >= (pending ? 0 : Number.EPSILON) && value <= 2000)) {
       errors[`dimensions.${key}`] = 'Måttet ska vara mellan 1 och 2000 mm.';
     }
   }
 
   const weightGrams = num(raw.weightGrams);
-  if (!(weightGrams > 0 && weightGrams <= 50000)) {
+  if (!(weightGrams >= (pending ? 0 : Number.EPSILON) && weightGrams <= 50000)) {
     errors.weightGrams = 'Vikten ska vara mellan 1 och 50 000 gram.';
   }
 
@@ -220,6 +229,23 @@ export function parseProductInput(
   }
 
   const art = asRecord(raw.art);
+  const variantImages: NonNullable<Product['variantImages']> = [];
+  if (raw.variantImages !== undefined && !Array.isArray(raw.variantImages)) errors.variantImages = 'Variantbilderna kunde inte tolkas.';
+  const combinations = new Set<string>();
+  for (const [index, entry] of (Array.isArray(raw.variantImages) ? raw.variantImages : []).entries()) {
+    const variant = asRecord(entry);
+    const color = text(variant.color);
+    const size = text(variant.size);
+    const picture = asRecord(variant.image);
+    const id = text(picture.id);
+    const key = JSON.stringify([color, size]);
+    if (!colors.includes(color) || (size && !sizes?.some(option => option.id === size)) || !/^[0-9a-f]{32}$/.test(id) || combinations.has(key)) {
+      errors[`variantImages.${index}`] = 'Välj en befintlig färg och storlek samt en giltig bild. Varje kombination får bara ha en bild.';
+      continue;
+    }
+    combinations.add(key);
+    variantImages.push({ color, ...(size ? { size } : {}), image: { id, url: `/api/uploads/${id}`, fileName: text(picture.fileName).slice(0, 200) || 'variantbild' } });
+  }
   const shape = text(art.shape);
   const tone = text(art.tone);
   if (!ART_SHAPES.includes(shape as ArtShape)) errors['art.shape'] = 'Välj en form som finns.';
@@ -245,13 +271,18 @@ export function parseProductInput(
     weightGrams: Math.round(weightGrams),
     colors,
     ...(sizes ? { sizes } : {}),
+    optionLabel: text(raw.optionLabel).slice(0, 60) || 'Storlek',
     highlights,
     stock,
     rating: Math.round(rating * 10) / 10,
     reviewCount,
     featured: raw.featured === true,
     published: raw.published !== false,
+    ...(pending && [printTimeHours, weightGrams, ...Object.values(dimensions)].some(value => value === 0) ? { specificationsPending: true } : {}),
+    dimensionsEstimated: raw.dimensionsEstimated === true,
+    dimensionsNote: text(raw.dimensionsNote).slice(0, 500),
     ...(image ? { image } : {}),
+    ...(Object.hasOwn(raw, 'variantImages') ? { variantImages } : {}),
     art: { shape: shape as ArtShape, tone: tone as ArtTone },
   };
 }

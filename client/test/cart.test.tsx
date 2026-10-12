@@ -54,6 +54,15 @@ describe('varukorgen', () => {
     expect(result.current.items).toHaveLength(3);
   });
 
+  it('uppdaterar bilden när samma variant läggs till igen', () => {
+    const { result } = setup();
+    act(() => result.current.add(base));
+    const image = { id: 'updated', url: '/updated.webp', fileName: 'updated.webp' };
+    act(() => result.current.add({ ...base, image }));
+    expect(result.current.items[0]?.image).toEqual(image);
+    expect(result.current.items[0]?.quantity).toBe(2);
+  });
+
   it('taket är 99 exemplar per rad', () => {
     const { result } = setup();
     act(() => result.current.add({ ...base, quantity: 60 }));

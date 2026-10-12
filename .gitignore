@@ -3,6 +3,12 @@ dist/
 .env
 .DS_Store
 *.log
+.dev.vars
+.dev.vars.*
+.wrangler/
+models/**/deps/
+tmp/cloudflare-dry-run/
+tmp/production-audit.json
 # All körtidsdata: ordrar, lagersaldo, katalog och utkorgen för brev.
 server/data/
 server/uploads/
