@@ -63,7 +63,7 @@ export function AboutPage() {
               <div>
                 <h3>Kontakt</h3>
                 <p className="muted" style={{ fontSize: '0.93rem', marginBottom: 0 }}>
-                  <a href="mailto:hej@formlabb.se">hej@formlabb.se</a>
+                  <a href="mailto:support@formlabb.se">support@formlabb.se</a>
                   <br />
                   031-12 34 56, vardagar 09–17
                   <br />

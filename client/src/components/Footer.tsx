@@ -56,7 +56,7 @@ export function Footer() {
               <li>413 03 Göteborg</li>
               <li>Vardagar 09–17</li>
               <li>
-                <a href="mailto:hej@formlabb.se">hej@formlabb.se</a>
+                <a href="mailto:support@formlabb.se">support@formlabb.se</a>
               </li>
             </ul>
           </div>
