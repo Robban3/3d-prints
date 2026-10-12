@@ -4,6 +4,13 @@
   "main": "cloudflare/worker.ts",
   "compatibility_date": "2026-10-12",
   "observability": { "enabled": true },
+  "vars": {
+    "PUBLIC_URL": "https://formlabb-shop.blue-darkness-3c69.workers.dev",
+    "ADMIN_EMAIL": "admin@formlabb.se",
+    "STATE_BUCKET": "formlabb-private",
+    "S3_BUCKET": "formlabb-private",
+    "S3_ENDPOINT": "https://4015d1857d7474d6344ef85104ad2479.eu.r2.cloudflarestorage.com"
+  },
   "containers": [{
     "class_name": "Shop",
     "scheduling_policy": "durable_object",

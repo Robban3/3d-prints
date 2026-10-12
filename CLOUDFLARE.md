@@ -14,6 +14,8 @@ Adminsessioner finns i minnet: efter vila/omstart krävs ny inloggning.
 1. Använd Workers Paid och aktiverad R2. Kontrollera kostnaden innan ett nytt
    abonnemang aktiveras.
 2. Skapa privat R2-bucket `formlabb-private`. Aktivera inte publik åtkomst.
+   Den förberedda bucketens jurisdiktion är EU. Använd EU-endpointen i
+   `wrangler.jsonc`, utan bucketnamnet på slutet.
 3. Skapa R2 S3-uppgifter med objektläsning/skrivning för endast denna bucket.
 4. Workers & Pages → Create application → importera `Robban3/3d-prints` från
    GitHub. Välj Worker, produktionsgren `main`, rot `/`, byggkommando `npm ci`
@@ -71,6 +73,10 @@ npm run deploy:cloudflare
 Direkt deployment kräver Wrangler-inloggning och Docker. Använd annars Workers
 Builds. Lägg aldrig secrets i Git, `wrangler.jsonc` eller katalogexporten.
 `.dev.vars` ignoreras av Git.
+
+Den förberedda Workern använder
+`https://formlabb-shop.blue-darkness-3c69.workers.dev` som ursprung.
+Uppdatera `PUBLIC_URL` när en egen domän kopplas in.
 
 Referenser:
 - https://developers.cloudflare.com/containers/guides/deploy/
