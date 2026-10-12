@@ -49,6 +49,8 @@ app.use(
 app.use(cors());
 app.use(express.json({ limit: '256kb' }));
 
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
+
 app.use('/api', uploads);
 app.use('/api', admin);
 app.use('/api', api);

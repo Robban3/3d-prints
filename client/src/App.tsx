@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -17,17 +17,20 @@ import { HowItWorksPage } from './pages/HowItWorksPage';
 import { ContactPage } from './pages/ContactPage';
 import { AdminPage } from './pages/AdminPage';
 import { TopBar } from './components/TopBar';
+import { ThemePreviewBar } from './components/ThemePreviewBar';
 
 export function App() {
   return (
     <>
       <ScrollToTop />
+      <ThemePreviewBar />
       <TopBar />
       <Header />
       <main id="innehall">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/produkter" element={<ShopPage />} />
+          <Route path="/produkter/spiral-vas" element={<Navigate to="/produkter/vas-nexo" replace />} />
           <Route path="/produkter/:slug" element={<ProductPage />} />
           <Route path="/egen-print" element={<CustomOrderPage />} />
           <Route path="/varukorg" element={<CartPage />} />

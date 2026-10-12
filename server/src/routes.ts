@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { readAppearance } from './appearance.ts';
 import {
   allCategories,
   allMaterials,
@@ -64,6 +65,10 @@ api.get('/health', async (_req, res) => {
   res.json({ status: 'ok', products: (await publishedProducts()).length });
 });
 
+api.get('/appearance', async (_req, res) => {
+  res.set('Cache-Control', 'no-store').json({ appearance: await readAppearance() });
+});
+
 api.get('/config', async (_req, res) => {
   res.json({
     materials: await allMaterials(),
@@ -111,7 +116,7 @@ api.get('/products/:slug', async (req, res) => {
   const fillers = catalog
     .filter((p) => p.id !== product.id && p.category !== product.category)
     .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount);
-  const related = [...sameCategory, ...fillers].slice(0, 5);
+  const related = [...sameCategory, ...fillers].slice(0, 7);
   const levels = await stockLevels();
   const withStock = <T extends { id: string }>(entry: T) => ({
     ...entry,
@@ -120,7 +125,7 @@ api.get('/products/:slug', async (req, res) => {
   res.json({ product: withStock(product), related: related.map(withStock) });
 });
 
-api.post('/quote', quoteLimit, (req, res) => {
+api.post('/quote', quoteLimit, async (req, res) => {
   const request = await parseQuoteRequest(req.body);
   res.json({ request, quote: await quoteFor(request) });
 });

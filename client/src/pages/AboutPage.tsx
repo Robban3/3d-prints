@@ -56,7 +56,7 @@ export function AboutPage() {
               <div>
                 <h3>Frakt</h3>
                 <p className="muted" style={{ fontSize: '0.93rem', marginBottom: 0 }}>
-                  59 kr spårbart med PostNord, fritt över 599 kr. Vi packar i returkartong så att en
+                  59 kr spårbart med PostNord, fritt över 699 kr. Vi packar i returkartong så att en
                   eventuell retur inte kräver nytt emballage.
                 </p>
               </div>

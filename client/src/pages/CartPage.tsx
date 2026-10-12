@@ -11,7 +11,7 @@ export function CartPage() {
   const config = useAsync(() => fetchConfig(), []);
   const shippingConfig = config.data?.shipping ?? {
     fee: 59,
-    freeThreshold: 599,
+    freeThreshold: 699,
   };
   const shipping = subtotal >= shippingConfig.freeThreshold ? 0 : shippingConfig.fee;
   const missingForFreeShipping = shippingConfig.freeThreshold - subtotal;

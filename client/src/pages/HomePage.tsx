@@ -1,15 +1,15 @@
+// Startsidan visar den utvalda kollektionen direkt efter kampanjen.
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { HeroScene } from '../components/HeroScene';
 import { ProductCard } from '../components/ProductCard';
-import { CategoryStrip } from '../components/CategoryStrip';
+import { SeasonHero } from '../components/SeasonHero';
+import { useAppearance } from '../lib/appearance';
+import { themeFor } from '../lib/themes';
 import { TrustBar } from '../components/TrustBar';
-import { StatsRow } from '../components/StatsRow';
 import { UploadDropzone } from '../components/UploadDropzone';
 import { Icon } from '../components/Icon';
 import { fetchConfig, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
-import type { IconName } from '../components/Icon';
 import type { UploadedFile } from '../types';
 
 const steps: Array<{ title: string; text: string }> = [
@@ -19,84 +19,32 @@ const steps: Array<{ title: string; text: string }> = [
   { title: 'Leverans till dig', text: 'Spårbar leverans inom 2–7 arbetsdagar' },
 ];
 
-const miniFeatures: Array<{ icon: IconName; title: string; text: string }> = [
-  { icon: 'file', title: 'STL, 3MF, OBJ', text: 'Flera filformat' },
-  { icon: 'bolt', title: 'Snabb offert', text: 'Direkt i formuläret' },
-  { icon: 'shield', title: 'Hög kvalitet', text: 'Professionell finish' },
-];
+const campaignSlugs = ['vas-signe', 'julgran-2-pack', 'stjarna', 'kruka-elise'];
 
-const values: Array<{ icon: IconName; title: string; text: string }> = [
-  { icon: 'target', title: 'Hög precision', text: 'Noggranna printar med skarpa detaljer.' },
-  { icon: 'cube', title: 'Kvalitetsmaterial', text: 'Vi använder endast premium filament.' },
-  { icon: 'leaf', title: 'Hållbarhet', text: 'Spillet mals ned och blir nytt material.' },
-  { icon: 'heart', title: 'Kundfokus', text: 'Vi finns här för dig hela vägen.' },
-];
 
 export function HomePage() {
+  const { theme } = useAppearance();
+  const design = themeFor(theme);
   const navigate = useNavigate();
-  const { data, loading } = useAsync(() => fetchProducts(), []);
+  const { data, loading, error } = useAsync(() => fetchProducts(), []);
   const config = useAsync(() => fetchConfig(), []);
   const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
 
   const products = data?.products ?? [];
   const popular = [...products]
-    .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount)
-    .slice(0, 12);
-  // Betyget räknas fram ur produkternas egna omdömen i stället för att hittas på.
-  const reviewCount = products.reduce((sum, product) => sum + product.reviewCount, 0);
-  const averageRating = reviewCount
-    ? products.reduce((sum, product) => sum + product.rating * product.reviewCount, 0) / reviewCount
-    : 0;
-
+    .sort((a, b) => {
+      const ai = campaignSlugs.indexOf(a.slug), bi = campaignSlugs.indexOf(b.slug);
+      return (ai < 0 ? 100 : ai) - (bi < 0 ? 100 : bi) || Number(b.featured) - Number(a.featured) || b.rating * b.reviewCount - a.rating * a.reviewCount;
+    })
+    .slice(0, 4);
   return (
     <>
-      <section className="hero">
+      <SeasonHero />
+      <section className="section featured-collection" aria-labelledby="featured-heading">
         <div className="container">
-          <div>
-            <h1>
-              3D-printade produkter.
-              <br />
-              <span className="accent-text">Byggda för dig.</span>
-            </h1>
-            <p className="lead">
-              Högkvalitativa 3D-printade produkter och prototyper. Snabbt, hållbart och precis –
-              precis som du vill ha det.
-            </p>
-            <div className="hero-cta">
-              <Link className="btn btn-lg" to="/produkter">
-                Utforska produkter
-              </Link>
-              <Link className="btn btn-ghost btn-lg" to="/egen-print">
-                Beställ din egen print
-              </Link>
-            </div>
-            <span className="rating-strip">
-              <span className="rating-boxes" aria-hidden="true">
-                <i>★</i>
-                <i>★</i>
-                <i>★</i>
-                <i>★</i>
-                <i>★</i>
-              </span>
-              {averageRating.toFixed(1).replace('.', ',')}/5 baserat på{' '}
-              {reviewCount.toLocaleString('sv-SE')} omdömen
-            </span>
-          </div>
-
-          <div className="hero-visual">
-            <HeroScene />
-          </div>
-        </div>
-      </section>
-
-      <div className="container">
-        <CategoryStrip />
-      </div>
-
-      <section className="section">
-        <div className="container">
-          <div className="spread section-head">
-            <h2 style={{ margin: 0 }}>Populära produkter</h2>
+          <div className="collection-heading">
+            <h2 id="featured-heading">{theme === 'nordic' ? 'Utvalt för dig' : design.collection}</h2>
+            <span className="collection-rule" aria-hidden="true" />
             <Link className="link-arrow" to="/produkter">
               Visa alla produkter
               <Icon name="arrowRight" size={16} />
@@ -104,25 +52,33 @@ export function HomePage() {
           </div>
 
           {loading ? (
-            <div className="product-grid">
-              {Array.from({ length: 12 }, (_, index) => (
+            <div className="product-grid home-products">
+              {Array.from({ length: 4 }, (_, index) => (
                 <div className="skeleton" key={index} />
               ))}
             </div>
-          ) : (
-            <div className="product-grid">
+          ) : error ? <p className="notice notice-error" role="alert">Kunde inte hämta produkterna. Försök ladda om sidan.</p> : popular.length === 0 ? <p className="muted">Nya favoriter är på väg. Titta gärna in igen snart.</p> : (
+            <div className="product-grid home-products">
               {popular.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
 
-          <TrustBar />
         </div>
       </section>
 
-      <section className="section section-alt">
-        <div className="container custom-grid">
+      <section className="season-section container" aria-label="Inspiration inför julen">
+        <div className="season-intro"><div className="collection-heading"><h2>Gör plats för julen</h2><span className="collection-rule" aria-hidden="true" /></div><h3>Lite mer personligt. Lite mer du.</h3><p>Upptäck 3D-printade inredningsdetaljer, unika julklappar och personliga skatter – alla formgivna och tillverkade lokalt i Sverige.</p></div>
+        <Link className="season-card photo-card" to="/produkter?kategori=julkollektionen"><img src="/images/campaign/gifts.webp" alt="Spiralvas, julstjärna och inslagen julklapp" loading="lazy" /><span className="photo-card-copy"><strong>Presenter med personlighet</strong><span>Unika gåvor som håller länge.</span></span><Icon name="arrowRight" size={22} /></Link>
+        <Link className="season-card photo-card" to="/egen-print"><img src="/images/campaign/wrapping.webp" alt="Händer som knyter ett vinrött band kring en julklapp" loading="lazy" /><span className="photo-card-copy"><strong>Din idé, vår verkstad</strong><span>Vi 3D-printar din design.</span></span><Icon name="arrowRight" size={22} /></Link>
+      </section>
+
+      <section className="container home-category-navigation"><h2>Hitta din form</h2><span className="collection-rule" aria-hidden="true" /><nav aria-label="Kategorier"><Link to="/produkter?kategori=julkollektionen">Julkollektionen</Link><Link to="/produkter?kategori=halloween">Halloween</Link><Link to="/produkter?kategori=inredning">Hem</Link><Link to="/produkter?kategori=kontor">Skrivbord</Link><Link to="/produkter?kategori=prylar">Hobby</Link><Link to="/produkter?kategori=kok">Kök</Link><Link to="/egen-print">Egen print</Link></nav></section>
+
+      <section className="home-workshop">
+        <img className="workshop-photo" src="/images/campaign/printing.webp" alt="En spiralvas växer fram i 3D-skrivaren" loading="lazy" />
+        <div className="workshop-content">
           <div className="custom-pitch">
             <h2>
               Har du en egen design?
@@ -133,17 +89,6 @@ export function HomePage() {
               Ladda upp din 3D-fil så får du en offert direkt. Välj material, färg och kvalitet – vi
               tar hand om resten.
             </p>
-            <div className="mini-features">
-              {miniFeatures.map((feature) => (
-                <div className="mini-feature" key={feature.title}>
-                  <Icon name={feature.icon} size={18} />
-                  <span>
-                    <strong>{feature.title}</strong>
-                    <span>{feature.text}</span>
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div>
@@ -165,8 +110,7 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="steps-panel">
-            <h3>Så här fungerar det</h3>
+          <div className="workshop-steps" aria-label="Så här fungerar det">
             {steps.map((step, index) => (
               <div className="step" key={step.title}>
                 <span className="step-num">{index + 1}</span>
@@ -180,40 +124,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="section-tight">
-        <div className="container">
-          <StatsRow />
-        </div>
-      </section>
-
-      <section className="section-tight" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <div className="value-grid">
-            {values.map((value) => (
-              <div className="value-item" key={value.title}>
-                <Icon name={value.icon} size={24} />
-                <strong>{value.title}</strong>
-                <p>{value.text}</p>
-              </div>
-            ))}
-            <div className="newsletter">
-              <strong>Få nyheter &amp; erbjudanden</strong>
-              <p>Anmäl dig till vårt nyhetsbrev.</p>
-              <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  navigate('/om-oss');
-                }}
-              >
-                <input className="input" type="email" placeholder="Din e-postadress" required />
-                <button type="submit" className="btn">
-                  Prenumerera
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="home-trust">
+        <div className="container"><TrustBar /></div>
+      </div>
     </>
   );
 }

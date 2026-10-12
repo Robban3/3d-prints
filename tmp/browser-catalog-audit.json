@@ -1,0 +1,2510 @@
+{
+  "products": [
+    {
+      "id": "p-001",
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "tagline": "Fasetterad form för hemmets gröna favoriter.",
+      "description": "Terras tydliga fasetter ger växterna en lugn, skulptural inramning. Välj mellan tre storlekar och fyra färger för fönsterbrädan, hyllan eller skrivbordet. Fatet fångar upp mindre mängder vatten; använd en innerkruka när du vattnar. Växt ingår inte.",
+      "category": "inredning",
+      "price": 249,
+      "material": "petg",
+      "finish": "Matte",
+      "printTimeHours": 9,
+      "dimensions": {
+        "width": 110,
+        "depth": 110,
+        "height": 120
+      },
+      "weightGrams": 210,
+      "colors": [
+        "Lermatt",
+        "Grafit",
+        "Salvia",
+        "Benvit"
+      ],
+      "sizes": [
+        {
+          "id": "liten",
+          "name": "Liten (Ø 110 mm)",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 110,
+            "depth": 110,
+            "height": 120
+          }
+        },
+        {
+          "id": "mellan",
+          "name": "Mellan (Ø 140 mm)",
+          "priceDelta": 80,
+          "dimensions": {
+            "width": 140,
+            "depth": 140,
+            "height": 155
+          }
+        },
+        {
+          "id": "stor",
+          "name": "Stor (Ø 180 mm)",
+          "priceDelta": 180,
+          "dimensions": {
+            "width": 180,
+            "depth": 180,
+            "height": 195
+          }
+        }
+      ],
+      "highlights": [
+        "Fasetterad form för hemmets gröna favoriter."
+      ],
+      "stock": 24,
+      "rating": 4.8,
+      "reviewCount": 63,
+      "featured": true,
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "published": true,
+      "image": {
+        "id": "d653f06c32916e870f1a8776c42acae6",
+        "url": "/api/uploads/d653f06c32916e870f1a8776c42acae6",
+        "fileName": "terra-vaxtkruka-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Lermatt",
+          "size": "liten",
+          "image": {
+            "id": "d653f06c32916e870f1a8776c42acae6",
+            "url": "/api/uploads/d653f06c32916e870f1a8776c42acae6",
+            "fileName": "terra-vaxtkruka-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Lermatt",
+          "size": "mellan",
+          "image": {
+            "id": "fd348f817b53d4c1bc36fd7e28c15cae",
+            "url": "/api/uploads/fd348f817b53d4c1bc36fd7e28c15cae",
+            "fileName": "terra-vaxtkruka-c0-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Lermatt",
+          "size": "stor",
+          "image": {
+            "id": "bc24e0910e24e66f70a05266bb8e3fcb",
+            "url": "/api/uploads/bc24e0910e24e66f70a05266bb8e3fcb",
+            "fileName": "terra-vaxtkruka-c0-s2-visualisering.webp"
+          }
+        },
+        {
+          "color": "Grafit",
+          "size": "liten",
+          "image": {
+            "id": "c1f3feeac5bf15422e813fa221e3573f",
+            "url": "/api/uploads/c1f3feeac5bf15422e813fa221e3573f",
+            "fileName": "terra-vaxtkruka-c1-s0-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Grafit",
+          "size": "mellan",
+          "image": {
+            "id": "76c7800354ac0d73d10563bd6851904f",
+            "url": "/api/uploads/76c7800354ac0d73d10563bd6851904f",
+            "fileName": "terra-vaxtkruka-c1-s1-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Grafit",
+          "size": "stor",
+          "image": {
+            "id": "33ef71ff67c388f6a58c4a73534d0981",
+            "url": "/api/uploads/33ef71ff67c388f6a58c4a73534d0981",
+            "fileName": "terra-vaxtkruka-c1-s2-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Salvia",
+          "size": "liten",
+          "image": {
+            "id": "e39e186c1ccf9eb3b6ef013905dd2da0",
+            "url": "/api/uploads/e39e186c1ccf9eb3b6ef013905dd2da0",
+            "fileName": "terra-vaxtkruka-c2-s0-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Salvia",
+          "size": "mellan",
+          "image": {
+            "id": "4bb4b7b29fb4da9f77ee6bc40289c406",
+            "url": "/api/uploads/4bb4b7b29fb4da9f77ee6bc40289c406",
+            "fileName": "terra-vaxtkruka-c2-s1-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Salvia",
+          "size": "stor",
+          "image": {
+            "id": "d2c79fbe6652ffcba0fc3e94b376292d",
+            "url": "/api/uploads/d2c79fbe6652ffcba0fc3e94b376292d",
+            "fileName": "terra-vaxtkruka-c2-s2-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Benvit",
+          "size": "liten",
+          "image": {
+            "id": "ab5b0090263c28b67754d658b358c0bd",
+            "url": "/api/uploads/ab5b0090263c28b67754d658b358c0bd",
+            "fileName": "terra-vaxtkruka-c3-s0-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Benvit",
+          "size": "mellan",
+          "image": {
+            "id": "2c342ae5b5d9f46b09fcd933004b0f07",
+            "url": "/api/uploads/2c342ae5b5d9f46b09fcd933004b0f07",
+            "fileName": "terra-vaxtkruka-c3-s1-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Benvit",
+          "size": "stor",
+          "image": {
+            "id": "9c25bff69efb49ec1a2f3ded84c4cc00",
+            "url": "/api/uploads/9c25bff69efb49ec1a2f3ded84c4cc00",
+            "fileName": "terra-vaxtkruka-c3-s2-aligned-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Måtten gäller ytterdiameter och total höjd inklusive fat.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "id": "p-002",
+      "slug": "arc-horlursstall",
+      "name": "Arc hörlursställ",
+      "tagline": "En självklar plats för dina hörlurar.",
+      "description": "Arc håller hörlurarna samlade och gör skrivbordet enklare att använda. Den mjuka bågen och breda foten ger ett avskalat uttryck som passar både arbetsplats och spelhörna. Välj svart, off-white eller djupblå. Hörlurar ingår inte.",
+      "category": "kontor",
+      "price": 279,
+      "material": "pla",
+      "finish": "Matte",
+      "printTimeHours": 7,
+      "dimensions": {
+        "width": 120,
+        "depth": 110,
+        "height": 265
+      },
+      "weightGrams": 180,
+      "colors": [
+        "Matt svart",
+        "Off-white",
+        "Djupblå"
+      ],
+      "highlights": [
+        "En självklar plats för dina hörlurar."
+      ],
+      "stock": 31,
+      "rating": 4.7,
+      "reviewCount": 41,
+      "featured": true,
+      "art": {
+        "shape": "headphoneStand",
+        "tone": "grafit"
+      },
+      "published": true,
+      "image": {
+        "id": "67fd2b88e26d6b4f7711e0cc60a01367",
+        "url": "/api/uploads/67fd2b88e26d6b4f7711e0cc60a01367",
+        "fileName": "arc-horlursstall-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Matt svart",
+          "image": {
+            "id": "67fd2b88e26d6b4f7711e0cc60a01367",
+            "url": "/api/uploads/67fd2b88e26d6b4f7711e0cc60a01367",
+            "fileName": "arc-horlursstall-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Off-white",
+          "image": {
+            "id": "23c0ea30c106c3e522ca692b5583a649",
+            "url": "/api/uploads/23c0ea30c106c3e522ca692b5583a649",
+            "fileName": "arc-horlursstall-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Djupblå",
+          "image": {
+            "id": "2100b17c24196ffa0929ed4431e4b378",
+            "url": "/api/uploads/2100b17c24196ffa0929ed4431e4b378",
+            "fileName": "arc-horlursstall-c2-s0-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått inklusive fot."
+    },
+    {
+      "id": "p-003",
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "tagline": "Bygg ordning, modul för modul.",
+      "description": "Grid samlar pennor, småsaker och telefon på en gemensam bas. Välj ett set med 3, 5 eller 8 moduler och skapa en ordning som passar ditt skrivbord. Priset gäller hela det valda setet inklusive bas; kontorstillbehör och telefon ingår inte.",
+      "category": "kontor",
+      "price": 349,
+      "material": "pla",
+      "finish": "Matte",
+      "printTimeHours": 11,
+      "dimensions": {
+        "width": 180,
+        "depth": 90,
+        "height": 110
+      },
+      "weightGrams": 260,
+      "colors": [
+        "Grafit",
+        "Sand",
+        "Mossgrön"
+      ],
+      "sizes": [
+        {
+          "id": "3-moduler",
+          "name": "3 moduler",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 180,
+            "depth": 90,
+            "height": 110
+          }
+        },
+        {
+          "id": "5-moduler",
+          "name": "5 moduler",
+          "priceDelta": 180,
+          "dimensions": {
+            "width": 300,
+            "depth": 90,
+            "height": 110
+          }
+        },
+        {
+          "id": "8-moduler",
+          "name": "8 moduler",
+          "priceDelta": 400,
+          "dimensions": {
+            "width": 480,
+            "depth": 90,
+            "height": 110
+          }
+        }
+      ],
+      "highlights": [
+        "Bygg ordning, modul för modul."
+      ],
+      "stock": 18,
+      "rating": 4.6,
+      "reviewCount": 28,
+      "featured": true,
+      "art": {
+        "shape": "organizer",
+        "tone": "stal"
+      },
+      "published": true,
+      "image": {
+        "id": "b3ef39de31cc3400cad565c2d1c7e408",
+        "url": "/api/uploads/b3ef39de31cc3400cad565c2d1c7e408",
+        "fileName": "grid-skrivbordsorganiserare-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Grafit",
+          "size": "3-moduler",
+          "image": {
+            "id": "b3ef39de31cc3400cad565c2d1c7e408",
+            "url": "/api/uploads/b3ef39de31cc3400cad565c2d1c7e408",
+            "fileName": "grid-skrivbordsorganiserare-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Grafit",
+          "size": "5-moduler",
+          "image": {
+            "id": "f0c1219c151df4b8aa680e01ccd7da27",
+            "url": "/api/uploads/f0c1219c151df4b8aa680e01ccd7da27",
+            "fileName": "grid-skrivbordsorganiserare-c0-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Grafit",
+          "size": "8-moduler",
+          "image": {
+            "id": "7f52b8ab8dc7e8eb204d90f643d7704c",
+            "url": "/api/uploads/7f52b8ab8dc7e8eb204d90f643d7704c",
+            "fileName": "grid-skrivbordsorganiserare-c0-s2-visualisering.webp"
+          }
+        },
+        {
+          "color": "Sand",
+          "size": "3-moduler",
+          "image": {
+            "id": "498bd3635b62bf6f1827266033075d96",
+            "url": "/api/uploads/498bd3635b62bf6f1827266033075d96",
+            "fileName": "grid-skrivbordsorganiserare-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Sand",
+          "size": "5-moduler",
+          "image": {
+            "id": "7809fbf44822d0aa994ebee28a696d9f",
+            "url": "/api/uploads/7809fbf44822d0aa994ebee28a696d9f",
+            "fileName": "grid-skrivbordsorganiserare-c1-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Sand",
+          "size": "8-moduler",
+          "image": {
+            "id": "17b280964436a894bfbded2672449035",
+            "url": "/api/uploads/17b280964436a894bfbded2672449035",
+            "fileName": "grid-skrivbordsorganiserare-c1-s2-visualisering.webp"
+          }
+        },
+        {
+          "color": "Mossgrön",
+          "size": "3-moduler",
+          "image": {
+            "id": "336618d298fe2dbf0981e84604124d89",
+            "url": "/api/uploads/336618d298fe2dbf0981e84604124d89",
+            "fileName": "grid-skrivbordsorganiserare-c2-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Mossgrön",
+          "size": "5-moduler",
+          "image": {
+            "id": "5732f7581ab47e2acc854203e7340a19",
+            "url": "/api/uploads/5732f7581ab47e2acc854203e7340a19",
+            "fileName": "grid-skrivbordsorganiserare-c2-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Mossgrön",
+          "size": "8-moduler",
+          "image": {
+            "id": "b1e060c4dfe4f846e10abe676c4f62ac",
+            "url": "/api/uploads/b1e060c4dfe4f846e10abe676c4f62ac",
+            "fileName": "grid-skrivbordsorganiserare-c2-s2-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Måtten gäller det monterade setet; höjden avser den högsta modulen."
+    },
+    {
+      "id": "p-004",
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "tagline": "En drake med form, färg och rörelse.",
+      "description": "Flexi drakes ledade kropp och markerade fjäll gör den till ett blickfång på skrivbordet eller hyllan. Välj mini, standard eller jätte och ge den ditt eget uttryck med silk koppar, silk lila, regnbågsövergång eller glow. En dekorativ figur med små och rörliga delar.",
+      "category": "prylar",
+      "price": 179,
+      "material": "pla",
+      "finish": "Silk",
+      "printTimeHours": 6,
+      "dimensions": {
+        "width": 47,
+        "depth": 160,
+        "height": 60
+      },
+      "weightGrams": 95,
+      "colors": [
+        "Silk koppar",
+        "Silk lila",
+        "Regnbågsövergång",
+        "Glow in the dark"
+      ],
+      "sizes": [
+        {
+          "id": "mini",
+          "name": "Mini (16 cm)",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 47,
+            "depth": 160,
+            "height": 60
+          }
+        },
+        {
+          "id": "standard",
+          "name": "Standard (24 cm)",
+          "priceDelta": 100,
+          "dimensions": {
+            "width": 70,
+            "depth": 240,
+            "height": 90
+          }
+        },
+        {
+          "id": "jatte",
+          "name": "Jätte (38 cm)",
+          "priceDelta": 270,
+          "dimensions": {
+            "width": 110,
+            "depth": 380,
+            "height": 140
+          }
+        }
+      ],
+      "highlights": [
+        "En drake med form, färg och rörelse."
+      ],
+      "stock": 44,
+      "rating": 4.9,
+      "reviewCount": 187,
+      "featured": true,
+      "art": {
+        "shape": "dragon",
+        "tone": "bla"
+      },
+      "published": true,
+      "image": {
+        "id": "9c08cea77851c81cb30b9bf3d249966e",
+        "url": "/api/uploads/9c08cea77851c81cb30b9bf3d249966e",
+        "fileName": "flexi-drake-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Silk koppar",
+          "size": "mini",
+          "image": {
+            "id": "9c08cea77851c81cb30b9bf3d249966e",
+            "url": "/api/uploads/9c08cea77851c81cb30b9bf3d249966e",
+            "fileName": "flexi-drake-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Silk koppar",
+          "size": "standard",
+          "image": {
+            "id": "e6d1c31012c44cae619fc70cc4c27eeb",
+            "url": "/api/uploads/e6d1c31012c44cae619fc70cc4c27eeb",
+            "fileName": "flexi-drake-c0-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Silk koppar",
+          "size": "jatte",
+          "image": {
+            "id": "af4500fe9fdd5fbe25582220076d2e3c",
+            "url": "/api/uploads/af4500fe9fdd5fbe25582220076d2e3c",
+            "fileName": "flexi-drake-c0-s2-visualisering.webp"
+          }
+        },
+        {
+          "color": "Silk lila",
+          "size": "mini",
+          "image": {
+            "id": "708cdce845a3cde91820c5158b75780f",
+            "url": "/api/uploads/708cdce845a3cde91820c5158b75780f",
+            "fileName": "flexi-drake-c1-s0-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Silk lila",
+          "size": "standard",
+          "image": {
+            "id": "fad0e0912c13beb84a2f80cbc3c7abe1",
+            "url": "/api/uploads/fad0e0912c13beb84a2f80cbc3c7abe1",
+            "fileName": "flexi-drake-c1-s1-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Silk lila",
+          "size": "jatte",
+          "image": {
+            "id": "d8804b169f16fa9197f64407892e4e0b",
+            "url": "/api/uploads/d8804b169f16fa9197f64407892e4e0b",
+            "fileName": "flexi-drake-c1-s2-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Regnbågsövergång",
+          "size": "mini",
+          "image": {
+            "id": "e76c1417930bac894c42f1af705156da",
+            "url": "/api/uploads/e76c1417930bac894c42f1af705156da",
+            "fileName": "flexi-drake-c2-s0-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Regnbågsövergång",
+          "size": "standard",
+          "image": {
+            "id": "637210c4112db892ddd903bf4bb1e526",
+            "url": "/api/uploads/637210c4112db892ddd903bf4bb1e526",
+            "fileName": "flexi-drake-c2-s1-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Regnbågsövergång",
+          "size": "jatte",
+          "image": {
+            "id": "7297568043d74c52fc1d8db17eada7c2",
+            "url": "/api/uploads/7297568043d74c52fc1d8db17eada7c2",
+            "fileName": "flexi-drake-c2-s2-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Glow in the dark",
+          "size": "mini",
+          "image": {
+            "id": "d9321dba4a35b6a0148554608acc67c8",
+            "url": "/api/uploads/d9321dba4a35b6a0148554608acc67c8",
+            "fileName": "flexi-drake-c3-s0-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Glow in the dark",
+          "size": "standard",
+          "image": {
+            "id": "e393c2fefb54f7ea7f7751cc1ef0e4a3",
+            "url": "/api/uploads/e393c2fefb54f7ea7f7751cc1ef0e4a3",
+            "fileName": "flexi-drake-c3-s1-aligned-visualisering.webp"
+          }
+        },
+        {
+          "color": "Glow in the dark",
+          "size": "jatte",
+          "image": {
+            "id": "3ff22907101dcd1b708c4178a59b342e",
+            "url": "/api/uploads/3ff22907101dcd1b708c4178a59b342e",
+            "fileName": "flexi-drake-c3-s2-aligned-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Djupmåttet avser ungefärlig längd när draken är utsträckt; posen påverkar bredd och höjd.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "id": "p-005",
+      "slug": "luna-manlampa",
+      "name": "Luna månlampa",
+      "tagline": "Månens struktur, ett mjukare ljus.",
+      "description": "Lunas kraterliknande yta ger lampan ett lugnt uttryck både tänd och släckt. Den naturvita månkupan kombineras med en enkel träbas och finns i tre diametrar. En dekorativ lampa för nattduksbord, hylla eller läshörna.",
+      "category": "inredning",
+      "price": 449,
+      "material": "pla",
+      "finish": "Matte",
+      "printTimeHours": 16,
+      "dimensions": {
+        "width": 120,
+        "depth": 120,
+        "height": 155
+      },
+      "weightGrams": 320,
+      "colors": [
+        "Naturvit"
+      ],
+      "sizes": [
+        {
+          "id": "12cm",
+          "name": "Ø 12 cm",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 120,
+            "depth": 120,
+            "height": 155
+          }
+        },
+        {
+          "id": "15cm",
+          "name": "Ø 15 cm",
+          "priceDelta": 150,
+          "dimensions": {
+            "width": 150,
+            "depth": 150,
+            "height": 190
+          }
+        },
+        {
+          "id": "20cm",
+          "name": "Ø 20 cm",
+          "priceDelta": 350,
+          "dimensions": {
+            "width": 200,
+            "depth": 200,
+            "height": 245
+          }
+        }
+      ],
+      "highlights": [
+        "Månens struktur, ett mjukare ljus."
+      ],
+      "stock": 12,
+      "rating": 4.9,
+      "reviewCount": 96,
+      "featured": true,
+      "art": {
+        "shape": "moonLamp",
+        "tone": "benvit"
+      },
+      "published": true,
+      "image": {
+        "id": "cdb81685493a181e867da49e3e3b81a1",
+        "url": "/api/uploads/cdb81685493a181e867da49e3e3b81a1",
+        "fileName": "luna-manlampa-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Naturvit",
+          "size": "12cm",
+          "image": {
+            "id": "cdb81685493a181e867da49e3e3b81a1",
+            "url": "/api/uploads/cdb81685493a181e867da49e3e3b81a1",
+            "fileName": "luna-manlampa-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Naturvit",
+          "size": "15cm",
+          "image": {
+            "id": "517c6d5f5eb503194637d335f837ed20",
+            "url": "/api/uploads/517c6d5f5eb503194637d335f837ed20",
+            "fileName": "luna-manlampa-c0-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Naturvit",
+          "size": "20cm",
+          "image": {
+            "id": "684c90c198f48bf6fee2e1050b6ffc68",
+            "url": "/api/uploads/684c90c198f48bf6fee2e1050b6ffc68",
+            "fileName": "luna-manlampa-c0-s2-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Bredd och djup gäller månkupans diameter; höjd är inklusive bas."
+    },
+    {
+      "id": "p-006",
+      "slug": "hex-pennstall",
+      "name": "Hex pennställ",
+      "tagline": "Ge pennorna en egen plats.",
+      "description": "Hex kombinerar sexkantiga fack med olika höjder för pennor, sax och andra små skrivbordstillbehör. Den kompakta formen gör det lätt att skapa ordning även på ett mindre bord. Välj en diskret eller färgstark finish. Tillbehör ingår inte.",
+      "category": "kontor",
+      "price": 179,
+      "material": "pla",
+      "finish": "Matte",
+      "printTimeHours": 5,
+      "dimensions": {
+        "width": 105,
+        "depth": 92,
+        "height": 110
+      },
+      "weightGrams": 120,
+      "colors": [
+        "Matt svart",
+        "Sand",
+        "Tegel",
+        "Djupblå"
+      ],
+      "highlights": [
+        "Ge pennorna en egen plats."
+      ],
+      "stock": 37,
+      "rating": 4.5,
+      "reviewCount": 34,
+      "featured": false,
+      "art": {
+        "shape": "penHolder",
+        "tone": "grafit"
+      },
+      "published": true,
+      "image": {
+        "id": "55973bd8fd90f42683a1ad74cf831732",
+        "url": "/api/uploads/55973bd8fd90f42683a1ad74cf831732",
+        "fileName": "hex-pennstall-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Matt svart",
+          "image": {
+            "id": "55973bd8fd90f42683a1ad74cf831732",
+            "url": "/api/uploads/55973bd8fd90f42683a1ad74cf831732",
+            "fileName": "hex-pennstall-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Sand",
+          "image": {
+            "id": "3603838d4ad19b34ad5073e3ba7b4247",
+            "url": "/api/uploads/3603838d4ad19b34ad5073e3ba7b4247",
+            "fileName": "hex-pennstall-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Tegel",
+          "image": {
+            "id": "0e41081be181fb3528186c94bbb678ea",
+            "url": "/api/uploads/0e41081be181fb3528186c94bbb678ea",
+            "fileName": "hex-pennstall-c2-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Djupblå",
+          "image": {
+            "id": "0ba50317d2c36ca323ad2cf83dc1d2af",
+            "url": "/api/uploads/0ba50317d2c36ca323ad2cf83dc1d2af",
+            "fileName": "hex-pennstall-c3-s0-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått; höjden gäller det högsta facket."
+    },
+    {
+      "id": "p-007",
+      "slug": "wave-vaggkrokar",
+      "name": "Wave väggkrokar (3-pack)",
+      "tagline": "Små krokar med en mjuk rörelse.",
+      "description": "Wave ger hallen, sovrummet eller arbetsrummet en enkel plats för lättare accessoarer. Den böljande formen fungerar lika fint ensam som i en rad. Välj 3-pack eller 6-pack; priset gäller hela setet. Infästning och lämplig belastning behöver anpassas till vägg och användning.",
+      "category": "tillbehor",
+      "price": 149,
+      "material": "petg",
+      "finish": "Matte",
+      "printTimeHours": 4,
+      "dimensions": {
+        "width": 45,
+        "depth": 35,
+        "height": 80
+      },
+      "weightGrams": 105,
+      "colors": [
+        "Matt svart",
+        "Off-white",
+        "Mässing-look"
+      ],
+      "sizes": [
+        {
+          "id": "3-pack",
+          "name": "3-pack",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 45,
+            "depth": 35,
+            "height": 80
+          }
+        },
+        {
+          "id": "6-pack",
+          "name": "6-pack",
+          "priceDelta": 100,
+          "dimensions": {
+            "width": 45,
+            "depth": 35,
+            "height": 80
+          }
+        }
+      ],
+      "highlights": [
+        "Små krokar med en mjuk rörelse.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 52,
+      "rating": 4.4,
+      "reviewCount": 57,
+      "featured": false,
+      "art": {
+        "shape": "wallHook",
+        "tone": "grafit"
+      },
+      "published": true,
+      "image": {
+        "id": "b18bf1820f9f284da97c69656e8195fc",
+        "url": "/api/uploads/b18bf1820f9f284da97c69656e8195fc",
+        "fileName": "wave-vaggkrokar-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Matt svart",
+          "size": "3-pack",
+          "image": {
+            "id": "b18bf1820f9f284da97c69656e8195fc",
+            "url": "/api/uploads/b18bf1820f9f284da97c69656e8195fc",
+            "fileName": "wave-vaggkrokar-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Matt svart",
+          "size": "6-pack",
+          "image": {
+            "id": "40501a1b4b6311539b33f3f866747d77",
+            "url": "/api/uploads/40501a1b4b6311539b33f3f866747d77",
+            "fileName": "wave-vaggkrokar-c0-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Off-white",
+          "size": "3-pack",
+          "image": {
+            "id": "1a9eebbd6b6fe554c83991d7c01aacea",
+            "url": "/api/uploads/1a9eebbd6b6fe554c83991d7c01aacea",
+            "fileName": "wave-vaggkrokar-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Off-white",
+          "size": "6-pack",
+          "image": {
+            "id": "2a0d1b75065186183114b5fc2ac2640a",
+            "url": "/api/uploads/2a0d1b75065186183114b5fc2ac2640a",
+            "fileName": "wave-vaggkrokar-c1-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Mässing-look",
+          "size": "3-pack",
+          "image": {
+            "id": "818291457db299a42979d58741eeae42",
+            "url": "/api/uploads/818291457db299a42979d58741eeae42",
+            "fileName": "wave-vaggkrokar-c2-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Mässing-look",
+          "size": "6-pack",
+          "image": {
+            "id": "598d48ba797cc2bb6ee838e4816942bf",
+            "url": "/api/uploads/598d48ba797cc2bb6ee838e4816942bf",
+            "fileName": "wave-vaggkrokar-c2-s1-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Mått per krok; djup anger hur långt kroken sticker ut från väggen."
+    },
+    {
+      "id": "p-008",
+      "slug": "brew-kaffedripp",
+      "name": "Brew kaffedripp",
+      "tagline": "En finare plats för kaffestunden.",
+      "description": "Brew är ett luftigt ställ för manuell kaffebryggning, med plats för kopp under tratten. Den enkla formen gör brygghörnan till en del av köket. Produkten är stället; filtertratt, kopp och filter ingår inte. Torka av för hand.",
+      "category": "kok",
+      "price": 299,
+      "material": "petg",
+      "finish": "Matte",
+      "printTimeHours": 8,
+      "dimensions": {
+        "width": 130,
+        "depth": 130,
+        "height": 175
+      },
+      "weightGrams": 195,
+      "colors": [
+        "Matt svart",
+        "Benvit",
+        "Rostbrun"
+      ],
+      "highlights": [
+        "En finare plats för kaffestunden."
+      ],
+      "stock": 21,
+      "rating": 4.6,
+      "reviewCount": 39,
+      "featured": false,
+      "art": {
+        "shape": "coffeeDripper",
+        "tone": "bla"
+      },
+      "published": true,
+      "image": {
+        "id": "6c6d457027e665981f3aa0031b615f82",
+        "url": "/api/uploads/6c6d457027e665981f3aa0031b615f82",
+        "fileName": "brew-kaffedripp-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Matt svart",
+          "image": {
+            "id": "6c6d457027e665981f3aa0031b615f82",
+            "url": "/api/uploads/6c6d457027e665981f3aa0031b615f82",
+            "fileName": "brew-kaffedripp-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Benvit",
+          "image": {
+            "id": "271d03aa5f8946ae8f1ff77bcd4c541e",
+            "url": "/api/uploads/271d03aa5f8946ae8f1ff77bcd4c541e",
+            "fileName": "brew-kaffedripp-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Rostbrun",
+          "image": {
+            "id": "163e32cc8a2d9d483c0d8cee50ab7e82",
+            "url": "/api/uploads/163e32cc8a2d9d483c0d8cee50ab7e82",
+            "fileName": "brew-kaffedripp-c2-s0-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått för stället. Kontrollera utrymmet för din kopp och tratt innan köp."
+    },
+    {
+      "id": "p-009",
+      "slug": "keep-tarningstorn",
+      "name": "Keep tärningstorn",
+      "tagline": "Samla tärningarna och låt spelet fortsätta.",
+      "description": "Keep leder tärningarna genom tornet till en uppsamlingsbricka framför öppningen. Den skulpturala formen blir en fin del av spelbordet och hjälper till att hålla kasten samlade. Finns i grafit, mörkgrön och vinröd. Tärningar ingår inte.",
+      "category": "prylar",
+      "price": 349,
+      "material": "pla",
+      "finish": "Matte",
+      "printTimeHours": 12,
+      "dimensions": {
+        "width": 110,
+        "depth": 170,
+        "height": 245
+      },
+      "weightGrams": 240,
+      "colors": [
+        "Grafit",
+        "Mörkgrön",
+        "Vinröd"
+      ],
+      "highlights": [
+        "Samla tärningarna och låt spelet fortsätta."
+      ],
+      "stock": 16,
+      "rating": 4.8,
+      "reviewCount": 72,
+      "featured": false,
+      "art": {
+        "shape": "diceTower",
+        "tone": "grafit"
+      },
+      "published": true,
+      "image": {
+        "id": "386f67718811a6db6ac38563f8bd879a",
+        "url": "/api/uploads/386f67718811a6db6ac38563f8bd879a",
+        "fileName": "keep-tarningstorn-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Grafit",
+          "image": {
+            "id": "386f67718811a6db6ac38563f8bd879a",
+            "url": "/api/uploads/386f67718811a6db6ac38563f8bd879a",
+            "fileName": "keep-tarningstorn-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Mörkgrön",
+          "image": {
+            "id": "264bfa91ee767f8a1562809831f6c1ab",
+            "url": "/api/uploads/264bfa91ee767f8a1562809831f6c1ab",
+            "fileName": "keep-tarningstorn-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Vinröd",
+          "image": {
+            "id": "e4e3b2843996db8a38572d8356d5f848",
+            "url": "/api/uploads/e4e3b2843996db8a38572d8356d5f848",
+            "fileName": "keep-tarningstorn-c2-s0-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått inklusive uppsamlingsbricka."
+    },
+    {
+      "id": "p-010",
+      "slug": "fold-telefonstall",
+      "name": "Fold telefonställ",
+      "tagline": "Ett litet ställ för de stora vardagsbehoven.",
+      "description": "Fold håller telefonen i en bekväm vinkel för videosamtal, recept och pauser vid skrivbordet. Den vikbara formen gör det lätt att ta med mellan hem och arbete. Välj svart, transparent rök eller korall. Telefon ingår inte.",
+      "category": "tillbehor",
+      "price": 129,
+      "material": "tpu",
+      "finish": "Matte",
+      "printTimeHours": 3,
+      "dimensions": {
+        "width": 78,
+        "depth": 90,
+        "height": 105
+      },
+      "weightGrams": 35,
+      "colors": [
+        "Matt svart",
+        "Transparent rök",
+        "Korall"
+      ],
+      "highlights": [
+        "Ett litet ställ för de stora vardagsbehoven."
+      ],
+      "stock": 68,
+      "rating": 4.3,
+      "reviewCount": 118,
+      "featured": false,
+      "art": {
+        "shape": "phoneStand",
+        "tone": "stal"
+      },
+      "published": true,
+      "image": {
+        "id": "054e46270193af0686597498ed4631b4",
+        "url": "/api/uploads/054e46270193af0686597498ed4631b4",
+        "fileName": "fold-telefonstall-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Matt svart",
+          "image": {
+            "id": "054e46270193af0686597498ed4631b4",
+            "url": "/api/uploads/054e46270193af0686597498ed4631b4",
+            "fileName": "fold-telefonstall-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Transparent rök",
+          "image": {
+            "id": "63bfd6be09945810d77a6c0afbd7aa82",
+            "url": "/api/uploads/63bfd6be09945810d77a6c0afbd7aa82",
+            "fileName": "fold-telefonstall-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Korall",
+          "image": {
+            "id": "f518d5d8cbf3ac291696ab59320c3adf",
+            "url": "/api/uploads/f518d5d8cbf3ac291696ab59320c3adf",
+            "fileName": "fold-telefonstall-c2-s0-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Mått uppfällt. Planerad tjocklek ihopfällt är cirka 6 mm."
+    },
+    {
+      "id": "p-011",
+      "slug": "coil-kabelhallare",
+      "name": "Coil kabelhållare (5-pack)",
+      "tagline": "Låt kablarna stanna där du behöver dem.",
+      "description": "Coil samlar laddkablar och sladdar nära kanten på skrivbordet. De fem små hållarna kan placeras var för sig för en renare arbetsyta. Välj svart, vit eller grå. Priset gäller fem hållare; kablar ingår inte.",
+      "category": "kontor",
+      "price": 129,
+      "material": "petg",
+      "finish": "Matte",
+      "printTimeHours": 3,
+      "dimensions": {
+        "width": 25,
+        "depth": 25,
+        "height": 22
+      },
+      "weightGrams": 45,
+      "colors": [
+        "Matt svart",
+        "Vit",
+        "Grå"
+      ],
+      "highlights": [
+        "Låt kablarna stanna där du behöver dem.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 74,
+      "rating": 4.2,
+      "reviewCount": 91,
+      "featured": false,
+      "art": {
+        "shape": "cableClip",
+        "tone": "bla"
+      },
+      "published": true,
+      "image": {
+        "id": "94920ab0545cc0f7a7b62bd286bc4be6",
+        "url": "/api/uploads/94920ab0545cc0f7a7b62bd286bc4be6",
+        "fileName": "coil-kabelhallare-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Matt svart",
+          "image": {
+            "id": "94920ab0545cc0f7a7b62bd286bc4be6",
+            "url": "/api/uploads/94920ab0545cc0f7a7b62bd286bc4be6",
+            "fileName": "coil-kabelhallare-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Vit",
+          "image": {
+            "id": "92613b22248de80409c15d817577f899",
+            "url": "/api/uploads/92613b22248de80409c15d817577f899",
+            "fileName": "coil-kabelhallare-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Grå",
+          "image": {
+            "id": "9f799e2dc446bf8baa17a8cf982eaeb1",
+            "url": "/api/uploads/9f799e2dc446bf8baa17a8cf982eaeb1",
+            "fileName": "coil-kabelhallare-c2-s0-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Mått per hållare. Passform och infästning behöver kontrolleras för aktuell kabel och yta."
+    },
+    {
+      "id": "p-013",
+      "slug": "orbit-fidget",
+      "name": "Orbit fidget",
+      "tagline": "En liten mekanik för händerna.",
+      "description": "Orbit förenar en yttre ring med rörliga kugghjul i en kompakt form. Kontrastfärgerna gör mekaniken till en dekorativ detalj även när den ligger på skrivbordet. Välj svart/lime, grå/orange eller blå/vit.",
+      "category": "prylar",
+      "price": 199,
+      "material": "pla",
+      "finish": "Matte",
+      "printTimeHours": 5,
+      "dimensions": {
+        "width": 78,
+        "depth": 78,
+        "height": 14
+      },
+      "weightGrams": 55,
+      "colors": [
+        "Svart/lime",
+        "Grå/orange",
+        "Blå/vit"
+      ],
+      "highlights": [
+        "En liten mekanik för händerna."
+      ],
+      "stock": 58,
+      "rating": 4.5,
+      "reviewCount": 143,
+      "featured": false,
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "published": true,
+      "image": {
+        "id": "3c8d402ba45e42565dc5336a23bba1c4",
+        "url": "/api/uploads/3c8d402ba45e42565dc5336a23bba1c4",
+        "fileName": "orbit-fidget-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Svart/lime",
+          "image": {
+            "id": "3c8d402ba45e42565dc5336a23bba1c4",
+            "url": "/api/uploads/3c8d402ba45e42565dc5336a23bba1c4",
+            "fileName": "orbit-fidget-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Grå/orange",
+          "image": {
+            "id": "e9ca8db55ef38f6d8fe93cd4f62b8bbc",
+            "url": "/api/uploads/e9ca8db55ef38f6d8fe93cd4f62b8bbc",
+            "fileName": "orbit-fidget-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Blå/vit",
+          "image": {
+            "id": "1fb4cce3d2fc01e71f7917da83d20081",
+            "url": "/api/uploads/1fb4cce3d2fc01e71f7917da83d20081",
+            "fileName": "orbit-fidget-c2-s0-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Bredd och djup motsvarar ytterdiametern."
+    },
+    {
+      "id": "p-014",
+      "slug": "shelf-kryddstall",
+      "name": "Shelf kryddställ",
+      "tagline": "Se kryddorna, också längst bak.",
+      "description": "Shelf lyfter kryddburkarna i tre nivåer så att det blir enklare att hitta rätt. Den breda, avskalade formen passar på köksbänken eller i ett rymligt skåp. Välj benvit, svart eller ljusgrå. Burkar och kryddor ingår inte.",
+      "category": "kok",
+      "price": 299,
+      "material": "petg",
+      "finish": "Matte",
+      "printTimeHours": 10,
+      "dimensions": {
+        "width": 360,
+        "depth": 180,
+        "height": 120
+      },
+      "weightGrams": 285,
+      "colors": [
+        "Benvit",
+        "Matt svart",
+        "Ljusgrå"
+      ],
+      "highlights": [
+        "Se kryddorna, också längst bak."
+      ],
+      "stock": 19,
+      "rating": 4.6,
+      "reviewCount": 26,
+      "featured": false,
+      "art": {
+        "shape": "spiceShelf",
+        "tone": "stal"
+      },
+      "published": true,
+      "image": {
+        "id": "16be0753f6b5c8fcf26e51022d5c797e",
+        "url": "/api/uploads/16be0753f6b5c8fcf26e51022d5c797e",
+        "fileName": "shelf-kryddstall-c0-s0-visualisering.webp"
+      },
+      "variantImages": [
+        {
+          "color": "Benvit",
+          "image": {
+            "id": "16be0753f6b5c8fcf26e51022d5c797e",
+            "url": "/api/uploads/16be0753f6b5c8fcf26e51022d5c797e",
+            "fileName": "shelf-kryddstall-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Matt svart",
+          "image": {
+            "id": "3ba1dede5d25e1b2397a22ef5ae787b9",
+            "url": "/api/uploads/3ba1dede5d25e1b2397a22ef5ae787b9",
+            "fileName": "shelf-kryddstall-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Ljusgrå",
+          "image": {
+            "id": "991f1f34c2ff3d98dcc3aa1ef0fb3f2c",
+            "url": "/api/uploads/991f1f34c2ff3d98dcc3aa1ef0fb3f2c",
+            "fileName": "shelf-kryddstall-c2-s0-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Mått för hela stället. Kontrollera skåpets invändiga utrymme och burkarnas diameter."
+    },
+    {
+      "slug": "vas-signe",
+      "name": "Vas Signe",
+      "tagline": "Mjuka veck med en skulptural känsla.",
+      "description": "Signes täta, vridna veck fångar ljuset och ger buketten en mjuk inramning. Den benvita vasen fungerar lika fint med torra kvistar som som ett fristående objekt på hyllan. Använd en separat vattentät insats för färska blommor. Blommor och insats ingår inte.",
+      "category": "inredning",
+      "price": 349,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 130,
+        "depth": 130,
+        "height": 220
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Mjuka veck med en skulptural känsla."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "eeec3e5dbf12ec563f98c42f70019584",
+        "url": "/api/uploads/eeec3e5dbf12ec563f98c42f70019584",
+        "fileName": "signe.webp"
+      },
+      "art": {
+        "shape": "spiralVase",
+        "tone": "benvit"
+      },
+      "id": "p-015",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått för vasen.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "julgran-2-pack",
+      "name": "Julgran – 2-pack",
+      "tagline": "Två gröna granar för julens små stilleben.",
+      "description": "Två veckade granar i skogsgrönt som ger julbordet eller fönsterbrädan ett lugnt vinteruttryck. Kombinera dem med en vas, en stjärna eller andra dekorationer. Setet innehåller en mindre och en större gran.",
+      "category": "julkollektionen",
+      "price": 199,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 160
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Skogsgrön"
+      ],
+      "highlights": [
+        "Två gröna granar för julens små stilleben.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "135f315a7d7369cb776415c700060681",
+        "url": "/api/uploads/135f315a7d7369cb776415c700060681",
+        "fileName": "julgran.webp"
+      },
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "id": "p-016",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Stor gran: cirka 80 × 80 × 160 mm. Liten gran: cirka 55 × 55 × 110 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "stjarna",
+      "name": "Stjärna",
+      "tagline": "En vinröd stjärna som fångar ljuset.",
+      "description": "Stjärnans geometriska veck skapar ett tydligt blickfång bland julens gröna och benvita detaljer. Placera den på en hylla, ett sidobord eller i en dekorativ julgrupp. En stjärna i vinrött ingår.",
+      "category": "julkollektionen",
+      "price": 129,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 140,
+        "depth": 35,
+        "height": 140
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Vinröd"
+      ],
+      "highlights": [
+        "En vinröd stjärna som fångar ljuset."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "55b0fafa7cc45c500b6b0f73051dfae0",
+        "url": "/api/uploads/55b0fafa7cc45c500b6b0f73051dfae0",
+        "fileName": "stjarna.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-017",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått; djupmåttet avser stjärnans tjocklek.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "kruka-elise",
+      "name": "Kruka Elise",
+      "tagline": "En fasetterad kruka med varm karaktär.",
+      "description": "Elises kantiga yta möter växternas mjuka former och ger den benvita krukan ett tydligt uttryck. Den passar på fönsterbrädan eller som detalj på ett litet bord. Använd en innerkruka vid vattning. Växt och innerkruka ingår inte.",
+      "category": "inredning",
+      "price": 249,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 140,
+        "depth": 140,
+        "height": 140
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "En fasetterad kruka med varm karaktär."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "1a68444e5e232dd39dace5538be2f1d2",
+        "url": "/api/uploads/1a68444e5e232dd39dace5538be2f1d2",
+        "fileName": "elise.webp"
+      },
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "id": "p-018",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått. Planerad öppning är cirka 115 mm i diameter.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "kula-virvel",
+      "name": "Julkula Virvel",
+      "tagline": "Luftiga spiraler i skogsgrönt.",
+      "description": "Virvel är en julkula med öppna, korsande ribbor som låter ljuset och granens grenar synas genom formen. Den skogsgröna färgen ger ett lugnt, skulpturalt uttryck. En kula med upphängningsögla ingår; band och övrig dekoration ingår inte.",
+      "category": "julkollektionen",
+      "price": 99,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Skogsgrön"
+      ],
+      "highlights": [
+        "Luftiga spiraler i skogsgrönt."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "b95cb6f183daf7303e74b7b68b2ca8fc",
+        "url": "/api/uploads/b95cb6f183daf7303e74b7b68b2ca8fc",
+        "fileName": "kula-virvel-visualisering.webp"
+      },
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "id": "p-019",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Kulans diameter är cirka 80 mm; total höjd inklusive ögla cirka 95 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "kula-diamant",
+      "name": "Julkula Diamant",
+      "tagline": "Vinröda veck för julgranen.",
+      "description": "Diamants slutna form och markerade veck ger julgranen både struktur och färg. Den vinröda kulan passar fint tillsammans med gröna ornament och benvita stjärnor. En kula med upphängningsögla ingår; band ingår inte.",
+      "category": "julkollektionen",
+      "price": 99,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Vinröd"
+      ],
+      "highlights": [
+        "Vinröda veck för julgranen."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "598fef706faad972dbb535ecd892d1e4",
+        "url": "/api/uploads/598fef706faad972dbb535ecd892d1e4",
+        "fileName": "kula-diamant-visualisering.webp"
+      },
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "id": "p-020",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Kulans diameter är cirka 80 mm; total höjd inklusive ögla cirka 95 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "gran-frost",
+      "name": "Gran Frost – 2-pack",
+      "tagline": "Två benvita granar med fina veck.",
+      "description": "Frost kombinerar två olika höjder i en avskalad vinterdekoration. De benvita, veckade formerna passar på julbordet, i ett fönster eller i en liten julgrupp. Priset gäller båda granarna.",
+      "category": "julkollektionen",
+      "price": 229,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 90,
+        "depth": 90,
+        "height": 220
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Två benvita granar med fina veck.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "6b8f8d828d0811090f5b5f01e3db33e8",
+        "url": "/api/uploads/6b8f8d828d0811090f5b5f01e3db33e8",
+        "fileName": "gran-frost-visualisering.webp"
+      },
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "id": "p-021",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Stor gran: cirka 90 × 90 × 220 mm. Liten gran: cirka 60 × 60 × 140 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "stjarna-polaris",
+      "name": "Stjärna Polaris",
+      "tagline": "Åtta spetsar. Ett stilla blickfång.",
+      "description": "Polaris är en benvit stjärna med åtta spetsar och tydliga geometriska veck. Den ger ett skulpturalt uttryck på hyllan eller tillsammans med julens andra dekorationer. En stjärna ingår.",
+      "category": "julkollektionen",
+      "price": 129,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 160,
+        "depth": 40,
+        "height": 160
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Åtta spetsar. Ett stilla blickfång."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "f2c5b991f09df5148dc21c6852c7d2b8",
+        "url": "/api/uploads/f2c5b991f09df5148dc21c6852c7d2b8",
+        "fileName": "stjarna-polaris-visualisering.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-022",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått; djupmåttet avser stjärnans tjocklek.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "namnornament",
+      "name": "Personligt namnornament",
+      "tagline": "Ett namn, en personlig juldetalj.",
+      "description": "Ett cirkelformat ornament med namn, små granar och en dekorativ rosett. Ge bort som en personlig hälsning eller skapa en egen tradition i julgranen. Priset gäller ett ornament med ett namn; namnet på bilden är ett exempel och stäms av inför tillverkning. Band ingår inte.",
+      "category": "julkollektionen",
+      "price": 149,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 100,
+        "depth": 5,
+        "height": 115
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Ett namn, en personlig juldetalj."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "3208827ce679b0e4b6cb737d08c071e8",
+        "url": "/api/uploads/3208827ce679b0e4b6cb737d08c071e8",
+        "fileName": "namnornament-visualisering.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-023",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Ringen är cirka 100 mm i diameter; total höjd inklusive rosett cirka 115 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "mala-din-jul",
+      "name": "Måla din jul – 4-pack",
+      "tagline": "Måla själv – välj med eller utan färg och penslar.",
+      "description": "Ett kreativt set med fyra julkulor: en grön, en röd, en vit och en svart. Välj enbart dekorationerna om du redan har eget målarmaterial, eller komplett paket med fem färger – grön, röd, guld, svart och silver – samt två penslar, en fin och en mellan. Komplett paket kostar 100 kr extra. Planerat färginnehåll är 10 ml per kulör. Färg och penslar ingår endast när du väljer det kompletta paketet. Upphängningsband ingår inte.",
+      "category": "julkollektionen",
+      "price": 249,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 70,
+        "depth": 70,
+        "height": 85
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Grön, röd, vit och svart"
+      ],
+      "highlights": [
+        "4 kulor: grön, röd, vit och svart",
+        "Välj med eller utan färg och penslar",
+        "Komplett paket: 5 färger och 2 penslar (+100 kr)"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "e45895f1b6057d8b3ce47930d3486a24",
+        "url": "/api/uploads/e45895f1b6057d8b3ce47930d3486a24",
+        "fileName": "mala-din-jul-utan-farg-penslar-visualisering.webp"
+      },
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "id": "p-024",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Mått per kula. Diameter cirka 70 mm; höjd inklusive ögla cirka 85 mm.",
+      "optionLabel": "Paket",
+      "sizes": [
+        {
+          "id": "utan-farg-penslar",
+          "name": "Utan färg och penslar",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 70,
+            "depth": 70,
+            "height": 85
+          }
+        },
+        {
+          "id": "med-farg-penslar",
+          "name": "Med färg och penslar",
+          "priceDelta": 100,
+          "dimensions": {
+            "width": 70,
+            "depth": 70,
+            "height": 85
+          }
+        }
+      ],
+      "variantImages": [
+        {
+          "color": "Grön, röd, vit och svart",
+          "size": "utan-farg-penslar",
+          "image": {
+            "id": "e45895f1b6057d8b3ce47930d3486a24",
+            "url": "/api/uploads/e45895f1b6057d8b3ce47930d3486a24",
+            "fileName": "mala-din-jul-utan-farg-penslar-visualisering.webp"
+          }
+        },
+        {
+          "color": "Grön, röd, vit och svart",
+          "size": "med-farg-penslar",
+          "image": {
+            "id": "2fd3eb3d01ed3c9b5b7379244ae06e17",
+            "url": "/api/uploads/2fd3eb3d01ed3c9b5b7379244ae06e17",
+            "fileName": "mala-din-jul-kit-visualisering.webp"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "julkula-med-namn",
+      "name": "Julkula med namn",
+      "tagline": "En julkula med ditt eget namn.",
+      "description": "En benvit julkula med ditt eget namn och luftig, ribbad form. Välj utan årtal för en tidlös dekoration eller med 2026 för att minnas just denna jul. Du kan också lägga till ett målarpaket med fem färger – grön, röd, guld, svart och silver – samt två penslar, en fin och en mellan, för 100 kr extra. Planerat färginnehåll är 10 ml per kulör. Kulan kostar 149 kr utan målarpaket och 249 kr med målarpaket, oavsett årtal. Namnet Elsa på bilden är ett exempel och önskat namn stäms av inför tillverkning. Upphängningsband ingår inte.",
+      "category": "julkollektionen",
+      "price": 149,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Personlig julkula med ett namn",
+        "Välj med eller utan årtal (2026)",
+        "Valfritt målarpaket: 5 färger och 2 penslar (+100 kr)"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "53af20f0d403099a02f37de9f8fec473",
+        "url": "/api/uploads/53af20f0d403099a02f37de9f8fec473",
+        "fileName": "julkula-med-namn-utan-artal-visualisering.webp"
+      },
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "id": "p-025",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Kulans diameter är cirka 80 mm; total höjd inklusive ögla cirka 95 mm.",
+      "sizes": [
+        {
+          "id": "utan-artal",
+          "name": "Utan årtal · utan målarpaket",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 80,
+            "depth": 80,
+            "height": 95
+          }
+        },
+        {
+          "id": "med-artal",
+          "name": "Med årtal (2026) · utan målarpaket",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 80,
+            "depth": 80,
+            "height": 95
+          }
+        },
+        {
+          "id": "utan-artal-med-malarpaket",
+          "name": "Utan årtal · med målarpaket",
+          "priceDelta": 100,
+          "dimensions": {
+            "width": 80,
+            "depth": 80,
+            "height": 95
+          }
+        },
+        {
+          "id": "med-artal-med-malarpaket",
+          "name": "Med årtal (2026) · med målarpaket",
+          "priceDelta": 100,
+          "dimensions": {
+            "width": 80,
+            "depth": 80,
+            "height": 95
+          }
+        }
+      ],
+      "optionLabel": "Årtal och målarpaket",
+      "variantImages": [
+        {
+          "color": "Benvit",
+          "size": "utan-artal",
+          "image": {
+            "id": "53af20f0d403099a02f37de9f8fec473",
+            "url": "/api/uploads/53af20f0d403099a02f37de9f8fec473",
+            "fileName": "julkula-med-namn-utan-artal-visualisering.webp"
+          }
+        },
+        {
+          "color": "Benvit",
+          "size": "med-artal",
+          "image": {
+            "id": "6735356aff427f5439c29bdd66f144be",
+            "url": "/api/uploads/6735356aff427f5439c29bdd66f144be",
+            "fileName": "julkula-med-namn-visualisering.webp"
+          }
+        },
+        {
+          "color": "Benvit",
+          "size": "utan-artal-med-malarpaket",
+          "image": {
+            "id": "1b0808e7da49a788decc448be630192c",
+            "url": "/api/uploads/1b0808e7da49a788decc448be630192c",
+            "fileName": "julkula-med-namn-utan-artal-kit-visualisering.webp"
+          }
+        },
+        {
+          "color": "Benvit",
+          "size": "med-artal-med-malarpaket",
+          "image": {
+            "id": "666a9079bbede4bde1f9c038826af0f7",
+            "url": "/api/uploads/666a9079bbede4bde1f9c038826af0f7",
+            "fileName": "julkula-med-namn-med-artal-kit-visualisering.webp"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "var-forsta-jul",
+      "name": "Vår första jul",
+      "tagline": "Ett litet minne av er första jul.",
+      "description": "Ett benvitt ornament med husmotiv och texten Vår första jul. En fin detalj för ett nytt hem eller en första gemensam jultradition. Priset gäller ett ornament. Upphängningsband ingår inte.",
+      "category": "julkollektionen",
+      "price": 149,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 100,
+        "depth": 5,
+        "height": 110
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Ett litet minne av er första jul."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "ddc291ef7ffc589db7caeadc82d65398",
+        "url": "/api/uploads/ddc291ef7ffc589db7caeadc82d65398",
+        "fileName": "var-forsta-jul-visualisering.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-026",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått inklusive upphängningsögla; djup anger ornamentets tjocklek.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "snoflinga-3-pack",
+      "name": "Snöflinga – 3-pack",
+      "tagline": "Tre snöflingor för en stilla vinterkänsla.",
+      "description": "Tre benvita snöflingor med olika geometriska mönster. Häng dem i granen, placera dem i ett fönster eller använd dem som dekoration på paket. Priset gäller hela setet. Upphängningsband ingår inte.",
+      "category": "julkollektionen",
+      "price": 129,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 90,
+        "depth": 4,
+        "height": 90
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Tre snöflingor för en stilla vinterkänsla.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "eb68e9fb3dead218673f74e9c41b2bb3",
+        "url": "/api/uploads/eb68e9fb3dead218673f74e9c41b2bb3",
+        "fileName": "snoflinga-3-pack-visualisering.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-027",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Mått per snöflinga: cirka 90 × 4 × 90 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "angel-alma",
+      "name": "Ängel Alma – 2-pack",
+      "tagline": "Två mjuka former för julens stillhet.",
+      "description": "Alma är ett par benvita änglar med veckade kroppar och enkla, rundade huvuden. De två storlekarna gör det lätt att skapa ett fint stilleben på en hylla eller ett sidobord. Priset gäller båda änglarna.",
+      "category": "julkollektionen",
+      "price": 179,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 75,
+        "depth": 55,
+        "height": 140
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Två mjuka former för julens stillhet.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "aa0180b655207eb0145bf4e3be14e4b7",
+        "url": "/api/uploads/aa0180b655207eb0145bf4e3be14e4b7",
+        "fileName": "angel-alma-visualisering.webp"
+      },
+      "art": {
+        "shape": "planter",
+        "tone": "benvit"
+      },
+      "id": "p-028",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Stor ängel: cirka 75 × 55 × 140 mm. Liten ängel: cirka 55 × 40 × 100 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "ren-vilgot",
+      "name": "Ren Vilgot",
+      "tagline": "En ren med skulptural silhuett.",
+      "description": "Vilgots rena linjer och markerade horn gör den till en avskalad vinterdekoration. Den benvita formen passar både ensam och tillsammans med granar eller en julstjärna. En ren ingår.",
+      "category": "julkollektionen",
+      "price": 199,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 130,
+        "depth": 45,
+        "height": 170
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "En ren med skulptural silhuett."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "7ddc8add4cb6842eb7a69bafb770c2a1",
+        "url": "/api/uploads/7ddc8add4cb6842eb7a69bafb770c2a1",
+        "fileName": "ren-vilgot-visualisering.webp"
+      },
+      "art": {
+        "shape": "dragon",
+        "tone": "benvit"
+      },
+      "id": "p-029",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått inklusive horn.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "julby",
+      "name": "Julby – 3 små hus",
+      "tagline": "Tre små hus för ett varmt vinterstilleben.",
+      "description": "Bygg en liten julby med tre benvita hus i olika höjder. Fönsteröppningarna är tänkta för ljuset från batteridrivna LED-ljus. Priset gäller tre hus; ljuskällor ingår inte. Använd endast LED-ljus, aldrig levande ljus.",
+      "category": "julkollektionen",
+      "price": 349,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 80,
+        "depth": 70,
+        "height": 160
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Tre små hus för ett varmt vinterstilleben.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "2aa24a44106f678c359d1c4f0e27b285",
+        "url": "/api/uploads/2aa24a44106f678c359d1c4f0e27b285",
+        "fileName": "julby-visualisering.webp"
+      },
+      "art": {
+        "shape": "moonLamp",
+        "tone": "benvit"
+      },
+      "id": "p-030",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Största huset: cirka 80 × 70 × 160 mm. Övriga hus: cirka 70 × 60 × 130 och 60 × 55 × 100 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "servettring-noel",
+      "name": "Servettring Noel – 4-pack",
+      "tagline": "Fyra ringar som samlar juldukningen.",
+      "description": "Noel ger linneservetten en skulptural inramning i skogsgrönt med en diskret stjärndetalj. Ett enkelt sätt att knyta ihop färgerna runt julbordet. Priset gäller fyra servettringar. Servetter ingår inte.",
+      "category": "julkollektionen",
+      "price": 179,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 55,
+        "depth": 35,
+        "height": 55
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Skogsgrön"
+      ],
+      "highlights": [
+        "Fyra ringar som samlar juldukningen.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "33bfc767a55b8f9bf1a1bf1c17963dec",
+        "url": "/api/uploads/33bfc767a55b8f9bf1a1bf1c17963dec",
+        "fileName": "servettring-noel-visualisering.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-031",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Mått per ring. Planerad invändig öppning är cirka 40 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "namnskyltar",
+      "name": "Namnskylt till julbordet",
+      "tagline": "Låt varje plats få ett eget namn.",
+      "description": "En fristående namnskylt i benvit skrivstil ger dukningen en personlig detalj. Använd den vid julbordet, på en present eller som ett litet minne efter kvällen. Priset gäller en skylt med ett namn; namnen på bilden är exempel och önskat namn stäms av inför tillverkning.",
+      "category": "julkollektionen",
+      "price": 99,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 120,
+        "depth": 15,
+        "height": 35
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Låt varje plats få ett eget namn."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "6af148f42ab50cb6a503b70034e90a25",
+        "url": "/api/uploads/6af148f42ab50cb6a503b70034e90a25",
+        "fileName": "namnskyltar-visualisering.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-032",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Cirka 120 × 15 × 35 mm för ett normal­långt namn. Bredden anpassas efter bokstäver och längd.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "paketetiketter",
+      "name": "Paketetiketter – 6-pack",
+      "tagline": "Sex små detaljer som gör paketen personliga.",
+      "description": "Ett set med sex återanvändbara etiketter i benvitt, med olika former och julmotiv. Knyt dem på paketet och spara dem till nästa jul. Priset gäller alla sex etiketter. Band, presentpapper och paket ingår inte.",
+      "category": "julkollektionen",
+      "price": 99,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 60,
+        "depth": 4,
+        "height": 35
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Benvit"
+      ],
+      "highlights": [
+        "Sex små detaljer som gör paketen personliga.",
+        "Priset gäller hela setet"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "f26c2d6bfbc64f01bf21cd9f2e55318d",
+        "url": "/api/uploads/f26c2d6bfbc64f01bf21cd9f2e55318d",
+        "fileName": "paketetiketter-visualisering.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-033",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Rektangulär etikett: cirka 60 × 4 × 35 mm. Stjärnformad etikett: cirka 45 × 4 × 45 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "presentask-gomma",
+      "name": "Presentask med gömma",
+      "tagline": "En liten ask som gör gåvan större.",
+      "description": "En skogsgrön presentask med avtagbart lock och skulpturalt vinrött band. Lägg en liten gåva eller hälsning inuti och låt själva asken bli en del av presenten. Priset gäller en tom ask med lock.",
+      "category": "julkollektionen",
+      "price": 149,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 65
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Skogsgrön"
+      ],
+      "highlights": [
+        "En liten ask som gör gåvan större."
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "b2594fcdba395eb5d0403d37e9eaf180",
+        "url": "/api/uploads/b2594fcdba395eb5d0403d37e9eaf180",
+        "fileName": "presentask-gomma-visualisering.webp"
+      },
+      "art": {
+        "shape": "organizer",
+        "tone": "benvit"
+      },
+      "id": "p-034",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått inklusive lock. Planerat invändigt utrymme är cirka 65 × 65 × 40 mm.",
+      "optionLabel": "Storlek"
+    },
+    {
+      "slug": "julpyssel",
+      "name": "Julpyssel – måla själv",
+      "tagline": "Måla själv – välj med eller utan färg och penslar.",
+      "description": "Ett kreativt set med sex vita dekorationer: två granar, två hjärtan och två stjärnor. Välj enbart dekorationerna om du redan har eget målarmaterial, eller komplett paket med fem färger – grön, röd, guld, svart och silver – samt två penslar, en fin och en mellan. Komplett paket kostar 100 kr extra. Planerat färginnehåll är 10 ml per kulör. Färg och penslar ingår endast när du väljer det kompletta paketet. Upphängningsband ingår inte.",
+      "category": "julkollektionen",
+      "price": 129,
+      "material": "pla",
+      "finish": "matt",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 70,
+        "depth": 4,
+        "height": 80
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Vit"
+      ],
+      "highlights": [
+        "6 dekorationer: 2 granar, 2 hjärtan och 2 stjärnor",
+        "Välj med eller utan färg och penslar",
+        "Komplett paket: 5 färger och 2 penslar (+100 kr)"
+      ],
+      "stock": 25,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "582601faf35bc10b72de8e8fa86f7ba7",
+        "url": "/api/uploads/582601faf35bc10b72de8e8fa86f7ba7",
+        "fileName": "julpyssel-utan-farg-penslar-visualisering.webp"
+      },
+      "art": {
+        "shape": "gearFidget",
+        "tone": "benvit"
+      },
+      "id": "p-035",
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Måtten avser den största dekorationen; varje form är cirka 60–80 mm hög.",
+      "optionLabel": "Paket",
+      "sizes": [
+        {
+          "id": "utan-farg-penslar",
+          "name": "Utan färg och penslar",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 70,
+            "depth": 4,
+            "height": 80
+          }
+        },
+        {
+          "id": "med-farg-penslar",
+          "name": "Med färg och penslar",
+          "priceDelta": 100,
+          "dimensions": {
+            "width": 70,
+            "depth": 4,
+            "height": 80
+          }
+        }
+      ],
+      "variantImages": [
+        {
+          "color": "Vit",
+          "size": "utan-farg-penslar",
+          "image": {
+            "id": "582601faf35bc10b72de8e8fa86f7ba7",
+            "url": "/api/uploads/582601faf35bc10b72de8e8fa86f7ba7",
+            "fileName": "julpyssel-utan-farg-penslar-visualisering.webp"
+          }
+        },
+        {
+          "color": "Vit",
+          "size": "med-farg-penslar",
+          "image": {
+            "id": "1671c1ce0dc2513187ac2838e42a5c9e",
+            "url": "/api/uploads/1671c1ce0dc2513187ac2838e42a5c9e",
+            "fileName": "julpyssel-kit-visualisering.webp"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "tagline": "Luft, glas och skulpturala band.",
+      "description": "Tre breda band skapar en öppen form runt en synlig glasinsats. Ljuset passerar mellan banden och ger Nexo ett lätt, arkitektoniskt uttryck som fungerar med några få kvistar eller som ett fristående objekt. Välj mellan två höjder och fyra färger. Glasinsats är planerad att ingå; konstruktion och passform bekräftas genom provprintning. Blommor ingår inte.",
+      "category": "inredning",
+      "price": 449,
+      "material": "pla",
+      "finish": "Silk / matt efter färgval",
+      "printTimeHours": 0,
+      "dimensions": {
+        "width": 140,
+        "depth": 120,
+        "height": 240
+      },
+      "weightGrams": 0,
+      "colors": [
+        "Silk pärlemor",
+        "Matt svart",
+        "Salvia",
+        "Terrakotta"
+      ],
+      "sizes": [
+        {
+          "id": "l24",
+          "name": "Höjd 24 cm",
+          "priceDelta": 0,
+          "dimensions": {
+            "width": 140,
+            "depth": 120,
+            "height": 240
+          }
+        },
+        {
+          "id": "l32",
+          "name": "Höjd 32 cm",
+          "priceDelta": 200,
+          "dimensions": {
+            "width": 185,
+            "depth": 160,
+            "height": 320
+          }
+        }
+      ],
+      "highlights": [
+        "Luft, glas och skulpturala band."
+      ],
+      "stock": 0,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "published": true,
+      "specificationsPending": true,
+      "image": {
+        "id": "389babc969ea7d70525e66b5b9f4782d",
+        "url": "/api/uploads/389babc969ea7d70525e66b5b9f4782d",
+        "fileName": "vas-nexo-c0-s0-visualisering.webp"
+      },
+      "art": {
+        "shape": "nexoVase",
+        "tone": "benvit"
+      },
+      "id": "p-036",
+      "variantImages": [
+        {
+          "color": "Silk pärlemor",
+          "size": "l24",
+          "image": {
+            "id": "389babc969ea7d70525e66b5b9f4782d",
+            "url": "/api/uploads/389babc969ea7d70525e66b5b9f4782d",
+            "fileName": "vas-nexo-c0-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Silk pärlemor",
+          "size": "l32",
+          "image": {
+            "id": "af40841670c49303b5402757dbb18ab4",
+            "url": "/api/uploads/af40841670c49303b5402757dbb18ab4",
+            "fileName": "vas-nexo-c0-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Matt svart",
+          "size": "l24",
+          "image": {
+            "id": "ed058fc146f066c993af055f08174706",
+            "url": "/api/uploads/ed058fc146f066c993af055f08174706",
+            "fileName": "vas-nexo-c1-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Matt svart",
+          "size": "l32",
+          "image": {
+            "id": "12286774330b95aa5dbee3596c116320",
+            "url": "/api/uploads/12286774330b95aa5dbee3596c116320",
+            "fileName": "vas-nexo-c1-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Salvia",
+          "size": "l24",
+          "image": {
+            "id": "0a70f73bebf080ccc7414c59097d15a7",
+            "url": "/api/uploads/0a70f73bebf080ccc7414c59097d15a7",
+            "fileName": "vas-nexo-c2-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Salvia",
+          "size": "l32",
+          "image": {
+            "id": "366df176e3d3a86c0ef9e429234a3ca1",
+            "url": "/api/uploads/366df176e3d3a86c0ef9e429234a3ca1",
+            "fileName": "vas-nexo-c2-s1-visualisering.webp"
+          }
+        },
+        {
+          "color": "Terrakotta",
+          "size": "l24",
+          "image": {
+            "id": "7266675eefb1e8ec9075a10b0a39fdb3",
+            "url": "/api/uploads/7266675eefb1e8ec9075a10b0a39fdb3",
+            "fileName": "vas-nexo-c3-s0-visualisering.webp"
+          }
+        },
+        {
+          "color": "Terrakotta",
+          "size": "l32",
+          "image": {
+            "id": "2e25c34bff58a0963cdbe93b68e5bd95",
+            "url": "/api/uploads/2e25c34bff58a0963cdbe93b68e5bd95",
+            "fileName": "vas-nexo-c3-s1-visualisering.webp"
+          }
+        }
+      ],
+      "dimensionsEstimated": true,
+      "dimensionsNote": "Yttermått inklusive glasinsats. Bredd och djup varierar med den asymmetriska formen.",
+      "optionLabel": "Storlek"
+    }
+  ],
+  "total": 35
+}

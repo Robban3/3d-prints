@@ -1,0 +1,614 @@
+[
+  {
+    "slug": "portalpumpan",
+    "name": "Portalpumpan",
+    "price": 349,
+    "colors": [
+      "Pumpaorange"
+    ],
+    "dimensions": {
+      "width": 170,
+      "depth": 150,
+      "height": 180
+    },
+    "tagline": "En liten portal till höstens magi.",
+    "description": "En fasetterad orange pumpa med en öppen portal, små trappsteg och en gotisk miniatyrvärld inuti. Placera den på hyllan eller låt en batteridriven LED-ljuskälla ge djup åt dekorationen. Priset gäller en pumpdekoration; LED-ljuskälla ingår inte.",
+    "highlights": [
+      "Facetterad pumpa med inbyggt miniatyrlandskap",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "planter",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "spokduon",
+    "name": "Spökduon – 2-pack",
+    "price": 249,
+    "colors": [
+      "Benvit"
+    ],
+    "dimensions": {
+      "width": 90,
+      "depth": 75,
+      "height": 220
+    },
+    "tagline": "Två små personligheter för höstens hylla.",
+    "description": "Boo och Bus är två benvita spöken med mjuka veck, hjärtformade detaljer och små namnplaketter. Setet innehåller båda figurerna i den kombination som visas på bilden. Den större är cirka 22 cm hög och den mindre cirka 14 cm.",
+    "highlights": [
+      "Två spöken med plaketter: Boo och Bus",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Måtten gäller den större figuren. Den mindre är cirka 60 × 50 × 140 mm.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "korpens-vas",
+    "name": "Korpens vas",
+    "price": 449,
+    "colors": [
+      "Matt svart"
+    ],
+    "dimensions": {
+      "width": 140,
+      "depth": 140,
+      "height": 250
+    },
+    "tagline": "Vingarnas form, bukettens inramning.",
+    "description": "En skulptural svart vas med lager av spetsiga, vingliknande former runt en central öppning. Korpens vas blir ett tydligt blickfång med torra grenar eller som fristående objekt. Använd en separat vattentät insats för färska blommor. Grenar, blommor och insats ingår inte.",
+    "highlights": [
+      "Skulptural silhuett inspirerad av korpens vingar",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "planter",
+      "tone": "grafit"
+    }
+  },
+  {
+    "slug": "manskugga",
+    "name": "Månskugga",
+    "price": 249,
+    "colors": [
+      "Plommon och svart"
+    ],
+    "dimensions": {
+      "width": 180,
+      "depth": 35,
+      "height": 330
+    },
+    "tagline": "En måne som låter skuggorna dansa.",
+    "description": "En fasetterad plommonfärgad halvmåne med fyra svarta fladdermöss som hänger på olika höjd. Placera den i ett fönster eller som en dekorativ detalj på väggen. Upphängningssnören ingår; krok för vägg eller tak ingår inte.",
+    "highlights": [
+      "Halvmåne med fyra hängande fladdermöss",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Bredd gäller månen; höjd gäller dekorationen inklusive hängande fladdermöss.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "grafit"
+    }
+  },
+  {
+    "slug": "haxans-gomma",
+    "name": "Häxans gömma",
+    "price": 279,
+    "colors": [
+      "Svart och plommon"
+    ],
+    "dimensions": {
+      "width": 200,
+      "depth": 180,
+      "height": 210
+    },
+    "tagline": "En liten plats för dina skatter.",
+    "description": "En kantig svart häxhatt vars breda, böljande brätte bildar en liten förvaringsbricka. Den plommonfärgade insidan ger kontrast åt ringar, örhängen och andra småsaker. Priset gäller hatten med integrerad bricka; smycken ingår inte.",
+    "highlights": [
+      "Häxhatt och smyckesbricka i ett",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "grafit"
+    }
+  },
+  {
+    "slug": "gravbiblioteket",
+    "name": "Gravbiblioteket – bokstöd",
+    "price": 399,
+    "colors": [
+      "Mörkgrå"
+    ],
+    "dimensions": {
+      "width": 90,
+      "depth": 120,
+      "height": 200
+    },
+    "tagline": "Ge bokhyllan en gotisk inramning.",
+    "description": "Ett par mörkgrå bokstöd med spetsiga torn och gotiska fönsterdetaljer. Stöden ramar in några favoritböcker och fungerar också som fristående höstdekorationer. Priset gäller två bokstöd. Anpassa antalet böcker efter stödens stabilitet; böcker ingår inte.",
+    "highlights": [
+      "Två gotiska bokstöd",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Mått per bokstöd.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "grafit"
+    }
+  },
+  {
+    "slug": "skuggkatten",
+    "name": "Skuggkatten",
+    "price": 229,
+    "colors": [
+      "Matt svart"
+    ],
+    "dimensions": {
+      "width": 150,
+      "depth": 60,
+      "height": 220
+    },
+    "tagline": "En katt med plats för dina ringar.",
+    "description": "En fasetterad svart katt med böjd rygg och en lång, uppåtriktad svans. Häng några ringar på svansen eller låt katten stå ensam som en grafisk detalj på hyllan. Priset gäller en kattfigur; smycken ingår inte.",
+    "highlights": [
+      "Dekorativ katt och ringhållare",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "grafit"
+    }
+  },
+  {
+    "slug": "pumpatornet",
+    "name": "Pumpatornet",
+    "price": 299,
+    "colors": [
+      "Orange, benvit och plommon"
+    ],
+    "dimensions": {
+      "width": 110,
+      "depth": 110,
+      "height": 250
+    },
+    "tagline": "Tre pumpor. Ett höstligt blickfång.",
+    "description": "En staplad skulptur med tre fasetterade pumpor i orange, benvitt och plommon. Den svarta stjälken och färgernas kontrast ger tornet ett lekfullt men avskalat uttryck. Priset gäller ett komplett pumpatorn.",
+    "highlights": [
+      "Tre staplade pumpor i en skulptur",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "spokporten",
+    "name": "Spökporten",
+    "price": 499,
+    "colors": [
+      "Mörkgrå och benvit"
+    ],
+    "dimensions": {
+      "width": 110,
+      "depth": 100,
+      "height": 230
+    },
+    "tagline": "En liten berättelse mellan böckerna.",
+    "description": "En fristående bokhylledekoration med gotisk båge, måne, träd och ett litet benvitt spöke. Placera den mellan böcker eller i ett litet höststilleben. Avsedd för batteridriven LED-belysning; ljuskälla och böcker ingår inte.",
+    "highlights": [
+      "Gotisk bokhyllevärld med spöke och måne",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "moonLamp",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "midnattsgomman",
+    "name": "Midnattsgömman",
+    "price": 249,
+    "colors": [
+      "Plommon"
+    ],
+    "dimensions": {
+      "width": 110,
+      "depth": 190,
+      "height": 65
+    },
+    "tagline": "För små skatter och hemligheter.",
+    "description": "En plommonfärgad, kistformad förvaringsask med ett separat lock och ett markerat geometriskt mönster. Samla ringar, små minnen eller andra personliga detaljer i asken. Priset gäller ask och lock; innehållet på bilden ingår inte.",
+    "highlights": [
+      "Öppningsbar ask med geometriskt lock",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "runolyktan",
+    "name": "Runolyktan",
+    "price": 349,
+    "colors": [
+      "Benvit"
+    ],
+    "dimensions": {
+      "width": 105,
+      "depth": 105,
+      "height": 260
+    },
+    "tagline": "Låt hösten lysa genom fina detaljer.",
+    "description": "En benvit dekorationslykta med höga, gotiska fönster och ett fasetterat tak. Ett batteridrivet LED-ljus ger ett varmt sken genom öppningarna. Priset gäller lyktan; LED-ljus ingår inte. Lyktan är avsedd enbart för batteridriven LED-belysning.",
+    "highlights": [
+      "Gotisk lykta för batteridrivet LED-ljus",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "moonLamp",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "ritualbrickan",
+    "name": "Ritualbrickan",
+    "price": 199,
+    "colors": [
+      "Matt svart"
+    ],
+    "dimensions": {
+      "width": 180,
+      "depth": 140,
+      "height": 25
+    },
+    "tagline": "En måne för vardagens småsaker.",
+    "description": "En svart halvmåneformad bricka med tre fack och en upphöjd stjärna. Den passar för ringar, nycklar och andra småsaker på hallbordet eller nattduksbordet. Priset gäller en bricka; nycklar och smycken ingår inte.",
+    "highlights": [
+      "Halvmåne med tre förvaringsfack",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "grafit"
+    }
+  },
+  {
+    "slug": "ribbad-pumpa",
+    "name": "Ribbad pumpa",
+    "price": 149,
+    "colors": [
+      "Pumpaorange"
+    ],
+    "dimensions": {
+      "width": 120,
+      "depth": 120,
+      "height": 125
+    },
+    "tagline": "En klassiker med fina veck.",
+    "description": "En orange dekorationspumpa med mjuka ribbor och svart stjälk. Den passar på fönsterbrädan, bordet eller tillsammans med kollektionens spöken. Priset gäller en pumpa. Produkten är en dekoration utan belysning.",
+    "highlights": [
+      "Ribbad pumpa med svart stjälk",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "planter",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "spoket-boo",
+    "name": "Spöket Boo",
+    "price": 99,
+    "colors": [
+      "Benvit"
+    ],
+    "dimensions": {
+      "width": 70,
+      "depth": 65,
+      "height": 100
+    },
+    "tagline": "Lite bus. Mycket charm.",
+    "description": "Ett benvitt spöke med rundad silhuett, mjuka veck och två svarta ögon. Boo är en liten detalj för hyllan eller höstens dukning och en enkel present till någon som gillar Halloween. Priset gäller en figur.",
+    "highlights": [
+      "Ett litet benvitt spöke med svarta ögon",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "fladdermus-3-pack",
+    "name": "Fladdermus – 3-pack",
+    "price": 129,
+    "colors": [
+      "Matt svart"
+    ],
+    "dimensions": {
+      "width": 160,
+      "depth": 12,
+      "height": 65
+    },
+    "tagline": "Tre skuggor att hänga upp.",
+    "description": "Tre svarta fladdermöss med geometriska vingar och upphängningshål. Setet innehåller en stor, en mellan och en liten fladdermus i den fasta kombination som visas på bilden. Upphängningssnören ingår; krok eller infästning ingår inte.",
+    "highlights": [
+      "Tre geometriska fladdermöss med snören",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Måtten gäller den största fladdermusen. De övrigas vingbredd är cirka 120 och 80 mm.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "grafit"
+    }
+  },
+  {
+    "slug": "dodskallekruka",
+    "name": "Dödskallekruka",
+    "price": 249,
+    "colors": [
+      "Benvit"
+    ],
+    "dimensions": {
+      "width": 120,
+      "depth": 130,
+      "height": 115
+    },
+    "tagline": "Ge hemmets gröna en kuslig plats.",
+    "description": "En benvit kruka formad som en dödskalle med tydliga ansiktsdetaljer. Den passar för en mindre växt eller som förvaring för småsaker. Använd en innerkruka när du planterar och vattnar. Växt och innerkruka ingår inte.",
+    "highlights": [
+      "Dödskalleformad kruka för en liten växt",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Preliminära yttermått för det kompletta utförandet på bilden.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "planter",
+      "tone": "benvit"
+    }
+  },
+  {
+    "slug": "spindelnat-4-pack",
+    "name": "Spindelnät – 4-pack",
+    "price": 149,
+    "colors": [
+      "Matt svart"
+    ],
+    "dimensions": {
+      "width": 100,
+      "depth": 100,
+      "height": 5
+    },
+    "tagline": "Duka med ett nät av detaljer.",
+    "description": "Fyra svarta, sexkantiga glasunderlägg med ett öppet spindelnätsmönster. De ger Halloween-dukningen en grafisk detalj och passar för kalla drycker i glas. Priset gäller fyra underlägg; glas och övrig dekoration ingår inte.",
+    "highlights": [
+      "Fyra sexkantiga glasunderlägg med spindelnät",
+      "Formlabbs Halloweenkollektion"
+    ],
+    "category": "halloween",
+    "material": "pla",
+    "finish": "matt",
+    "printTimeHours": 0,
+    "weightGrams": 0,
+    "specificationsPending": true,
+    "dimensionsEstimated": true,
+    "dimensionsNote": "Mått per underlägg.",
+    "stock": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "featured": false,
+    "published": true,
+    "art": {
+      "shape": "organizer",
+      "tone": "grafit"
+    }
+  }
+]

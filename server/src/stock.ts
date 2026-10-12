@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
+import { readFile, writeFile } from './stateFiles.ts';
 import { dirname, resolve } from 'node:path';
 import { allProducts } from './catalog.ts';
 import type { OrderLine } from './types.ts';
@@ -45,7 +46,8 @@ async function load(): Promise<Map<string, number>> {
       if (levels.has(id) && Number.isInteger(value) && value >= 0) levels.set(id, value);
     }
     cache = levels;
-  } catch {
+  } catch (error) {
+    if (process.env.STATE_BUCKET && (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     cache = await initial();
   }
   return cache;
@@ -54,6 +56,7 @@ async function load(): Promise<Map<string, number>> {
 async function persist(levels: Map<string, number>): Promise<void> {
   await mkdir(dirname(STOCK_FILE()), { recursive: true });
   await writeFile(STOCK_FILE(), JSON.stringify(Object.fromEntries(levels), null, 2), 'utf8');
+  cache = levels;
 }
 
 export async function stockLevels(): Promise<Map<string, number>> {
@@ -71,7 +74,7 @@ export async function stockFor(productId: string): Promise<number> {
  */
 export async function reserve(lines: OrderLine[]): Promise<void> {
   return serialize(async () => {
-    const levels = await load();
+    const levels = new Map(await load());
     const wanted = new Map<string, number>();
     for (const line of lines) {
       wanted.set(line.productId, (wanted.get(line.productId) ?? 0) + line.quantity);
@@ -100,7 +103,7 @@ export async function reserve(lines: OrderLine[]): Promise<void> {
 /** Lämnar tillbaka reserverat saldo, t.ex. när betalningen inte gick igenom. */
 export async function release(lines: OrderLine[]): Promise<void> {
   return serialize(async () => {
-    const levels = await load();
+    const levels = new Map(await load());
     for (const line of lines) {
       const current = levels.get(line.productId);
       if (current === undefined) continue;
@@ -113,7 +116,7 @@ export async function release(lines: OrderLine[]): Promise<void> {
 /** Sätter saldot för en produkt, t.ex. när den skapas eller redigeras. */
 export async function setStock(productId: string, quantity: number): Promise<void> {
   return serialize(async () => {
-    const levels = await load();
+    const levels = new Map(await load());
     levels.set(productId, Math.max(0, Math.round(quantity)));
     await persist(levels);
   });
@@ -122,7 +125,7 @@ export async function setStock(productId: string, quantity: number): Promise<voi
 /** Tar bort saldot för en produkt som plockats ur katalogen. */
 export async function removeStock(productId: string): Promise<void> {
   return serialize(async () => {
-    const levels = await load();
+    const levels = new Map(await load());
     if (!levels.delete(productId)) return;
     await persist(levels);
   });

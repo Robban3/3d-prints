@@ -1,0 +1,74 @@
+[
+  {
+    "choice": "Utan färg och penslarGrundpris",
+    "loaded": true,
+    "price": "249 kr",
+    "src": "/api/uploads/e45895f1b6057d8b3ce47930d3486a24",
+    "slug": "mala-din-jul",
+    "imageMatches": true,
+    "priceMatches": true
+  },
+  {
+    "choice": "Med färg och penslar+100 kr",
+    "loaded": true,
+    "price": "349 kr",
+    "src": "/api/uploads/2fd3eb3d01ed3c9b5b7379244ae06e17",
+    "slug": "mala-din-jul",
+    "imageMatches": true,
+    "priceMatches": true
+  },
+  {
+    "choice": "Utan årtal · utan målarpaketGrundpris",
+    "loaded": true,
+    "price": "149 kr",
+    "src": "/api/uploads/53af20f0d403099a02f37de9f8fec473",
+    "slug": "julkula-med-namn",
+    "imageMatches": true,
+    "priceMatches": true
+  },
+  {
+    "choice": "Med årtal (2026) · utan målarpaketGrundpris",
+    "loaded": true,
+    "price": "149 kr",
+    "src": "/api/uploads/6735356aff427f5439c29bdd66f144be",
+    "slug": "julkula-med-namn",
+    "imageMatches": true,
+    "priceMatches": true
+  },
+  {
+    "choice": "Utan årtal · med målarpaket+100 kr",
+    "loaded": true,
+    "price": "249 kr",
+    "src": "/api/uploads/1b0808e7da49a788decc448be630192c",
+    "slug": "julkula-med-namn",
+    "imageMatches": true,
+    "priceMatches": true
+  },
+  {
+    "choice": "Med årtal (2026) · med målarpaket+100 kr",
+    "loaded": true,
+    "price": "249 kr",
+    "src": "/api/uploads/666a9079bbede4bde1f9c038826af0f7",
+    "slug": "julkula-med-namn",
+    "imageMatches": true,
+    "priceMatches": true
+  },
+  {
+    "choice": "Utan färg och penslarGrundpris",
+    "loaded": true,
+    "price": "129 kr",
+    "src": "/api/uploads/582601faf35bc10b72de8e8fa86f7ba7",
+    "slug": "julpyssel",
+    "imageMatches": true,
+    "priceMatches": true
+  },
+  {
+    "choice": "Med färg och penslar+100 kr",
+    "loaded": true,
+    "price": "229 kr",
+    "src": "/api/uploads/1671c1ce0dc2513187ac2838e42a5c9e",
+    "slug": "julpyssel",
+    "imageMatches": true,
+    "priceMatches": true
+  }
+]

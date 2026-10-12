@@ -1,0 +1,2014 @@
+{
+  "products": 52,
+  "combinations": 118,
+  "images": 118,
+  "failures": [],
+  "checks": [
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Lermatt",
+      "size": "liten",
+      "price": 249,
+      "dimensions": {
+        "width": 110,
+        "depth": 110,
+        "height": 120
+      },
+      "image": {
+        "id": "d653f06c32916e870f1a8776c42acae6",
+        "url": "/api/uploads/d653f06c32916e870f1a8776c42acae6",
+        "fileName": "terra-vaxtkruka-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Grafit",
+      "size": "liten",
+      "price": 249,
+      "dimensions": {
+        "width": 110,
+        "depth": 110,
+        "height": 120
+      },
+      "image": {
+        "id": "c1f3feeac5bf15422e813fa221e3573f",
+        "url": "/api/uploads/c1f3feeac5bf15422e813fa221e3573f",
+        "fileName": "terra-vaxtkruka-c1-s0-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Salvia",
+      "size": "liten",
+      "price": 249,
+      "dimensions": {
+        "width": 110,
+        "depth": 110,
+        "height": 120
+      },
+      "image": {
+        "id": "e39e186c1ccf9eb3b6ef013905dd2da0",
+        "url": "/api/uploads/e39e186c1ccf9eb3b6ef013905dd2da0",
+        "fileName": "terra-vaxtkruka-c2-s0-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Benvit",
+      "size": "liten",
+      "price": 249,
+      "dimensions": {
+        "width": 110,
+        "depth": 110,
+        "height": 120
+      },
+      "image": {
+        "id": "ab5b0090263c28b67754d658b358c0bd",
+        "url": "/api/uploads/ab5b0090263c28b67754d658b358c0bd",
+        "fileName": "terra-vaxtkruka-c3-s0-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Lermatt",
+      "size": "mellan",
+      "price": 329,
+      "dimensions": {
+        "width": 140,
+        "depth": 140,
+        "height": 155
+      },
+      "image": {
+        "id": "fd348f817b53d4c1bc36fd7e28c15cae",
+        "url": "/api/uploads/fd348f817b53d4c1bc36fd7e28c15cae",
+        "fileName": "terra-vaxtkruka-c0-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Grafit",
+      "size": "mellan",
+      "price": 329,
+      "dimensions": {
+        "width": 140,
+        "depth": 140,
+        "height": 155
+      },
+      "image": {
+        "id": "76c7800354ac0d73d10563bd6851904f",
+        "url": "/api/uploads/76c7800354ac0d73d10563bd6851904f",
+        "fileName": "terra-vaxtkruka-c1-s1-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Salvia",
+      "size": "mellan",
+      "price": 329,
+      "dimensions": {
+        "width": 140,
+        "depth": 140,
+        "height": 155
+      },
+      "image": {
+        "id": "4bb4b7b29fb4da9f77ee6bc40289c406",
+        "url": "/api/uploads/4bb4b7b29fb4da9f77ee6bc40289c406",
+        "fileName": "terra-vaxtkruka-c2-s1-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Benvit",
+      "size": "mellan",
+      "price": 329,
+      "dimensions": {
+        "width": 140,
+        "depth": 140,
+        "height": 155
+      },
+      "image": {
+        "id": "2c342ae5b5d9f46b09fcd933004b0f07",
+        "url": "/api/uploads/2c342ae5b5d9f46b09fcd933004b0f07",
+        "fileName": "terra-vaxtkruka-c3-s1-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Lermatt",
+      "size": "stor",
+      "price": 429,
+      "dimensions": {
+        "width": 180,
+        "depth": 180,
+        "height": 195
+      },
+      "image": {
+        "id": "bc24e0910e24e66f70a05266bb8e3fcb",
+        "url": "/api/uploads/bc24e0910e24e66f70a05266bb8e3fcb",
+        "fileName": "terra-vaxtkruka-c0-s2-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Grafit",
+      "size": "stor",
+      "price": 429,
+      "dimensions": {
+        "width": 180,
+        "depth": 180,
+        "height": 195
+      },
+      "image": {
+        "id": "33ef71ff67c388f6a58c4a73534d0981",
+        "url": "/api/uploads/33ef71ff67c388f6a58c4a73534d0981",
+        "fileName": "terra-vaxtkruka-c1-s2-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Salvia",
+      "size": "stor",
+      "price": 429,
+      "dimensions": {
+        "width": 180,
+        "depth": 180,
+        "height": 195
+      },
+      "image": {
+        "id": "d2c79fbe6652ffcba0fc3e94b376292d",
+        "url": "/api/uploads/d2c79fbe6652ffcba0fc3e94b376292d",
+        "fileName": "terra-vaxtkruka-c2-s2-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "color": "Benvit",
+      "size": "stor",
+      "price": 429,
+      "dimensions": {
+        "width": 180,
+        "depth": 180,
+        "height": 195
+      },
+      "image": {
+        "id": "9c25bff69efb49ec1a2f3ded84c4cc00",
+        "url": "/api/uploads/9c25bff69efb49ec1a2f3ded84c4cc00",
+        "fileName": "terra-vaxtkruka-c3-s2-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "arc-horlursstall",
+      "name": "Arc hörlursställ",
+      "color": "Matt svart",
+      "size": "",
+      "price": 279,
+      "dimensions": {
+        "width": 120,
+        "depth": 110,
+        "height": 265
+      },
+      "image": {
+        "id": "67fd2b88e26d6b4f7711e0cc60a01367",
+        "url": "/api/uploads/67fd2b88e26d6b4f7711e0cc60a01367",
+        "fileName": "arc-horlursstall-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "arc-horlursstall",
+      "name": "Arc hörlursställ",
+      "color": "Off-white",
+      "size": "",
+      "price": 279,
+      "dimensions": {
+        "width": 120,
+        "depth": 110,
+        "height": 265
+      },
+      "image": {
+        "id": "23c0ea30c106c3e522ca692b5583a649",
+        "url": "/api/uploads/23c0ea30c106c3e522ca692b5583a649",
+        "fileName": "arc-horlursstall-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "arc-horlursstall",
+      "name": "Arc hörlursställ",
+      "color": "Djupblå",
+      "size": "",
+      "price": 279,
+      "dimensions": {
+        "width": 120,
+        "depth": 110,
+        "height": 265
+      },
+      "image": {
+        "id": "2100b17c24196ffa0929ed4431e4b378",
+        "url": "/api/uploads/2100b17c24196ffa0929ed4431e4b378",
+        "fileName": "arc-horlursstall-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Grafit",
+      "size": "3-moduler",
+      "price": 349,
+      "dimensions": {
+        "width": 180,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "b3ef39de31cc3400cad565c2d1c7e408",
+        "url": "/api/uploads/b3ef39de31cc3400cad565c2d1c7e408",
+        "fileName": "grid-skrivbordsorganiserare-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Sand",
+      "size": "3-moduler",
+      "price": 349,
+      "dimensions": {
+        "width": 180,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "498bd3635b62bf6f1827266033075d96",
+        "url": "/api/uploads/498bd3635b62bf6f1827266033075d96",
+        "fileName": "grid-skrivbordsorganiserare-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Mossgrön",
+      "size": "3-moduler",
+      "price": 349,
+      "dimensions": {
+        "width": 180,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "336618d298fe2dbf0981e84604124d89",
+        "url": "/api/uploads/336618d298fe2dbf0981e84604124d89",
+        "fileName": "grid-skrivbordsorganiserare-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Grafit",
+      "size": "5-moduler",
+      "price": 529,
+      "dimensions": {
+        "width": 300,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "f0c1219c151df4b8aa680e01ccd7da27",
+        "url": "/api/uploads/f0c1219c151df4b8aa680e01ccd7da27",
+        "fileName": "grid-skrivbordsorganiserare-c0-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Sand",
+      "size": "5-moduler",
+      "price": 529,
+      "dimensions": {
+        "width": 300,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "7809fbf44822d0aa994ebee28a696d9f",
+        "url": "/api/uploads/7809fbf44822d0aa994ebee28a696d9f",
+        "fileName": "grid-skrivbordsorganiserare-c1-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Mossgrön",
+      "size": "5-moduler",
+      "price": 529,
+      "dimensions": {
+        "width": 300,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "5732f7581ab47e2acc854203e7340a19",
+        "url": "/api/uploads/5732f7581ab47e2acc854203e7340a19",
+        "fileName": "grid-skrivbordsorganiserare-c2-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Grafit",
+      "size": "8-moduler",
+      "price": 749,
+      "dimensions": {
+        "width": 480,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "7f52b8ab8dc7e8eb204d90f643d7704c",
+        "url": "/api/uploads/7f52b8ab8dc7e8eb204d90f643d7704c",
+        "fileName": "grid-skrivbordsorganiserare-c0-s2-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Sand",
+      "size": "8-moduler",
+      "price": 749,
+      "dimensions": {
+        "width": 480,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "17b280964436a894bfbded2672449035",
+        "url": "/api/uploads/17b280964436a894bfbded2672449035",
+        "fileName": "grid-skrivbordsorganiserare-c1-s2-visualisering.webp"
+      }
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "color": "Mossgrön",
+      "size": "8-moduler",
+      "price": 749,
+      "dimensions": {
+        "width": 480,
+        "depth": 90,
+        "height": 110
+      },
+      "image": {
+        "id": "b1e060c4dfe4f846e10abe676c4f62ac",
+        "url": "/api/uploads/b1e060c4dfe4f846e10abe676c4f62ac",
+        "fileName": "grid-skrivbordsorganiserare-c2-s2-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Silk koppar",
+      "size": "mini",
+      "price": 179,
+      "dimensions": {
+        "width": 47,
+        "depth": 160,
+        "height": 60
+      },
+      "image": {
+        "id": "9c08cea77851c81cb30b9bf3d249966e",
+        "url": "/api/uploads/9c08cea77851c81cb30b9bf3d249966e",
+        "fileName": "flexi-drake-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Silk lila",
+      "size": "mini",
+      "price": 179,
+      "dimensions": {
+        "width": 47,
+        "depth": 160,
+        "height": 60
+      },
+      "image": {
+        "id": "708cdce845a3cde91820c5158b75780f",
+        "url": "/api/uploads/708cdce845a3cde91820c5158b75780f",
+        "fileName": "flexi-drake-c1-s0-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Regnbågsövergång",
+      "size": "mini",
+      "price": 179,
+      "dimensions": {
+        "width": 47,
+        "depth": 160,
+        "height": 60
+      },
+      "image": {
+        "id": "e76c1417930bac894c42f1af705156da",
+        "url": "/api/uploads/e76c1417930bac894c42f1af705156da",
+        "fileName": "flexi-drake-c2-s0-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Glow in the dark",
+      "size": "mini",
+      "price": 179,
+      "dimensions": {
+        "width": 47,
+        "depth": 160,
+        "height": 60
+      },
+      "image": {
+        "id": "d9321dba4a35b6a0148554608acc67c8",
+        "url": "/api/uploads/d9321dba4a35b6a0148554608acc67c8",
+        "fileName": "flexi-drake-c3-s0-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Silk koppar",
+      "size": "standard",
+      "price": 279,
+      "dimensions": {
+        "width": 70,
+        "depth": 240,
+        "height": 90
+      },
+      "image": {
+        "id": "e6d1c31012c44cae619fc70cc4c27eeb",
+        "url": "/api/uploads/e6d1c31012c44cae619fc70cc4c27eeb",
+        "fileName": "flexi-drake-c0-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Silk lila",
+      "size": "standard",
+      "price": 279,
+      "dimensions": {
+        "width": 70,
+        "depth": 240,
+        "height": 90
+      },
+      "image": {
+        "id": "fad0e0912c13beb84a2f80cbc3c7abe1",
+        "url": "/api/uploads/fad0e0912c13beb84a2f80cbc3c7abe1",
+        "fileName": "flexi-drake-c1-s1-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Regnbågsövergång",
+      "size": "standard",
+      "price": 279,
+      "dimensions": {
+        "width": 70,
+        "depth": 240,
+        "height": 90
+      },
+      "image": {
+        "id": "637210c4112db892ddd903bf4bb1e526",
+        "url": "/api/uploads/637210c4112db892ddd903bf4bb1e526",
+        "fileName": "flexi-drake-c2-s1-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Glow in the dark",
+      "size": "standard",
+      "price": 279,
+      "dimensions": {
+        "width": 70,
+        "depth": 240,
+        "height": 90
+      },
+      "image": {
+        "id": "e393c2fefb54f7ea7f7751cc1ef0e4a3",
+        "url": "/api/uploads/e393c2fefb54f7ea7f7751cc1ef0e4a3",
+        "fileName": "flexi-drake-c3-s1-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Silk koppar",
+      "size": "jatte",
+      "price": 449,
+      "dimensions": {
+        "width": 110,
+        "depth": 380,
+        "height": 140
+      },
+      "image": {
+        "id": "af4500fe9fdd5fbe25582220076d2e3c",
+        "url": "/api/uploads/af4500fe9fdd5fbe25582220076d2e3c",
+        "fileName": "flexi-drake-c0-s2-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Silk lila",
+      "size": "jatte",
+      "price": 449,
+      "dimensions": {
+        "width": 110,
+        "depth": 380,
+        "height": 140
+      },
+      "image": {
+        "id": "d8804b169f16fa9197f64407892e4e0b",
+        "url": "/api/uploads/d8804b169f16fa9197f64407892e4e0b",
+        "fileName": "flexi-drake-c1-s2-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Regnbågsövergång",
+      "size": "jatte",
+      "price": 449,
+      "dimensions": {
+        "width": 110,
+        "depth": 380,
+        "height": 140
+      },
+      "image": {
+        "id": "7297568043d74c52fc1d8db17eada7c2",
+        "url": "/api/uploads/7297568043d74c52fc1d8db17eada7c2",
+        "fileName": "flexi-drake-c2-s2-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "color": "Glow in the dark",
+      "size": "jatte",
+      "price": 449,
+      "dimensions": {
+        "width": 110,
+        "depth": 380,
+        "height": 140
+      },
+      "image": {
+        "id": "3ff22907101dcd1b708c4178a59b342e",
+        "url": "/api/uploads/3ff22907101dcd1b708c4178a59b342e",
+        "fileName": "flexi-drake-c3-s2-aligned-visualisering.webp"
+      }
+    },
+    {
+      "slug": "luna-manlampa",
+      "name": "Luna månlampa",
+      "color": "Naturvit",
+      "size": "12cm",
+      "price": 449,
+      "dimensions": {
+        "width": 120,
+        "depth": 120,
+        "height": 155
+      },
+      "image": {
+        "id": "cdb81685493a181e867da49e3e3b81a1",
+        "url": "/api/uploads/cdb81685493a181e867da49e3e3b81a1",
+        "fileName": "luna-manlampa-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "luna-manlampa",
+      "name": "Luna månlampa",
+      "color": "Naturvit",
+      "size": "15cm",
+      "price": 599,
+      "dimensions": {
+        "width": 150,
+        "depth": 150,
+        "height": 190
+      },
+      "image": {
+        "id": "517c6d5f5eb503194637d335f837ed20",
+        "url": "/api/uploads/517c6d5f5eb503194637d335f837ed20",
+        "fileName": "luna-manlampa-c0-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "luna-manlampa",
+      "name": "Luna månlampa",
+      "color": "Naturvit",
+      "size": "20cm",
+      "price": 799,
+      "dimensions": {
+        "width": 200,
+        "depth": 200,
+        "height": 245
+      },
+      "image": {
+        "id": "684c90c198f48bf6fee2e1050b6ffc68",
+        "url": "/api/uploads/684c90c198f48bf6fee2e1050b6ffc68",
+        "fileName": "luna-manlampa-c0-s2-visualisering.webp"
+      }
+    },
+    {
+      "slug": "hex-pennstall",
+      "name": "Hex pennställ",
+      "color": "Matt svart",
+      "size": "",
+      "price": 179,
+      "dimensions": {
+        "width": 105,
+        "depth": 92,
+        "height": 110
+      },
+      "image": {
+        "id": "55973bd8fd90f42683a1ad74cf831732",
+        "url": "/api/uploads/55973bd8fd90f42683a1ad74cf831732",
+        "fileName": "hex-pennstall-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "hex-pennstall",
+      "name": "Hex pennställ",
+      "color": "Sand",
+      "size": "",
+      "price": 179,
+      "dimensions": {
+        "width": 105,
+        "depth": 92,
+        "height": 110
+      },
+      "image": {
+        "id": "3603838d4ad19b34ad5073e3ba7b4247",
+        "url": "/api/uploads/3603838d4ad19b34ad5073e3ba7b4247",
+        "fileName": "hex-pennstall-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "hex-pennstall",
+      "name": "Hex pennställ",
+      "color": "Tegel",
+      "size": "",
+      "price": 179,
+      "dimensions": {
+        "width": 105,
+        "depth": 92,
+        "height": 110
+      },
+      "image": {
+        "id": "0e41081be181fb3528186c94bbb678ea",
+        "url": "/api/uploads/0e41081be181fb3528186c94bbb678ea",
+        "fileName": "hex-pennstall-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "hex-pennstall",
+      "name": "Hex pennställ",
+      "color": "Djupblå",
+      "size": "",
+      "price": 179,
+      "dimensions": {
+        "width": 105,
+        "depth": 92,
+        "height": 110
+      },
+      "image": {
+        "id": "0ba50317d2c36ca323ad2cf83dc1d2af",
+        "url": "/api/uploads/0ba50317d2c36ca323ad2cf83dc1d2af",
+        "fileName": "hex-pennstall-c3-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "wave-vaggkrokar",
+      "name": "Wave väggkrokar (3-pack)",
+      "color": "Matt svart",
+      "size": "3-pack",
+      "price": 149,
+      "dimensions": {
+        "width": 45,
+        "depth": 35,
+        "height": 80
+      },
+      "image": {
+        "id": "b18bf1820f9f284da97c69656e8195fc",
+        "url": "/api/uploads/b18bf1820f9f284da97c69656e8195fc",
+        "fileName": "wave-vaggkrokar-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "wave-vaggkrokar",
+      "name": "Wave väggkrokar (3-pack)",
+      "color": "Off-white",
+      "size": "3-pack",
+      "price": 149,
+      "dimensions": {
+        "width": 45,
+        "depth": 35,
+        "height": 80
+      },
+      "image": {
+        "id": "1a9eebbd6b6fe554c83991d7c01aacea",
+        "url": "/api/uploads/1a9eebbd6b6fe554c83991d7c01aacea",
+        "fileName": "wave-vaggkrokar-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "wave-vaggkrokar",
+      "name": "Wave väggkrokar (3-pack)",
+      "color": "Mässing-look",
+      "size": "3-pack",
+      "price": 149,
+      "dimensions": {
+        "width": 45,
+        "depth": 35,
+        "height": 80
+      },
+      "image": {
+        "id": "818291457db299a42979d58741eeae42",
+        "url": "/api/uploads/818291457db299a42979d58741eeae42",
+        "fileName": "wave-vaggkrokar-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "wave-vaggkrokar",
+      "name": "Wave väggkrokar (3-pack)",
+      "color": "Matt svart",
+      "size": "6-pack",
+      "price": 249,
+      "dimensions": {
+        "width": 45,
+        "depth": 35,
+        "height": 80
+      },
+      "image": {
+        "id": "40501a1b4b6311539b33f3f866747d77",
+        "url": "/api/uploads/40501a1b4b6311539b33f3f866747d77",
+        "fileName": "wave-vaggkrokar-c0-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "wave-vaggkrokar",
+      "name": "Wave väggkrokar (3-pack)",
+      "color": "Off-white",
+      "size": "6-pack",
+      "price": 249,
+      "dimensions": {
+        "width": 45,
+        "depth": 35,
+        "height": 80
+      },
+      "image": {
+        "id": "2a0d1b75065186183114b5fc2ac2640a",
+        "url": "/api/uploads/2a0d1b75065186183114b5fc2ac2640a",
+        "fileName": "wave-vaggkrokar-c1-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "wave-vaggkrokar",
+      "name": "Wave väggkrokar (3-pack)",
+      "color": "Mässing-look",
+      "size": "6-pack",
+      "price": 249,
+      "dimensions": {
+        "width": 45,
+        "depth": 35,
+        "height": 80
+      },
+      "image": {
+        "id": "598d48ba797cc2bb6ee838e4816942bf",
+        "url": "/api/uploads/598d48ba797cc2bb6ee838e4816942bf",
+        "fileName": "wave-vaggkrokar-c2-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "brew-kaffedripp",
+      "name": "Brew kaffedripp",
+      "color": "Matt svart",
+      "size": "",
+      "price": 299,
+      "dimensions": {
+        "width": 130,
+        "depth": 130,
+        "height": 175
+      },
+      "image": {
+        "id": "6c6d457027e665981f3aa0031b615f82",
+        "url": "/api/uploads/6c6d457027e665981f3aa0031b615f82",
+        "fileName": "brew-kaffedripp-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "brew-kaffedripp",
+      "name": "Brew kaffedripp",
+      "color": "Benvit",
+      "size": "",
+      "price": 299,
+      "dimensions": {
+        "width": 130,
+        "depth": 130,
+        "height": 175
+      },
+      "image": {
+        "id": "271d03aa5f8946ae8f1ff77bcd4c541e",
+        "url": "/api/uploads/271d03aa5f8946ae8f1ff77bcd4c541e",
+        "fileName": "brew-kaffedripp-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "brew-kaffedripp",
+      "name": "Brew kaffedripp",
+      "color": "Rostbrun",
+      "size": "",
+      "price": 299,
+      "dimensions": {
+        "width": 130,
+        "depth": 130,
+        "height": 175
+      },
+      "image": {
+        "id": "163e32cc8a2d9d483c0d8cee50ab7e82",
+        "url": "/api/uploads/163e32cc8a2d9d483c0d8cee50ab7e82",
+        "fileName": "brew-kaffedripp-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "keep-tarningstorn",
+      "name": "Keep tärningstorn",
+      "color": "Grafit",
+      "size": "",
+      "price": 349,
+      "dimensions": {
+        "width": 110,
+        "depth": 170,
+        "height": 245
+      },
+      "image": {
+        "id": "386f67718811a6db6ac38563f8bd879a",
+        "url": "/api/uploads/386f67718811a6db6ac38563f8bd879a",
+        "fileName": "keep-tarningstorn-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "keep-tarningstorn",
+      "name": "Keep tärningstorn",
+      "color": "Mörkgrön",
+      "size": "",
+      "price": 349,
+      "dimensions": {
+        "width": 110,
+        "depth": 170,
+        "height": 245
+      },
+      "image": {
+        "id": "264bfa91ee767f8a1562809831f6c1ab",
+        "url": "/api/uploads/264bfa91ee767f8a1562809831f6c1ab",
+        "fileName": "keep-tarningstorn-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "keep-tarningstorn",
+      "name": "Keep tärningstorn",
+      "color": "Vinröd",
+      "size": "",
+      "price": 349,
+      "dimensions": {
+        "width": 110,
+        "depth": 170,
+        "height": 245
+      },
+      "image": {
+        "id": "e4e3b2843996db8a38572d8356d5f848",
+        "url": "/api/uploads/e4e3b2843996db8a38572d8356d5f848",
+        "fileName": "keep-tarningstorn-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "fold-telefonstall",
+      "name": "Fold telefonställ",
+      "color": "Matt svart",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 78,
+        "depth": 90,
+        "height": 105
+      },
+      "image": {
+        "id": "054e46270193af0686597498ed4631b4",
+        "url": "/api/uploads/054e46270193af0686597498ed4631b4",
+        "fileName": "fold-telefonstall-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "fold-telefonstall",
+      "name": "Fold telefonställ",
+      "color": "Transparent rök",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 78,
+        "depth": 90,
+        "height": 105
+      },
+      "image": {
+        "id": "63bfd6be09945810d77a6c0afbd7aa82",
+        "url": "/api/uploads/63bfd6be09945810d77a6c0afbd7aa82",
+        "fileName": "fold-telefonstall-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "fold-telefonstall",
+      "name": "Fold telefonställ",
+      "color": "Korall",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 78,
+        "depth": 90,
+        "height": 105
+      },
+      "image": {
+        "id": "f518d5d8cbf3ac291696ab59320c3adf",
+        "url": "/api/uploads/f518d5d8cbf3ac291696ab59320c3adf",
+        "fileName": "fold-telefonstall-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "coil-kabelhallare",
+      "name": "Coil kabelhållare (5-pack)",
+      "color": "Matt svart",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 25,
+        "depth": 25,
+        "height": 22
+      },
+      "image": {
+        "id": "94920ab0545cc0f7a7b62bd286bc4be6",
+        "url": "/api/uploads/94920ab0545cc0f7a7b62bd286bc4be6",
+        "fileName": "coil-kabelhallare-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "coil-kabelhallare",
+      "name": "Coil kabelhållare (5-pack)",
+      "color": "Vit",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 25,
+        "depth": 25,
+        "height": 22
+      },
+      "image": {
+        "id": "92613b22248de80409c15d817577f899",
+        "url": "/api/uploads/92613b22248de80409c15d817577f899",
+        "fileName": "coil-kabelhallare-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "coil-kabelhallare",
+      "name": "Coil kabelhållare (5-pack)",
+      "color": "Grå",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 25,
+        "depth": 25,
+        "height": 22
+      },
+      "image": {
+        "id": "9f799e2dc446bf8baa17a8cf982eaeb1",
+        "url": "/api/uploads/9f799e2dc446bf8baa17a8cf982eaeb1",
+        "fileName": "coil-kabelhallare-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "orbit-fidget",
+      "name": "Orbit fidget",
+      "color": "Svart/lime",
+      "size": "",
+      "price": 199,
+      "dimensions": {
+        "width": 78,
+        "depth": 78,
+        "height": 14
+      },
+      "image": {
+        "id": "3c8d402ba45e42565dc5336a23bba1c4",
+        "url": "/api/uploads/3c8d402ba45e42565dc5336a23bba1c4",
+        "fileName": "orbit-fidget-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "orbit-fidget",
+      "name": "Orbit fidget",
+      "color": "Grå/orange",
+      "size": "",
+      "price": 199,
+      "dimensions": {
+        "width": 78,
+        "depth": 78,
+        "height": 14
+      },
+      "image": {
+        "id": "e9ca8db55ef38f6d8fe93cd4f62b8bbc",
+        "url": "/api/uploads/e9ca8db55ef38f6d8fe93cd4f62b8bbc",
+        "fileName": "orbit-fidget-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "orbit-fidget",
+      "name": "Orbit fidget",
+      "color": "Blå/vit",
+      "size": "",
+      "price": 199,
+      "dimensions": {
+        "width": 78,
+        "depth": 78,
+        "height": 14
+      },
+      "image": {
+        "id": "1fb4cce3d2fc01e71f7917da83d20081",
+        "url": "/api/uploads/1fb4cce3d2fc01e71f7917da83d20081",
+        "fileName": "orbit-fidget-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "shelf-kryddstall",
+      "name": "Shelf kryddställ",
+      "color": "Benvit",
+      "size": "",
+      "price": 299,
+      "dimensions": {
+        "width": 360,
+        "depth": 180,
+        "height": 120
+      },
+      "image": {
+        "id": "16be0753f6b5c8fcf26e51022d5c797e",
+        "url": "/api/uploads/16be0753f6b5c8fcf26e51022d5c797e",
+        "fileName": "shelf-kryddstall-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "shelf-kryddstall",
+      "name": "Shelf kryddställ",
+      "color": "Matt svart",
+      "size": "",
+      "price": 299,
+      "dimensions": {
+        "width": 360,
+        "depth": 180,
+        "height": 120
+      },
+      "image": {
+        "id": "3ba1dede5d25e1b2397a22ef5ae787b9",
+        "url": "/api/uploads/3ba1dede5d25e1b2397a22ef5ae787b9",
+        "fileName": "shelf-kryddstall-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "shelf-kryddstall",
+      "name": "Shelf kryddställ",
+      "color": "Ljusgrå",
+      "size": "",
+      "price": 299,
+      "dimensions": {
+        "width": 360,
+        "depth": 180,
+        "height": 120
+      },
+      "image": {
+        "id": "991f1f34c2ff3d98dcc3aa1ef0fb3f2c",
+        "url": "/api/uploads/991f1f34c2ff3d98dcc3aa1ef0fb3f2c",
+        "fileName": "shelf-kryddstall-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-signe",
+      "name": "Vas Signe",
+      "color": "Benvit",
+      "size": "",
+      "price": 349,
+      "dimensions": {
+        "width": 130,
+        "depth": 130,
+        "height": 220
+      },
+      "image": {
+        "id": "eeec3e5dbf12ec563f98c42f70019584",
+        "url": "/api/uploads/eeec3e5dbf12ec563f98c42f70019584",
+        "fileName": "signe.webp"
+      }
+    },
+    {
+      "slug": "julgran-2-pack",
+      "name": "Julgran – 2-pack",
+      "color": "Skogsgrön",
+      "size": "",
+      "price": 199,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 160
+      },
+      "image": {
+        "id": "135f315a7d7369cb776415c700060681",
+        "url": "/api/uploads/135f315a7d7369cb776415c700060681",
+        "fileName": "julgran.webp"
+      }
+    },
+    {
+      "slug": "stjarna",
+      "name": "Stjärna",
+      "color": "Vinröd",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 140,
+        "depth": 35,
+        "height": 140
+      },
+      "image": {
+        "id": "55b0fafa7cc45c500b6b0f73051dfae0",
+        "url": "/api/uploads/55b0fafa7cc45c500b6b0f73051dfae0",
+        "fileName": "stjarna.webp"
+      }
+    },
+    {
+      "slug": "kruka-elise",
+      "name": "Kruka Elise",
+      "color": "Benvit",
+      "size": "",
+      "price": 249,
+      "dimensions": {
+        "width": 140,
+        "depth": 140,
+        "height": 140
+      },
+      "image": {
+        "id": "1a68444e5e232dd39dace5538be2f1d2",
+        "url": "/api/uploads/1a68444e5e232dd39dace5538be2f1d2",
+        "fileName": "elise.webp"
+      }
+    },
+    {
+      "slug": "kula-virvel",
+      "name": "Julkula Virvel",
+      "color": "Skogsgrön",
+      "size": "",
+      "price": 99,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "image": {
+        "id": "b95cb6f183daf7303e74b7b68b2ca8fc",
+        "url": "/api/uploads/b95cb6f183daf7303e74b7b68b2ca8fc",
+        "fileName": "kula-virvel-visualisering.webp"
+      }
+    },
+    {
+      "slug": "kula-diamant",
+      "name": "Julkula Diamant",
+      "color": "Vinröd",
+      "size": "",
+      "price": 99,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "image": {
+        "id": "598fef706faad972dbb535ecd892d1e4",
+        "url": "/api/uploads/598fef706faad972dbb535ecd892d1e4",
+        "fileName": "kula-diamant-visualisering.webp"
+      }
+    },
+    {
+      "slug": "gran-frost",
+      "name": "Gran Frost – 2-pack",
+      "color": "Benvit",
+      "size": "",
+      "price": 229,
+      "dimensions": {
+        "width": 90,
+        "depth": 90,
+        "height": 220
+      },
+      "image": {
+        "id": "6b8f8d828d0811090f5b5f01e3db33e8",
+        "url": "/api/uploads/6b8f8d828d0811090f5b5f01e3db33e8",
+        "fileName": "gran-frost-visualisering.webp"
+      }
+    },
+    {
+      "slug": "stjarna-polaris",
+      "name": "Stjärna Polaris",
+      "color": "Benvit",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 160,
+        "depth": 40,
+        "height": 160
+      },
+      "image": {
+        "id": "f2c5b991f09df5148dc21c6852c7d2b8",
+        "url": "/api/uploads/f2c5b991f09df5148dc21c6852c7d2b8",
+        "fileName": "stjarna-polaris-visualisering.webp"
+      }
+    },
+    {
+      "slug": "namnornament",
+      "name": "Personligt namnornament",
+      "color": "Benvit",
+      "size": "",
+      "price": 149,
+      "dimensions": {
+        "width": 100,
+        "depth": 5,
+        "height": 115
+      },
+      "image": {
+        "id": "3208827ce679b0e4b6cb737d08c071e8",
+        "url": "/api/uploads/3208827ce679b0e4b6cb737d08c071e8",
+        "fileName": "namnornament-visualisering.webp"
+      }
+    },
+    {
+      "slug": "mala-din-jul",
+      "name": "Måla din jul – 4-pack",
+      "color": "Grön, röd, vit och svart",
+      "size": "utan-farg-penslar",
+      "price": 249,
+      "dimensions": {
+        "width": 70,
+        "depth": 70,
+        "height": 85
+      },
+      "image": {
+        "id": "e45895f1b6057d8b3ce47930d3486a24",
+        "url": "/api/uploads/e45895f1b6057d8b3ce47930d3486a24",
+        "fileName": "mala-din-jul-utan-farg-penslar-visualisering.webp"
+      }
+    },
+    {
+      "slug": "mala-din-jul",
+      "name": "Måla din jul – 4-pack",
+      "color": "Grön, röd, vit och svart",
+      "size": "med-farg-penslar",
+      "price": 349,
+      "dimensions": {
+        "width": 70,
+        "depth": 70,
+        "height": 85
+      },
+      "image": {
+        "id": "2fd3eb3d01ed3c9b5b7379244ae06e17",
+        "url": "/api/uploads/2fd3eb3d01ed3c9b5b7379244ae06e17",
+        "fileName": "mala-din-jul-kit-visualisering.webp"
+      }
+    },
+    {
+      "slug": "julkula-med-namn",
+      "name": "Julkula med namn",
+      "color": "Benvit",
+      "size": "utan-artal",
+      "price": 149,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "image": {
+        "id": "53af20f0d403099a02f37de9f8fec473",
+        "url": "/api/uploads/53af20f0d403099a02f37de9f8fec473",
+        "fileName": "julkula-med-namn-utan-artal-visualisering.webp"
+      }
+    },
+    {
+      "slug": "julkula-med-namn",
+      "name": "Julkula med namn",
+      "color": "Benvit",
+      "size": "med-artal",
+      "price": 149,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "image": {
+        "id": "6735356aff427f5439c29bdd66f144be",
+        "url": "/api/uploads/6735356aff427f5439c29bdd66f144be",
+        "fileName": "julkula-med-namn-visualisering.webp"
+      }
+    },
+    {
+      "slug": "julkula-med-namn",
+      "name": "Julkula med namn",
+      "color": "Benvit",
+      "size": "utan-artal-med-malarpaket",
+      "price": 249,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "image": {
+        "id": "1b0808e7da49a788decc448be630192c",
+        "url": "/api/uploads/1b0808e7da49a788decc448be630192c",
+        "fileName": "julkula-med-namn-utan-artal-kit-visualisering.webp"
+      }
+    },
+    {
+      "slug": "julkula-med-namn",
+      "name": "Julkula med namn",
+      "color": "Benvit",
+      "size": "med-artal-med-malarpaket",
+      "price": 249,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "image": {
+        "id": "666a9079bbede4bde1f9c038826af0f7",
+        "url": "/api/uploads/666a9079bbede4bde1f9c038826af0f7",
+        "fileName": "julkula-med-namn-med-artal-kit-visualisering.webp"
+      }
+    },
+    {
+      "slug": "var-forsta-jul",
+      "name": "Vår första jul",
+      "color": "Benvit",
+      "size": "",
+      "price": 149,
+      "dimensions": {
+        "width": 100,
+        "depth": 5,
+        "height": 110
+      },
+      "image": {
+        "id": "ddc291ef7ffc589db7caeadc82d65398",
+        "url": "/api/uploads/ddc291ef7ffc589db7caeadc82d65398",
+        "fileName": "var-forsta-jul-visualisering.webp"
+      }
+    },
+    {
+      "slug": "snoflinga-3-pack",
+      "name": "Snöflinga – 3-pack",
+      "color": "Benvit",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 90,
+        "depth": 4,
+        "height": 90
+      },
+      "image": {
+        "id": "eb68e9fb3dead218673f74e9c41b2bb3",
+        "url": "/api/uploads/eb68e9fb3dead218673f74e9c41b2bb3",
+        "fileName": "snoflinga-3-pack-visualisering.webp"
+      }
+    },
+    {
+      "slug": "angel-alma",
+      "name": "Ängel Alma – 2-pack",
+      "color": "Benvit",
+      "size": "",
+      "price": 179,
+      "dimensions": {
+        "width": 75,
+        "depth": 55,
+        "height": 140
+      },
+      "image": {
+        "id": "aa0180b655207eb0145bf4e3be14e4b7",
+        "url": "/api/uploads/aa0180b655207eb0145bf4e3be14e4b7",
+        "fileName": "angel-alma-visualisering.webp"
+      }
+    },
+    {
+      "slug": "ren-vilgot",
+      "name": "Ren Vilgot",
+      "color": "Benvit",
+      "size": "",
+      "price": 199,
+      "dimensions": {
+        "width": 130,
+        "depth": 45,
+        "height": 170
+      },
+      "image": {
+        "id": "7ddc8add4cb6842eb7a69bafb770c2a1",
+        "url": "/api/uploads/7ddc8add4cb6842eb7a69bafb770c2a1",
+        "fileName": "ren-vilgot-visualisering.webp"
+      }
+    },
+    {
+      "slug": "julby",
+      "name": "Julby – 3 små hus",
+      "color": "Benvit",
+      "size": "",
+      "price": 349,
+      "dimensions": {
+        "width": 80,
+        "depth": 70,
+        "height": 160
+      },
+      "image": {
+        "id": "2aa24a44106f678c359d1c4f0e27b285",
+        "url": "/api/uploads/2aa24a44106f678c359d1c4f0e27b285",
+        "fileName": "julby-visualisering.webp"
+      }
+    },
+    {
+      "slug": "servettring-noel",
+      "name": "Servettring Noel – 4-pack",
+      "color": "Skogsgrön",
+      "size": "",
+      "price": 179,
+      "dimensions": {
+        "width": 55,
+        "depth": 35,
+        "height": 55
+      },
+      "image": {
+        "id": "33bfc767a55b8f9bf1a1bf1c17963dec",
+        "url": "/api/uploads/33bfc767a55b8f9bf1a1bf1c17963dec",
+        "fileName": "servettring-noel-visualisering.webp"
+      }
+    },
+    {
+      "slug": "namnskyltar",
+      "name": "Namnskylt till julbordet",
+      "color": "Benvit",
+      "size": "",
+      "price": 99,
+      "dimensions": {
+        "width": 120,
+        "depth": 15,
+        "height": 35
+      },
+      "image": {
+        "id": "6af148f42ab50cb6a503b70034e90a25",
+        "url": "/api/uploads/6af148f42ab50cb6a503b70034e90a25",
+        "fileName": "namnskyltar-visualisering.webp"
+      }
+    },
+    {
+      "slug": "paketetiketter",
+      "name": "Paketetiketter – 6-pack",
+      "color": "Benvit",
+      "size": "",
+      "price": 99,
+      "dimensions": {
+        "width": 60,
+        "depth": 4,
+        "height": 35
+      },
+      "image": {
+        "id": "f26c2d6bfbc64f01bf21cd9f2e55318d",
+        "url": "/api/uploads/f26c2d6bfbc64f01bf21cd9f2e55318d",
+        "fileName": "paketetiketter-visualisering.webp"
+      }
+    },
+    {
+      "slug": "presentask-gomma",
+      "name": "Presentask med gömma",
+      "color": "Skogsgrön",
+      "size": "",
+      "price": 149,
+      "dimensions": {
+        "width": 80,
+        "depth": 80,
+        "height": 65
+      },
+      "image": {
+        "id": "b2594fcdba395eb5d0403d37e9eaf180",
+        "url": "/api/uploads/b2594fcdba395eb5d0403d37e9eaf180",
+        "fileName": "presentask-gomma-visualisering.webp"
+      }
+    },
+    {
+      "slug": "julpyssel",
+      "name": "Julpyssel – måla själv",
+      "color": "Vit",
+      "size": "utan-farg-penslar",
+      "price": 129,
+      "dimensions": {
+        "width": 70,
+        "depth": 4,
+        "height": 80
+      },
+      "image": {
+        "id": "582601faf35bc10b72de8e8fa86f7ba7",
+        "url": "/api/uploads/582601faf35bc10b72de8e8fa86f7ba7",
+        "fileName": "julpyssel-utan-farg-penslar-visualisering.webp"
+      }
+    },
+    {
+      "slug": "julpyssel",
+      "name": "Julpyssel – måla själv",
+      "color": "Vit",
+      "size": "med-farg-penslar",
+      "price": 229,
+      "dimensions": {
+        "width": 70,
+        "depth": 4,
+        "height": 80
+      },
+      "image": {
+        "id": "1671c1ce0dc2513187ac2838e42a5c9e",
+        "url": "/api/uploads/1671c1ce0dc2513187ac2838e42a5c9e",
+        "fileName": "julpyssel-kit-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "color": "Silk pärlemor",
+      "size": "l24",
+      "price": 449,
+      "dimensions": {
+        "width": 140,
+        "depth": 120,
+        "height": 240
+      },
+      "image": {
+        "id": "389babc969ea7d70525e66b5b9f4782d",
+        "url": "/api/uploads/389babc969ea7d70525e66b5b9f4782d",
+        "fileName": "vas-nexo-c0-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "color": "Matt svart",
+      "size": "l24",
+      "price": 449,
+      "dimensions": {
+        "width": 140,
+        "depth": 120,
+        "height": 240
+      },
+      "image": {
+        "id": "ed058fc146f066c993af055f08174706",
+        "url": "/api/uploads/ed058fc146f066c993af055f08174706",
+        "fileName": "vas-nexo-c1-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "color": "Salvia",
+      "size": "l24",
+      "price": 449,
+      "dimensions": {
+        "width": 140,
+        "depth": 120,
+        "height": 240
+      },
+      "image": {
+        "id": "0a70f73bebf080ccc7414c59097d15a7",
+        "url": "/api/uploads/0a70f73bebf080ccc7414c59097d15a7",
+        "fileName": "vas-nexo-c2-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "color": "Terrakotta",
+      "size": "l24",
+      "price": 449,
+      "dimensions": {
+        "width": 140,
+        "depth": 120,
+        "height": 240
+      },
+      "image": {
+        "id": "7266675eefb1e8ec9075a10b0a39fdb3",
+        "url": "/api/uploads/7266675eefb1e8ec9075a10b0a39fdb3",
+        "fileName": "vas-nexo-c3-s0-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "color": "Silk pärlemor",
+      "size": "l32",
+      "price": 649,
+      "dimensions": {
+        "width": 185,
+        "depth": 160,
+        "height": 320
+      },
+      "image": {
+        "id": "af40841670c49303b5402757dbb18ab4",
+        "url": "/api/uploads/af40841670c49303b5402757dbb18ab4",
+        "fileName": "vas-nexo-c0-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "color": "Matt svart",
+      "size": "l32",
+      "price": 649,
+      "dimensions": {
+        "width": 185,
+        "depth": 160,
+        "height": 320
+      },
+      "image": {
+        "id": "12286774330b95aa5dbee3596c116320",
+        "url": "/api/uploads/12286774330b95aa5dbee3596c116320",
+        "fileName": "vas-nexo-c1-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "color": "Salvia",
+      "size": "l32",
+      "price": 649,
+      "dimensions": {
+        "width": 185,
+        "depth": 160,
+        "height": 320
+      },
+      "image": {
+        "id": "366df176e3d3a86c0ef9e429234a3ca1",
+        "url": "/api/uploads/366df176e3d3a86c0ef9e429234a3ca1",
+        "fileName": "vas-nexo-c2-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "color": "Terrakotta",
+      "size": "l32",
+      "price": 649,
+      "dimensions": {
+        "width": 185,
+        "depth": 160,
+        "height": 320
+      },
+      "image": {
+        "id": "2e25c34bff58a0963cdbe93b68e5bd95",
+        "url": "/api/uploads/2e25c34bff58a0963cdbe93b68e5bd95",
+        "fileName": "vas-nexo-c3-s1-visualisering.webp"
+      }
+    },
+    {
+      "slug": "portalpumpan",
+      "name": "Portalpumpan",
+      "color": "Pumpaorange",
+      "size": "",
+      "price": 349,
+      "dimensions": {
+        "width": 170,
+        "depth": 150,
+        "height": 180
+      },
+      "image": {
+        "id": "1cea95409d60e47ac86c9503d3d1e162",
+        "url": "/api/uploads/1cea95409d60e47ac86c9503d3d1e162",
+        "fileName": "portalpumpan-visualisering.webp"
+      }
+    },
+    {
+      "slug": "spokduon",
+      "name": "Spökduon – 2-pack",
+      "color": "Benvit",
+      "size": "",
+      "price": 249,
+      "dimensions": {
+        "width": 90,
+        "depth": 75,
+        "height": 220
+      },
+      "image": {
+        "id": "ebd2efc4930133cbb0e8793399f01eb6",
+        "url": "/api/uploads/ebd2efc4930133cbb0e8793399f01eb6",
+        "fileName": "spokduon-visualisering.webp"
+      }
+    },
+    {
+      "slug": "korpens-vas",
+      "name": "Korpens vas",
+      "color": "Matt svart",
+      "size": "",
+      "price": 449,
+      "dimensions": {
+        "width": 140,
+        "depth": 140,
+        "height": 250
+      },
+      "image": {
+        "id": "dd744e47d711069e4efbd0f24d3fb46e",
+        "url": "/api/uploads/dd744e47d711069e4efbd0f24d3fb46e",
+        "fileName": "korpens-vas-visualisering.webp"
+      }
+    },
+    {
+      "slug": "manskugga",
+      "name": "Månskugga",
+      "color": "Plommon och svart",
+      "size": "",
+      "price": 249,
+      "dimensions": {
+        "width": 180,
+        "depth": 35,
+        "height": 330
+      },
+      "image": {
+        "id": "49a71213beb756062056a0d4998d8845",
+        "url": "/api/uploads/49a71213beb756062056a0d4998d8845",
+        "fileName": "manskugga-visualisering.webp"
+      }
+    },
+    {
+      "slug": "haxans-gomma",
+      "name": "Häxans gömma",
+      "color": "Svart och plommon",
+      "size": "",
+      "price": 279,
+      "dimensions": {
+        "width": 200,
+        "depth": 180,
+        "height": 210
+      },
+      "image": {
+        "id": "ebf90d5f0b9fdfc7c64b3308ebce2273",
+        "url": "/api/uploads/ebf90d5f0b9fdfc7c64b3308ebce2273",
+        "fileName": "haxans-gomma-visualisering.webp"
+      }
+    },
+    {
+      "slug": "gravbiblioteket",
+      "name": "Gravbiblioteket – bokstöd",
+      "color": "Mörkgrå",
+      "size": "",
+      "price": 399,
+      "dimensions": {
+        "width": 90,
+        "depth": 120,
+        "height": 200
+      },
+      "image": {
+        "id": "8c8345935caafe900b95ddf4d1237326",
+        "url": "/api/uploads/8c8345935caafe900b95ddf4d1237326",
+        "fileName": "gravbiblioteket-visualisering.webp"
+      }
+    },
+    {
+      "slug": "skuggkatten",
+      "name": "Skuggkatten",
+      "color": "Matt svart",
+      "size": "",
+      "price": 229,
+      "dimensions": {
+        "width": 150,
+        "depth": 60,
+        "height": 220
+      },
+      "image": {
+        "id": "d205b807733ecacfcb58b554f98ef127",
+        "url": "/api/uploads/d205b807733ecacfcb58b554f98ef127",
+        "fileName": "skuggkatten-visualisering.webp"
+      }
+    },
+    {
+      "slug": "pumpatornet",
+      "name": "Pumpatornet",
+      "color": "Orange, benvit och plommon",
+      "size": "",
+      "price": 299,
+      "dimensions": {
+        "width": 110,
+        "depth": 110,
+        "height": 250
+      },
+      "image": {
+        "id": "4a14cc0b9b1491a5a961e29dc10ea505",
+        "url": "/api/uploads/4a14cc0b9b1491a5a961e29dc10ea505",
+        "fileName": "pumpatornet-visualisering.webp"
+      }
+    },
+    {
+      "slug": "spokporten",
+      "name": "Spökporten",
+      "color": "Mörkgrå och benvit",
+      "size": "",
+      "price": 499,
+      "dimensions": {
+        "width": 110,
+        "depth": 100,
+        "height": 230
+      },
+      "image": {
+        "id": "0cab2f4abf1833b4b748103a56aedf96",
+        "url": "/api/uploads/0cab2f4abf1833b4b748103a56aedf96",
+        "fileName": "spokporten-visualisering.webp"
+      }
+    },
+    {
+      "slug": "midnattsgomman",
+      "name": "Midnattsgömman",
+      "color": "Plommon",
+      "size": "",
+      "price": 249,
+      "dimensions": {
+        "width": 110,
+        "depth": 190,
+        "height": 65
+      },
+      "image": {
+        "id": "fe2a933a7ad2b0f907bf34f47398d847",
+        "url": "/api/uploads/fe2a933a7ad2b0f907bf34f47398d847",
+        "fileName": "midnattsgomman-visualisering.webp"
+      }
+    },
+    {
+      "slug": "runolyktan",
+      "name": "Runolyktan",
+      "color": "Benvit",
+      "size": "",
+      "price": 349,
+      "dimensions": {
+        "width": 105,
+        "depth": 105,
+        "height": 260
+      },
+      "image": {
+        "id": "577c23b1f986ad45cec9f68184bb7eba",
+        "url": "/api/uploads/577c23b1f986ad45cec9f68184bb7eba",
+        "fileName": "runolyktan-visualisering.webp"
+      }
+    },
+    {
+      "slug": "ritualbrickan",
+      "name": "Ritualbrickan",
+      "color": "Matt svart",
+      "size": "",
+      "price": 199,
+      "dimensions": {
+        "width": 180,
+        "depth": 140,
+        "height": 25
+      },
+      "image": {
+        "id": "7a7ea618750d34302076291eef395928",
+        "url": "/api/uploads/7a7ea618750d34302076291eef395928",
+        "fileName": "ritualbrickan-visualisering.webp"
+      }
+    },
+    {
+      "slug": "ribbad-pumpa",
+      "name": "Ribbad pumpa",
+      "color": "Pumpaorange",
+      "size": "",
+      "price": 149,
+      "dimensions": {
+        "width": 120,
+        "depth": 120,
+        "height": 125
+      },
+      "image": {
+        "id": "3a2fda8e8c868e8d759526c10d6c53d5",
+        "url": "/api/uploads/3a2fda8e8c868e8d759526c10d6c53d5",
+        "fileName": "ribbad-pumpa-visualisering.webp"
+      }
+    },
+    {
+      "slug": "spoket-boo",
+      "name": "Spöket Boo",
+      "color": "Benvit",
+      "size": "",
+      "price": 99,
+      "dimensions": {
+        "width": 70,
+        "depth": 65,
+        "height": 100
+      },
+      "image": {
+        "id": "0a40fdcb822035ab7afb3aaf15814323",
+        "url": "/api/uploads/0a40fdcb822035ab7afb3aaf15814323",
+        "fileName": "spoket-boo-visualisering.webp"
+      }
+    },
+    {
+      "slug": "fladdermus-3-pack",
+      "name": "Fladdermus – 3-pack",
+      "color": "Matt svart",
+      "size": "",
+      "price": 129,
+      "dimensions": {
+        "width": 160,
+        "depth": 12,
+        "height": 65
+      },
+      "image": {
+        "id": "3b494f3270783a0a83332af0c1a4fea3",
+        "url": "/api/uploads/3b494f3270783a0a83332af0c1a4fea3",
+        "fileName": "fladdermus-3-pack-visualisering.webp"
+      }
+    },
+    {
+      "slug": "dodskallekruka",
+      "name": "Dödskallekruka",
+      "color": "Benvit",
+      "size": "",
+      "price": 249,
+      "dimensions": {
+        "width": 120,
+        "depth": 130,
+        "height": 115
+      },
+      "image": {
+        "id": "3ed9230ff7545dbca71ca6528d80cab6",
+        "url": "/api/uploads/3ed9230ff7545dbca71ca6528d80cab6",
+        "fileName": "dodskallekruka-visualisering.webp"
+      }
+    },
+    {
+      "slug": "spindelnat-4-pack",
+      "name": "Spindelnät – 4-pack",
+      "color": "Matt svart",
+      "size": "",
+      "price": 149,
+      "dimensions": {
+        "width": 100,
+        "depth": 100,
+        "height": 5
+      },
+      "image": {
+        "id": "49daa2a30d60bf7d81c7bd959e83bac2",
+        "url": "/api/uploads/49daa2a30d60bf7d81c7bd959e83bac2",
+        "fileName": "spindelnat-4-pack-visualisering.webp"
+      }
+    }
+  ]
+}

@@ -60,6 +60,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           entry.key === key
             ? {
                 ...entry,
+                image: item.image,
                 quantity: Math.min(99, entry.quantity + item.quantity),
               }
             : entry,

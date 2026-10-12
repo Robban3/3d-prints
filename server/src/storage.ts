@@ -46,6 +46,8 @@ function s3Storage(bucket: string): Storage {
       ({ S3Client }) =>
         new S3Client({
           region: process.env.S3_REGION ?? 'eu-north-1',
+          requestChecksumCalculation: 'WHEN_REQUIRED',
+          responseChecksumValidation: 'WHEN_REQUIRED',
           ...(process.env.S3_ENDPOINT
             ? { endpoint: process.env.S3_ENDPOINT, forcePathStyle: true }
             : {}),
@@ -58,12 +60,13 @@ function s3Storage(bucket: string): Storage {
   return {
     kind: 's3',
     async put(key, localPath, contentType) {
-      const [{ PutObjectCommand }, s3] = await Promise.all([import('@aws-sdk/client-s3'), connect()]);
+      const [{ PutObjectCommand }, s3, info] = await Promise.all([import('@aws-sdk/client-s3'), connect(), stat(localPath)]);
       await s3.send(
         new PutObjectCommand({
           Bucket: bucket,
           Key: prefix + key,
           Body: createReadStream(localPath),
+          ContentLength: info.size,
           ContentType: contentType,
         }),
       );

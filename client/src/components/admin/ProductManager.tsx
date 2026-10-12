@@ -33,8 +33,13 @@ function toDraft(product: Product): ProductDraft {
     reviewCount: product.reviewCount,
     featured: product.featured,
     published: product.published !== false,
+    specificationsPending: product.specificationsPending,
+    dimensionsEstimated: product.dimensionsEstimated,
+    dimensionsNote: product.dimensionsNote,
+    optionLabel: product.optionLabel,
     art: { ...product.art },
     ...(product.image ? { image: { ...product.image } } : {}),
+    variantImages: product.variantImages?.map(variant => ({ ...variant, image: { ...variant.image } })),
   };
 }
 

@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
-import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, stat } from 'node:fs/promises';
+import { readFile, readdir, rm, writeFile } from './stateFiles.ts';
 import { extname, join, resolve } from 'node:path';
 import { storage } from './storage.ts';
 
@@ -106,7 +107,8 @@ export async function readMeta(id: string): Promise<UploadMeta | undefined> {
     const parsed = JSON.parse(raw) as UploadMeta;
     // Metadatan styr vilken fil vi öppnar, så ändelsen kontrolleras även här.
     return isStorableExtension(parsed.extension) ? parsed : undefined;
-  } catch {
+  } catch (error) {
+    if (process.env.STATE_BUCKET && (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     return undefined;
   }
 }
@@ -143,7 +145,8 @@ export async function sweepOrphans(
   let entries: string[];
   try {
     entries = await readdir(uploadDir());
-  } catch {
+  } catch (error) {
+    if (process.env.STATE_BUCKET && (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     return 0;
   }
   for (const entry of entries) {

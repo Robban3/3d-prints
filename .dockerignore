@@ -1,0 +1,16 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.env
+**/.env
+**/.dev.vars
+server/data
+server/uploads
+models
+exports
+screenshots
+tmp
+design-concepts
+client/test
+server/test

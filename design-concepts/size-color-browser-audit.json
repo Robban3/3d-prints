@@ -1,0 +1,855 @@
+{
+  "checks": [
+    {
+      "color": "Lermatt",
+      "dimensions": "Mått (B×D×H)Ca 110 × 110 × 120 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "249 kr",
+      "size": "Liten (Ø 110 mm)Grundpris",
+      "src": "/api/uploads/d653f06c32916e870f1a8776c42acae6",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Grafit",
+      "dimensions": "Mått (B×D×H)Ca 110 × 110 × 120 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "249 kr",
+      "size": "Liten (Ø 110 mm)Grundpris",
+      "src": "/api/uploads/c1f3feeac5bf15422e813fa221e3573f",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Salvia",
+      "dimensions": "Mått (B×D×H)Ca 110 × 110 × 120 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "249 kr",
+      "size": "Liten (Ø 110 mm)Grundpris",
+      "src": "/api/uploads/e39e186c1ccf9eb3b6ef013905dd2da0",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Benvit",
+      "dimensions": "Mått (B×D×H)Ca 110 × 110 × 120 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "249 kr",
+      "size": "Liten (Ø 110 mm)Grundpris",
+      "src": "/api/uploads/ab5b0090263c28b67754d658b358c0bd",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Lermatt",
+      "dimensions": "Mått (B×D×H)Ca 140 × 140 × 155 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "329 kr",
+      "size": "Mellan (Ø 140 mm)+80 kr",
+      "src": "/api/uploads/fd348f817b53d4c1bc36fd7e28c15cae",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Grafit",
+      "dimensions": "Mått (B×D×H)Ca 140 × 140 × 155 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "329 kr",
+      "size": "Mellan (Ø 140 mm)+80 kr",
+      "src": "/api/uploads/76c7800354ac0d73d10563bd6851904f",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Salvia",
+      "dimensions": "Mått (B×D×H)Ca 140 × 140 × 155 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "329 kr",
+      "size": "Mellan (Ø 140 mm)+80 kr",
+      "src": "/api/uploads/4bb4b7b29fb4da9f77ee6bc40289c406",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Benvit",
+      "dimensions": "Mått (B×D×H)Ca 140 × 140 × 155 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "329 kr",
+      "size": "Mellan (Ø 140 mm)+80 kr",
+      "src": "/api/uploads/2c342ae5b5d9f46b09fcd933004b0f07",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Lermatt",
+      "dimensions": "Mått (B×D×H)Ca 180 × 180 × 195 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "429 kr",
+      "size": "Stor (Ø 180 mm)+180 kr",
+      "src": "/api/uploads/bc24e0910e24e66f70a05266bb8e3fcb",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Grafit",
+      "dimensions": "Mått (B×D×H)Ca 180 × 180 × 195 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "429 kr",
+      "size": "Stor (Ø 180 mm)+180 kr",
+      "src": "/api/uploads/33ef71ff67c388f6a58c4a73534d0981",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Salvia",
+      "dimensions": "Mått (B×D×H)Ca 180 × 180 × 195 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "429 kr",
+      "size": "Stor (Ø 180 mm)+180 kr",
+      "src": "/api/uploads/d2c79fbe6652ffcba0fc3e94b376292d",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Benvit",
+      "dimensions": "Mått (B×D×H)Ca 180 × 180 × 195 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "429 kr",
+      "size": "Stor (Ø 180 mm)+180 kr",
+      "src": "/api/uploads/9c25bff69efb49ec1a2f3ded84c4cc00",
+      "slug": "terra-vaxtkruka",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Grafit",
+      "dimensions": "Mått (B×D×H)Ca 180 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "349 kr",
+      "size": "3 modulerGrundpris",
+      "src": "/api/uploads/b3ef39de31cc3400cad565c2d1c7e408",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Sand",
+      "dimensions": "Mått (B×D×H)Ca 180 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "349 kr",
+      "size": "3 modulerGrundpris",
+      "src": "/api/uploads/498bd3635b62bf6f1827266033075d96",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Mossgrön",
+      "dimensions": "Mått (B×D×H)Ca 180 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "349 kr",
+      "size": "3 modulerGrundpris",
+      "src": "/api/uploads/336618d298fe2dbf0981e84604124d89",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Grafit",
+      "dimensions": "Mått (B×D×H)Ca 300 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "529 kr",
+      "size": "5 moduler+180 kr",
+      "src": "/api/uploads/f0c1219c151df4b8aa680e01ccd7da27",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Sand",
+      "dimensions": "Mått (B×D×H)Ca 300 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "529 kr",
+      "size": "5 moduler+180 kr",
+      "src": "/api/uploads/7809fbf44822d0aa994ebee28a696d9f",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Mossgrön",
+      "dimensions": "Mått (B×D×H)Ca 300 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "529 kr",
+      "size": "5 moduler+180 kr",
+      "src": "/api/uploads/5732f7581ab47e2acc854203e7340a19",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Grafit",
+      "dimensions": "Mått (B×D×H)Ca 480 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "749 kr",
+      "size": "8 moduler+400 kr",
+      "src": "/api/uploads/7f52b8ab8dc7e8eb204d90f643d7704c",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Sand",
+      "dimensions": "Mått (B×D×H)Ca 480 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "749 kr",
+      "size": "8 moduler+400 kr",
+      "src": "/api/uploads/17b280964436a894bfbded2672449035",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Mossgrön",
+      "dimensions": "Mått (B×D×H)Ca 480 × 90 × 110 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "749 kr",
+      "size": "8 moduler+400 kr",
+      "src": "/api/uploads/b1e060c4dfe4f846e10abe676c4f62ac",
+      "slug": "grid-skrivbordsorganiserare",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Silk koppar",
+      "dimensions": "Mått (B×D×H)Ca 47 × 160 × 60 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "179 kr",
+      "size": "Mini (16 cm)Grundpris",
+      "src": "/api/uploads/9c08cea77851c81cb30b9bf3d249966e",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Silk lila",
+      "dimensions": "Mått (B×D×H)Ca 47 × 160 × 60 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "179 kr",
+      "size": "Mini (16 cm)Grundpris",
+      "src": "/api/uploads/708cdce845a3cde91820c5158b75780f",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Regnbågsövergång",
+      "dimensions": "Mått (B×D×H)Ca 47 × 160 × 60 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "179 kr",
+      "size": "Mini (16 cm)Grundpris",
+      "src": "/api/uploads/e76c1417930bac894c42f1af705156da",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Glow in the dark",
+      "dimensions": "Mått (B×D×H)Ca 47 × 160 × 60 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "179 kr",
+      "size": "Mini (16 cm)Grundpris",
+      "src": "/api/uploads/d9321dba4a35b6a0148554608acc67c8",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Silk koppar",
+      "dimensions": "Mått (B×D×H)Ca 70 × 240 × 90 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "279 kr",
+      "size": "Standard (24 cm)+100 kr",
+      "src": "/api/uploads/e6d1c31012c44cae619fc70cc4c27eeb",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Silk lila",
+      "dimensions": "Mått (B×D×H)Ca 70 × 240 × 90 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "279 kr",
+      "size": "Standard (24 cm)+100 kr",
+      "src": "/api/uploads/fad0e0912c13beb84a2f80cbc3c7abe1",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Regnbågsövergång",
+      "dimensions": "Mått (B×D×H)Ca 70 × 240 × 90 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "279 kr",
+      "size": "Standard (24 cm)+100 kr",
+      "src": "/api/uploads/637210c4112db892ddd903bf4bb1e526",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Glow in the dark",
+      "dimensions": "Mått (B×D×H)Ca 70 × 240 × 90 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "279 kr",
+      "size": "Standard (24 cm)+100 kr",
+      "src": "/api/uploads/e393c2fefb54f7ea7f7751cc1ef0e4a3",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Silk koppar",
+      "dimensions": "Mått (B×D×H)Ca 110 × 380 × 140 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Jätte (38 cm)+270 kr",
+      "src": "/api/uploads/af4500fe9fdd5fbe25582220076d2e3c",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Silk lila",
+      "dimensions": "Mått (B×D×H)Ca 110 × 380 × 140 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Jätte (38 cm)+270 kr",
+      "src": "/api/uploads/d8804b169f16fa9197f64407892e4e0b",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Regnbågsövergång",
+      "dimensions": "Mått (B×D×H)Ca 110 × 380 × 140 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Jätte (38 cm)+270 kr",
+      "src": "/api/uploads/7297568043d74c52fc1d8db17eada7c2",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Glow in the dark",
+      "dimensions": "Mått (B×D×H)Ca 110 × 380 × 140 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Jätte (38 cm)+270 kr",
+      "src": "/api/uploads/3ff22907101dcd1b708c4178a59b342e",
+      "slug": "flexi-drake",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Naturvit",
+      "dimensions": "Mått (B×D×H)Ca 120 × 120 × 155 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Ø 12 cmGrundpris",
+      "src": "/api/uploads/cdb81685493a181e867da49e3e3b81a1",
+      "slug": "luna-manlampa",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Naturvit",
+      "dimensions": "Mått (B×D×H)Ca 150 × 150 × 190 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "599 kr",
+      "size": "Ø 15 cm+150 kr",
+      "src": "/api/uploads/517c6d5f5eb503194637d335f837ed20",
+      "slug": "luna-manlampa",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Naturvit",
+      "dimensions": "Mått (B×D×H)Ca 200 × 200 × 245 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "799 kr",
+      "size": "Ø 20 cm+350 kr",
+      "src": "/api/uploads/684c90c198f48bf6fee2e1050b6ffc68",
+      "slug": "luna-manlampa",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Matt svart",
+      "dimensions": "Mått (B×D×H)Ca 45 × 35 × 80 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "149 kr",
+      "size": "3-packGrundpris",
+      "src": "/api/uploads/b18bf1820f9f284da97c69656e8195fc",
+      "slug": "wave-vaggkrokar",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Off-white",
+      "dimensions": "Mått (B×D×H)Ca 45 × 35 × 80 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "149 kr",
+      "size": "3-packGrundpris",
+      "src": "/api/uploads/1a9eebbd6b6fe554c83991d7c01aacea",
+      "slug": "wave-vaggkrokar",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Mässing-look",
+      "dimensions": "Mått (B×D×H)Ca 45 × 35 × 80 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "149 kr",
+      "size": "3-packGrundpris",
+      "src": "/api/uploads/818291457db299a42979d58741eeae42",
+      "slug": "wave-vaggkrokar",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Matt svart",
+      "dimensions": "Mått (B×D×H)Ca 45 × 35 × 80 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "249 kr",
+      "size": "6-pack+100 kr",
+      "src": "/api/uploads/40501a1b4b6311539b33f3f866747d77",
+      "slug": "wave-vaggkrokar",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Off-white",
+      "dimensions": "Mått (B×D×H)Ca 45 × 35 × 80 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "249 kr",
+      "size": "6-pack+100 kr",
+      "src": "/api/uploads/2a0d1b75065186183114b5fc2ac2640a",
+      "slug": "wave-vaggkrokar",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Mässing-look",
+      "dimensions": "Mått (B×D×H)Ca 45 × 35 × 80 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "249 kr",
+      "size": "6-pack+100 kr",
+      "src": "/api/uploads/598d48ba797cc2bb6ee838e4816942bf",
+      "slug": "wave-vaggkrokar",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Silk pärlemor",
+      "dimensions": "Mått (B×D×H)Ca 140 × 120 × 240 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Höjd 24 cmGrundpris",
+      "src": "/api/uploads/389babc969ea7d70525e66b5b9f4782d",
+      "slug": "vas-nexo",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Matt svart",
+      "dimensions": "Mått (B×D×H)Ca 140 × 120 × 240 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Höjd 24 cmGrundpris",
+      "src": "/api/uploads/ed058fc146f066c993af055f08174706",
+      "slug": "vas-nexo",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Salvia",
+      "dimensions": "Mått (B×D×H)Ca 140 × 120 × 240 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Höjd 24 cmGrundpris",
+      "src": "/api/uploads/0a70f73bebf080ccc7414c59097d15a7",
+      "slug": "vas-nexo",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Terrakotta",
+      "dimensions": "Mått (B×D×H)Ca 140 × 120 × 240 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "449 kr",
+      "size": "Höjd 24 cmGrundpris",
+      "src": "/api/uploads/7266675eefb1e8ec9075a10b0a39fdb3",
+      "slug": "vas-nexo",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Silk pärlemor",
+      "dimensions": "Mått (B×D×H)Ca 185 × 160 × 320 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "649 kr",
+      "size": "Höjd 32 cm+200 kr",
+      "src": "/api/uploads/af40841670c49303b5402757dbb18ab4",
+      "slug": "vas-nexo",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Matt svart",
+      "dimensions": "Mått (B×D×H)Ca 185 × 160 × 320 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "649 kr",
+      "size": "Höjd 32 cm+200 kr",
+      "src": "/api/uploads/12286774330b95aa5dbee3596c116320",
+      "slug": "vas-nexo",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Salvia",
+      "dimensions": "Mått (B×D×H)Ca 185 × 160 × 320 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "649 kr",
+      "size": "Höjd 32 cm+200 kr",
+      "src": "/api/uploads/366df176e3d3a86c0ef9e429234a3ca1",
+      "slug": "vas-nexo",
+      "imageMatches": true,
+      "priceMatches": true
+    },
+    {
+      "color": "Terrakotta",
+      "dimensions": "Mått (B×D×H)Ca 185 × 160 × 320 mm",
+      "frame": [
+        55,
+        253.25,
+        526.5,
+        526.5
+      ],
+      "loaded": true,
+      "price": "649 kr",
+      "size": "Höjd 32 cm+200 kr",
+      "src": "/api/uploads/2e25c34bff58a0963cdbe93b68e5bd95",
+      "slug": "vas-nexo",
+      "imageMatches": true,
+      "priceMatches": true
+    }
+  ],
+  "frameChanges": []
+}

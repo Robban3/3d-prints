@@ -1,4 +1,5 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
+import { writeFile } from './stateFiles.ts';
 import { join, resolve } from 'node:path';
 import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';

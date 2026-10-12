@@ -3,10 +3,12 @@ import { Link, useParams, useNavigate } from 'react-router';
 import { ProductImage } from '../components/ProductImage';
 import { ProductCard } from '../components/ProductCard';
 import { Rating } from '../components/Rating';
+import { Icon } from '../components/Icon';
 import { fetchProduct } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import { useCart } from '../lib/cart';
 import { formatHours, formatPrice } from '../lib/format';
+import { selectedProductImage } from '../lib/productImage';
 
 export function ProductPage() {
   const { slug = '' } = useParams();
@@ -48,6 +50,8 @@ export function ProductPage() {
 
   const size = product.sizes?.find((entry) => entry.id === sizeId);
   const unitPrice = product.price + (size?.priceDelta ?? 0);
+  const image = selectedProductImage(product, color, sizeId);
+  const dimensions = size?.dimensions ?? product.dimensions;
 
   function addToCart(goToCart: boolean) {
     if (!product) return;
@@ -61,7 +65,7 @@ export function ProductPage() {
       size: size?.id,
       sizeName: size?.name,
       art: product.art,
-      image: product.image,
+      image,
     });
     if (goToCart) navigate('/varukorg');
     else {
@@ -80,8 +84,9 @@ export function ProductPage() {
         <div className="product-layout">
           <div className="stack">
             <div className="product-hero-art">
-              <ProductImage product={product} />
+              <ProductImage product={{ ...product, image }} />
             </div>
+            {image?.fileName.endsWith('-visualisering.webp') && <p className="dim" style={{ fontSize: '.8rem', margin: 0 }}>Illustrativ produktbild. Dekoration och tillbehör ingår bara när det anges i beskrivningen.</p>}
             <div className="panel panel-tight">
               <h3>Specifikation</h3>
               <table className="spec-table">
@@ -95,17 +100,16 @@ export function ProductPage() {
                   <tr>
                     <th>Mått (B×D×H)</th>
                     <td>
-                      {product.dimensions.width} × {product.dimensions.depth} ×{' '}
-                      {product.dimensions.height} mm
+                      {Object.values(dimensions).some(value => value <= 0) ? 'Fastställs inför produktion' : `${product.dimensionsEstimated ? 'Ca ' : ''}${dimensions.width} × ${dimensions.depth} × ${dimensions.height} mm`}
                     </td>
                   </tr>
                   <tr>
                     <th>Vikt</th>
-                    <td>{product.weightGrams} g</td>
+                    <td>{product.weightGrams <= 0 ? 'Fastställs inför produktion' : `${product.weightGrams} g`}</td>
                   </tr>
                   <tr>
                     <th>Printtid</th>
-                    <td>{formatHours(product.printTimeHours)}</td>
+                    <td>{product.printTimeHours <= 0 ? 'Fastställs inför produktion' : formatHours(product.printTimeHours)}</td>
                   </tr>
                   <tr>
                     <th>Lagerstatus</th>
@@ -113,6 +117,8 @@ export function ProductPage() {
                   </tr>
                 </tbody>
               </table>
+              {product.dimensionsNote && <p className="field-hint">{product.dimensionsNote}</p>}
+              {product.dimensionsEstimated && <p className="field-hint">Preliminära designmått – bekräftas vid provprintning.</p>}
             </div>
           </div>
 
@@ -122,7 +128,7 @@ export function ProductPage() {
                 <span className="badge badge-accent">
                   {product.material.toUpperCase()} {product.finish}
                 </span>
-                <Rating value={product.rating} count={product.reviewCount} />
+                {product.reviewCount > 0 && <Rating value={product.rating} count={product.reviewCount} />}
               </div>
               <h1 className="product-title" style={{ marginTop: 14 }}>
                 {product.name}
@@ -161,7 +167,7 @@ export function ProductPage() {
 
                 {product.sizes && product.sizes.length > 0 && (
                   <div>
-                    <span className="field-label">Storlek</span>
+                    <span className="field-label">{product.optionLabel || 'Storlek'}</span>
                     <div className="option-cards" style={{ marginTop: 8 }}>
                       {product.sizes.map((entry) => (
                         <button
@@ -184,9 +190,9 @@ export function ProductPage() {
                 )}
 
                 <div className="spread">
-                  <div>
+                  <div className="product-quantity-field">
                     <span className="field-label">Antal</span>
-                    <div className="qty" style={{ marginTop: 8 }}>
+                    <div className="qty">
                       <button
                         type="button"
                         onClick={() => setQuantity((n) => Math.max(1, n - 1))}
@@ -214,13 +220,15 @@ export function ProductPage() {
                 </div>
 
                 <div className="row">
-                  <button type="button" className="btn btn-lg" onClick={() => addToCart(false)}>
+                  <button type="button" className="btn btn-lg" disabled={product.stock <= 0} onClick={() => addToCart(false)}>
+                    <Icon name="bag" size={20} />
                     Lägg i varukorg
                   </button>
                   <button
                     type="button"
                     className="btn btn-ghost btn-lg"
                     onClick={() => addToCart(true)}
+                    disabled={product.stock <= 0}
                   >
                     Köp nu
                   </button>
@@ -228,7 +236,7 @@ export function ProductPage() {
                 {added && <p className="notice notice-success">Tillagd i varukorgen.</p>}
                 <p className="dim" style={{ margin: 0, fontSize: '0.86rem' }}>
                   Printas på beställning i vår verkstad · Skickas inom 1–3 arbetsdagar · Fri frakt
-                  över 599 kr
+                  över 699 kr
                 </p>
               </div>
             </div>
