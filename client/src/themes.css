@@ -4,7 +4,7 @@
 .campaign-topbar-divider { margin-inline: 5px; }
 .site-header .brand { font-size: 1.65rem; letter-spacing: .28em; font-weight: 400; }
 .site-header .container { height: 70px; }
-.site-header .nav { margin-inline: auto; gap: 26px; font-family: Georgia, 'Times New Roman', serif; }
+.site-header .nav { margin-inline: auto; gap: 26px; font-family: var(--font); }
 .header-actions { gap: 14px; }
 .cart-badge { background: #792d2e; color: white; min-width: 16px; height: 16px; font-size: .6rem; top: 0; right: -1px; }
 
@@ -15,9 +15,9 @@
 :root[data-theme='nordic'] .season-hero h1 { font-size: clamp(3.4rem,6.15vw,6rem); line-height: 1.02; letter-spacing: -.045em; margin-bottom: 16px; }
 :root[data-theme='nordic'] .season-hero-copy .season-label { display: flex; align-items: center; gap: 22px; color: #445747; font-size: .62rem; letter-spacing: .16em; margin-bottom: 20px; }
 :root[data-theme='nordic'] .season-hero-copy .season-label::after { content: ''; width: 80px; height: 1px; background: #73806e; }
-:root[data-theme='nordic'] .season-hero-copy > p { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(1rem,1.35vw,1.25rem); color: #66665c; line-height: 1.45; max-width: 45ch; }
+:root[data-theme='nordic'] .season-hero-copy > p { font-family: var(--font); font-size: clamp(1rem,1.35vw,1.25rem); color: #66665c; line-height: 1.45; max-width: 45ch; }
 :root[data-theme='nordic'] .season-hero .hero-cta { margin: 24px 0 0; }
-:root[data-theme='nordic'] .season-hero .btn { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; font-size: 1rem; padding: 15px 30px; gap: 16px; }
+:root[data-theme='nordic'] .season-hero .btn { font-family: var(--font); font-weight: 400; font-size: 1rem; padding: 15px 30px; gap: 16px; }
 :root[data-theme='nordic'] .season-hero-image { position: absolute; inset: 0; margin: 0; min-height: 0; overflow: hidden; }
 :root[data-theme='nordic'] .season-hero-image img { width: 100%; height: auto; inset: auto; top: calc(-100vw * 104 / 1536); left: 0; object-fit: initial; }
 :root[data-theme='nordic'] .season-hero-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,#f4f0e8 0%,#f4f0e8 38%,#f4f0e8f5 41%,#f4f0e800 56%); }
@@ -28,7 +28,7 @@
   --text: #243b2b; --text-muted: #60685b; --text-dim: #697163;
   --accent: #792d2e; --accent-strong: #692629; --accent-soft: #792d2e0d;
   --accent-btn: #243e2d; --accent-btn-hover: #35543e; --accent-ink: #ffffff;
-  --theme-serif: Georgia, 'Times New Roman', serif;
+  --theme-serif: var(--font);
   --theme-heading: var(--theme-serif); --theme-heading-weight: 400;
   --theme-top: #792d2e; --theme-top-ink: #fff8ef;
   --theme-footer: #243e2d; --theme-footer-ink: #edece0;
@@ -383,7 +383,7 @@ h1, h2, .season-intro h2, .section-head h2, .custom-pitch h2 {
 .halloween-collection-banner.container { width: calc(100% - 100px); max-width: none; padding: 0; margin-block: 26px 0; display: grid; grid-template-columns: 1fr 1.15fr; background: #281923; color: #fff5e5; overflow: hidden; }
 .halloween-collection-copy { padding: clamp(28px, 4vw, 64px); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
 .halloween-collection-copy .eyebrow { color: #e8bd96; letter-spacing: .16em; }
-.halloween-collection-copy h1 { color: #fff5e5; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2.4rem, 4.1vw, 4.5rem); font-weight: 400; line-height: 1.05; letter-spacing: -.04em; margin: 20px 0; }
+.halloween-collection-copy h1 { color: #fff5e5; font-family: var(--font); font-size: clamp(2.4rem, 4.1vw, 4.5rem); font-weight: 400; line-height: 1.05; letter-spacing: -.04em; margin: 20px 0; }
 .halloween-collection-copy p { color: #e7d9d4; max-width: 38ch; line-height: 1.65; margin: 0 0 26px; }
 .halloween-collection-copy .btn { color: #fff8ed; background: #bb4c1a; border: 1px solid #bb4c1a; border-radius: 999px; }
 .halloween-collection-copy .btn:hover { background: #a64014; border-color: #a64014; }
