@@ -17,16 +17,24 @@ export class Shop extends DurableObject<Env> {
 
   private async ready(): Promise<void> {
     const container = this.ctx.container!;
+    const variables: Record<string, string> = { S3_REGION: 'auto', TRUST_PROXY_HOPS: '1' };
+    for (const name of forwardedVariables) {
+      if (typeof this.env[name] === 'string') variables[name] = this.env[name] as string;
+    }
+    for (const name of ['PUBLIC_URL', 'ADMIN_TOKEN', 'STATE_BUCKET', 'S3_BUCKET', 'S3_ENDPOINT', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
+      if (!variables[name]) throw new Error(`Configure Cloudflare variable or secret ${name}`);
+    }
+    variables.PUBLIC_BASE_URL = variables.PUBLIC_URL!;
+    // Durable Object-managed containers keep their startup image across deploys.
+    // Compare both image and runtime settings before reusing an existing instance.
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(variables)));
+    const configuration = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+    const current = container.running ? await container.inspect() : null;
+    if (current && (current.image !== container.images.shop || current.labels.configuration !== configuration)) {
+      await container.destroy();
+    }
     if (!container.running) {
-      const variables: Record<string, string> = { S3_REGION: 'auto', TRUST_PROXY_HOPS: '1' };
-      for (const name of forwardedVariables) {
-        if (typeof this.env[name] === 'string') variables[name] = this.env[name] as string;
-      }
-      for (const name of ['PUBLIC_URL', 'ADMIN_TOKEN', 'STATE_BUCKET', 'S3_BUCKET', 'S3_ENDPOINT', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']) {
-        if (!variables[name]) throw new Error(`Configure Cloudflare variable or secret ${name}`);
-      }
-      variables.PUBLIC_BASE_URL = variables.PUBLIC_URL!;
-      container.start({ image: container.images.shop, instance: 'lite', enableInternet: true, env: variables });
+      container.start({ image: container.images.shop, instance: 'lite', enableInternet: true, env: variables, labels: { configuration } });
     }
     await container.setInactivityTimeout(15 * 60 * 1000);
     for (let attempt = 0; attempt < 100; attempt++) {
