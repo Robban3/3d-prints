@@ -24,6 +24,26 @@ import type {
 
 const BASE = '/api';
 
+export interface AdminPrintFile {
+  id: string; fileName: string; size: number; createdAt: string;
+  source: 'own' | 'customer'; orderId: string | null; projectName?: string;
+}
+export function fetchPrintFiles(token: string): Promise<{ files: AdminPrintFile[] }> {
+  return request('/admin/files', adminInit(token));
+}
+export async function uploadPrintFile(token: string, file: File): Promise<void> {
+  const body = new FormData(); body.append('file', file);
+  const response = await fetch(`${BASE}/admin/files`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body });
+  if (!response.ok) { const result = await response.json(); throw new ApiError(result.error ?? 'Uppladdningen misslyckades.', response.status, {}); }
+}
+export async function downloadPrintFile(token: string, file: AdminPrintFile): Promise<void> {
+  const response = await fetch(`${BASE}/admin/files/${encodeURIComponent(file.id)}/download`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Kunde inte hämta filen. Kontrollera att du är inloggad.');
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement('a'); link.href = url; link.download = file.fileName;
+  document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 export class ApiError extends Error {
   readonly fields: Record<string, string>;
   readonly status: number;

@@ -39,7 +39,7 @@ const ID_PATTERN = /^[0-9a-f]{32}$/;
 export interface UploadMeta {
   id: string;
   /** Produktbilder visas öppet; modellfiler är knutna till en order. */
-  kind?: 'model' | 'image';
+  kind?: 'model' | 'image' | 'library';
   /** Filnamnet kunden laddade upp – används bara som etikett, aldrig som sökväg. */
   originalName: string;
   extension: string;
@@ -117,10 +117,19 @@ export function filePathFor(meta: UploadMeta): string {
   return pathsFor(meta.id, meta.extension).file;
 }
 
+export async function listModelFiles(): Promise<UploadMeta[]> {
+  let entries: string[];
+  try { entries = await readdir(uploadDir()); }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []; throw error; }
+  const files = await Promise.all(entries.filter(name => /^[0-9a-f]{32}\.json$/.test(name)).map(name => readMeta(name.slice(0, -5))));
+  return files.filter((meta): meta is UploadMeta => Boolean(meta && isAllowedExtension(meta.extension)))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 /** Kopplar en uppladdning till en order så att den inte städas bort eller återanvänds. */
 export async function claimUpload(id: string, orderId: string): Promise<UploadMeta | undefined> {
   const meta = await readMeta(id);
-  if (!meta || meta.claimedBy) return undefined;
+  if (!meta || meta.claimedBy || meta.kind === 'library') return undefined;
   return writeMeta({ ...meta, claimedBy: orderId });
 }
 
@@ -153,7 +162,7 @@ export async function sweepOrphans(
     if (!entry.endsWith('.json')) continue;
     const meta = await readMeta(entry.slice(0, -'.json'.length));
     // Bilder hör till katalogen och har ingen order att knytas till.
-    if (!meta || meta.claimedBy || meta.kind === 'image') continue;
+    if (!meta || meta.claimedBy || meta.kind === 'image' || meta.kind === 'library') continue;
     if (now - new Date(meta.createdAt).getTime() < maxAgeMs) continue;
     await deleteUpload(meta.id);
     removed += 1;
