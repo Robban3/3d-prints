@@ -116,7 +116,7 @@ api.get('/products/:slug', async (req, res) => {
   const fillers = catalog
     .filter((p) => p.id !== product.id && p.category !== product.category)
     .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount);
-  const related = [...sameCategory, ...fillers].slice(0, 7);
+  const related = [...sameCategory, ...fillers].slice(0, 6);
   const levels = await stockLevels();
   const withStock = <T extends { id: string }>(entry: T) => ({
     ...entry,
