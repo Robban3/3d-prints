@@ -10,6 +10,7 @@ import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { ConfirmationPage } from './pages/ConfirmationPage';
 import { TrackOrderPage } from './pages/TrackOrderPage';
+import { QuotePage } from './pages/QuotePage';
 import { AboutPage } from './pages/AboutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { MaterialPage } from './pages/MaterialPage';
@@ -33,6 +34,7 @@ export function App() {
           <Route path="/varukorg" element={<CartPage />} />
           <Route path="/kassa" element={<CheckoutPage />} />
           <Route path="/order/:id" element={<ConfirmationPage />} />
+          <Route path="/offert/:id" element={<QuotePage />} />
           <Route path="/spara-order" element={<TrackOrderPage />} />
           <Route path="/material" element={<MaterialPage />} />
           <Route path="/sa-funkar-det" element={<HowItWorksPage />} />

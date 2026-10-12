@@ -3,7 +3,15 @@ import { ProductArt } from '../ProductArt';
 import { ApiError, uploadProductImage } from '../../lib/api';
 import { TextAreaField, TextField } from '../Field';
 import { formatPrice } from '../../lib/format';
-import type { ArtShape, ArtTone, Category, Material, Product, ProductDraft } from '../../types';
+import type {
+  ArtShape,
+  ArtTone,
+  Category,
+  Material,
+  Product,
+  ProductDraft,
+  ProductParameter,
+} from '../../types';
 
 const SHAPES: Array<{ id: ArtShape; name: string }> = [
   { id: 'planter', name: 'Kruka' },
@@ -20,6 +28,11 @@ const SHAPES: Array<{ id: ArtShape; name: string }> = [
   { id: 'cableClip', name: 'Klämmor' },
   { id: 'gearFidget', name: 'Kugghjul' },
   { id: 'dragon', name: 'Figur' },
+  { id: 'christmasTree', name: 'Julgran' },
+  { id: 'ornamentBall', name: 'Julkula' },
+  { id: 'starBurst', name: 'Stjärna' },
+  { id: 'nameOrnament', name: 'Namnring' },
+  { id: 'giftBox', name: 'Presentask' },
 ];
 
 const TONES: Array<{ id: ArtTone; name: string }> = [
@@ -27,8 +40,31 @@ const TONES: Array<{ id: ArtTone; name: string }> = [
   { id: 'grafit', name: 'Grafit' },
   { id: 'stal', name: 'Stål' },
   { id: 'bla', name: 'Blå' },
+  { id: 'gran', name: 'Gran' },
+  { id: 'vinrod', name: 'Vinröd' },
 ];
 
+const AXES: Array<{ id: '' | 'width' | 'depth' | 'height'; name: string }> = [
+  { id: '', name: 'Inget mått' },
+  { id: 'width', name: 'Bredd' },
+  { id: 'depth', name: 'Djup' },
+  { id: 'height', name: 'Höjd' },
+];
+
+/** Ett nytt mått börjar som en bredd mellan 100 och 400 mm. */
+function emptyParameter(): ProductParameter {
+  return {
+    id: '',
+    name: '',
+    unit: 'mm',
+    min: 100,
+    max: 400,
+    step: 10,
+    default: 200,
+    pricePerUnit: 1,
+    axis: 'width',
+  };
+}
 
 export function emptyDraft(categoryId: string): ProductDraft {
   return {
@@ -141,6 +177,7 @@ export function ProductForm({
   onCancel,
 }: Props) {
   const sizes = draft.sizes ?? [];
+  const parameters = draft.parameters ?? [];
   const imageInput = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [imageError, setImageError] = useState('');
@@ -160,9 +197,20 @@ export function ProductForm({
     }
   }
 
-  function setSize(index: number, patch: Partial<{ id: string; name: string; priceDelta: number }>) {
+  function setSize(
+    index: number,
+    patch: Partial<{ id: string; name: string; priceDelta: number }>,
+  ) {
     const next = sizes.map((size, i) => (i === index ? { ...size, ...patch } : size));
     onChange({ sizes: next });
+  }
+
+  function setParameter(index: number, patch: Partial<ProductParameter>) {
+    onChange({
+      parameters: parameters.map((parameter, i) =>
+        i === index ? { ...parameter, ...patch } : parameter,
+      ),
+    });
   }
 
   return (
@@ -400,7 +448,9 @@ export function ProductForm({
               value={draft.dimensions.height}
               error={errors['dimensions.height']}
               onChange={(event) =>
-                onChange({ dimensions: { ...draft.dimensions, height: Number(event.target.value) } })
+                onChange({
+                  dimensions: { ...draft.dimensions, height: Number(event.target.value) },
+                })
               }
             />
           </div>
@@ -478,6 +528,136 @@ export function ProductForm({
             onClick={() => onChange({ sizes: [...sizes, { id: '', name: '', priceDelta: 0 }] })}
           >
             Lägg till storlek
+          </button>
+
+          <h3 style={{ marginTop: 10 }}>Valbara mått</h3>
+          <p className="field-hint" style={{ marginTop: -6 }}>
+            Låter kunden ställa in måttet själv. Standardmåttet ingår i grundpriset; varje
+            millimeter därifrån kostar priset per enhet, åt båda hållen. Kopplar du måttet till en
+            axel skrivs produktens mått om efter kundens val.
+          </p>
+          {parameters.map((parameter, index) => (
+            <div className="parameter-row" key={index}>
+              <div className="parameter-grid">
+                <TextField
+                  label="Namn"
+                  name={`parameter-namn-${index}`}
+                  value={parameter.name}
+                  onChange={(event) => setParameter(index, { name: event.target.value })}
+                />
+                <TextField
+                  label="Enhet"
+                  name={`parameter-enhet-${index}`}
+                  value={parameter.unit}
+                  onChange={(event) => setParameter(index, { unit: event.target.value })}
+                />
+                <TextField
+                  label="Minst"
+                  name={`parameter-min-${index}`}
+                  type="number"
+                  value={parameter.min}
+                  onChange={(event) => setParameter(index, { min: Number(event.target.value) })}
+                />
+                <TextField
+                  label="Mest"
+                  name={`parameter-max-${index}`}
+                  type="number"
+                  value={parameter.max}
+                  onChange={(event) => setParameter(index, { max: Number(event.target.value) })}
+                />
+                <TextField
+                  label="Steg"
+                  name={`parameter-steg-${index}`}
+                  type="number"
+                  value={parameter.step}
+                  onChange={(event) => setParameter(index, { step: Number(event.target.value) })}
+                />
+                <TextField
+                  label="Standard"
+                  name={`parameter-standard-${index}`}
+                  type="number"
+                  value={parameter.default}
+                  onChange={(event) => setParameter(index, { default: Number(event.target.value) })}
+                />
+                <TextField
+                  label="Kr per enhet"
+                  name={`parameter-pris-${index}`}
+                  type="number"
+                  step="0.1"
+                  value={parameter.pricePerUnit}
+                  onChange={(event) =>
+                    setParameter(index, { pricePerUnit: Number(event.target.value) })
+                  }
+                />
+                <div className="field">
+                  <label htmlFor={`parameter-axel-${index}`}>Styr måttet</label>
+                  <select
+                    id={`parameter-axel-${index}`}
+                    className="input"
+                    value={parameter.axis ?? ''}
+                    onChange={(event) =>
+                      setParameter(index, {
+                        ...(event.target.value
+                          ? { axis: event.target.value as ProductParameter['axis'] }
+                          : { axis: undefined }),
+                      })
+                    }
+                  >
+                    {AXES.map((axis) => (
+                      <option key={axis.id} value={axis.id}>
+                        {axis.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <TextField
+                label="Hjälptext till kunden"
+                name={`parameter-hjalp-${index}`}
+                value={parameter.description ?? ''}
+                onChange={(event) => setParameter(index, { description: event.target.value })}
+              />
+              <div className="spread">
+                <span className="dim" style={{ fontSize: '0.82rem' }}>
+                  {parameter.min} {parameter.unit} ger{' '}
+                  {formatPrice(
+                    Math.max(
+                      0,
+                      draft.price + (parameter.min - parameter.default) * parameter.pricePerUnit,
+                    ),
+                  )}
+                  , {parameter.max} {parameter.unit} ger{' '}
+                  {formatPrice(
+                    Math.max(
+                      0,
+                      draft.price + (parameter.max - parameter.default) * parameter.pricePerUnit,
+                    ),
+                  )}
+                </span>
+                <button
+                  type="button"
+                  className="btn-quiet"
+                  onClick={() => onChange({ parameters: parameters.filter((_, i) => i !== index) })}
+                >
+                  Ta bort
+                </button>
+              </div>
+            </div>
+          ))}
+          {Object.keys(errors)
+            .filter((key) => key.startsWith('parameters.'))
+            .map((key) => (
+              <span className="error" key={key}>
+                {errors[key]}
+              </span>
+            ))}
+          <button
+            type="button"
+            className="btn btn-ghost"
+            style={{ justifySelf: 'start' }}
+            onClick={() => onChange({ parameters: [...parameters, emptyParameter()] })}
+          >
+            Lägg till mått
           </button>
 
           <h3 style={{ marginTop: 10 }}>Synlighet</h3>

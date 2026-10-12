@@ -4,8 +4,14 @@ import { fetchOrder } from '../lib/api';
 import { PageHeader } from '../components/PageHeader';
 import { useAsync } from '../lib/useAsync';
 import type { AnyOrder } from '../types';
+import { useDocumentMeta } from '../lib/meta';
 
 export function ConfirmationPage() {
+  useDocumentMeta({
+    title: 'Din order',
+    description: 'Kvitto och status för din beställning.',
+    noindex: true,
+  });
   const { id = '' } = useParams();
   const location = useLocation();
   // Ordern skickas med i navigeringen efter köp, annars hämtas den från servern.

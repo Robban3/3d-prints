@@ -1,5 +1,9 @@
 import type {
+  Actor,
+  AdminReview,
   AnyOrder,
+  AppliedDiscount,
+  Campaign,
   CustomOrder,
   CustomerDetails,
   Product,
@@ -10,14 +14,39 @@ import type {
   AdminMaterial,
   AuditEntry,
   Category,
+  CustomerRecord,
+  CustomerSummary,
+  MailTemplate,
   Material,
+  ModelAnalysis,
   Quality,
   OrderStatus,
   PaymentSession,
+  DashboardStats,
+  DiscountCode,
+  GuideAnswers,
+  GuideResult,
+  HeroContent,
+  HomeContent,
   ImportResult,
+  Media,
+  FilamentConsumption,
+  PickList,
+  FilamentShortage,
   ProductDraft,
+  Permission,
+  ProductionQueue,
+  QueuePlace,
+  Role,
+  Spool,
+  ReorderDraft,
+  Review,
+  ReviewStatus,
+  ReviewSummary,
+  SavedQuote,
   ShopOrder,
   UploadedFile,
+  User,
 } from '../types';
 
 const BASE = '/api';
@@ -60,6 +89,18 @@ export function fetchConfig(): Promise<ShopConfig> {
   return request<ShopConfig>('/config');
 }
 
+/** Materialguidens förslag. Uträkningen ligger på servern. */
+export function fetchMaterialGuide(
+  answers: GuideAnswers,
+): Promise<{ answers: GuideAnswers; results: GuideResult[] }> {
+  return request('/materials/guide', { method: 'POST', body: JSON.stringify(answers) });
+}
+
+/** Startsidans hero och de kampanjer som är igång. */
+export function fetchHomeContent(): Promise<HomeContent> {
+  return request('/content/home');
+}
+
 export function fetchProducts(params: { category?: string; search?: string } = {}): Promise<{
   products: Product[];
   total: number;
@@ -71,14 +112,60 @@ export function fetchProducts(params: { category?: string; search?: string } = {
   return request(`/products${suffix}`);
 }
 
-export function fetchProduct(slug: string): Promise<{ product: Product; related: Product[] }> {
+export function fetchProduct(slug: string): Promise<{
+  product: Product;
+  related: Product[];
+  reviews: Review[];
+  reviewSummary: ReviewSummary | null;
+}> {
   return request(`/products/${encodeURIComponent(slug)}`);
 }
 
+/**
+ * Lämnar ett omdöme. Det hamnar i kö för granskning, så svaret bekräftar att vi
+ * tagit emot det – inte att det syns i butiken.
+ */
+export function submitReview(
+  slug: string,
+  review: { author: string; email: string; rating: number; title: string; body: string },
+): Promise<{ review: Review; status: string }> {
+  return request(`/products/${encodeURIComponent(slug)}/reviews`, {
+    method: 'POST',
+    body: JSON.stringify(review),
+  });
+}
+
+/** Bevakar en slutsåld produkt. Ger ett mejl när saldot fyllts på. */
+export function watchStock(
+  slug: string,
+  email: string,
+): Promise<{ watching: boolean; productName: string }> {
+  return request(`/products/${encodeURIComponent(slug)}/notify`, {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+/**
+ * Har kunden laddat upp en fil skickas dess id med, och servern räknar på den
+ * uppmätta volymen i stället för den som ligger i formuläret.
+ */
 export function fetchQuote(
   payload: QuoteRequest,
-): Promise<{ request: QuoteRequest; quote: QuoteBreakdown }> {
-  return request('/quote', { method: 'POST', body: JSON.stringify(payload) });
+  fileId?: string,
+): Promise<{ request: QuoteRequest; quote: QuoteBreakdown; model?: ModelAnalysis }> {
+  return request('/quote', {
+    method: 'POST',
+    body: JSON.stringify(fileId ? { request: payload, fileId } : payload),
+  });
+}
+
+/** Prövar en rabattkod mot varukorgen. Beloppet räknas av servern. */
+export function checkDiscount(
+  code: string,
+  lines: Array<{ productId: string; quantity: number; color: string; size?: string }>,
+): Promise<{ discount: AppliedDiscount; subtotal: number }> {
+  return request('/discounts/check', { method: 'POST', body: JSON.stringify({ code, lines }) });
 }
 
 export function createPaymentSession(
@@ -86,8 +173,10 @@ export function createPaymentSession(
     | {
         type: 'shop';
         lines: Array<{ productId: string; quantity: number; color: string; size?: string }>;
+        code?: string;
+        shippingOption?: string;
       }
-    | { type: 'custom'; request: QuoteRequest; projectName: string },
+    | { type: 'custom'; request: QuoteRequest; projectName: string; fileId?: string },
 ): Promise<{ session: PaymentSession; amount: number }> {
   return request('/payments/session', { method: 'POST', body: JSON.stringify(payload) });
 }
@@ -100,6 +189,8 @@ export function placeOrder(payload: {
     color: string;
     size?: string;
   }>;
+  code?: string;
+  shippingOption?: string;
   authorizationToken?: string;
 }): Promise<{ order: ShopOrder }> {
   return request('/orders', { method: 'POST', body: JSON.stringify(payload) });
@@ -119,7 +210,39 @@ export function placeCustomOrder(payload: {
   });
 }
 
-export function fetchOrder(id: string): Promise<{ order: AnyOrder }> {
+/** Sparar den uträknade offerten bakom en egen länk, och mejlar den på begäran. */
+export function saveQuote(payload: {
+  request: QuoteRequest;
+  projectName: string;
+  description: string;
+  fileId?: string;
+  email?: string;
+}): Promise<{
+  quote: SavedQuote;
+  /** Sökvägen till offerten. Adressen byggs av klienten, som vet sitt ursprung. */
+  path: string;
+  mail?: { delivered: boolean; path?: string };
+}> {
+  return request('/quotes', { method: 'POST', body: JSON.stringify(payload) });
+}
+
+/** Hämtar en sparad offert, med dagens pris vid sidan om det sparade. */
+export function fetchSavedQuote(id: string): Promise<{
+  quote: SavedQuote;
+  current: QuoteBreakdown | null;
+  changed: boolean;
+}> {
+  return request(`/quotes/${encodeURIComponent(id)}`);
+}
+
+/** Förbereder en ny beställning av ett tidigare kundunikt jobb. */
+export function reorderCustomOrder(
+  id: string,
+): Promise<{ draft: ReorderDraft; quote: QuoteBreakdown }> {
+  return request(`/orders/${encodeURIComponent(id)}/reorder`, { method: 'POST' });
+}
+
+export function fetchOrder(id: string): Promise<{ order: AnyOrder; queue?: QueuePlace }> {
   return request(`/orders/${encodeURIComponent(id)}`);
 }
 
@@ -168,8 +291,112 @@ export function uploadModelFile(
   return { promise, abort: () => request.abort() };
 }
 
-export function fetchAdminStatus(): Promise<{ enabled: boolean }> {
+export function fetchAdminStatus(): Promise<{
+  enabled: boolean;
+  users: number;
+  /** True när startnyckeln fortfarande gäller, dvs. innan första användaren. */
+  bootstrap: boolean;
+}> {
   return request('/admin/status');
+}
+
+export function adminLogin(
+  email: string,
+  password: string,
+): Promise<{ token: string; expiresAt: string; user: Actor; permissions: Permission[] }> {
+  return request('/admin/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export function adminLogout(token: string): Promise<{ ok: true }> {
+  return request('/admin/logout', adminInit(token, { method: 'POST' }));
+}
+
+/** Vem token hör till, och vad den får göra. Samma svar för startnyckeln. */
+export function fetchAdminMe(token: string): Promise<{ user: Actor; permissions: Permission[] }> {
+  return request('/admin/me', adminInit(token));
+}
+
+/* ---------- Kunder och mejlmallar ---------- */
+
+export function fetchCustomers(
+  token: string,
+  search = '',
+): Promise<{ customers: CustomerRecord[]; summary: CustomerSummary; total: number }> {
+  const query = search.trim() ? `?search=${encodeURIComponent(search.trim())}` : '';
+  return request(`/admin/customers${query}`, adminInit(token));
+}
+
+export function fetchCustomer(
+  token: string,
+  email: string,
+): Promise<{ customer: CustomerRecord; orders: AnyOrder[] }> {
+  return request(`/admin/customers/${encodeURIComponent(email)}`, adminInit(token));
+}
+
+export function fetchMailTemplates(token: string): Promise<{ templates: MailTemplate[] }> {
+  return request('/admin/mail-templates', adminInit(token));
+}
+
+export function saveMailTemplate(
+  token: string,
+  id: string,
+  template: { subject: string; body: string },
+): Promise<{ template: MailTemplate }> {
+  return request(
+    `/admin/mail-templates/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'PUT', body: JSON.stringify(template) }),
+  );
+}
+
+export function resetMailTemplate(token: string, id: string): Promise<{ template: MailTemplate }> {
+  return request(
+    `/admin/mail-templates/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+export function previewMailTemplate(
+  token: string,
+  id: string,
+  values: Record<string, string> = {},
+): Promise<{ preview: { subject: string; text: string } }> {
+  return request(
+    `/admin/mail-templates/${encodeURIComponent(id)}/preview`,
+    adminInit(token, { method: 'POST', body: JSON.stringify({ values }) }),
+  );
+}
+
+/* ---------- Användare i panelen ---------- */
+
+export function fetchUsers(
+  token: string,
+): Promise<{ users: User[]; roles: Record<Role, Permission[]> }> {
+  return request('/admin/users', adminInit(token));
+}
+
+export function createUser(
+  token: string,
+  user: { email: string; name: string; role: Role; password: string },
+): Promise<{ user: User }> {
+  return request('/admin/users', adminInit(token, { method: 'POST', body: JSON.stringify(user) }));
+}
+
+export function updateUser(
+  token: string,
+  id: string,
+  patch: { name?: string; role?: Role; active?: boolean; password?: string },
+): Promise<{ user: User }> {
+  return request(
+    `/admin/users/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'PATCH', body: JSON.stringify(patch) }),
+  );
+}
+
+export function deleteUser(token: string, id: string): Promise<{ ok: true }> {
+  return request(`/admin/users/${encodeURIComponent(id)}`, adminInit(token, { method: 'DELETE' }));
 }
 
 export function fetchAdminOrders(
@@ -191,6 +418,40 @@ export function setOrderStatus(
   });
 }
 
+/**
+ * Flyttar flera ordrar i ett svep. Varje order prövas för sig på servern, så
+ * svaret innehåller både de som flyttades och de som inte kunde flyttas.
+ */
+export function setOrderStatuses(
+  token: string,
+  ids: string[],
+  status: OrderStatus,
+  note?: string,
+): Promise<{
+  moved: Array<AnyOrder & { next: OrderStatus[] }>;
+  failed: Array<{ id: string; reason: string }>;
+  status: OrderStatus;
+}> {
+  return request('/admin/orders/status', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ ids, status, note }),
+  });
+}
+
+export function fetchPickList(
+  token: string,
+  selection: { ids?: string[]; status?: OrderStatus } = {},
+): Promise<{ list: PickList }> {
+  const params = new URLSearchParams();
+  if (selection.ids && selection.ids.length > 0) params.set('ids', selection.ids.join(','));
+  else if (selection.status) params.set('status', selection.status);
+  const query = params.toString();
+  return request(`/admin/picklist${query ? `?${query}` : ''}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
 /* ---------- Katalogen i adminpanelen ---------- */
 
 function adminInit(token: string, init: RequestInit = {}): RequestInit {
@@ -201,10 +462,7 @@ export function fetchAdminProducts(token: string): Promise<{ products: Product[]
   return request('/admin/products', adminInit(token));
 }
 
-export function createProduct(
-  token: string,
-  draft: ProductDraft,
-): Promise<{ product: Product }> {
+export function createProduct(token: string, draft: ProductDraft): Promise<{ product: Product }> {
   return request(
     '/admin/products',
     adminInit(token, { method: 'POST', body: JSON.stringify(draft) }),
@@ -262,9 +520,10 @@ export function deleteCategory(token: string, id: string): Promise<{ category: C
 }
 
 /** Laddar upp en produktbild. Returnerar id och adress att spara på produkten. */
-export function uploadProductImage(
-  file: File,
-): { promise: Promise<{ id: string; url: string; fileName: string }>; abort: () => void } {
+export function uploadProductImage(file: File): {
+  promise: Promise<{ id: string; url: string; fileName: string }>;
+  abort: () => void;
+} {
   const xhr = new XMLHttpRequest();
   const promise = new Promise<{ id: string; url: string; fileName: string }>((resolve, reject) => {
     const body = new FormData();
@@ -300,7 +559,10 @@ export function saveMaterial(
   isNew: boolean,
 ): Promise<{ material: Material }> {
   return isNew
-    ? request('/admin/materials', adminInit(token, { method: 'POST', body: JSON.stringify(material) }))
+    ? request(
+        '/admin/materials',
+        adminInit(token, { method: 'POST', body: JSON.stringify(material) }),
+      )
     : request(
         `/admin/materials/${encodeURIComponent(material.id)}`,
         adminInit(token, { method: 'PATCH', body: JSON.stringify(material) }),
@@ -320,7 +582,10 @@ export function saveQuality(
   isNew: boolean,
 ): Promise<{ quality: Quality }> {
   return isNew
-    ? request('/admin/qualities', adminInit(token, { method: 'POST', body: JSON.stringify(quality) }))
+    ? request(
+        '/admin/qualities',
+        adminInit(token, { method: 'POST', body: JSON.stringify(quality) }),
+      )
     : request(
         `/admin/qualities/${encodeURIComponent(quality.id)}`,
         adminInit(token, { method: 'PATCH', body: JSON.stringify(quality) }),
@@ -356,4 +621,195 @@ export function fetchHistory(token: string): Promise<{ entries: AuditEntry[] }> 
 
 export async function deleteUpload(id: string): Promise<void> {
   await fetch(`${BASE}/uploads/${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
+
+/* ---------- Omdömen och översikt i panelen ---------- */
+
+export function fetchAdminReviews(
+  token: string,
+  status?: ReviewStatus,
+): Promise<{ reviews: AdminReview[]; waiting: number }> {
+  const query = status ? `?status=${encodeURIComponent(status)}` : '';
+  return request(`/admin/reviews${query}`, adminInit(token));
+}
+
+export function moderateReview(
+  token: string,
+  id: string,
+  status: ReviewStatus,
+  reply?: string,
+): Promise<{ review: AdminReview; waiting: number }> {
+  return request(
+    `/admin/reviews/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'PATCH', body: JSON.stringify({ status, reply }) }),
+  );
+}
+
+export function deleteReview(
+  token: string,
+  id: string,
+): Promise<{ review: AdminReview; waiting: number }> {
+  return request(
+    `/admin/reviews/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+export function fetchStats(
+  token: string,
+  days = 30,
+): Promise<{ stats: DashboardStats; days: number; lowStockThreshold: number }> {
+  return request(`/admin/stats?days=${days}`, adminInit(token));
+}
+
+/* ---------- Rabattkoder i panelen ---------- */
+
+export function fetchDiscounts(token: string): Promise<{ discounts: DiscountCode[] }> {
+  return request('/admin/discounts', adminInit(token));
+}
+
+export function saveDiscount(
+  token: string,
+  discount: Partial<DiscountCode>,
+  existingCode?: string,
+): Promise<{ discount: DiscountCode }> {
+  return existingCode
+    ? request(
+        `/admin/discounts/${encodeURIComponent(existingCode)}`,
+        adminInit(token, { method: 'PATCH', body: JSON.stringify(discount) }),
+      )
+    : request(
+        '/admin/discounts',
+        adminInit(token, { method: 'POST', body: JSON.stringify(discount) }),
+      );
+}
+
+export function deleteDiscount(token: string, code: string): Promise<{ discount: DiscountCode }> {
+  return request(
+    `/admin/discounts/${encodeURIComponent(code)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+/* ---------- Produktionskö och filament ---------- */
+
+export function fetchQueue(token: string): Promise<{
+  queue: ProductionQueue;
+  spools: Spool[];
+  shortages: FilamentShortage[];
+  lowFilamentGrams: number;
+  printers: number;
+}> {
+  return request('/admin/queue', adminInit(token));
+}
+
+export function fetchFilament(token: string): Promise<{
+  spools: Spool[];
+  log: FilamentConsumption[];
+  lowFilamentGrams: number;
+}> {
+  return request('/admin/filament', adminInit(token));
+}
+
+export function saveSpool(
+  token: string,
+  spool: { material: string; color: string; grams: number; totalGrams: number; note?: string },
+  id?: string,
+): Promise<{ spool: Spool }> {
+  return id
+    ? request(
+        `/admin/filament/${encodeURIComponent(id)}`,
+        adminInit(token, { method: 'PATCH', body: JSON.stringify(spool) }),
+      )
+    : request('/admin/filament', adminInit(token, { method: 'POST', body: JSON.stringify(spool) }));
+}
+
+export function deleteSpool(token: string, id: string): Promise<{ ok: true }> {
+  return request(
+    `/admin/filament/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
+}
+
+/* ---------- Startsidan i panelen ---------- */
+
+/** Laddar upp en bild eller video till startsidan. */
+export function uploadMedia(
+  file: File,
+  onProgress?: (percent: number) => void,
+): { promise: Promise<Media>; abort: () => void } {
+  const xhr = new XMLHttpRequest();
+  const promise = new Promise<Media>((resolve, reject) => {
+    const body = new FormData();
+    body.append('file', file);
+
+    xhr.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable && onProgress) {
+        onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    });
+    xhr.addEventListener('load', () => {
+      let payload: { media?: Media; error?: string } = {};
+      try {
+        payload = JSON.parse(xhr.responseText) as typeof payload;
+      } catch {
+        payload = {};
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && payload.media) resolve(payload.media);
+      else reject(new ApiError(payload.error ?? 'Filen kunde inte laddas upp', xhr.status));
+    });
+    xhr.addEventListener('error', () =>
+      reject(new ApiError('Uppladdningen avbröts. Kontrollera din uppkoppling.', 0)),
+    );
+    xhr.addEventListener('abort', () => reject(new ApiError('Uppladdningen avbröts.', 0)));
+
+    xhr.open('POST', `${BASE}/uploads/media`);
+    xhr.send(body);
+  });
+  return { promise, abort: () => xhr.abort() };
+}
+
+export function fetchAdminContent(token: string): Promise<HomeContent> {
+  return request('/admin/content', adminInit(token));
+}
+
+export function saveHero(token: string, hero: unknown): Promise<{ hero: HeroContent }> {
+  return request(
+    '/admin/content/hero',
+    adminInit(token, { method: 'PUT', body: JSON.stringify(hero) }),
+  );
+}
+
+export function saveCampaign(
+  token: string,
+  campaign: unknown,
+  id?: string,
+): Promise<{ campaign: Campaign }> {
+  return id
+    ? request(
+        `/admin/content/campaigns/${encodeURIComponent(id)}`,
+        adminInit(token, { method: 'PATCH', body: JSON.stringify(campaign) }),
+      )
+    : request(
+        '/admin/content/campaigns',
+        adminInit(token, { method: 'POST', body: JSON.stringify(campaign) }),
+      );
+}
+
+export function moveCampaign(
+  token: string,
+  id: string,
+  direction: 'upp' | 'ned',
+): Promise<{ campaigns: Campaign[] }> {
+  return request(
+    `/admin/content/campaigns/${encodeURIComponent(id)}/move`,
+    adminInit(token, { method: 'POST', body: JSON.stringify({ direction }) }),
+  );
+}
+
+export function deleteCampaign(token: string, id: string): Promise<{ campaign: Campaign }> {
+  return request(
+    `/admin/content/campaigns/${encodeURIComponent(id)}`,
+    adminInit(token, { method: 'DELETE' }),
+  );
 }

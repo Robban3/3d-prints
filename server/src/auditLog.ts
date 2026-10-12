@@ -2,9 +2,11 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 /**
- * Enkel ändringslogg för panelen. Det finns ingen inloggning per person, så
- * "vem" är alltid den som haft adminnyckeln – det som loggas är vad som hänt
- * och när, vilket är det som går att svara ärligt på.
+ * Enkel ändringslogg för panelen: vad som hänt, när, och vem som gjorde det.
+ *
+ * Namnet kommer från den inloggade användaren. Händelser utan namn är antingen
+ * från tiden före inloggningen eller sådant som sker av sig självt, och då står
+ * det ingenting i stället för en gissning.
  */
 const LOG_FILE = () => resolve(process.env.AUDIT_STORE ?? 'data/handelser.json');
 
@@ -14,9 +16,23 @@ const MAX_ENTRIES = 500;
 export interface AuditEntry {
   at: string;
   action: 'skapad' | 'ändrad' | 'borttagen' | 'importerad' | 'status';
-  entity: 'produkt' | 'kategori' | 'material' | 'kvalitet' | 'order';
+  entity:
+    | 'produkt'
+    | 'kategori'
+    | 'material'
+    | 'kvalitet'
+    | 'order'
+    | 'omdöme'
+    | 'rabattkod'
+    | 'startsida'
+    | 'kampanj'
+    | 'filament'
+    | 'användare'
+    | 'mejlmall';
   entityId: string;
   summary: string;
+  /** Vem som gjorde det. Saknas på händelser loggade före inloggningen fanns. */
+  by?: string;
   /** Fälten som faktiskt ändrades, för en ändring. */
   changed?: string[];
 }

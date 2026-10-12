@@ -12,6 +12,9 @@ export interface CartItem {
   color: string;
   size?: string;
   sizeName?: string;
+  /** Kundens egna mått. Servern räknar om priset på dem när ordern läggs. */
+  parameters?: Record<string, number>;
+  parameterText?: string;
   art: Product['art'];
   image?: Product['image'];
 }
@@ -20,13 +23,23 @@ interface CartContextValue {
   items: CartItem[];
   itemCount: number;
   subtotal: number;
+  /**
+   * Rabattkoden kunden skrivit in. Bara koden sparas – vad den är värd beror på
+   * varukorgens innehåll och räknas alltid ut av servern.
+   */
+  discountCode: string;
+  shippingOptionId: string;
   add: (item: Omit<CartItem, 'key'>) => void;
   setQuantity: (key: string, quantity: number) => void;
   remove: (key: string) => void;
+  setDiscountCode: (code: string) => void;
+  setShippingOptionId: (id: string) => void;
   clear: () => void;
 }
 
 const STORAGE_KEY = 'formlabb.cart.v1';
+/** Rabattkod och fraktval ligger för sig, så den gamla varukorgsnyckeln består. */
+const CHOICES_KEY = 'formlabb.cart.choices.v1';
 const CartContext = createContext<CartContextValue | null>(null);
 
 function readStorage(): CartItem[] {
@@ -39,8 +52,42 @@ function readStorage(): CartItem[] {
   }
 }
 
+interface Choices {
+  discountCode: string;
+  shippingOptionId: string;
+}
+
+const noChoices: Choices = { discountCode: '', shippingOptionId: '' };
+
+function readChoices(): Choices {
+  try {
+    const raw = window.localStorage.getItem(CHOICES_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : null;
+    if (!parsed || typeof parsed !== 'object') return noChoices;
+    const record = parsed as Partial<Choices>;
+    return {
+      discountCode: typeof record.discountCode === 'string' ? record.discountCode : '',
+      shippingOptionId: typeof record.shippingOptionId === 'string' ? record.shippingOptionId : '',
+    };
+  } catch {
+    return noChoices;
+  }
+}
+
+/** Två hyllor i olika bredd ska bli två rader, inte en rad med antal två. */
+function parameterKey(parameters: Record<string, number> | undefined): string {
+  if (!parameters) return '-';
+  const entries = Object.entries(parameters);
+  if (entries.length === 0) return '-';
+  return entries
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([id, value]) => `${id}=${value}`)
+    .join(',');
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(readStorage);
+  const [choices, setChoices] = useState<Choices>(readChoices);
 
   useEffect(() => {
     try {
@@ -50,9 +97,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(CHOICES_KEY, JSON.stringify(choices));
+    } catch {
+      // Samma sak här: valen lever i minnet om lagringen inte går att skriva.
+    }
+  }, [choices]);
+
   const add = useCallback((item: Omit<CartItem, 'key'>) => {
-    // Samma produkt i samma färg och storlek slås ihop till en rad.
-    const key = [item.productId, item.color, item.size ?? '-'].join('|');
+    // Samma produkt i samma färg, storlek och mått slås ihop till en rad.
+    const key = [item.productId, item.color, item.size ?? '-', parameterKey(item.parameters)].join(
+      '|',
+    );
     setItems((current) => {
       const existing = current.find((entry) => entry.key === key);
       if (existing) {
@@ -83,13 +140,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((current) => current.filter((entry) => entry.key !== key));
   }, []);
 
-  const clear = useCallback(() => setItems([]), []);
+  const setDiscountCode = useCallback((discountCode: string) => {
+    setChoices((current) => ({ ...current, discountCode }));
+  }, []);
+
+  const setShippingOptionId = useCallback((shippingOptionId: string) => {
+    setChoices((current) => ({ ...current, shippingOptionId }));
+  }, []);
+
+  // En lagd order ska inte lämna kvar sin rabattkod till nästa köp.
+  const clear = useCallback(() => {
+    setItems([]);
+    setChoices(noChoices);
+  }, []);
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-    return { items, itemCount, subtotal, add, setQuantity, remove, clear };
-  }, [items, add, setQuantity, remove, clear]);
+    return {
+      items,
+      itemCount,
+      subtotal,
+      discountCode: choices.discountCode,
+      shippingOptionId: choices.shippingOptionId,
+      add,
+      setQuantity,
+      remove,
+      setDiscountCode,
+      setShippingOptionId,
+      clear,
+    };
+  }, [items, choices, add, setQuantity, remove, setDiscountCode, setShippingOptionId, clear]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

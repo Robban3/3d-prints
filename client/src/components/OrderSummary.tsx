@@ -1,3 +1,6 @@
+import { ModelPanel } from './ModelPanel';
+import { PrintProgressBar } from './PrintProgressBar';
+import { ReorderButton } from './ReorderButton';
 import { formatBytes, formatDate, formatHours, formatPrice } from '../lib/format';
 import { statusLabels } from '../lib/status';
 import type { AnyOrder } from '../types';
@@ -17,23 +20,35 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
         Lagd {formatDate(order.createdAt)}
       </p>
 
+      <PrintProgressBar order={order} />
+
       {order.type === 'shop' ? (
         <div style={{ marginTop: 18 }}>
           {order.lines.map((line) => (
-            <div className="summary-row" key={`${line.productId}-${line.color}-${line.size ?? ''}`}>
+            <div
+              className="summary-row"
+              key={`${line.productId}-${line.color}-${line.size ?? ''}-${line.parameterText ?? ''}`}
+            >
               <span>
                 {line.quantity} × {line.name}
                 <br />
                 <span className="dim" style={{ fontSize: '0.82rem' }}>
                   {line.color}
                   {line.size ? ` · ${line.size}` : ''}
+                  {line.parameterText ? ` · ${line.parameterText}` : ''}
                 </span>
               </span>
               <span>{formatPrice(line.unitPrice * line.quantity)}</span>
             </div>
           ))}
+          {order.discount && (
+            <div className="summary-row discount">
+              <span>Rabatt ({order.discount.label})</span>
+              <span>−{formatPrice(order.discount.amount)}</span>
+            </div>
+          )}
           <div className="summary-row">
-            <span>Frakt</span>
+            <span>Frakt{order.shippingOption ? ` (${order.shippingOption.name})` : ''}</span>
             <span>{order.shipping === 0 ? 'Fri' : formatPrice(order.shipping)}</span>
           </div>
           <div className="summary-row total">
@@ -74,6 +89,7 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
                 <th>Volym / fyllnad</th>
                 <td>
                   {order.request.volumeCm3} cm³ · {order.request.infill} %
+                  {order.model && <span className="dim"> · uppmätt ur filen</span>}
                 </td>
               </tr>
               <tr>
@@ -94,6 +110,15 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
             <span>Totalt</span>
             <span>{formatPrice(order.total)}</span>
           </div>
+
+          <ModelPanel
+            fileName={order.fileName}
+            fileUrl={order.fileUrl}
+            fileSize={order.fileSize}
+            model={order.model}
+          />
+
+          <ReorderButton orderId={order.id} />
         </div>
       )}
 

@@ -5,6 +5,7 @@ import { fetchConfig, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import { PageHeader } from '../components/PageHeader';
 import type { Product } from '../types';
+import { useDocumentMeta } from '../lib/meta';
 
 type SortId = 'popular' | 'price-asc' | 'price-desc' | 'name';
 
@@ -23,8 +24,16 @@ const sortLabels: Array<{ id: SortId; label: string }> = [
 ];
 
 export function ShopPage() {
+  useDocumentMeta({
+    title: 'Alla produkter',
+    description:
+      'Hela sortimentet av 3D-printade produkter för hem, kontor och kök. Printade på beställning i PLA, PETG, ABS, TPU och resin.',
+  });
   const [params, setParams] = useSearchParams();
   const category = params.get('kategori') ?? 'alla';
+  // En kampanj kan peka på flera kategorier på en gång, som en hel kollektion.
+  const selected = category.split(',').filter((id) => id && id !== 'alla');
+  const multiple = selected.length > 1;
   // Sökningen bor i URL:en, så att headerns sökruta och delade länkar slår
   // igenom även när butiken redan är öppen.
   const search = params.get('sok') ?? '';
@@ -51,7 +60,7 @@ export function ShopPage() {
 
   function selectCategory(id: string) {
     const next = new URLSearchParams(params);
-    if (id === 'alla') next.delete('kategori');
+    if (id === 'alla' || id === 'flera') next.delete('kategori');
     else next.set('kategori', id);
     setParams(next, { replace: true });
   }
@@ -85,10 +94,18 @@ export function ShopPage() {
             <select
               className="select"
               aria-label="Kategori"
-              value={category}
+              value={multiple ? 'flera' : category}
               onChange={(event) => selectCategory(event.target.value)}
             >
               <option value="alla">Alla kategorier</option>
+              {/* Namnger urvalet i stället för att visa ett tomt fält. */}
+              {multiple && (
+                <option value="flera">
+                  {selected
+                    .map((id) => categories.find((entry) => entry.id === id)?.name ?? id)
+                    .join(' · ')}
+                </option>
+              )}
               {categories.map((entry) => (
                 <option key={entry.id} value={entry.id}>
                   {entry.name}

@@ -57,6 +57,45 @@ describe('payloadForOrder', () => {
     assert.equal(first!.type, 'physical');
   });
 
+  it('lägger rabatten som en egen rad med negativt belopp', () => {
+    const payload = payloadForOrder(
+      { lines, shipping: 59, total: 1156, discount: { amount: 200, label: 'HOST20 · 20 %' } },
+      config,
+    );
+    const rabatt = payload.order_lines.find((line) => line.type === 'discount')!;
+    assert.equal(rabatt.name, 'HOST20 · 20 %');
+    assert.equal(rabatt.total_amount, -20000);
+    assert.equal(rabatt.unit_price, -20000);
+    assert.equal(rabatt.total_tax_amount, taxOf(-20000));
+    assert.ok(rabatt.total_tax_amount < 0);
+  });
+
+  it('håller order_amount lika med raderna även med rabatt', () => {
+    const payload = payloadForOrder(
+      { lines, shipping: 59, total: 1156, discount: { amount: 200, label: 'HOST20' } },
+      config,
+    );
+    // Klarna avvisar underlaget om summan inte stämmer på öret.
+    const summa = payload.order_lines.reduce((sum, line) => sum + line.total_amount, 0);
+    assert.equal(payload.order_amount, summa);
+    assert.equal(payload.order_amount, 69800 + 59900 + 5900 - 20000);
+    assert.equal(
+      payload.order_tax_amount,
+      payload.order_lines.reduce((sum, line) => sum + line.total_tax_amount, 0),
+    );
+  });
+
+  it('utelämnar rabattraden när rabatten är noll', () => {
+    const payload = payloadForOrder(
+      { lines, shipping: 0, total: 1297, discount: { amount: 0, label: 'FRIFRAKT' } },
+      config,
+    );
+    assert.equal(
+      payload.order_lines.some((line) => line.type === 'discount'),
+      false,
+    );
+  });
+
   it('summerar ordern till samma belopp som raderna', () => {
     const payload = payloadForOrder({ lines, shipping: 0, total: 1297 }, config);
     const sum = payload.order_lines.reduce((total, line) => total + line.total_amount, 0);
@@ -92,7 +131,10 @@ describe('payloadForOrder', () => {
   });
 
   it('tar med ordernumret som referens när det finns', () => {
-    const payload = payloadForOrder({ lines, shipping: 0, total: 1297, id: 'S2026-ABC123' }, config);
+    const payload = payloadForOrder(
+      { lines, shipping: 0, total: 1297, id: 'S2026-ABC123' },
+      config,
+    );
     assert.equal(payload.merchant_reference1, 'S2026-ABC123');
   });
 });
@@ -150,7 +192,9 @@ describe('konfiguration', () => {
 
 describe('testläge utan nycklar', () => {
   it('ger en session som är märkt som test', async () => {
-    const session = await createSession(payloadForOrder({ lines, shipping: 0, total: 1297 }, config));
+    const session = await createSession(
+      payloadForOrder({ lines, shipping: 0, total: 1297 }, config),
+    );
     assert.equal(session.mock, true);
     assert.ok(session.clientToken.length > 0);
   });

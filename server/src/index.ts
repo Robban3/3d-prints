@@ -8,12 +8,18 @@ import { dirname, join, resolve } from 'node:path';
 import { api } from './routes.ts';
 import { uploads } from './uploadRoutes.ts';
 import { admin } from './adminRoutes.ts';
+import { seo } from './seoRoutes.ts';
 import { ORPHAN_MAX_AGE_MS, sweepOrphans } from './uploads.ts';
 import { ValidationError } from './validation.ts';
 import { KlarnaError } from './klarna.ts';
 import { OutOfStockError } from './stock.ts';
 import { CatalogError } from './catalog.ts';
+import { FilamentError } from './filament.ts';
+import { UserError } from './users.ts';
+import { TemplateError } from './mailTemplates.ts';
 import { ProductInputError } from './catalogValidation.ts';
+import { DiscountError } from './discounts.ts';
+import { ContentError } from './content.ts';
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
@@ -52,6 +58,9 @@ app.use(express.json({ limit: '256kb' }));
 app.use('/api', uploads);
 app.use('/api', admin);
 app.use('/api', api);
+// Måste ligga före statiska filer och SPA-fallbacken, annars fångas
+// /sitemap.xml av index.html.
+app.use(seo);
 
 // I produktion serveras den byggda React-appen från samma process.
 const here = dirname(fileURLToPath(import.meta.url));
@@ -81,6 +90,34 @@ const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
 
   if (error instanceof ProductInputError) {
     res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
+    return;
+  }
+
+  if (error instanceof DiscountError) {
+    res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
+    return;
+  }
+
+  if (error instanceof ContentError) {
+    res.status(400).json({ error: 'Kontrollera fälten nedan', fields: error.fields });
+    return;
+  }
+
+  if (error instanceof UserError) {
+    res.status(error.status).json({
+      error: error.message,
+      ...(Object.keys(error.fields).length > 0 ? { fields: error.fields } : {}),
+    });
+    return;
+  }
+
+  if (error instanceof TemplateError) {
+    res.status(400).json({ error: error.message, fields: error.fields });
+    return;
+  }
+
+  if (error instanceof FilamentError) {
+    res.status(400).json({ error: error.message });
     return;
   }
 

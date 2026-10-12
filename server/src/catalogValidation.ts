@@ -3,7 +3,9 @@ import type {
   ArtTone,
   Category,
   Material,
+  MaterialProperties,
   Product,
+  ProductParameter,
   ProductVariantOption,
   QualityLevel,
 } from './types.ts';
@@ -38,9 +40,14 @@ export const ART_SHAPES: ArtShape[] = [
   'spiralVase',
   'gearFidget',
   'spiceShelf',
+  'christmasTree',
+  'ornamentBall',
+  'starBurst',
+  'nameOrnament',
+  'giftBox',
 ];
 
-export const ART_TONES: ArtTone[] = ['grafit', 'benvit', 'stal', 'bla'];
+export const ART_TONES: ArtTone[] = ['grafit', 'benvit', 'stal', 'bla', 'gran', 'vinrod'];
 
 type Rec = Record<string, unknown>;
 
@@ -50,6 +57,14 @@ function asRecord(value: unknown): Rec {
 
 function text(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+/**
+ * Sant när fältet faktiskt fyllts i. Kan inte uttryckas med text(), som ger
+ * tom sträng för allt som inte är en sträng – inklusive tal.
+ */
+function given(value: unknown): boolean {
+  return value !== undefined && value !== null && value !== '';
 }
 
 function num(value: unknown): number {
@@ -76,7 +91,10 @@ export function slugify(value: string): string {
     .slice(0, 60);
 }
 
-function parseSizes(value: unknown, errors: Record<string, string>): ProductVariantOption[] | undefined {
+function parseSizes(
+  value: unknown,
+  errors: Record<string, string>,
+): ProductVariantOption[] | undefined {
   if (value === undefined || value === null) return undefined;
   if (!Array.isArray(value)) {
     errors.sizes = 'Storlekarna kunde inte tolkas.';
@@ -219,6 +237,8 @@ export function parseProductInput(
     }
   }
 
+  const parameters = parseParameters(raw.parameters, errors);
+
   const art = asRecord(raw.art);
   const shape = text(art.shape);
   const tone = text(art.tone);
@@ -245,6 +265,7 @@ export function parseProductInput(
     weightGrams: Math.round(weightGrams),
     colors,
     ...(sizes ? { sizes } : {}),
+    ...(parameters.length > 0 ? { parameters } : {}),
     highlights,
     stock,
     rating: Math.round(rating * 10) / 10,
@@ -297,9 +318,19 @@ export function parseMaterialInput(input: unknown, existingId?: string): Materia
   const description = text(raw.description);
   if (description.length < 10) errors.description = 'Beskriv materialet kort.';
 
+  // Densiteten är frivillig. Lämnas den tom räknar vi vikten som för PLA.
+  const density = given(raw.densityGramsPerCm3) ? num(raw.densityGramsPerCm3) : undefined;
+  if (density !== undefined && !(density >= 0.5 && density <= 5)) {
+    errors.densityGramsPerCm3 = 'Densiteten ska vara mellan 0,5 och 5 g/cm³.';
+  }
+
   const traits = Array.isArray(raw.traits)
     ? raw.traits.map((entry) => text(entry)).filter((entry) => entry.length > 0)
     : [];
+
+  // Egenskaperna är frivilliga, men anges de måste alla fem vara med – ett
+  // halvt ifyllt material kan inte vägas mot kundens behov.
+  const properties = parseMaterialProperties(raw.properties, errors);
 
   if (Object.keys(errors).length > 0) throw new ProductInputError(errors);
 
@@ -307,6 +338,8 @@ export function parseMaterialInput(input: unknown, existingId?: string): Materia
     id,
     name,
     priceFactor: Math.round(priceFactor * 100) / 100,
+    ...(properties ? { properties } : {}),
+    ...(density === undefined ? {} : { densityGramsPerCm3: Math.round(density * 100) / 100 }),
     description,
     traits,
   };
@@ -346,4 +379,126 @@ export function parseQualityInput(input: unknown, existingId?: string): QualityL
     timeFactor: Math.round(timeFactor * 100) / 100,
     description,
   };
+}
+
+/** Skalorna i materialguiden går från 1 till 5, temperaturen i grader. */
+function parseMaterialProperties(
+  input: unknown,
+  errors: Record<string, string>,
+): MaterialProperties | undefined {
+  if (input === undefined || input === null) return undefined;
+  const raw = asRecord(input);
+
+  // Ett tomt objekt betyder att egenskaperna inte angetts.
+  const filled = ['maxTempC', 'strength', 'flexibility', 'detail'].filter((key) => given(raw[key]));
+  if (filled.length === 0) return undefined;
+  if (filled.length < 4) {
+    errors.properties = 'Fyll i alla fyra egenskaper, eller lämna dem helt tomma.';
+    return undefined;
+  }
+
+  const maxTempC = num(raw.maxTempC);
+  if (!(maxTempC >= 20 && maxTempC <= 400)) {
+    errors.properties = 'Temperaturen ska vara mellan 20 och 400 °C.';
+    return undefined;
+  }
+
+  const scales = {
+    strength: num(raw.strength),
+    flexibility: num(raw.flexibility),
+    detail: num(raw.detail),
+  };
+  for (const [key, value] of Object.entries(scales)) {
+    if (!(Number.isInteger(value) && value >= 1 && value <= 5)) {
+      errors.properties = `${key} ska vara ett heltal mellan 1 och 5.`;
+      return undefined;
+    }
+  }
+
+  return {
+    maxTempC: Math.round(maxTempC),
+    strength: scales.strength,
+    flexibility: scales.flexibility,
+    detail: scales.detail,
+    outdoor: raw.outdoor === true,
+  };
+}
+
+/**
+ * Mått kunden får välja. Ett halvt ifyllt mått är värre än inget: priset skulle
+ * räknas mot ett grundvärde som inte finns, så varje fält kontrolleras.
+ */
+function parseParameters(input: unknown, errors: Record<string, string>): ProductParameter[] {
+  if (input === undefined || input === null) return [];
+  if (!Array.isArray(input)) {
+    errors.parameters = 'Måtten kunde inte tolkas.';
+    return [];
+  }
+
+  const parameters: ProductParameter[] = [];
+  const seen = new Set<string>();
+
+  for (const [index, entry] of input.entries()) {
+    const raw = asRecord(entry);
+    const name = text(raw.name);
+    if (name.length === 0) {
+      errors[`parameters.${index}.name`] = 'Måttet behöver ett namn.';
+      continue;
+    }
+
+    const id = text(raw.id) || slugify(name);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
+      errors[`parameters.${index}.id`] = 'Id:t får bara innehålla små bokstäver och bindestreck.';
+      continue;
+    }
+    if (seen.has(id)) {
+      errors[`parameters.${index}.id`] = 'Två mått kan inte ha samma id.';
+      continue;
+    }
+
+    const min = num(raw.min);
+    const max = num(raw.max);
+    const step = num(raw.step);
+    const fallback = num(raw.default);
+    const pricePerUnit = num(raw.pricePerUnit);
+
+    if (![min, max, step, fallback, pricePerUnit].every(Number.isFinite)) {
+      errors[`parameters.${index}`] = 'Fyll i minimum, maximum, steg, grundvärde och pris.';
+      continue;
+    }
+    if (min >= max) {
+      errors[`parameters.${index}.max`] = 'Maximum måste vara större än minimum.';
+      continue;
+    }
+    if (!(step > 0) || step > max - min) {
+      errors[`parameters.${index}.step`] = 'Steget måste vara större än noll och rymmas i spannet.';
+      continue;
+    }
+    if (fallback < min || fallback > max) {
+      errors[`parameters.${index}.default`] = 'Grundvärdet måste ligga inom spannet.';
+      continue;
+    }
+
+    const axis = text(raw.axis);
+    if (axis && !['width', 'depth', 'height'].includes(axis)) {
+      errors[`parameters.${index}.axis`] = 'Axeln måste vara width, depth eller height.';
+      continue;
+    }
+
+    seen.add(id);
+    parameters.push({
+      id,
+      name,
+      unit: text(raw.unit) || 'mm',
+      min,
+      max,
+      step,
+      default: fallback,
+      pricePerUnit: Math.round(pricePerUnit * 100) / 100,
+      ...(axis ? { axis: axis as ProductParameter['axis'] } : {}),
+      ...(text(raw.description) ? { description: text(raw.description) } : {}),
+    });
+  }
+
+  return parameters;
 }

@@ -1,7 +1,8 @@
-import { findMaterial, findQuality } from './catalog.ts';
+import { findMaterial, findProduct, findQuality } from './catalog.ts';
 import { QUOTE_LIMITS } from './pricing.ts';
+import { describeValues, normalizeValues, parameterPrice } from './parameters.ts';
+import type { ModelAnalysis } from './modelAnalysis.ts';
 import type { CustomQuoteRequest, CustomerDetails, OrderLine } from './types.ts';
-import { findProduct } from './catalog.ts';
 
 export class ValidationError extends Error {
   readonly fields: Record<string, string>;
@@ -96,14 +97,23 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
       continue;
     }
 
+    // Måtten normaliseras mot produktens egna gränser, så ett påhittat värde
+    // blir det närmaste tillåtna i stället för ett pris kunden satt själv.
+    const parameters = normalizeValues(product.parameters, raw.parameters);
+    const parameterText = describeValues(product.parameters, parameters);
+
     // Priset hämtas alltid från katalogen, aldrig från klienten.
     lines.push({
       productId: product.id,
       name: product.name,
       quantity,
-      unitPrice: product.price + priceDelta,
+      unitPrice: Math.max(
+        0,
+        product.price + priceDelta + parameterPrice(product.parameters, parameters),
+      ),
       color,
       size,
+      ...(parameterText ? { parameters, parameterText } : {}),
     });
   }
 
@@ -147,4 +157,25 @@ export async function parseQuoteRequest(input: unknown): Promise<CustomQuoteRequ
     rush: raw.rush === true || raw.rush === 'true',
     postProcessing: raw.postProcessing === true || raw.postProcessing === 'true',
   };
+}
+
+/**
+ * När kunden bifogat en fil som gick att mäta upp är det filens volym som
+ * gäller, inte den som följer med anropet. Dels blir priset rätt utan att
+ * kunden behöver känna till sin modells volym, dels går det inte att pruta ner
+ * priset genom att skicka in en mindre volym än modellen faktiskt har.
+ */
+export function withMeasuredVolume(
+  request: CustomQuoteRequest,
+  analysis: ModelAnalysis | undefined,
+): CustomQuoteRequest {
+  if (!analysis) return request;
+  const measured = analysis.volumeCm3;
+  if (measured > QUOTE_LIMITS.volumeCm3.max) {
+    throw new ValidationError({
+      fileId: `Modellen mäter ${measured} cm³ och automatiska offerter går upp till ${QUOTE_LIMITS.volumeCm3.max} cm³. Skriv en rad i beskrivningen så räknar vi på den för hand.`,
+    });
+  }
+  // Mycket små modeller får minimivolymen. Prisgolvet gör ändå att de kostar lika mycket.
+  return { ...request, volumeCm3: Math.max(QUOTE_LIMITS.volumeCm3.min, measured) };
 }

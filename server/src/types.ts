@@ -1,3 +1,5 @@
+import type { ModelAnalysis } from './modelAnalysis.ts';
+
 export type MaterialId = string;
 
 export interface Material {
@@ -5,9 +7,50 @@ export interface Material {
   name: string;
   /** Prisfaktor jämfört med PLA (1.0). */
   priceFactor: number;
+  /** Densitet i g/cm³, används för att räkna fram vikten. Saknas = PLA:s 1.24. */
+  densityGramsPerCm3?: number;
+  /**
+   * Egenskaperna materialguiden väger mot kundens behov. Saknas de kan
+   * materialet inte rekommenderas av guiden, men går att välja som vanligt.
+   */
+  properties?: MaterialProperties;
   description: string;
   /** Egenskaper som visas i UI:t. */
   traits: string[];
+}
+
+/** Mätbara egenskaper, satta i panelen. Skalorna går från 1 till 5. */
+export interface MaterialProperties {
+  /** Högsta användningstemperatur i grader Celsius. */
+  maxTempC: number;
+  /** Hållfasthet: 1 är skört, 5 bär last. */
+  strength: number;
+  /** Böjlighet: 1 är styvt, 5 är gummiliknande. */
+  flexibility: number;
+  /** Detaljnivå: 1 är grovt, 5 återger minsta detalj. */
+  detail: number;
+  /** Tål fukt och UV tillräckligt för att stå ute. */
+  outdoor: boolean;
+}
+
+/**
+ * Ett mått kunden får välja. Grundvärdet ingår i produktens pris; avvikelsen
+ * därifrån kostar pricePerUnit per enhet, åt båda hållen.
+ */
+export interface ProductParameter {
+  id: string;
+  name: string;
+  /** Enheten som visas, t.ex. mm. */
+  unit: string;
+  min: number;
+  max: number;
+  step: number;
+  default: number;
+  pricePerUnit: number;
+  /** Måttet parametern styr, så specifikationen kan visa rätt siffror. */
+  axis?: 'width' | 'depth' | 'height';
+  /** En rad som förklarar vad måttet gör. */
+  description?: string;
 }
 
 export interface ProductVariantOption {
@@ -35,6 +78,8 @@ export interface Product {
   weightGrams: number;
   colors: string[];
   sizes?: ProductVariantOption[];
+  /** Mått kunden får välja. Priset följer med. */
+  parameters?: ProductParameter[];
   highlights: string[];
   stock: number;
   rating: number;
@@ -62,12 +107,25 @@ export type ArtShape =
   | 'cableClip'
   | 'spiralVase'
   | 'gearFidget'
-  | 'spiceShelf';
+  | 'spiceShelf'
+  | 'christmasTree'
+  | 'ornamentBall'
+  | 'starBurst'
+  | 'nameOrnament'
+  | 'giftBox';
 
 /** Ytan produkten visas i – motsvarar hur den faktiskt printas. */
-export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla';
+export type ArtTone = 'grafit' | 'benvit' | 'stal' | 'bla' | 'gran' | 'vinrod';
 
-export type CategoryId = 'inredning' | 'kontor' | 'kok' | 'prylar' | 'tillbehor';
+export type CategoryId =
+  | 'inredning'
+  | 'kontor'
+  | 'kok'
+  | 'prylar'
+  | 'tillbehor'
+  | 'julpynt-personligt'
+  | 'jul-dekorationer'
+  | 'julklappar';
 
 export interface Category {
   id: CategoryId;
@@ -82,6 +140,10 @@ export interface OrderLine {
   unitPrice: number;
   color: string;
   size?: string;
+  /** Valda mått, när produkten har sådana. */
+  parameters?: Record<string, number>;
+  /** Måtten i klartext, sparade på ordern så att verkstaden ser dem. */
+  parameterText?: string;
 }
 
 export interface CustomerDetails {
@@ -113,15 +175,30 @@ export interface PaymentDetails {
   test: boolean;
 }
 
+/** Rabatten som faktiskt drogs av, sparad på ordern så kvittot kan visa den. */
+export interface OrderDiscount {
+  code: string;
+  label: string;
+  amount: number;
+}
+
 export interface Order {
   id: string;
   type: 'shop';
+  /**
+   * Beräknad printtid för hela ordern, summerad ur produkternas printtider när
+   * ordern läggs. Används för att visa hur långt jobbet kommit.
+   */
+  productionHours?: number;
   createdAt: string;
   status: OrderStatus;
   customer: CustomerDetails;
   lines: OrderLine[];
   shipping: number;
+  /** Fraktalternativet kunden valde. Saknas på ordrar lagda före fraktvalen. */
+  shippingOption?: { id: string; name: string };
   subtotal: number;
+  discount?: OrderDiscount;
   total: number;
   payment?: PaymentDetails;
   history: StatusEvent[];
@@ -161,6 +238,8 @@ export interface QuoteBreakdown {
   total: number;
   estimatedPrintHours: number;
   estimatedDeliveryDays: number;
+  /** Beräknad vikt för hela jobbet, utifrån materialets densitet. */
+  estimatedWeightGrams: number;
 }
 
 export interface CustomOrder {
@@ -173,6 +252,8 @@ export interface CustomOrder {
   projectName: string;
   /** Id för den uppladdade modellfilen, om kunden bifogade en. */
   fileId?: string;
+  /** Uppmätt geometri från filen. Volymen här är den priset räknats på. */
+  model?: ModelAnalysis;
   fileName?: string;
   fileUrl?: string;
   fileSize?: number;

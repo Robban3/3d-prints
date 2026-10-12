@@ -4,6 +4,7 @@ import { PageHeader } from '../components/PageHeader';
 import { TextAreaField, TextField } from '../components/Field';
 import { Icon } from '../components/Icon';
 import type { IconName } from '../components/Icon';
+import { useDocumentMeta } from '../lib/meta';
 
 const channels: Array<{ icon: IconName; title: string; lines: string[] }> = [
   { icon: 'headset', title: 'Kundsupport', lines: ['hej@formlabb.se', '031-12 34 56'] },
@@ -13,6 +14,11 @@ const channels: Array<{ icon: IconName; title: string; lines: string[] }> = [
 ];
 
 export function ContactPage() {
+  useDocumentMeta({
+    title: 'Kontakt',
+    description:
+      'Hör av dig om ett printjobb, en fil som behöver ses över eller en order. Vi svarar inom en arbetsdag.',
+  });
   const [sent, setSent] = useState(false);
 
   return (

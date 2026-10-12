@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { CustomerForm } from '../components/CustomerForm';
+import { ModelFacts } from '../components/ModelFacts';
+import { ModelViewer } from '../components/ModelViewer';
 import { UploadDropzone } from '../components/UploadDropzone';
 import { PageHeader } from '../components/PageHeader';
+import { QuoteSummary } from '../components/QuoteSummary';
 import { TextAreaField, TextField } from '../components/Field';
-import { ApiError, fetchConfig, fetchQuote, placeCustomOrder } from '../lib/api';
+import { ApiError, fetchConfig, fetchQuote, placeCustomOrder, saveQuote } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
-import { formatHours, formatPrice } from '../lib/format';
 import type {
   CustomerDetails,
   MaterialId,
@@ -15,6 +17,8 @@ import type {
   QuoteRequest,
   UploadedFile,
 } from '../types';
+import { useDocumentMeta } from '../lib/meta';
+import type { CustomOrderPrefill } from '../lib/prefill';
 
 /** Fallback tills /api/config svarat – servern är källan för de riktiga gränserna. */
 const DEFAULT_ACCEPTED = ['.stl', '.obj', '.3mf', '.step', '.stp', '.f3d'];
@@ -42,26 +46,45 @@ const volumePresets = [
 ];
 
 export function CustomOrderPage() {
+  useDocumentMeta({
+    title: 'Beställ eget printjobb',
+    description:
+      'Ladda upp din STL, OBJ eller 3MF. Vi mäter upp modellen, visar den i 3D och räknar fram pris och leveranstid direkt.',
+  });
   const navigate = useNavigate();
   const config = useAsync(() => fetchConfig(), []);
   const location = useLocation();
 
-  const [request, setRequest] = useState<QuoteRequest>({
-    material: 'pla',
-    quality: 'standard',
-    volumeCm3: 120,
-    infill: 20,
-    quantity: 1,
-    rush: false,
-    postProcessing: false,
-  });
-  const [projectName, setProjectName] = useState('');
-  const [description, setDescription] = useState('');
-  // En fil som laddades upp på startsidan följer med hit via navigeringen.
-  const carried = (location.state as { uploaded?: UploadedFile } | null)?.uploaded ?? null;
-  const [uploaded, setUploaded] = useState<UploadedFile | null>(carried);
+  // Startsidan skickar med en uppladdad fil; en sparad offert och en
+  // ombeställning skickar med hela formuläret.
+  const prefill = (location.state as CustomOrderPrefill | null) ?? {};
+
+  const [request, setRequest] = useState<QuoteRequest>(
+    prefill.request ?? {
+      material: 'pla',
+      quality: 'standard',
+      volumeCm3: 120,
+      infill: 20,
+      quantity: 1,
+      rush: false,
+      postProcessing: false,
+    },
+  );
+  const [projectName, setProjectName] = useState(prefill.projectName ?? '');
+  const [description, setDescription] = useState(prefill.description ?? '');
+  const [uploaded, setUploaded] = useState<UploadedFile | null>(prefill.uploaded ?? null);
+  // Filen ligger kvar i webbläsaren så att 3D-vyn slipper hämta hem den igen.
+  const [pickedFile, setPickedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
+  const [customer, setCustomer] = useState<CustomerDetails>(prefill.customer ?? emptyCustomer);
+
+  // Att spara offerten är ett eget steg, så siffrorna går att skicka vidare
+  // till den som ska godkänna köpet.
+  const [shareEmail, setShareEmail] = useState(prefill.customer?.email ?? '');
+  const [savedUrl, setSavedUrl] = useState('');
+  const [savedMailed, setSavedMailed] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const [quote, setQuote] = useState<QuoteBreakdown | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
@@ -73,7 +96,7 @@ export function CustomOrderPage() {
   useEffect(() => {
     let active = true;
     const timer = window.setTimeout(() => {
-      fetchQuote(request)
+      fetchQuote(request, uploaded?.id)
         .then((result) => {
           if (!active) return;
           setQuote(result.quote);
@@ -89,13 +112,15 @@ export function CustomOrderPage() {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [request]);
+  }, [request, uploaded?.id]);
 
   const accepted = config.data?.upload.extensions ?? DEFAULT_ACCEPTED;
   const maxBytes = config.data?.upload.maxBytes ?? DEFAULT_MAX_BYTES;
   const materials = config.data?.materials ?? [];
   const qualities = config.data?.qualities ?? [];
   const limits = config.data?.quoteLimits;
+  // Är filen uppmätt är det dess volym som gäller, så reglaget döljs.
+  const measured = uploaded?.analysis;
 
   const selectedMaterial = useMemo(
     () => materials.find((entry) => entry.id === request.material),
@@ -104,6 +129,32 @@ export function CustomOrderPage() {
 
   function patch(update: Partial<QuoteRequest>) {
     setRequest((current) => ({ ...current, ...update }));
+  }
+
+  async function share() {
+    setSaving(true);
+    setSaveError('');
+    setSavedUrl('');
+    try {
+      const result = await saveQuote({
+        request,
+        projectName,
+        description,
+        fileId: uploaded?.id,
+        ...(shareEmail.trim() ? { email: shareEmail.trim() } : {}),
+      });
+      setSavedUrl(`${window.location.origin}${result.path}`);
+      setSavedMailed(Boolean(result.mail?.delivered));
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrors(error.fields);
+        setSaveError(error.message);
+      } else {
+        setSaveError('Offerten kunde inte sparas. Försök igen.');
+      }
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function submit(event: React.FormEvent) {
@@ -140,6 +191,11 @@ export function CustomOrderPage() {
       />
       <section className="section">
         <div className="container">
+          {prefill.notice && (
+            <p className="notice notice-success" style={{ marginBottom: 20 }}>
+              {prefill.notice} Ändra det du vill innan du skickar.
+            </p>
+          )}
           <form className="cart-layout" onSubmit={submit} noValidate>
             <div className="stack" style={{ gap: 22 }}>
               <div className="panel">
@@ -161,10 +217,29 @@ export function CustomOrderPage() {
                       maxBytes={maxBytes}
                       uploaded={uploaded}
                       onUploaded={setUploaded}
+                      onFileChosen={setPickedFile}
                       onBusyChange={setUploading}
                       error={errors.fileId}
                     />
                   </div>
+
+                  {uploaded && (
+                    <div className="model-preview">
+                      <ModelViewer
+                        file={pickedFile}
+                        url={uploaded.url}
+                        fileName={uploaded.fileName}
+                      />
+                      {measured ? (
+                        <ModelFacts analysis={measured} />
+                      ) : (
+                        <p className="notice">
+                          {uploaded.analysisError ??
+                            'Det här formatet mäter vi upp för hand. Välj ungefär rätt storlek nedan – vi hör av oss med exakt pris innan produktion.'}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <TextAreaField
                     label="Beskriv jobbet"
@@ -233,38 +308,58 @@ export function CustomOrderPage() {
               <div className="panel">
                 <h2>3. Storlek och antal</h2>
                 <div className="stack" style={{ gap: 22 }}>
-                  <div className="field">
-                    <label htmlFor="volume">
-                      Ungefärlig volym: <strong>{request.volumeCm3} cm³</strong>
-                    </label>
-                    <input
-                      id="volume"
-                      type="range"
-                      min={limits?.volumeCm3.min ?? 1}
-                      max={1500}
-                      step={1}
-                      value={request.volumeCm3}
-                      onChange={(event) => patch({ volumeCm3: Number(event.target.value) })}
-                    />
-                    <div className="chip-row">
-                      {volumePresets.map((preset) => (
-                        <button
-                          key={preset.label}
-                          type="button"
-                          className="chip"
-                          aria-pressed={request.volumeCm3 === preset.volume}
-                          onClick={() => patch({ volumeCm3: preset.volume })}
-                        >
-                          {preset.label} ≈ {preset.volume} cm³
-                        </button>
-                      ))}
+                  {measured ? (
+                    <div className="field">
+                      <span className="field-label">Volym</span>
+                      <p className="measured-volume">
+                        <strong>
+                          {measured.volumeCm3.toLocaleString('sv-SE', {
+                            maximumFractionDigits: 2,
+                          })}{' '}
+                          cm³
+                        </strong>
+                        <span>uppmätt ur {uploaded?.fileName}</span>
+                      </p>
+                      <span className="field-hint">
+                        Vi räknar på filens riktiga volym, så du behöver inte uppskatta något. Byt
+                        fil om du vill prissätta en annan modell.
+                      </span>
+                      {errors.volumeCm3 && <span className="error">{errors.volumeCm3}</span>}
                     </div>
-                    <span className="field-hint">
-                      Vet du inte volymen? Välj ungefär rätt storlek – vi mäter filen och hör av oss
-                      innan produktion om priset ändras.
-                    </span>
-                    {errors.volumeCm3 && <span className="error">{errors.volumeCm3}</span>}
-                  </div>
+                  ) : (
+                    <div className="field">
+                      <label htmlFor="volume">
+                        Ungefärlig volym: <strong>{request.volumeCm3} cm³</strong>
+                      </label>
+                      <input
+                        id="volume"
+                        type="range"
+                        min={limits?.volumeCm3.min ?? 1}
+                        max={1500}
+                        step={1}
+                        value={request.volumeCm3}
+                        onChange={(event) => patch({ volumeCm3: Number(event.target.value) })}
+                      />
+                      <div className="chip-row">
+                        {volumePresets.map((preset) => (
+                          <button
+                            key={preset.label}
+                            type="button"
+                            className="chip"
+                            aria-pressed={request.volumeCm3 === preset.volume}
+                            onClick={() => patch({ volumeCm3: preset.volume })}
+                          >
+                            {preset.label} ≈ {preset.volume} cm³
+                          </button>
+                        ))}
+                      </div>
+                      <span className="field-hint">
+                        Ladda upp en fil så mäter vi volymen exakt. Utan fil: välj ungefär rätt
+                        storlek, vi hör av oss innan produktion om priset ändras.
+                      </span>
+                      {errors.volumeCm3 && <span className="error">{errors.volumeCm3}</span>}
+                    </div>
+                  )}
 
                   <div className="field">
                     <label htmlFor="infill">
@@ -344,57 +439,11 @@ export function CustomOrderPage() {
               <h2>Ditt pris</h2>
               {quoteError && <p className="notice notice-error">{quoteError}</p>}
               {quote && (
-                <>
-                  <div className="price" style={{ fontSize: '2.4rem', margin: '8px 0 4px' }}>
-                    {formatPrice(quote.total)}
-                  </div>
-                  <p className="dim" style={{ fontSize: '0.86rem' }}>
-                    {request.quantity} st · {formatPrice(quote.unitPrice)} per styck inkl. moms
-                  </p>
-
-                  <div style={{ margin: '18px 0' }}>
-                    <div className="summary-row">
-                      <span>Material ({selectedMaterial?.name})</span>
-                      <span>{formatPrice(quote.materialCost)}/st</span>
-                    </div>
-                    <div className="summary-row">
-                      <span>Maskintid</span>
-                      <span>{formatPrice(quote.machineCost)}/st</span>
-                    </div>
-                    {quote.postProcessingCost > 0 && (
-                      <div className="summary-row">
-                        <span>Efterbearbetning</span>
-                        <span>{formatPrice(quote.postProcessingCost)}/st</span>
-                      </div>
-                    )}
-                    {quote.volumeDiscount > 0 && (
-                      <div className="summary-row discount">
-                        <span>Volymrabatt</span>
-                        <span>−{formatPrice(quote.volumeDiscount)}</span>
-                      </div>
-                    )}
-                    <div className="summary-row">
-                      <span>Startavgift</span>
-                      <span>{formatPrice(quote.setupFee)}</span>
-                    </div>
-                    {quote.rushSurcharge > 0 && (
-                      <div className="summary-row">
-                        <span>Expresstillägg</span>
-                        <span>{formatPrice(quote.rushSurcharge)}</span>
-                      </div>
-                    )}
-                    <div className="summary-row total">
-                      <span>Att betala</span>
-                      <span>{formatPrice(quote.total)}</span>
-                    </div>
-                  </div>
-
-                  <div className="notice">
-                    <strong>Beräknad printtid:</strong> {formatHours(quote.estimatedPrintHours)}
-                    <br />
-                    <strong>Leverans:</strong> {quote.estimatedDeliveryDays} arbetsdagar
-                  </div>
-                </>
+                <QuoteSummary
+                  quote={quote}
+                  quantity={request.quantity}
+                  materialName={selectedMaterial?.name}
+                />
               )}
 
               {submitError && (
@@ -415,6 +464,53 @@ export function CustomOrderPage() {
                 Du binder dig inte förrän vi bekräftat filen. Vi hör av oss inom en arbetsdag om
                 något behöver justeras innan print.
               </p>
+
+              <div className="share-quote">
+                {savedUrl ? (
+                  <>
+                    <strong>Offerten är sparad.</strong>
+                    <p className="dim" style={{ fontSize: '0.84rem', margin: '4px 0 10px' }}>
+                      {savedMailed
+                        ? 'Vi har mejlat länken till dig. Den gäller i 30 dagar.'
+                        : 'Länken gäller i 30 dagar och går att skicka vidare.'}
+                    </p>
+                    <input
+                      className="input"
+                      readOnly
+                      value={savedUrl}
+                      onFocus={(event) => event.target.select()}
+                      aria-label="Länk till din offert"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <strong>Behöver någon annan godkänna?</strong>
+                    <p className="dim" style={{ fontSize: '0.84rem', margin: '4px 0 10px' }}>
+                      Spara offerten bakom en egen länk som går att återkomma till eller skicka
+                      vidare.
+                    </p>
+                    <input
+                      className="input"
+                      type="email"
+                      placeholder="Mejla länken till (valfritt)"
+                      value={shareEmail}
+                      onChange={(event) => setShareEmail(event.target.value)}
+                      aria-label="Mejladress för offerten"
+                    />
+                    {errors.email && <span className="error">{errors.email}</span>}
+                    {saveError && !errors.email && <span className="error">{saveError}</span>}
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-block"
+                      style={{ marginTop: 10 }}
+                      disabled={saving || uploading || !quote}
+                      onClick={() => void share()}
+                    >
+                      {saving ? 'Sparar…' : 'Spara offerten'}
+                    </button>
+                  </>
+                )}
+              </div>
             </aside>
           </form>
         </div>

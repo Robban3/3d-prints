@@ -3,6 +3,7 @@ import { Icon } from '../components/Icon';
 import { StatsRow } from '../components/StatsRow';
 import { PageHeader } from '../components/PageHeader';
 import type { IconName } from '../components/Icon';
+import { useDocumentMeta } from '../lib/meta';
 
 const steps: Array<{ icon: IconName; title: string; text: string }> = [
   {
@@ -33,6 +34,11 @@ const steps: Array<{ icon: IconName; title: string; text: string }> = [
 ];
 
 export function HowItWorksPage() {
+  useDocumentMeta({
+    title: 'Så funkar det',
+    description:
+      'Från uppladdad fil till färdig del: uppmätning, offert, print och leverans inom 1–3 arbetsdagar.',
+  });
   return (
     <>
       <PageHeader

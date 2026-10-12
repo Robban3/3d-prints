@@ -6,3 +6,11 @@
 export function pathParam(value: string | string[] | undefined): string {
   return typeof value === 'string' ? value : '';
 }
+
+/**
+ * Butikens publika adress, utan avslutande snedstreck. Används i mejl och i
+ * sitemapen, som båda behöver absoluta adresser.
+ */
+export function shopUrl(): string {
+  return (process.env.SHOP_URL ?? 'https://formlabb.se').replace(/\/+$/, '');
+}

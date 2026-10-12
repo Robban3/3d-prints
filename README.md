@@ -40,20 +40,41 @@ npm start          # http://localhost:4000
 
 **Butiken**
 
-- 14 unika produkter i fem kategorier med egna färger, storlekar och specifikationer
+- 22 unika produkter i åtta kategorier, varav tre utgör julkollektionen
 - Filtrering per kategori, fritextsökning och sortering på pris, namn eller popularitet
 - Produktsida med färg- och storleksval, antal och löpande totalpris
+- **Måttanpassade produkter**: reglage för bredd och höjd där pris, mått och
+  printtid räknas om medan kunden drar
 - Varukorg som sparas i `localStorage` och överlever omladdning
 - Lagersaldo som dras av vid köp och hindrar överförsäljning
 - Kassa med validering, fri frakt över 599 kr, Klarna-betalning och orderbekräftelse
 - Orderspårning på ordernummer med tidslinje över var ordern befinner sig
+- **Live printstatus** på spårningen: en framstegsmätare som räknas ur den
+  beräknade printtiden och tidpunkten jobbet gick i produktion
+- **Plats i produktionskön** på spårningen, med beräknad start och sluttid
+- **Materialguiden**: tre frågor om hur delen ska användas, och ett
+  rekommenderat material med skäl och varningar
 - Bekräftelse- och statusmejl till kunden
+- Kundomdömen med betygsfördelning, verifierat köp och svar från verkstaden –
+  modererade, så inget syns förrän det godkänts
+- Bevakning av slutsålda produkter: ett mejl när saldot fyllts på
+- Egen titel, beskrivning och delningsbild per sida, plus `sitemap.xml`,
+  `robots.txt` och strukturerad data för produkterna
 
 **Egna printjobb**
 
 - Uppladdning av STL, OBJ, 3MF, STEP eller F3D (drag-and-drop)
+- **Automatisk uppmätning** av STL, OBJ och 3MF: volym, yttermått, yta och
+  täthet läses ur filen, och volymen är den priset räknas på – kunden behöver
+  inte uppskatta något, och priset går inte att pruta ner genom att skicka in en
+  mindre volym än modellen har
+- **3D-förhandsvisning** av den uppladdade modellen, ritad med WebGL i
+  webbläsaren
+- Varningar när modellen inte får plats på byggplattan, har hål i ytan,
+  överlappar sig själv eller verkar exporterad i fel enhet
 - Val av material (PLA, PETG, ABS, TPU, resin) och lagerhöjd
-- Reglage för volym och fyllnadsgrad, antal, efterbearbetning och express
+- Reglage för fyllnadsgrad, antal, efterbearbetning och express (volymreglaget
+  ersätts av den uppmätta volymen när filen gått att läsa)
 - Prisförslag som räknas om löpande mot servern, med full specifikation av
   materialkostnad, maskintid, startavgift, volymrabatt och leveranstid
 - Nedladdningslänk till modellfilen på orderbekräftelsen och i orderspårningen
@@ -77,16 +98,26 @@ accepteras rakt av, varken för butiksorder eller egna jobb.
 
 ## API
 
-| Metod  | Väg                   | Beskrivning                                                 |
-| ------ | --------------------- | ----------------------------------------------------------- |
-| `GET`  | `/api/health`         | Enkel statuskontroll                                        |
-| `GET`  | `/api/config`         | Material, kvaliteter, kategorier, gränsvärden, fraktvillkor |
-| `GET`  | `/api/products`       | Produktlista, filtrerbar med `category` och `search`        |
-| `GET`  | `/api/products/:slug` | En produkt plus relaterade produkter                        |
-| `POST` | `/api/quote`          | Prisförslag för ett kundunikt printjobb                     |
-| `POST` | `/api/orders`         | Lägger en butiksorder                                       |
-| `POST` | `/api/custom-orders`  | Lägger en order för ett eget printjobb                      |
-| `GET`  | `/api/orders/:id`     | Hämtar en order för spårning                                |
+| Metod  | Väg                           | Beskrivning                                                 |
+| ------ | ----------------------------- | ----------------------------------------------------------- |
+| `GET`  | `/api/health`                 | Enkel statuskontroll                                        |
+| `GET`  | `/api/config`                 | Material, kvaliteter, kategorier, gränsvärden, fraktvillkor |
+| `GET`  | `/api/products`               | Produktlista, filtrerbar med `category` och `search`        |
+| `GET`  | `/api/products/:slug`         | En produkt plus relaterade produkter                        |
+| `POST` | `/api/quote`                  | Prisförslag för ett kundunikt printjobb                     |
+| `POST` | `/api/orders`                 | Lägger en butiksorder                                       |
+| `POST` | `/api/custom-orders`          | Lägger en order för ett eget printjobb                      |
+| `GET`  | `/api/orders/:id`             | Hämtar en order för spårning, med plats i kön               |
+| `POST` | `/api/products/:slug/reviews` | Lämnar ett omdöme, som läggs i kö för granskning            |
+| `POST` | `/api/products/:slug/notify`  | Bevakar en slutsåld produkt                                 |
+| `POST` | `/api/discounts/check`        | Prövar en rabattkod mot varukorgen                          |
+| `GET`  | `/api/content/home`           | Startsidans hero och de kampanjer som är igång              |
+| `POST` | `/api/materials/guide`        | Rekommenderar material utifrån tre frågor                   |
+| `POST` | `/api/quotes`                 | Sparar en offert bakom en egen länk                         |
+| `GET`  | `/api/quotes/:id`             | Hämtar en sparad offert, med dagens pris vid sidan om       |
+| `POST` | `/api/orders/:id/reorder`     | Förbereder en ny beställning av ett tidigare jobb           |
+| `GET`  | `/sitemap.xml`                | Sitemap byggd ur katalogen                                  |
+| `GET`  | `/robots.txt`                 | Indexeringsregler                                           |
 
 Valideringsfel besvaras med `400` och ett `fields`-objekt som pekar ut de fält som
 behöver rättas, vilket formulären visar direkt vid respektive fält.
@@ -123,6 +154,65 @@ Så här hanteras filerna:
 
 Byt lagringen mot S3 eller motsvarande genom att ersätta `server/src/uploads.ts` –
 resten av koden går bara via funktionerna där.
+
+**Julkollektionen** är tre kategorier: `julpynt-personligt` (namn och egna
+hälsningar), `jul-dekorationer` (granar, stjärnor och julkulor) och `julklappar`
+(presenter till familj, vänner och kollegor). De lyfts fram i en egen sektion på
+startsidan, där namn och beskrivningar hämtas ur katalogen – en ändring i
+panelen slår alltså igenom direkt, och bara urvalet och illustrationen står i
+koden.
+
+Kollektionens åtta produkter ritas med fem egna former i samma SVG-språk som
+resten av sortimentet, i två nya ytor – granbarr och vinrött.
+
+Produktlistan tar flera kategorier på en gång: `?kategori=a,b,c`. Det är så
+kampanjen och kategoriraden pekar på hela kollektionen trots att den är uppdelad
+i teman.
+
+Kampanjen på startsidan följer med från start. Den har inget datumfönster satt,
+så den syns direkt; sätt start- och slutdatum under **Startsida** i panelen när
+den ska gå av sig själv. Bilden ligger i `client/public/kampanjer/` och är
+beskuren så att den bara visar produkterna – kampanjblocket har sin egen rubrik
+och text, och bildens egen text skulle dubblera den.
+
+## Printstatus och materialguiden
+
+**Framstegsmätaren** behöver ingen rapportering från verkstaden. Printtiden
+summeras när ordern läggs (`productionHours` på butiksordern, offertens
+`estimatedPrintHours` på ett kundunikt jobb), och tidpunkten då ordern gick i
+produktion står redan i dess historik. Mätaren stannar på 99 % så länge jobbet
+pågår – att visa 100 % på något som inte är klart är ett löfte vi inte kan
+hålla – och säger till när tiden passerats.
+
+Uträkningen finns i både `server/src/progress.ts` och `client/src/lib/progress.ts`:
+mätaren måste röra sig medan sidan är öppen, så den kan inte hämtas från
+servern en gång i sekunden. Båda testerna använder samma siffror, så en
+avvikelse syns.
+
+**Materialguiden** väger materialens egna egenskaper – högsta temperatur,
+hållfasthet, böjlighet, detaljnivå och om de tål att stå ute – mot tre frågor om
+hur delen ska användas. Egenskaperna redigeras i panelen, så ett nytt material
+kommer med i guiden utan att någon kod ändras. Uträkningen ligger bara på
+servern; klienten frågar.
+
+## Offerter och ombeställning
+
+En **sparad offert** ligger bakom en länk med 96 slumpade bitar i id:t – länken
+är själva behörigheten, precis som för uppladdade modellfiler. Offerten gäller i
+30 dagar, och när den öppnas räknas priset också om mot dagens siffror: har
+något ändrats står det i klartext i stället för att kunden möts av ett annat
+pris i kassan.
+
+Filen som offerten pekar på skyddas från städningen av föräldralösa
+uppladdningar så länge offerten gäller (`heldUntil` i uppladdningens metadata).
+Annars hade modellen försvunnit inom ett dygn medan offerten fortfarande såg
+giltig ut.
+
+**Beställ samma igen** kopierar modellfilen till ett nytt id i stället för att
+återanvända originalet. En fil hör till en order och bara en, annars går det
+inte att se vilken beställning en fil tillhör. Själva ordern läggs sedan genom
+det vanliga formuläret, så den går igenom samma validering, lagerreservation och
+betalning som alla andra.
 
 ## Betalning med Klarna
 
@@ -161,18 +251,26 @@ behöver.
 
 ## Adminpanelen
 
-Verkstadens panel ligger på `/verkstad` och har tre flikar:
+Verkstadens panel ligger på `/verkstad` och har åtta flikar:
 
-- **Ordrar** – flytta ordrar framåt i produktionen, se tidslinjen per order
+- **Översikt** – omsättning per dag, ordrar per status, bästsäljare och lågt lager
+- **Ordrar** – flytta ordrar framåt i produktionen, en i taget eller flera på
+  en gång, filtrera på status och skriv ut en plocklista
 - **Produkter** – lägg till, redigera och ta bort produkter, med foto eller ritad bild
 - **Kategorier** – lägg till, byt namn på och ta bort kategorier
-- **Material** – material och kvalitetsnivåer, vars faktorer styr priset på egna printjobb
+- **Material** – material, densitet och kvalitetsnivåer, vars faktorer styr priset på egna printjobb
+- **Omdömen** – granska, publicera, avslå och svara på kundomdömen
+- **Produktion** – produktionskön och filamentlagret
+- **Rabatter** – skapa och stäng av rabattkoder, och se hur många som löst in dem
+- **Kunder** – vem som handlat, hur ofta, för hur mycket och vad de köper helst
+- **Mejlmallar** – skriv om breven som går ut till kunden
+- **Användare** – konton, roller och avstängningar (bara för ägaren)
 - **Import/export** – exportera katalogen, ändra många produkter i filen, läs in igen
 - **Historik** – de senaste ändringarna i katalogen och i ordrarnas status
 
 Allt i en produkt går att ändra: namn, webbadress, säljande rad, beskrivning,
 kategori, pris, material, ytfinish, mått, vikt, printtid, lagersaldo, färger,
-storlekar med pristillägg, höjdpunkter, samt vilken form och yta
+storlekar med pristillägg, valbara mått, höjdpunkter, samt vilken form och yta
 produktbilden ritas i – med levande förhandsvisning medan du väljer.
 
 Varje produkt kan ha ett **uppladdat foto**; utan foto ritas illustrationen.
@@ -196,6 +294,103 @@ Att ta bort en produkt påverkar inte lagda ordrar – varje orderrad bär sin e
 kopia av namn och pris. En kategori som fortfarande har produkter i sig går inte
 att ta bort; flytta produkterna först.
 
+**Översiktens siffror** räknas fram ur ordrarna vid varje anrop i stället för att
+hållas i en egen räknare, så de kan inte hamna i otakt. Avbrutna ordrar räknas
+inte som omsättning men syns i statusfördelningen. Varje diagram visar en serie,
+och siffrorna finns också som tabell.
+
+**Omdömen** publiceras aldrig automatiskt. Kön visar hela texten, vem som skrivit
+den och vilken produkt det gäller. Finns det publicerade omdömen är det deras
+snitt butiken visar; annars behåller produkten katalogens eget värde, så en ny
+produkt inte ser ut att ha fått noll i betyg.
+
+**Startsidan** är redigerbar. Heron tar en uppladdad bild eller en video; utan
+media ritas den genererade scenen, och utgångstexten är densamma som stod i
+koden förut – startsidan ser alltså likadan ut tills någon ändrar den. En video
+spelas ljudlöst i loop, vilket är det enda webbläsare startar av sig själva, och
+den som bett om minskad rörelse får stillbilden och en spelknapp i stället.
+
+Adresser som skrivs in i panelen måste vara interna sökvägar eller https. En
+länk som får vara vad som helst i ett adminfält är en väg in för
+`javascript:`-adresser. Mediets adress byggs alltid av uppladdningens id på
+servern, aldrig av det klienten skickar.
+
+**Rabattkoder** räknas alltid om på servern. Koden som kommer från kunden är
+bara en nyckel; hur mycket den är värd beror på varukorgens innehåll och
+bestäms här. Räknaren över inlösen ökas innan betalningen och backas om något
+går fel, precis som lagersaldot, så en kod med en användning kvar inte kan lösas
+in av två kunder samtidigt. Rabatten går in i Klarnas underlag som en egen rad
+med negativt belopp – summan av raderna måste vara exakt det auktoriserade
+beloppet.
+
+Fraktavgiften mäts mot summan **före** rabatt, så att en rabattkod inte tar
+tillbaka den fria frakt kunden redan handlat ihop till.
+
+**Kundregistret** räknas fram ur ordrarna, precis som kön. Det finns inget
+register vid sidan om att hålla i synk, och det är med flit: en kund är någon
+som lagt en order, och adressen som gäller är den på den senaste – folk flyttar.
+Nyckeln är mejladressen i gemener; samma person med två adresser blir två
+kunder, vilket är ärligare än att gissa att de hör ihop. Avbrutna ordrar räknas
+inte som omsättning men syns i statusfördelningen. Registret ligger bakom
+orderbehörigheten: redaktören har inget på kundernas adresser att göra.
+
+**Mejlmallarna** gör texterna i koden till ett utgångsläge, inte en sanning.
+Verkstaden skriver om ett brev i panelen utan att någon rör en fil. Det som är
+uträknat – orderrader, summa, adress – är platshållare i klamrar, för dem kan
+ingen skriva för hand. En platshållare som inte finns avvisas när mallen sparas:
+alternativet vore att skicka `{{kudn}}` till en riktig kund, och det upptäcks
+först när det är för sent. Förhandsvisningen visar brevet med påhittade värden,
+så man slipper lägga en testorder, och varje mall går att lägga tillbaka i sitt
+utgångsläge.
+
+**Plocklistan** slår ihop raderna över ordrarna på produkt, färg, storlek och
+mått, så varje sak hämtas en gång i stället för en gång per order – men varje
+rad bär med sig vilka ordrar den gäller, för plocket är meningslöst om sakerna
+sedan hamnar i fel låda. Egna printjobb slås inte ihop; de är unika per order
+och ligger i en egen lista. Listan är gjord för att skrivas ut: rutan längst
+till vänster är till för pennan, och utskriften tar bara med själva listan.
+
+**Bulkbytet** flyttar flera ordrar till samma status i ett svep. Knappen
+erbjuds bara för de statusar som _varje_ markerad order kan gå till – ett
+bulkbyte som är till hälften gjort är värre än inget alls. Varje order prövas
+ändå för sig på servern, och de som inte gick rapporteras tillbaka med skälet.
+Lager, filament, logg och mejl hanteras precis som vid ett enskilt statusbyte,
+för det är samma kod som kör.
+
+**Produktionskön** räknas fram ur ordrarna varje gång, inte ur ett eget
+register – en kö som är en egen sanning hinner alltid bli osann. Jobb som redan
+printar upptar sin skrivare tills de är klara, resten läggs på den skrivare som
+blir ledig först, och expressjobb går före i kön men aldrig före något som redan
+börjat. Panelen visar maskintid kvar, vilken skrivare varje jobb ligger på och
+när allt är klart; kunden ser sin egen plats i kön på orderspårningen, och
+ingenting annat ur kön.
+
+**Filamentlagret** är rullar, inte ett saldo per material: två rullar svart PLA
+tar slut var för sig, och det är rullen man byter. Åtgången bokförs när ordern
+går i produktion, en gång per ordernummer – samma order två gånger vore att tro
+att plasten tog slut dubbelt upp. Räcker inte plasten bokförs åtgången ändå och
+bristen rapporteras; verkstaden ska inte hindras av bokföringen, men den ska se
+att en rulle behöver bytas. Panelen jämför kön mot hyllan och säger hur många
+gram som behöver köpas in.
+
+**Valbara mått** är det en 3D-printbutik kan som en lagerhållande butik inte
+kan: hyllan görs i den bredd kunden faktiskt behöver. Varje mått har ett
+standardvärde som ingår i grundpriset, och ett pris per enhet som gäller åt båda
+hållen – en smalare hylla kostar mindre. Kopplas måttet till en axel skrivs
+produktens mått om efter kundens val, och printtiden skalas mot hur mycket
+större delen blivit.
+
+Reglagen på produktsidan är ett besked, inte ett avtal: servern snäpper alltid
+värdena till spannet och räknar om priset när ordern läggs, så `server/src/parameters.ts`
+och dess spegling i `client/src/lib/parameters.ts` måste ge samma svar. Testerna
+på båda sidor räknar på samma siffror för att fånga det den dagen de glider isär.
+Måtten följer med ordern i klartext hela vägen till verkstadens lista och
+orderbekräftelsen, och två olika bredder blir två rader i varukorgen.
+
+**Lagerbevakningar** löses ut av panelen: höjer du saldot på en slutsåld produkt
+från noll får alla som bevakat den ett mejl, en gång var. Översikten visar hur
+många som väntar per produkt.
+
 ## Orderns livscykel
 
 En order rör sig `mottagen → i produktion → skickad → levererad`, och kan
@@ -204,19 +399,55 @@ hoppa över ett steg eller gå bakåt. Varje byte sparas i orderns historik, som
 kunden ser som en tidslinje under **Spåra order**. Avbryts en butiksorder
 lämnas exemplaren tillbaka till lagret.
 
-Verkstaden flyttar ordrar i vyn på `/verkstad`. Den är **avstängd tills
-`ADMIN_TOKEN` sätts** – ett saknat värde ger ingen åtkomst alls i stället för
-en gissningsbar standardnyckel. Nyckeln måste vara minst 16 tecken och jämförs
-i konstant tid.
+Verkstaden flyttar ordrar i vyn på `/verkstad`, en i taget eller flera på en
+gång.
+
+## Inloggning och roller
+
+Panelen har **användare med roller**, inte en delad nyckel. En nyckel som alla
+känner till kan inte tas ifrån någon, och loggen visar bara att "admin" gjorde
+något. Med användare går det att se vem som flyttade ordern, och att stänga av
+en person utan att alla andra måste byta nyckel.
+
+| Roll         | Får                                                   |
+| ------------ | ----------------------------------------------------- |
+| **Ägare**    | Allt, inklusive användare och roller                  |
+| **Verkstad** | Ordrar, produktionskö och filamentlager               |
+| **Redaktör** | Katalog, startsida, omdömen, rabatter och statistiken |
+
+Rollerna är få med flit: tre som betyder något är lättare att förvalta än tjugo
+kryssrutor som ingen orkar hålla rätt på. Historiken är öppen för alla
+inloggade – att veta vem som gjorde vad är hela poängen med att ha användare.
+
+**Första gången** finns ingen användare att logga in som. Då gäller startnyckeln
+i `ADMIN_TOKEN`, minst 16 tecken och jämförd i konstant tid:
 
 ```bash
 export ADMIN_TOKEN=$(openssl rand -hex 24)
 ```
 
+Logga in med nyckeln och skapa den första ägaren. I samma stund slutar nyckeln
+fungera – den är till för att komma igång, inte för att leva vid sidan av
+inloggningen. Utan både nyckel och användare är panelen helt avstängd.
+
+**Lösenord** sparas som scrypt-hash med eget salt per användare, och kravet är
+enbart längd: minst tolv tecken. Regler om stora bokstäver och tecken får folk
+att skriva lappar. En inloggning som inte går igenom svarar likadant vare sig
+adressen finns eller inte, och räknar ändå på ett låtsassalt så att svarstiden
+inte skvallrar.
+
+**Sessioner** sparas som sha256 av sin token – filen ska inte innehålla något
+som går att logga in med om den kommer på villovägar – och gäller tolv timmar.
+Ett byte av lösenord eller en avstängning loggar ut personens sessioner direkt,
+inte när de råkar löpa ut. Den sista aktiva ägaren går varken att degradera,
+stänga av eller ta bort: då stod panelen utan någon som kan släppa in folk igen.
+
 ## E-post
 
 Kunden får ett bekräftelsemejl när ordern läggs, och ett brev vid varje
-statusbyte som rör hen (i produktion, skickad, levererad).
+statusbyte som rör hen (i produktion, skickad, levererad). Alla brev – de två
+ovan, offertlänken och lagerbeskedet – går att skriva om under **Mejlmallar**
+i panelen.
 
 **Utan SMTP-uppgifter skrivs breven till `data/utkorg` som `.eml`-filer** i
 stället för att skickas. Då syns exakt vad kunden skulle ha fått, utan att
@@ -254,11 +485,30 @@ export MAIL_FROM='Formlabb <hej@formlabb.se>'
 
 ## Miljövariabler
 
-| Variabel      | Standard            | Beskrivning                     |
-| ------------- | ------------------- | ------------------------------- |
-| `PORT`        | `4000`              | Port för API-servern            |
-| `ORDER_STORE` | `data/orders.json`  | Fil där ordrar sparas           |
-| `CLIENT_DIST` | `../../client/dist` | Katalog med den byggda klienten |
+| Variabel                  | Standard                | Beskrivning                                            |
+| ------------------------- | ----------------------- | ------------------------------------------------------ |
+| `PORT`                    | `4000`                  | Port för API-servern                                   |
+| `ORDER_STORE`             | `data/orders.json`      | Fil där ordrar sparas                                  |
+| `REVIEW_STORE`            | `data/omdomen.json`     | Fil där omdömen sparas                                 |
+| `WATCH_STORE`             | `data/bevakningar.json` | Fil där lagerbevakningar sparas                        |
+| `DISCOUNT_STORE`          | `data/rabatter.json`    | Fil där rabattkoder sparas                             |
+| `CONTENT_STORE`           | `data/startsida.json`   | Fil där startsidans innehåll sparas                    |
+| `QUOTE_STORE`             | `data/offerter.json`    | Fil där sparade offerter sparas                        |
+| `FILAMENT_STORE`          | `data/filament.json`    | Fil där filamentrullar och åtgång sparas               |
+| `USER_STORE`              | `data/anvandare.json`   | Fil där användare och sessioner sparas                 |
+| `MAIL_TEMPLATE_STORE`     | `data/mejlmallar.json`  | Fil där ändrade mejlmallar sparas                      |
+| `CLIENT_DIST`             | `../../client/dist`     | Katalog med den byggda klienten                        |
+| `SHOP_URL`                | `https://formlabb.se`   | Adressen länkar i mejl och sitemap pekar på            |
+| `SHOP_TIME_ZONE`          | `Europe/Stockholm`      | Tidszon som avgör dygnsgränsen i översiktens siffror   |
+| `BUILD_PLATE_MM`          | `256x256x256`           | Byggvolymen som modeller mäts mot                      |
+| `LOW_STOCK_THRESHOLD`     | `5`                     | Saldo som flaggas som lågt i översikten                |
+| `LOW_FILAMENT_GRAMS`      | `250`                   | Gram kvar på en rulle innan den flaggas                |
+| `PRINTERS`                | `2`                     | Antal skrivare, dvs. hur många jobb som går parallellt |
+| `SESSION_HOURS`           | `12`                    | Hur länge en inloggning gäller                         |
+| `RATE_LIMIT_REVIEWS`      | `5`                     | Omdömen per IP och timme                               |
+| `RATE_LIMIT_WATCHES`      | `10`                    | Lagerbevakningar per IP och timme                      |
+| `RATE_LIMIT_DISCOUNTS`    | `60`                    | Försök med rabattkoder per IP och timme                |
+| `RATE_LIMIT_SAVED_QUOTES` | `20`                    | Sparade offerter per IP och timme                      |
 
 ## Struktur
 
@@ -276,6 +526,24 @@ server/
   src/catalogValidation.ts  validering av produktformuläret
   src/catalogTransfer.ts  export och import av katalogen
   src/auditLog.ts  ändringshistorik
+  src/modelAnalysis.ts  uppmätning av STL, OBJ och 3MF
+  src/reviews.ts  omdömen med moderering
+  src/stats.ts    siffrorna till panelens översikt
+  src/notify.ts   bevakningar av slutsålda produkter
+  src/seo.ts      sitemap och robots.txt
+  src/parameters.ts  mått kunden ställer in själv, och vad de kostar
+  src/queue.ts    produktionskön: vad som printas, var och när
+  src/picking.ts  plocklistan, sammanslagen över ordrarna
+  src/users.ts    användare, roller, lösenord och sessioner
+  src/customers.ts  kundregistret, räknat ur ordrarna
+  src/mailTemplates.ts  breven till kunden, redigerbara i panelen
+  src/filament.ts filamentrullarna och vad som gått åt
+  src/shipping.ts fraktalternativ och orderns totalsumma
+  src/discounts.ts rabattkoder
+  src/content.ts  startsidans hero och kampanjer
+  src/quotes.ts   sparade offerter med egen länk
+  src/materialGuide.ts  rekommenderar material utifrån hur delen ska användas
+  src/progress.ts  hur långt ett printjobb har kommit
   src/storage.ts  lokal disk eller objektlagring för uppladdade filer
   src/rateLimit.ts takgränser per IP
   src/routes.ts   API-rutter
@@ -284,7 +552,8 @@ client/
   src/pages/      en fil per vy
   src/components/ delade komponenter, bl.a. de genererade produktbilderna
   src/components/admin/  adminpanelens vyer och produktformulär
-  src/lib/        API-klient, varukorg och formatering
+  src/lib/        API-klient, varukorg, formatering och sidornas metadata
+  src/lib/mesh.ts modellfiler tolkade i webbläsaren, för 3D-vyn
   test/           komponent- och enhetstester (Vitest + Testing Library)
 ```
 
