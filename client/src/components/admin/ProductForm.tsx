@@ -40,7 +40,7 @@ export function emptyDraft(categoryId: string): ProductDraft {
     category: categoryId as Product['category'],
     price: 299,
     material: 'pla',
-    finish: 'Matte',
+    finish: 'Matt',
     printTimeHours: 6,
     dimensions: { width: 100, depth: 100, height: 120 },
     weightGrams: 150,

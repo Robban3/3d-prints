@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import {
@@ -95,6 +95,21 @@ describe('katalogen', () => {
     assert.equal(reloaded?.name, 'Nytt namn');
     assert.notEqual(before, 'Nytt namn');
   });
+});
+
+it('sparar äldre finishnamn som Matt utan att ändra andra produktuppgifter', async () => {
+  const products = await allProducts();
+  products[0] = { ...products[0]!, finish: 'Matte' };
+  products[1] = { ...products[1]!, finish: 'matt' };
+  await writeFile(process.env.CATALOG_STORE!, JSON.stringify({ products }));
+  resetCatalogCache();
+  const reloaded = await allProducts();
+  assert.deepEqual(reloaded, products.map((product) =>
+    /^(matte|matt)$/i.test(product.finish) ? { ...product, finish: 'Matt' } : product));
+  const stored = JSON.parse(await readFile(process.env.CATALOG_STORE!, 'utf8'));
+  assert.equal(stored.products[0].finish, 'Matt');
+  assert.equal(stored.products[1].finish, 'Matt');
+  assert.equal(parseProductInput(validInput(), options).finish, 'Matt');
 });
 
 describe('skapa produkt', () => {
