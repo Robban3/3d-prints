@@ -17,7 +17,7 @@ const faq = [
   },
   {
     q: 'Hur räknas priset ut?',
-    a: 'Egen print kostar 50 kr per printtimme plus en startavgift på 95 kr per order. Material ingår. Vi kontrollerar filen och bekräftar printtiden innan produktion. Ingenting läggs på i efterhand utan att du godkänt det.',
+    a: 'Priset för egen print baseras på printtiden, med en startavgift på 95 kr per order. Material ingår. Vi kontrollerar filen och bekräftar printtiden innan produktion. Ingenting läggs på i efterhand utan att du godkänt det.',
   },
   {
     q: 'Kan jag returnera en produkt?',
