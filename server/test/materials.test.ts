@@ -58,12 +58,12 @@ describe('material i katalogen', () => {
     );
   });
 
-  it('en ändrad prisfaktor slår igenom på offerten', async () => {
+  it('materialets gamla prisfaktor ändrar inte det fasta timpriset', async () => {
     const before = await quoteFor(request);
     await saveMaterial({ ...(await findMaterial('petg'))!, priceFactor: 3 });
     const after = await quoteFor(request);
-    assert.ok(after.total > before.total, `${after.total} skulle vara mer än ${before.total}`);
-    assert.ok(after.materialCost > before.materialCost);
+    assert.equal(after.total, before.total);
+    assert.equal(after.materialCost, 0);
   });
 
   it('ett nytt material går att prissätta direkt', async () => {
