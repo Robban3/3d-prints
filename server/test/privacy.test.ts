@@ -64,6 +64,8 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     assert.equal((await authorized.json()).order.customer.email, order.customer.email);
     const tracking = new URL(orderTrackingUrl(order)); assert.equal(tracking.searchParams.has('access'), false); assert.match(tracking.hash, /^#access=[a-f0-9]{64}$/);
     assert.equal((await fetch(`${base}/uploads/images`, { method: 'POST' })).status, 401);
+    assert.equal((await fetch(`${base}/admin/uploads/images`, { method: 'POST' })).status, 401);
+    assert.equal((await fetch(`${base}/admin/uploads/images`, { method: 'POST', headers: { Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } })).status, 400);
     assert.equal((await fetch(`${base}/uploads/${image.id}`, { method: 'DELETE' })).status, 409);
     assert.match((await fetch(`${base}/uploads/${meta.id}`)).headers.get('cache-control')!, /no-store/);
     const exportInit = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: order.customer.email }) };
