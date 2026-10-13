@@ -330,6 +330,7 @@ export function uploadProductImage(
       reject(new ApiError('Uppladdningen avbröts. Kontrollera din uppkoppling.', 0)),
     );
     xhr.open('POST', `${BASE}/admin/uploads/images`);
+    xhr.setRequestHeader('Authorization', 'Bearer session');
     xhr.send(body);
   });
   return { promise, abort: () => xhr.abort() };

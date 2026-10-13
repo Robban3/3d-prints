@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApiError, fetchProducts, placeOrder } from '../src/lib/api';
+import { ApiError, fetchProducts, placeOrder, uploadProductImage } from '../src/lib/api';
 
 const originalFetch = global.fetch;
 
@@ -20,6 +20,15 @@ afterEach(() => {
 });
 
 describe('API-klienten', () => {
+  it('skickar adminmarkören med bildfilen till en väg som omfattas av sessionskakan', () => {
+    const open = vi.spyOn(XMLHttpRequest.prototype, 'open').mockImplementation(() => {});
+    const header = vi.spyOn(XMLHttpRequest.prototype, 'setRequestHeader').mockImplementation(() => {});
+    const send = vi.spyOn(XMLHttpRequest.prototype, 'send').mockImplementation(() => {});
+    uploadProductImage(new File(['bild'], 'bild.png', { type: 'image/png' }));
+    expect(open).toHaveBeenCalledWith('POST', '/api/admin/uploads/images');
+    expect(header).toHaveBeenCalledWith('Authorization', 'Bearer session');
+    expect(send.mock.calls[0]?.[0]).toBeInstanceOf(FormData);
+  });
   it('bygger frågesträngen av filter', async () => {
     const fetchMock = respondWith(200, { products: [], total: 0 });
     global.fetch = fetchMock;
