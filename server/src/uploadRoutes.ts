@@ -248,7 +248,7 @@ const handleImage: RequestHandler = (req, res, next) => {
   });
 };
 
-uploads.post('/uploads/images', requireAdmin, handleImage, (req: Request, res: Response, next) => {
+uploads.post(['/uploads/images', '/admin/uploads/images'], requireAdmin, handleImage, (req: Request, res: Response, next) => {
   const file = req.file;
   const id = (req as Request & { uploadId?: string }).uploadId;
   if (!file || !id) {

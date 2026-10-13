@@ -329,7 +329,7 @@ export function uploadProductImage(
     xhr.addEventListener('error', () =>
       reject(new ApiError('Uppladdningen avbröts. Kontrollera din uppkoppling.', 0)),
     );
-    xhr.open('POST', `${BASE}/uploads/images`);
+    xhr.open('POST', `${BASE}/admin/uploads/images`);
     xhr.send(body);
   });
   return { promise, abort: () => xhr.abort() };
