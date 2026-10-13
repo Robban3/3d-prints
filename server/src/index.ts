@@ -9,6 +9,7 @@ import { api } from './routes.ts';
 import { uploads } from './uploadRoutes.ts';
 import { admin } from './adminRoutes.ts';
 import { ORPHAN_MAX_AGE_MS, sweepOrphans } from './uploads.ts';
+import { sweepCustomerFiles } from './privacyRetention.ts';
 import { ValidationError } from './validation.ts';
 import { KlarnaError } from './klarna.ts';
 import { OutOfStockError } from './stock.ts';
@@ -43,7 +44,7 @@ app.use(
     },
     // Uppladdade modellfiler laddas ned från samma ursprung.
     crossOriginResourcePolicy: { policy: 'same-origin' },
-    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    referrerPolicy: { policy: 'no-referrer' },
   }),
 );
 app.use(cors());
@@ -98,7 +99,7 @@ const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
 
   if (error instanceof KlarnaError) {
     // Detaljen loggas för felsökning men skickas inte vidare till kunden.
-    console.error('Klarna svarade med fel', error.status, error.detail);
+    console.error('Klarna svarade med fel', error.status);
     res.status(error.status >= 500 ? 502 : 400).json({
       error: 'Betalningen gick inte igenom. Försök igen eller välj att få en betalningslänk.',
     });
@@ -115,7 +116,7 @@ const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
     return;
   }
 
-  console.error(error);
+  console.error('Serverfel', error instanceof Error ? error.name : 'UnknownError');
   res.status(500).json({ error: 'Något gick fel på servern' });
 };
 app.use(errorHandler);
@@ -127,12 +128,13 @@ app.listen(port, () => {
 // Uppladdningar som aldrig blev en beställning städas bort en gång i timmen.
 const sweepInterval = setInterval(
   () => {
-    sweepOrphans(ORPHAN_MAX_AGE_MS)
+    Promise.all([sweepOrphans(ORPHAN_MAX_AGE_MS), sweepCustomerFiles()])
       .then((removed) => {
-        if (removed > 0) console.log(`Städade bort ${removed} oanvända uppladdningar`);
+        if (removed.some(count => count > 0)) console.log('Gallrade uppladdningar enligt lagringsreglerna');
       })
-      .catch((error: unknown) => console.error('Städning av uppladdningar misslyckades', error));
+      .catch(() => console.error('Städning av uppladdningar misslyckades'));
   },
   60 * 60 * 1000,
 );
 sweepInterval.unref();
+void sweepCustomerFiles().catch(() => console.error('Gallring av kundfiler misslyckades'));

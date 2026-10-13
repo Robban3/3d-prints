@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { useLocation, useSearchParams } from 'react-router';
 import { OrderSummary } from '../components/OrderSummary';
 import { OrderTimeline } from '../components/OrderTimeline';
 import { ApiError, fetchOrder } from '../lib/api';
@@ -8,6 +8,8 @@ import type { AnyOrder } from '../types';
 
 export function TrackOrderPage() {
   const [params] = useSearchParams();
+  const location = useLocation();
+  const initialToken = new URLSearchParams(location.hash.slice(1)).get('access') ?? undefined;
   const [id, setId] = useState(params.get('id') ?? '');
   const [order, setOrder] = useState<AnyOrder | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -20,12 +22,21 @@ export function TrackOrderPage() {
     setError(null);
     setOrder(null);
     try {
-      const result = await fetchOrder(id.trim());
+      let orderId = id.trim();
+      let token = initialToken;
+      if (orderId.startsWith('https://') || orderId.startsWith('http://') || orderId.startsWith('/')) {
+        const link = new URL(orderId, window.location.origin);
+        if (link.origin !== window.location.origin) throw new Error('Fel webbplats');
+        orderId = link.searchParams.get('id') ?? link.pathname.split('/').pop() ?? '';
+        token = new URLSearchParams(link.hash.slice(1)).get('access') ?? undefined;
+      }
+      if (!token) { setError('Öppna eller klistra in din privata orderlänk. För en äldre order, kontakta support@formlabb.se.'); return; }
+      const result = await fetchOrder(orderId, token);
       setOrder(result.order);
     } catch (caught) {
       setError(
         caught instanceof ApiError && caught.status === 404
-          ? 'Vi hittar ingen order med det numret. Kontrollera stavningen.'
+          ? 'Orderlänken är ogiltig. Kontrollera länken eller kontakta support@formlabb.se.'
           : 'Kunde inte hämta ordern just nu. Försök igen om en stund.',
       );
     } finally {
@@ -38,13 +49,13 @@ export function TrackOrderPage() {
       <PageHeader
         eyebrow="Orderstatus"
         title="Spåra din order"
-        text="Ordernumret står i bekräftelsemejlet och börjar med S för butiksorder eller C för egna printjobb."
+        text="Använd din privata orderlänk från beställningen eller bekräftelsemejlet. Dela inte länken med andra."
       />
       <section className="section">
         <div className="container receipt">
           <form className="panel" onSubmit={submit}>
             <div className="field">
-              <label htmlFor="orderId">Ordernummer</label>
+              <label htmlFor="orderId">Privat orderlänk eller ordernummer från länken</label>
               <input
                 id="orderId"
                 className="input"

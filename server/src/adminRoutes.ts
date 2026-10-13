@@ -38,8 +38,10 @@ import { release, removeStock, setStock, stockLevels } from './stock.ts';
 import type { AnyOrder, StatusEvent } from './types.ts';
 import { filePathFor, listModelFiles, readMeta, storedFileName } from './uploads.ts';
 import { storage } from './storage.ts';
+import { minimizeCustomerData } from './privacyRetention.ts';
 
 export const admin = Router();
+admin.use((_req, res, next) => { res.set('Cache-Control', 'private, no-store'); next(); });
 
 /**
  * Adminvägarna är avstängda tills ADMIN_TOKEN sätts. Ett saknat värde ska inte
@@ -69,6 +71,10 @@ const adminLimit = rateLimit({
 export const requireAdmin: RequestHandler = async (req, res, next) => {
   if (req.get('authorization') === 'Bearer session' && validSession(req)) { next(); return; }
   const expected = adminToken();
+  if (await readAccount()) {
+    res.status(401).json({ error: 'Logga in med ditt adminlösenord.' });
+    return;
+  }
   if (!expected && !await readAccount()) {
     res.status(503).json({ error: 'Adminläget är inte aktiverat på den här servern.' });
     return;
@@ -87,6 +93,24 @@ export const requireAdmin: RequestHandler = async (req, res, next) => {
 admin.get('/admin/status', async (req, res) => {
   const account = await readAccount();
   res.set('Cache-Control', 'no-store').json({ enabled: !!account || adminToken() !== undefined, passwordConfigured: !!account, email: account?.email ?? adminEmail(), authenticated: validSession(req), recoveryByEmail: mailIsConfigured() });
+});
+
+admin.post('/admin/privacy/export', requireAdmin, async (req, res) => {
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: 'Ange kundens e-postadress.' }); return;
+  }
+  const orders = (await listOrders()).filter(order => order.customer.email.trim().toLowerCase() === email);
+  const files = await Promise.all(orders.flatMap(order => order.type === 'custom' && order.fileId ? [readMeta(order.fileId)] : []));
+  res.json({ exportedAt: new Date().toISOString(), controller: 'P.C Service & Säkerhet AB', orders, files: files.filter(Boolean) });
+});
+
+admin.post('/admin/privacy/minimize', requireAdmin, async (req, res) => {
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  if (req.body?.confirmed !== true || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: 'Bekräfta prövningen av begäran och ange kundens e-postadress.' }); return;
+  }
+  res.json(await minimizeCustomerData(email));
 });
 
 const loginLimit = rateLimit({ name: 'admin-login', windowMs: 15 * 60 * 1000, max: 10, message: 'För många inloggningsförsök. Försök igen om 15 minuter.' });
@@ -233,7 +257,7 @@ admin.patch('/admin/orders/:id/status', requireAdmin, async (req, res) => {
       mailResult = await sendMail(mail);
     } catch (error) {
       // Ett misslyckat utskick får inte rulla tillbaka statusbytet.
-      console.error('Kunde inte skicka statusmejl', error);
+      console.error('Kunde inte skicka statusmejl');
     }
   }
 

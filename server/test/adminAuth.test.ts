@@ -45,7 +45,8 @@ it('aktiverar kontot med saltad hash och skyddad cookie, endast en gång', async
   cookie = header.split(';')[0]!;
   const stored = await readFile(process.env.ADMIN_ACCOUNT_STORE!, 'utf8');
   assert.ok(!stored.includes(password)); assert.equal(JSON.parse(stored).email, 'admin@formlabb.se');
-  assert.equal((await request('/auth/setup', { password }, { Authorization: `Bearer ${key}` })).status, 409);
+  assert.equal((await request('/auth/setup', { password }, { Authorization: `Bearer ${key}` })).status, 401);
+  assert.equal((await request('/appearance', undefined, { Authorization: `Bearer ${key}` })).status, 401);
 });
 it('skyddar admin med cookie och avvisar enbart sessionsmarkören', async () => {
   assert.equal((await request('/appearance', undefined, { Authorization: 'Bearer session' })).status, 401);

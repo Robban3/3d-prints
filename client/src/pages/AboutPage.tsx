@@ -35,7 +35,7 @@ export function AboutPage() {
       <PageHeader
         eyebrow="Om Formlabb"
         title="Åtta maskiner, en verkstad, inga mellanhänder"
-        text="Formlabb började som två printare i ett källarförråd på Hisingen och är i dag en verkstad på Tredje Långgatan med åtta maskiner igång."
+        text="Formlabb började som två printare i ett källarförråd på Hisingen och är i dag en verkstad i Göteborg med åtta maskiner igång."
       />
 
       <section className="section">
@@ -67,7 +67,7 @@ export function AboutPage() {
                   <br />
                   031-12 34 56, vardagar 09–17
                   <br />
-                  Tredje Långgatan 14, 413 03 Göteborg
+                  Ebbe Lieberathsgatan 25, 412 83 Göteborg
                 </p>
               </div>
             </div>

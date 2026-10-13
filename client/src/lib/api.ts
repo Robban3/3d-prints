@@ -123,7 +123,7 @@ export function placeOrder(payload: {
     size?: string;
   }>;
   authorizationToken?: string;
-}): Promise<{ order: ShopOrder }> {
+}): Promise<{ order: ShopOrder; accessToken: string }> {
   return request('/orders', { method: 'POST', body: JSON.stringify(payload) });
 }
 
@@ -134,15 +134,22 @@ export function placeCustomOrder(payload: {
   description: string;
   fileId?: string;
   authorizationToken?: string;
-}): Promise<{ order: CustomOrder }> {
+}): Promise<{ order: CustomOrder; accessToken: string }> {
   return request('/custom-orders', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
 }
 
-export function fetchOrder(id: string): Promise<{ order: AnyOrder }> {
-  return request(`/orders/${encodeURIComponent(id)}`);
+export function exportPersonalData(token: string, email: string): Promise<Record<string, unknown>> {
+  return request('/admin/privacy/export', adminInit(token, { method: 'POST', body: JSON.stringify({ email }) }));
+}
+export function minimizePersonalData(token: string, email: string): Promise<{ minimized: number; active: number }> {
+  return request('/admin/privacy/minimize', adminInit(token, { method: 'POST', body: JSON.stringify({ email, confirmed: true }) }));
+}
+
+export function fetchOrder(id: string, accessToken?: string): Promise<{ order: AnyOrder }> {
+  return request(`/orders/${encodeURIComponent(id)}`, { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {} });
 }
 
 /**

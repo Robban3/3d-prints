@@ -9,6 +9,19 @@ interface Bucket {
 }
 
 const buckets = new Map<string, Map<string, Bucket>>();
+const windows = new Map<string, number>();
+export function pruneRateLimits(now = Date.now()): void {
+  for (const [name, scope] of buckets) {
+    const windowMs = windows.get(name) ?? 0;
+    for (const [key, bucket] of scope) {
+      bucket.hits = bucket.hits.filter(at => now - at < windowMs);
+      if (!bucket.hits.length) scope.delete(key);
+    }
+    if (!scope.size) buckets.delete(name);
+  }
+}
+const expiryTimer = setInterval(pruneRateLimits, 60000);
+expiryTimer.unref();
 
 export interface RateLimitOptions {
   /** Namn på gränsen, så att olika rutter räknas var för sig. */
@@ -19,6 +32,7 @@ export interface RateLimitOptions {
 }
 
 export function rateLimit(options: RateLimitOptions): RequestHandler {
+  windows.set(options.name, options.windowMs);
   return (req, res, next) => {
     const now = Date.now();
     const key = req.ip ?? 'okänd';
