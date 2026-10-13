@@ -292,7 +292,7 @@ export function CustomOrderPage() {
                       max={limits?.quantity.max ?? 500}
                       value={request.quantity}
                       error={errors.quantity}
-                      hint="50 kr per printtimme. Startavgift 95 kr per order."
+                      hint="Startavgift 95 kr per order."
                       onChange={(event) =>
                         patch({
                           quantity: Math.max(1, Number(event.target.value) || 1),
@@ -322,7 +322,7 @@ export function CustomOrderPage() {
               {!quote && (
                 <>
                   <div className="price" style={{ fontSize: '2.4rem', margin: '8px 0 4px' }}>0 kr</div>
-                  <p className="dim">50 kr per printtimme + 95 kr i startavgift per order. Material ingår.</p>
+                  <p className="dim">Startavgift 95 kr per order. Material ingår.</p>
                   <p className="notice">Ange modellens ungefärliga volym för att få ett prisförslag. Vi kontrollerar printtiden från filen innan produktion.</p>
                 </>
               )}
@@ -337,7 +337,7 @@ export function CustomOrderPage() {
 
                   <div style={{ margin: '18px 0' }}>
                     <div className="summary-row">
-                      <span>Printtid · 50 kr/timme</span>
+                      <span>Printtid</span>
                       <span>{formatPrice(quote.machineCost)}/st</span>
                     </div>
                     {quote.postProcessingCost > 0 && (
