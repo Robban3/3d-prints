@@ -8,6 +8,9 @@ export type IconName =
   | 'bag'
   | 'tree'
   | 'chevronDown'
+  | 'chevronRight'
+  | 'kitchen'
+  | 'pumpkin'
   | 'grid'
   | 'home'
   | 'desk'
@@ -65,6 +68,9 @@ const paths: Record<IconName, JSX.Element> = {
     </>
   ),
   chevronDown: <path d="m6 9.5 6 6 6-6" />,
+  chevronRight: <path d="m9 6 6 6-6 6" />,
+  kitchen: <><path d="M3 3v5a3 3 0 0 0 6 0V3M6 3v18M17 3c-3 3-4 6-4 9h6M19 3v18" /></>,
+  pumpkin: <><path d="M12 5c-2-3 0-4 2-3M12 5c-6-3-10 1-10 7 0 5 4 9 10 9s10-4 10-9c0-6-4-10-10-7z" /><path d="M12 5c-5 3-5 12 0 16M12 5c5 3 5 12 0 16" /></>,
   grid: (
     <>
       <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
