@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { it } from 'node:test';
-import { mkdtemp, rm, writeFile, mkdir } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile, mkdir, rename } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import express from 'express';
@@ -15,6 +15,7 @@ it('isolates order access, personal data exports, image writes and 90-day file r
   process.env.ADMIN_TOKEN = 'privacy-test-only-key-0123456789';
   process.env.MAIL_OUTBOX = join(directory, 'outbox');
   process.env.CATALOG_STORE = join(directory, 'catalog.json');
+  process.env.STOCK_STORE = join(directory, 'stock.json');
   process.env.SMTP_HOST = '';
   process.env.KLARNA_USERNAME = '';
   process.env.KLARNA_PASSWORD = '';
@@ -26,6 +27,8 @@ it('isolates order access, personal data exports, image writes and 90-day file r
   const { saveOrder, findOrder } = await import('../src/store.ts');
   const { writeMeta, readMeta, filePathFor } = await import('../src/uploads.ts');
   const { sweepCustomerFiles } = await import('../src/privacyRetention.ts');
+  const { allProducts } = await import('../src/catalog.ts');
+  const { setStock, reserve, stockFor } = await import('../src/stock.ts');
   const order: CustomOrder = {
     id: 'C2026-ABCDEF', type: 'custom', createdAt: '2026-01-01T00:00:00Z', status: 'levererad',
     customer: { name: 'Test Person', email: 'customer@example.invalid', address: 'Testgatan 1', postalCode: '12345', city: 'Teststad' },
@@ -50,6 +53,23 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     await new Promise<void>(resolve => { server = app.listen(0, '127.0.0.1', () => resolve()); });
     const address = server!.address(); assert.ok(address && typeof address === 'object');
     const base = `http://127.0.0.1:${address.port}/api`;
+    const product = (await allProducts())[0]!;
+    const lines = [{ productId: product.id, name: product.name, quantity: 2, unitPrice: product.price, color: product.colors[0]! }];
+    await setStock(product.id, 10); await reserve(lines);
+    const shop = { ...order, id: 'S2026-CONCURRENCY', type: 'shop' as const, status: 'mottagen' as const, history: [{ status: 'mottagen' as const, at: order.createdAt }], lines, subtotal: product.price * 2, shipping: 0, total: product.price * 2 };
+    await saveOrder(shop);
+    const cancellation = () => fetch(`${base}/admin/orders/${shop.id}/status`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.ADMIN_TOKEN}` }, body: JSON.stringify({ status: 'avbruten' }) });
+    const canceled = await Promise.all([cancellation(), cancellation()]);
+    assert.deepEqual(canceled.map(response => response.status).sort(), [200, 409]);
+    assert.equal(await stockFor(product.id), 10);
+    const sessionResponse = await fetch(`${base}/payments/session`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shop', lines: [{ ...lines[0], unitPrice: 1 }] }) });
+    assert.equal(sessionResponse.status, 200);
+    const session = await sessionResponse.json();
+    assert.equal(session.summary.lines[0].unitPrice, product.price + (product.sizes?.[0]?.priceDelta ?? 0));
+    assert.equal(session.amount, Math.round(session.summary.total * 100));
+    const stalePrice = await fetch(`${base}/orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customer: order.customer, lines, expectedTotal: -1 }) });
+    assert.equal(stalePrice.status, 409); assert.equal(await stockFor(product.id), 10);
+    await assert.rejects(() => saveOrder(shop), /Ordernumret finns redan/);
     const createdResponse = await fetch(`${base}/custom-orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customer: { ...order.customer, email: 'new@example.invalid' }, request: order.request, projectName: 'Testprojekt', description: 'Beskrivning för testprojektet' }) });
     assert.equal(createdResponse.status, 201);
     const created = await createdResponse.json();
@@ -72,7 +92,7 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     assert.equal((await fetch(`${base}/admin/privacy/export`, exportInit)).status, 401);
     const exported = await fetch(`${base}/admin/privacy/export`, { ...exportInit, headers: { ...exportInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } });
     assert.equal(exported.status, 200);
-    const data = await exported.json(); assert.equal(data.orders.length, 1); assert.equal(data.files.length, 1); assert.ok(!JSON.stringify(data).includes(orderAccessToken(order)));
+    const data = await exported.json(); assert.equal(data.orders.length, 2); assert.equal(data.files.length, 1); assert.ok(!JSON.stringify(data).includes(orderAccessToken(order)));
     const cutoff = Date.parse('2026-01-02T00:00:00Z') + 90 * 86400000;
     assert.equal(await sweepCustomerFiles(cutoff - 1), 0);
     assert.equal(await sweepCustomerFiles(cutoff), 1);
@@ -84,9 +104,18 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     const minimized = await fetch(`${base}/admin/privacy/minimize`, { ...exportInit, headers: { ...exportInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` }, body: JSON.stringify({ email: second.customer.email, confirmed: true }) });
     assert.equal(minimized.status, 200); assert.equal((await minimized.json()).minimized, 1);
     const redacted = await findOrder(second.id); assert.ok(redacted?.type === 'custom'); assert.equal(redacted.description, ''); assert.equal(redacted.customer.address, second.customer.address); assert.equal(redacted.total, second.total);
+    const pendingFile = await writeMeta({ ...meta, id: 'd'.repeat(32), claimedBy: null });
+    const orderPath = process.env.ORDER_STORE!;
+    await rename(orderPath, `${orderPath}.backup`); await mkdir(orderPath);
+    try {
+      const failedShop = await fetch(`${base}/orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customer: order.customer, lines }) });
+      assert.equal(failedShop.status, 500); assert.equal(await stockFor(product.id), 10);
+      const failedCustom = await fetch(`${base}/custom-orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customer: order.customer, request: order.request, projectName: 'Testprojekt', description: 'Beskrivning för testprojektet', fileId: pendingFile.id }) });
+      assert.equal(failedCustom.status, 500); assert.equal((await readMeta(pendingFile.id))?.claimedBy, null);
+    } finally { await rm(orderPath, { recursive: true }); await rename(`${orderPath}.backup`, orderPath); }
   } finally {
     if (server) await new Promise<void>(resolve => server!.close(() => resolve()));
     await rm(directory, { recursive: true, force: true });
-    for (const key of ['ORDER_STORE','UPLOAD_DIR','ADMIN_ACCOUNT_STORE','ADMIN_TOKEN','MAIL_OUTBOX','CATALOG_STORE','SMTP_HOST','KLARNA_USERNAME','KLARNA_PASSWORD']) delete process.env[key];
+    for (const key of ['ORDER_STORE','UPLOAD_DIR','ADMIN_ACCOUNT_STORE','ADMIN_TOKEN','MAIL_OUTBOX','CATALOG_STORE','STOCK_STORE','SMTP_HOST','KLARNA_USERNAME','KLARNA_PASSWORD']) delete process.env[key];
   }
 });

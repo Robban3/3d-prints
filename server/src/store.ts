@@ -33,13 +33,16 @@ async function readAll(): Promise<AnyOrder[]> {
 
 export function generateOrderNumber(prefix: 'S' | 'C'): string {
   const year = new Date().getFullYear();
-  const suffix = randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
+  const suffix = randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase();
   return `${prefix}${year}-${suffix}`;
 }
 
 export async function saveOrder<T extends AnyOrder>(order: T): Promise<T> {
   return serialize(async () => {
     const orders = await readAll();
+    if (orders.some(existing => existing.id.toLowerCase() === order.id.toLowerCase())) {
+      throw new Error('Ordernumret finns redan');
+    }
     orders.push(order);
     await mkdir(dirname(DATA_FILE), { recursive: true });
     await writeFile(DATA_FILE, JSON.stringify(orders, null, 2), 'utf8');

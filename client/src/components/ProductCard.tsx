@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { ProductImage } from './ProductImage';
 import { Icon } from './Icon';
@@ -10,6 +10,11 @@ import type { Product } from '../types';
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
   const [added, setAdded] = useState(false);
+  useEffect(() => {
+    if (!added) return;
+    const timer = window.setTimeout(() => setAdded(false), 1600);
+    return () => window.clearTimeout(timer);
+  }, [added]);
 
   function quickAdd() {
     // Snabbköpet lägger till standardvarianten; färg och storlek ändras på produktsidan.
@@ -26,7 +31,6 @@ export function ProductCard({ product }: { product: Product }) {
       image: selectedProductImage(product),
     });
     setAdded(true);
-    window.setTimeout(() => setAdded(false), 1600);
   }
 
   return (
