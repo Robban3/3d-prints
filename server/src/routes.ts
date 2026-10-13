@@ -152,6 +152,7 @@ api.post('/payments/session', sessionLimit, async (req, res) => {
   const config = paymentLocale();
 
   let payload;
+  let summary: Pick<Order, 'lines' | 'subtotal' | 'shipping' | 'total'> | undefined;
   if (body.type === 'custom') {
     const request = await parseQuoteRequest(body.request);
     const projectName = String(body.projectName ?? '').trim() || 'Eget printjobb';
@@ -162,7 +163,9 @@ api.post('/payments/session', sessionLimit, async (req, res) => {
   } else {
     const lines = await parseOrderLines(body.lines);
     const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
-    payload = payloadForOrder({ lines, shipping: shippingFor(subtotal), total: subtotal }, config);
+    const shipping = shippingFor(subtotal);
+    summary = { lines, subtotal, shipping, total: subtotal + shipping };
+    payload = payloadForOrder(summary, config);
   }
 
   const session = await createSession(payload);
@@ -173,6 +176,7 @@ api.post('/payments/session', sessionLimit, async (req, res) => {
       test: session.mock,
     },
     amount: payload.order_amount,
+    summary,
   });
 });
 
@@ -209,6 +213,19 @@ async function notify(order: Order | CustomOrder): Promise<void> {
   }
 }
 
+async function persistOrder(order: Order | CustomOrder): Promise<void> {
+  try { await saveOrder(order); }
+  catch (error) {
+    // Without an external payment, a failed write must not consume stock or a file.
+    // An accepted payment requires reconciliation before resources can be released.
+    if (!order.payment?.reference) {
+      if (order.type === 'shop') await release(order.lines);
+      else if (order.fileId) await releaseUpload(order.fileId, order.id);
+    }
+    throw error;
+  }
+}
+
 api.post('/orders', orderLimit, async (req, res) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const customer = parseCustomer(body.customer);
@@ -218,6 +235,9 @@ api.post('/orders', orderLimit, async (req, res) => {
   const shipping = shippingFor(subtotal);
 
   const orderId = generateOrderNumber('S');
+  if (body.expectedTotal !== undefined && body.expectedTotal !== subtotal + shipping) {
+    res.status(409).json({ error: 'Priset har ändrats. Kontrollera den uppdaterade summan innan du beställer.' }); return;
+  }
   // Saldot dras av innan betalningen, så att två kunder inte kan köpa samma
   // sista exemplar medan Klarna svarar.
   await reserve(lines);
@@ -250,7 +270,7 @@ api.post('/orders', orderLimit, async (req, res) => {
     payment,
   };
 
-  await saveOrder(order);
+  await persistOrder(order);
   await notify(order);
   res.status(201).json({ order, accessToken: orderAccessToken(order) });
 });
@@ -318,7 +338,7 @@ api.post('/custom-orders', orderLimit, async (req, res) => {
     payment,
   };
 
-  await saveOrder(order);
+  await persistOrder(order);
   await notify(order);
   res.status(201).json({ order, accessToken: orderAccessToken(order) });
 });

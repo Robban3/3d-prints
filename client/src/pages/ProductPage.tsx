@@ -21,6 +21,11 @@ export function ProductPage() {
   const [sizeId, setSizeId] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  useEffect(() => {
+    if (!added) return;
+    const timer = window.setTimeout(() => setAdded(false), 2500);
+    return () => window.clearTimeout(timer);
+  }, [added]);
 
   useEffect(() => {
     if (!product) return;
@@ -48,7 +53,7 @@ export function ProductPage() {
     );
   }
 
-  const size = product.sizes?.find((entry) => entry.id === sizeId);
+  const size = product.sizes?.find((entry) => entry.id === sizeId) ?? product.sizes?.[0];
   const unitPrice = product.price + (size?.priceDelta ?? 0);
   const image = selectedProductImage(product, color, sizeId);
   const dimensions = size?.dimensions ?? product.dimensions;
@@ -70,7 +75,6 @@ export function ProductPage() {
     if (goToCart) navigate('/varukorg');
     else {
       setAdded(true);
-      window.setTimeout(() => setAdded(false), 2500);
     }
   }
 

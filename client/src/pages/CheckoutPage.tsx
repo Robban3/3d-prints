@@ -8,7 +8,7 @@ import { loadKlarna, authorize } from '../lib/klarna';
 import { useAsync } from '../lib/useAsync';
 import { formatPrice } from '../lib/format';
 import { PageHeader } from '../components/PageHeader';
-import type { CustomerDetails, PaymentSession } from '../types';
+import type { CustomerDetails, PaymentSession, ShopOrder } from '../types';
 
 const emptyCustomer: CustomerDetails = {
   name: '',
@@ -32,7 +32,10 @@ export function CheckoutPage() {
 
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
   const [session, setSession] = useState<PaymentSession | null>(null);
+  const [summary, setSummary] = useState<Pick<ShopOrder, 'lines' | 'subtotal' | 'shipping' | 'total'> | null>(null);
   const [sessionLoading, setSessionLoading] = useState(true);
+  const [sessionCartKey, setSessionCartKey] = useState('');
+  const [refresh, setRefresh] = useState(0);
   const [sessionError, setSessionError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -45,6 +48,8 @@ export function CheckoutPage() {
     if (items.length === 0) return;
     let active = true;
     setSessionLoading(true);
+    setSession(null);
+    setSummary(null);
     createPaymentSession({
       type: 'shop',
       lines: items.map((item) => ({
@@ -57,6 +62,8 @@ export function CheckoutPage() {
       .then((result) => {
         if (!active) return;
         setSession(result.session);
+        setSessionCartKey(cartKey);
+        setSummary(result.summary ?? null);
         setSessionError(null);
       })
       .catch((error: unknown) => {
@@ -65,7 +72,7 @@ export function CheckoutPage() {
         setSessionError(
           error instanceof ApiError
             ? error.message
-            : 'Betalningen kunde inte förberedas. Du kan fortfarande lägga ordern och få en betalningslänk.',
+            : 'Betalningen kunde inte förberedas. Försök igen om en stund.',
         );
       })
       .finally(() => {
@@ -75,7 +82,7 @@ export function CheckoutPage() {
       active = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cartKey]);
+  }, [cartKey, refresh]);
 
   if (items.length === 0) {
     return (
@@ -94,6 +101,7 @@ export function CheckoutPage() {
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (submitting || sessionLoading || !session || !summary || sessionCartKey !== cartKey) return;
     setSubmitting(true);
     setSubmitError(null);
     setErrors({});
@@ -121,6 +129,7 @@ export function CheckoutPage() {
       }
 
       const result = await placeOrder({
+        expectedTotal: summary.total,
         customer,
         lines: items.map((item) => ({
           productId: item.productId,
@@ -134,6 +143,7 @@ export function CheckoutPage() {
       navigate(`/order/${result.order.id}#access=${result.accessToken}`);
     } catch (error) {
       if (error instanceof ApiError) {
+        if (error.status === 409) setRefresh(value => value + 1);
         setErrors(error.fields);
         // Lagerfel hör inte till något fält i formuläret och visas därför samlat.
         const stockMessages = Object.entries(error.fields)
@@ -153,7 +163,7 @@ export function CheckoutPage() {
     <>
       <PageHeader
         title="Kassa"
-        text="Fyll i vart det ska skickas. Betalningslänken mejlas när ordern är bekräftad."
+        text="Fyll i leveransuppgifterna och kontrollera den aktuella ordersumman."
         crumbs={[{ to: '/varukorg', label: 'Varukorg' }]}
       />
       <section className="section">
@@ -181,14 +191,14 @@ export function CheckoutPage() {
 
             <aside className="panel sticky-panel">
               <h2>Din order</h2>
-              {items.map((item) => (
-                <div className="summary-row" key={item.key}>
+              {(summary?.lines ?? items).map((item, index) => (
+                <div className="summary-row" key={index}>
                   <span>
                     {item.quantity} × {item.name}
                     <br />
                     <span className="dim" style={{ fontSize: '0.82rem' }}>
                       {item.color}
-                      {item.sizeName ? ` · ${item.sizeName}` : ''}
+                      {item.size ? ` · ${item.size}` : ''}
                     </span>
                   </span>
                   <span>{formatPrice(item.unitPrice * item.quantity)}</span>
@@ -196,11 +206,11 @@ export function CheckoutPage() {
               ))}
               <div className="summary-row">
                 <span>Frakt</span>
-                <span>{shipping === 0 ? 'Fri' : formatPrice(shipping)}</span>
+                <span>{(summary?.shipping ?? shipping) === 0 ? 'Fri' : formatPrice(summary?.shipping ?? shipping)}</span>
               </div>
               <div className="summary-row total">
                 <span>Att betala</span>
-                <span>{formatPrice(subtotal + shipping)}</span>
+                <span>{formatPrice(summary?.total ?? subtotal + shipping)}</span>
               </div>
 
               {submitError && (
@@ -213,7 +223,7 @@ export function CheckoutPage() {
                 type="submit"
                 className="btn btn-block btn-lg"
                 style={{ marginTop: 18 }}
-                disabled={submitting}
+                disabled={submitting || sessionLoading || !session || !summary || sessionCartKey !== cartKey}
               >
                 {submitting ? 'Skickar…' : 'Slutför beställning'}
               </button>

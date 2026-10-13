@@ -22,7 +22,7 @@ export const statusLabels: Record<OrderStatus, string> = {
 };
 
 export function isOrderStatus(value: unknown): value is OrderStatus {
-  return typeof value === 'string' && value in transitions;
+  return typeof value === 'string' && Object.hasOwn(transitions, value);
 }
 
 export function nextStatuses(current: OrderStatus): OrderStatus[] {

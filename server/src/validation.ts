@@ -24,7 +24,7 @@ function text(value: unknown): string {
 }
 
 function num(value: unknown): number {
-  const n = typeof value === 'number' ? value : Number.parseFloat(String(value));
+  const n = typeof value === 'number' ? value : typeof value === 'string' && value.trim() ? Number(value) : NaN;
   return Number.isFinite(n) ? n : Number.NaN;
 }
 
@@ -74,8 +74,8 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
       errors[`lines.${index}`] = 'Produkten finns inte.';
       continue;
     }
-    const quantity = Math.round(num(raw.quantity));
-    if (!Number.isFinite(quantity) || quantity < 1 || quantity > 99) {
+    const quantity = num(raw.quantity);
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
       errors[`lines.${index}.quantity`] = 'Antal måste vara mellan 1 och 99.';
       continue;
     }
@@ -88,7 +88,8 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
     let size: string | undefined;
     let priceDelta = 0;
     if (product.sizes && product.sizes.length > 0) {
-      const match = product.sizes.find((s) => s.id === sizeId) ?? product.sizes[0]!;
+      const match = sizeId ? product.sizes.find((s) => s.id === sizeId) : product.sizes[0];
+      if (!match) { errors[`lines.${index}.size`] = 'Ogiltig storlek för produkten.'; continue; }
       size = match.id;
       priceDelta = match.priceDelta;
     } else if (sizeId) {
@@ -119,7 +120,7 @@ export async function parseQuoteRequest(input: unknown): Promise<CustomQuoteRequ
   const quality = text(raw.quality);
   const volumeCm3 = num(raw.volumeCm3);
   const infill = num(raw.infill);
-  const quantity = Math.round(num(raw.quantity));
+  const quantity = num(raw.quantity);
 
   if (!(await findMaterial(material))) errors.material = 'Välj ett material.';
   if (!(await findQuality(quality))) errors.quality = 'Välj en utskriftskvalitet.';
@@ -132,7 +133,7 @@ export async function parseQuoteRequest(input: unknown): Promise<CustomQuoteRequ
     errors.infill = `Fyllnadsgraden ska vara mellan ${i.min} och ${i.max} %.`;
   }
   const q = QUOTE_LIMITS.quantity;
-  if (!(quantity >= q.min && quantity <= q.max)) {
+  if (!(Number.isInteger(quantity) && quantity >= q.min && quantity <= q.max)) {
     errors.quantity = `Antalet ska vara mellan ${q.min} och ${q.max}.`;
   }
 

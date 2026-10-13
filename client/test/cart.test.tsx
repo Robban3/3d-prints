@@ -23,6 +23,18 @@ function setup() {
 }
 
 describe('varukorgen', () => {
+  it('ignorerar trasiga sparade rader utan att krascha eller visa NaN', () => {
+    localStorage.setItem('formlabb.cart.v1', JSON.stringify([null, {}, { ...base, key: 'ok', quantity: -1 }, { ...base, key: 'ok' }]));
+    const { result } = setup();
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.subtotal).toBe(349);
+  });
+  it('uppdaterar gammalt pris när en variant läggs till igen', () => {
+    const { result } = setup();
+    act(() => result.current.add(base));
+    act(() => result.current.add({ ...base, unitPrice: 399 }));
+    expect(result.current.subtotal).toBe(798);
+  });
   it('börjar tom', () => {
     const { result } = setup();
     expect(result.current.items).toHaveLength(0);

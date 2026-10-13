@@ -195,7 +195,9 @@ admin.get('/admin/files/:id/download', requireAdmin, async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+let statusQueue: Promise<unknown> = Promise.resolve();
 admin.patch('/admin/orders/:id/status', requireAdmin, async (req, res) => {
+  const run = statusQueue.then(async () => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const id = pathParam(req.params.id);
   const target = body.status;
@@ -262,6 +264,9 @@ admin.patch('/admin/orders/:id/status', requireAdmin, async (req, res) => {
   }
 
   res.json({ order: updated, next: nextStatuses(updated.status), mail: mailResult });
+  });
+  statusQueue = run.catch(() => undefined);
+  await run;
 });
 
 /* ---------- Katalog ---------- */

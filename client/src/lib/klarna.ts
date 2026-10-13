@@ -44,10 +44,11 @@ export function loadKlarna(): Promise<KlarnaPayments> {
     script.async = true;
     script.addEventListener('load', () => {
       if (window.Klarna?.Payments) resolve(window.Klarna.Payments);
-      else reject(new Error('Klarna kunde inte initieras'));
+      else { loader = null; script.remove(); reject(new Error('Klarna kunde inte initieras')); }
     });
     script.addEventListener('error', () => {
       loader = null;
+      script.remove();
       reject(new Error('Klarnas betalskript kunde inte laddas'));
     });
     if (!existing) document.head.appendChild(script);

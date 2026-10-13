@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { loadKlarna } from '../lib/klarna';
 import { Icon } from '../components/Icon';
 import type { PaymentSession } from '../types';
@@ -18,12 +18,10 @@ const CONTAINER_ID = 'klarna-payments-container';
  */
 export function KlarnaPayment({ session, loading, error }: Props) {
   const [widgetError, setWidgetError] = useState<string | null>(null);
-  const initialised = useRef<string | null>(null);
 
   useEffect(() => {
+    setWidgetError(null);
     if (!session || session.test) return;
-    if (initialised.current === session.clientToken) return;
-    initialised.current = session.clientToken;
 
     let active = true;
     loadKlarna()
@@ -69,7 +67,7 @@ export function KlarnaPayment({ session, loading, error }: Props) {
             <strong>Testläge</strong>
             <p>
               Klarnas widget visas här när butiken har API-nycklar. Just nu läggs ordern utan att
-              någon betalning genomförs, och du får en betalningslänk via e-post i stället.
+              någon betalning genomförs. Vi kontaktar dig för att bekräfta ordern och betalningen.
             </p>
           </div>
         </div>
@@ -77,7 +75,7 @@ export function KlarnaPayment({ session, loading, error }: Props) {
 
       <div id={CONTAINER_ID} />
 
-      {!session?.test && !loading && (
+      {session && !session.test && !loading && (
         <p className="dim" style={{ fontSize: '0.82rem', marginTop: 12, marginBottom: 0 }}>
           <Icon name="shield" size={13} /> Betalningen hanteras av Klarna. Inga betaluppgifter
           lagras hos oss.

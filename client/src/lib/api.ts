@@ -110,11 +110,12 @@ export function createPaymentSession(
         lines: Array<{ productId: string; quantity: number; color: string; size?: string }>;
       }
     | { type: 'custom'; request: QuoteRequest; projectName: string },
-): Promise<{ session: PaymentSession; amount: number }> {
+): Promise<{ session: PaymentSession; amount: number; summary?: Pick<ShopOrder, 'lines' | 'subtotal' | 'shipping' | 'total'> }> {
   return request('/payments/session', { method: 'POST', body: JSON.stringify(payload) });
 }
 
 export function placeOrder(payload: {
+  expectedTotal?: number;
   customer: CustomerDetails;
   lines: Array<{
     productId: string;

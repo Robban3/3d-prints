@@ -33,7 +33,14 @@ function readStorage(): CartItem[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     const parsed: unknown = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? (parsed as CartItem[]) : [];
+    return Array.isArray(parsed) ? parsed.filter((item): item is CartItem =>
+      item && typeof item === 'object' &&
+      ['key', 'productId', 'slug', 'name', 'color'].every(field => typeof item[field] === 'string' && item[field].length > 0) &&
+      Number.isInteger(item.quantity) && item.quantity >= 1 && item.quantity <= 99 &&
+      Number.isFinite(item.unitPrice) && item.unitPrice >= 0 &&
+      item.art && typeof item.art.shape === 'string' && typeof item.art.tone === 'string' &&
+      (item.size === undefined || typeof item.size === 'string')
+    ) : [];
   } catch {
     return [];
   }
@@ -61,6 +68,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             ? {
                 ...entry,
                 image: item.image,
+                unitPrice: item.unitPrice,
+                name: item.name,
                 quantity: Math.min(99, entry.quantity + item.quantity),
               }
             : entry,

@@ -74,6 +74,12 @@ describe('parseOrderLines', () => {
   it('avvisar tom varukorg', async () => {
     await assert.rejects(() => parseOrderLines([]), ValidationError);
   });
+  it('avvisar okända storlekar och antal som inte är hela tal', async () => {
+    await assert.rejects(() => parseOrderLines([{ productId: product.id, quantity: 1, size: 'saknas' }]), ValidationError);
+    for (const quantity of [1.5, '2st', true]) {
+      await assert.rejects(() => parseOrderLines([{ productId: product.id, quantity }]), ValidationError);
+    }
+  });
 
   it('avvisar okänd produkt och ogiltig färg', async () => {
     await assert.rejects(
@@ -116,6 +122,8 @@ describe('parseQuoteRequest', () => {
   });
 
   it('avvisar värden utanför gränserna', async () => {
+    await assert.rejects(() => parseQuoteRequest({ ...valid, quantity: 1.5 }), ValidationError);
+    await assert.rejects(() => parseQuoteRequest({ ...valid, volumeCm3: '80cm3' }), ValidationError);
     await assert.rejects(() => parseQuoteRequest({ ...valid, volumeCm3: 99999 }), ValidationError);
     await assert.rejects(() => parseQuoteRequest({ ...valid, infill: 300 }), ValidationError);
     await assert.rejects(() => parseQuoteRequest({ ...valid, material: 'guld' }), ValidationError);
