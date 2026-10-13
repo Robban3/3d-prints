@@ -127,10 +127,26 @@ export async function listModelFiles(): Promise<UploadMeta[]> {
 }
 
 /** Kopplar en uppladdning till en order så att den inte städas bort eller återanvänds. */
-export async function claimUpload(id: string, orderId: string): Promise<UploadMeta | undefined> {
-  const meta = await readMeta(id);
-  if (!meta || meta.claimedBy || meta.kind === 'library') return undefined;
-  return writeMeta({ ...meta, claimedBy: orderId });
+let ownershipQueue: Promise<unknown> = Promise.resolve();
+function serializeOwnership<T>(action: () => Promise<T>): Promise<T> {
+  const result = ownershipQueue.then(action, action);
+  ownershipQueue = result.catch(() => undefined);
+  return result;
+}
+export function claimUpload(id: string, orderId: string): Promise<UploadMeta | undefined> {
+  return serializeOwnership(async () => {
+    const meta = await readMeta(id);
+    if (!meta || meta.claimedBy || meta.kind === 'library' || meta.kind === 'image') return undefined;
+    return writeMeta({ ...meta, claimedBy: orderId });
+  });
+}
+export function releaseUpload(id: string, orderId: string): Promise<void> {
+  return serializeOwnership(async () => {
+    const meta = await readMeta(id);
+    if (meta?.claimedBy === orderId && meta.kind !== 'image' && meta.kind !== 'library') {
+      await writeMeta({ ...meta, claimedBy: null });
+    }
+  });
 }
 
 export async function deleteUpload(id: string): Promise<boolean> {
@@ -187,6 +203,14 @@ const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_MAX_FILES = 20;
 const RATE_MAX_BYTES = 500 * 1024 * 1024;
 const buckets = new Map<string, Array<{ at: number; bytes: number }>>();
+const rateExpiryTimer = setInterval(() => {
+  const now = Date.now();
+  for (const [key, entries] of buckets) {
+    const recent = entries.filter(entry => now - entry.at < RATE_WINDOW_MS);
+    if (recent.length) buckets.set(key, recent); else buckets.delete(key);
+  }
+}, 60000);
+rateExpiryTimer.unref();
 
 export function rateLimitStatus(
   key: string,

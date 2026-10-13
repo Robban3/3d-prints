@@ -3,16 +3,14 @@ import { OrderSummary } from '../components/OrderSummary';
 import { fetchOrder } from '../lib/api';
 import { PageHeader } from '../components/PageHeader';
 import { useAsync } from '../lib/useAsync';
-import type { AnyOrder } from '../types';
 
 export function ConfirmationPage() {
   const { id = '' } = useParams();
   const location = useLocation();
-  // Ordern skickas med i navigeringen efter köp, annars hämtas den från servern.
-  const passed = (location.state as { order?: AnyOrder } | null)?.order;
+  const accessToken = new URLSearchParams(location.hash.slice(1)).get('access') ?? undefined;
   const { data, loading, error } = useAsync(
-    () => (passed ? Promise.resolve({ order: passed }) : fetchOrder(id)),
-    [id, passed],
+    () => fetchOrder(id, accessToken),
+    [id, accessToken],
   );
 
   return (
@@ -22,7 +20,7 @@ export function ConfirmationPage() {
         title="Tack för din beställning!"
         text={
           data
-            ? `Vi har skickat en bekräftelse till ${data.order.customer.email} tillsammans med en betalningslänk från Klarna.`
+            ? 'Din beställning är registrerad. Spara den privata orderlänken för att följa din beställning.'
             : 'Vi hämtar din order.'
         }
       />
@@ -41,13 +39,13 @@ export function ConfirmationPage() {
             <>
               <OrderSummary order={data.order} />
               <p className="muted" style={{ marginTop: 18, fontSize: '0.9rem' }}>
-                Spara ordernumret – med det följer du jobbet hela vägen från kön till leverans.
+                Spara den privata orderlänken och dela den inte med andra. Ordernumret ensamt ger inte tillgång till dina kunduppgifter.
               </p>
               <div className="row" style={{ marginTop: 18 }}>
                 <Link className="btn" to="/produkter">
                   Fortsätt handla
                 </Link>
-                <Link className="btn btn-ghost" to={`/spara-order?id=${data.order.id}`}>
+                <Link className="btn btn-ghost" to={`/spara-order?id=${data.order.id}#access=${accessToken}`}>
                   Spåra ordern
                 </Link>
               </div>

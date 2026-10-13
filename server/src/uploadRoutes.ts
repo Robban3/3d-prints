@@ -191,6 +191,7 @@ uploads.get('/uploads/:id', (req, res, next) => {
           : `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(meta.originalName)}`,
       );
       if (isImage) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      else res.setHeader('Cache-Control', 'private, no-store');
       res.setHeader('Content-Length', String(meta.size));
       object.body.on('error', next).pipe(res);
     })
@@ -204,7 +205,7 @@ uploads.delete('/uploads/:id', (req, res, next) => {
         res.status(404).json({ error: 'Filen hittades inte' });
         return;
       }
-      if (meta.claimedBy || meta.kind === 'library') {
+      if (meta.claimedBy || meta.kind === 'library' || meta.kind === 'image') {
         // Filen hör till en lagd order och ska finnas kvar för produktionen.
         res.status(409).json({ error: 'Filen hör till en beställning och kan inte tas bort här.' });
         return;
@@ -247,7 +248,7 @@ const handleImage: RequestHandler = (req, res, next) => {
   });
 };
 
-uploads.post('/uploads/images', handleImage, (req: Request, res: Response, next) => {
+uploads.post('/uploads/images', requireAdmin, handleImage, (req: Request, res: Response, next) => {
   const file = req.file;
   const id = (req as Request & { uploadId?: string }).uploadId;
   if (!file || !id) {

@@ -131,7 +131,7 @@ export function CheckoutPage() {
         authorizationToken,
       });
       clear();
-      navigate(`/order/${result.order.id}`, { state: { order: result.order } });
+      navigate(`/order/${result.order.id}#access=${result.accessToken}`);
     } catch (error) {
       if (error instanceof ApiError) {
         setErrors(error.fields);

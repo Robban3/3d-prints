@@ -47,13 +47,14 @@ export function Footer() {
               <li>
                 <Link to="/om-oss">Frakt, retur och FAQ</Link>
               </li>
+              <li><Link to="/integritet">Integritet och kakor</Link></li>
             </ul>
           </div>
           <div>
             <h4>Verkstaden</h4>
             <ul>
-              <li>Tredje Långgatan 14</li>
-              <li>413 03 Göteborg</li>
+              <li>Ebbe Lieberathsgatan 25</li>
+              <li>412 83 Göteborg</li>
               <li>Vardagar 09–17</li>
               <li>
                 <a href="mailto:support@formlabb.se">support@formlabb.se</a>
@@ -62,7 +63,7 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-bottom spread">
-          <span>© {new Date().getFullYear()} Formlabb AB · Org.nr 559xxx-xxxx</span>
+          <span>© {new Date().getFullYear()} Formlabb · P.C Service &amp; Säkerhet AB · Org.nr 559512-7381</span>
           <span>Priser inkl. moms · Fri frakt över 699 kr</span>
         </div>
       </div>

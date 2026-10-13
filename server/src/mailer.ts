@@ -5,6 +5,7 @@ import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
 import { formatDate, formatPrice } from './format.ts';
 import type { AnyOrder } from './types.ts';
+import { orderTrackingUrl } from './orderAccess.ts';
 
 /**
  * Utan SMTP-uppgifter skrivs breven till en katalog i stället för att skickas.
@@ -116,10 +117,10 @@ export function orderConfirmation(order: AnyOrder): Mail {
       `  ${order.customer.address}`,
       `  ${order.customer.postalCode} ${order.customer.city}`,
       '',
-      `Följ din order: https://formlabb.se/spara-order?id=${order.id}`,
+      `Din privata orderlänk (dela den inte): ${orderTrackingUrl(order)}`,
       '',
       'Hälsningar,',
-      'Formlabb, Tredje Långgatan 14, Göteborg',
+      'Formlabb, Ebbe Lieberathsgatan 25, Göteborg',
     ].join('\n'),
   };
 }
@@ -151,7 +152,7 @@ export function statusUpdate(order: AnyOrder): Mail | undefined {
       message.body,
       '',
       `Ordernummer: ${order.id}`,
-      `Följ din order: https://formlabb.se/spara-order?id=${order.id}`,
+      `Din privata orderlänk (dela den inte): ${orderTrackingUrl(order)}`,
       '',
       'Hälsningar,',
       'Formlabb',

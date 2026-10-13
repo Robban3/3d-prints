@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { orderAccessToken, validOrderAccess } from './orderAccess.ts';
 import { readAppearance } from './appearance.ts';
 import {
   allCategories,
@@ -11,7 +12,7 @@ import {
 import { QUOTE_LIMITS, quoteFor } from './pricing.ts';
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, shippingFor } from './shipping.ts';
 import { findOrder, generateOrderNumber, listOrders, saveOrder, updateOrder } from './store.ts';
-import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, readMeta } from './uploads.ts';
+import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, releaseUpload, readMeta } from './uploads.ts';
 import { pathParam } from './http.ts';
 import { release, reserve, stockLevels } from './stock.ts';
 import { orderConfirmation, sendMail } from './mailer.ts';
@@ -35,6 +36,10 @@ import {
 import type { CustomOrder, Order, PaymentDetails } from './types.ts';
 
 export const api = Router();
+api.use((req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/orders/')) res.set('Cache-Control', 'private, no-store');
+  next();
+});
 
 const orderLimit = rateLimit({
   name: 'orders',
@@ -189,7 +194,7 @@ async function settle(
   return {
     provider: 'klarna',
     reference: placed.orderId,
-    status: placed.fraudStatus === 'REJECTED' ? 'obetald' : 'auktoriserad',
+    status: placed.fraudStatus === 'ACCEPTED' ? 'auktoriserad' : placed.fraudStatus === 'REJECTED' ? 'obetald' : 'avvaktar',
     fraudStatus: placed.fraudStatus,
     test: placed.mock,
   };
@@ -200,7 +205,7 @@ async function notify(order: Order | CustomOrder): Promise<void> {
   try {
     await sendMail(orderConfirmation(order));
   } catch (error) {
-    console.error('Kunde inte skicka orderbekräftelse', error);
+    console.error('Kunde inte skicka orderbekräftelse');
   }
 }
 
@@ -247,7 +252,7 @@ api.post('/orders', orderLimit, async (req, res) => {
 
   await saveOrder(order);
   await notify(order);
-  res.status(201).json({ order });
+  res.status(201).json({ order, accessToken: orderAccessToken(order) });
 });
 
 api.post('/custom-orders', orderLimit, async (req, res) => {
@@ -283,10 +288,16 @@ api.post('/custom-orders', orderLimit, async (req, res) => {
     }
   }
 
-  const payment = await settle(
-    typeof body.authorizationToken === 'string' ? body.authorizationToken : undefined,
-    payloadForCustomOrder({ projectName, request, quote, id: orderId }, paymentLocale()),
-  );
+  let payment;
+  try {
+    payment = await settle(
+      typeof body.authorizationToken === 'string' ? body.authorizationToken : undefined,
+      payloadForCustomOrder({ projectName, request, quote, id: orderId }, paymentLocale()),
+    );
+  } catch (error) {
+    if (upload) await releaseUpload(upload.id, orderId);
+    throw error;
+  }
 
   const order: CustomOrder = {
     id: orderId,
@@ -309,7 +320,7 @@ api.post('/custom-orders', orderLimit, async (req, res) => {
 
   await saveOrder(order);
   await notify(order);
-  res.status(201).json({ order });
+  res.status(201).json({ order, accessToken: orderAccessToken(order) });
 });
 
 /**
@@ -329,6 +340,10 @@ api.post('/payments/klarna/notification', async (req, res) => {
   const event = typeof body.event_type === 'string' ? body.event_type : '';
   if (!klarnaOrderId || !event) {
     res.status(400).json({ error: 'Saknar order_id eller event_type' });
+    return;
+  }
+  if (!['FRAUD_RISK_ACCEPTED', 'FRAUD_RISK_REJECTED'].includes(event)) {
+    res.status(400).json({ error: 'Okänd notifiering' });
     return;
   }
 
@@ -351,9 +366,13 @@ api.post('/payments/klarna/notification', async (req, res) => {
   res.json({ ok: true });
 });
 
-api.get('/orders/:id', async (req, res) => {
+api.get('/orders/:id', rateLimit({ name: 'order-access', windowMs: 60000, max: 30, message: 'För många försök. Vänta en stund.' }), async (req, res) => {
+  if (!/^Bearer [a-f0-9]{64}$/.test(req.get('authorization') ?? '')) {
+    res.status(404).json({ error: 'Använd din privata orderlänk eller kontakta support@formlabb.se.' });
+    return;
+  }
   const order = await findOrder(pathParam(req.params.id));
-  if (!order) {
+  if (!order || !validOrderAccess(order, req.get('authorization'))) {
     res.status(404).json({ error: 'Ordern hittades inte' });
     return;
   }

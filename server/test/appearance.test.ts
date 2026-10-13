@@ -19,6 +19,7 @@ before(async () => {
   process.env.APPEARANCE_STORE = join(directory, 'appearance.json');
   process.env.AUDIT_STORE = join(directory, 'audit.json');
   process.env.ADMIN_TOKEN = key;
+  process.env.ADMIN_ACCOUNT_STORE = join(directory, 'admin-account.json');
   const app = express();
   app.use(express.json());
   app.use('/api', admin, api);
@@ -35,6 +36,7 @@ after(async () => {
   delete process.env.APPEARANCE_STORE;
   delete process.env.AUDIT_STORE;
   delete process.env.ADMIN_TOKEN;
+  delete process.env.ADMIN_ACCOUNT_STORE;
 });
 
 describe('butikens teman', () => {

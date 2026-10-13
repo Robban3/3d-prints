@@ -10,18 +10,20 @@ import { HistoryView } from '../components/admin/HistoryView';
 import { ThemeManager } from '../components/admin/ThemeManager';
 import { AdminSignIn } from '../components/admin/AdminSignIn';
 import { PrintFileLibrary } from '../components/admin/PrintFileLibrary';
+import { PrivacyManager } from '../components/admin/PrivacyManager';
 import { ApiError, adminLogout, fetchAdminCategories, fetchAdminMaterials, fetchAdminStatus } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import type { Category, Material } from '../types';
 
 const STORAGE_KEY = 'formlabb.admin.token';
 
-type Tab = 'ordrar' | 'produkter' | 'filer' | 'kategorier' | 'material' | 'import' | 'historik' | 'teman';
+type Tab = 'ordrar' | 'produkter' | 'filer' | 'kategorier' | 'material' | 'import' | 'historik' | 'teman' | 'gdpr';
 
 const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'ordrar', label: 'Ordrar' },
   { id: 'produkter', label: 'Produkter' },
   { id: 'filer', label: 'Printfiler' },
+  { id: 'gdpr', label: 'GDPR' },
   { id: 'kategorier', label: 'Kategorier' },
   { id: 'material', label: 'Material' },
   { id: 'import', label: 'Import/export' },
@@ -167,6 +169,7 @@ export function AdminPage() {
 
           {tab === 'ordrar' && <OrderManager token={token} onUnauthorized={signOut} />}
           {tab === 'filer' && <PrintFileLibrary token={token} />}
+          {tab === 'gdpr' && <PrivacyManager token={token} />}
           {tab === 'produkter' && (
             <ProductManager
               token={token}

@@ -1,4 +1,5 @@
 import { TextAreaField, TextField } from './Field';
+import { Link } from 'react-router';
 import type { CustomerDetails } from '../types';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 export function CustomerForm({ value, errors, onChange, noteLabel, notePlaceholder }: Props) {
   return (
     <div className="stack">
+      <p className="field-hint">Vi använder uppgifterna för din beställning och kundservice. <Link to="/integritet" target="_blank" rel="noreferrer">Läs om personuppgifter och dina rättigheter.</Link></p>
       <div className="grid-2">
         <TextField
           label="Namn"
