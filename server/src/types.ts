@@ -28,7 +28,7 @@ export interface Product {
   /** Grundpris i kronor inkl. moms. */
   price: number;
   material: MaterialId;
-  /** Ytfinish som visas tillsammans med materialet, t.ex. ”PLA Matte”. */
+  /** Ytfinish som visas tillsammans med materialet, t.ex. ”PLA Matt”. */
   finish: string;
   /** Ungefärlig printtid i timmar, används för leveransbesked. */
   printTimeHours: number;

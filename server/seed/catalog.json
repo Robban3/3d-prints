@@ -9,7 +9,7 @@
       "category": "inredning",
       "price": 249,
       "material": "petg",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 9,
       "dimensions": {
         "width": 110,
@@ -195,7 +195,7 @@
       "category": "kontor",
       "price": 279,
       "material": "pla",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 7,
       "dimensions": {
         "width": 120,
@@ -263,7 +263,7 @@
       "category": "kontor",
       "price": 349,
       "material": "pla",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 11,
       "dimensions": {
         "width": 180,
@@ -606,7 +606,7 @@
       "category": "inredning",
       "price": 449,
       "material": "pla",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 16,
       "dimensions": {
         "width": 120,
@@ -707,7 +707,7 @@
       "category": "kontor",
       "price": 179,
       "material": "pla",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 5,
       "dimensions": {
         "width": 105,
@@ -784,7 +784,7 @@
       "category": "tillbehor",
       "price": 149,
       "material": "petg",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 4,
       "dimensions": {
         "width": 45,
@@ -905,7 +905,7 @@
       "category": "kok",
       "price": 299,
       "material": "petg",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 8,
       "dimensions": {
         "width": 130,
@@ -973,7 +973,7 @@
       "category": "prylar",
       "price": 349,
       "material": "pla",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 12,
       "dimensions": {
         "width": 110,
@@ -1041,7 +1041,7 @@
       "category": "tillbehor",
       "price": 129,
       "material": "tpu",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 3,
       "dimensions": {
         "width": 78,
@@ -1109,7 +1109,7 @@
       "category": "kontor",
       "price": 129,
       "material": "petg",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 3,
       "dimensions": {
         "width": 25,
@@ -1233,7 +1233,7 @@
       "category": "prylar",
       "price": 199,
       "material": "pla",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 5,
       "dimensions": {
         "width": 78,
@@ -1301,7 +1301,7 @@
       "category": "kok",
       "price": 299,
       "material": "petg",
-      "finish": "Matte",
+      "finish": "Matt",
       "printTimeHours": 10,
       "dimensions": {
         "width": 360,
@@ -1368,7 +1368,7 @@
       "category": "inredning",
       "price": 349,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 130,
@@ -1410,7 +1410,7 @@
       "category": "julkollektionen",
       "price": 199,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 80,
@@ -1453,7 +1453,7 @@
       "category": "julkollektionen",
       "price": 129,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 140,
@@ -1495,7 +1495,7 @@
       "category": "inredning",
       "price": 249,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 140,
@@ -1537,7 +1537,7 @@
       "category": "julkollektionen",
       "price": 99,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 80,
@@ -1579,7 +1579,7 @@
       "category": "julkollektionen",
       "price": 99,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 80,
@@ -1621,7 +1621,7 @@
       "category": "julkollektionen",
       "price": 229,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 90,
@@ -1664,7 +1664,7 @@
       "category": "julkollektionen",
       "price": 129,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 160,
@@ -1706,7 +1706,7 @@
       "category": "julkollektionen",
       "price": 149,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 100,
@@ -1748,7 +1748,7 @@
       "category": "julkollektionen",
       "price": 249,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 70,
@@ -1834,7 +1834,7 @@
       "category": "julkollektionen",
       "price": 149,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 80,
@@ -1958,7 +1958,7 @@
       "category": "julkollektionen",
       "price": 149,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 100,
@@ -2000,7 +2000,7 @@
       "category": "julkollektionen",
       "price": 129,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 90,
@@ -2043,7 +2043,7 @@
       "category": "julkollektionen",
       "price": 179,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 75,
@@ -2086,7 +2086,7 @@
       "category": "julkollektionen",
       "price": 199,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 130,
@@ -2128,7 +2128,7 @@
       "category": "julkollektionen",
       "price": 349,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 80,
@@ -2171,7 +2171,7 @@
       "category": "julkollektionen",
       "price": 179,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 55,
@@ -2214,7 +2214,7 @@
       "category": "julkollektionen",
       "price": 99,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 120,
@@ -2256,7 +2256,7 @@
       "category": "julkollektionen",
       "price": 99,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 60,
@@ -2299,7 +2299,7 @@
       "category": "julkollektionen",
       "price": 149,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 80,
@@ -2341,7 +2341,7 @@
       "category": "julkollektionen",
       "price": 129,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 70,
@@ -2568,7 +2568,7 @@
       "category": "halloween",
       "price": 349,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 170,
@@ -2611,7 +2611,7 @@
       "category": "halloween",
       "price": 249,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 90,
@@ -2654,7 +2654,7 @@
       "category": "halloween",
       "price": 449,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 140,
@@ -2697,7 +2697,7 @@
       "category": "halloween",
       "price": 249,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 180,
@@ -2740,7 +2740,7 @@
       "category": "halloween",
       "price": 279,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 200,
@@ -2783,7 +2783,7 @@
       "category": "halloween",
       "price": 399,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 90,
@@ -2826,7 +2826,7 @@
       "category": "halloween",
       "price": 229,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 150,
@@ -2869,7 +2869,7 @@
       "category": "halloween",
       "price": 299,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 110,
@@ -2912,7 +2912,7 @@
       "category": "halloween",
       "price": 499,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 110,
@@ -2955,7 +2955,7 @@
       "category": "halloween",
       "price": 249,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 110,
@@ -2998,7 +2998,7 @@
       "category": "halloween",
       "price": 349,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 105,
@@ -3041,7 +3041,7 @@
       "category": "halloween",
       "price": 199,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 180,
@@ -3084,7 +3084,7 @@
       "category": "halloween",
       "price": 149,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 120,
@@ -3127,7 +3127,7 @@
       "category": "halloween",
       "price": 99,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 70,
@@ -3170,7 +3170,7 @@
       "category": "halloween",
       "price": 129,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 160,
@@ -3213,7 +3213,7 @@
       "category": "halloween",
       "price": 249,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 120,
@@ -3256,7 +3256,7 @@
       "category": "halloween",
       "price": 149,
       "material": "pla",
-      "finish": "matt",
+      "finish": "Matt",
       "printTimeHours": 0,
       "dimensions": {
         "width": 100,

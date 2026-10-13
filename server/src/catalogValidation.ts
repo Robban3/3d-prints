@@ -168,7 +168,8 @@ export function parseProductInput(
   const material = text(raw.material);
   if (!options.materialIds.includes(material)) errors.material = 'Välj ett material som finns.';
 
-  const finish = text(raw.finish) || 'Matte';
+  const rawFinish = text(raw.finish) || 'Matt';
+  const finish = /^(matte|matt)$/i.test(rawFinish) ? 'Matt' : rawFinish;
 
   const printTimeHours = num(raw.printTimeHours);
   const pending = raw.specificationsPending === true;

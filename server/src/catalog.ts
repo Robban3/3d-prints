@@ -59,6 +59,15 @@ async function load(): Promise<CatalogFile> {
       ? JSON.parse(await readDiskFile(process.env.CATALOG_SEED, 'utf8')) as CatalogFile
       : seed();
   }
+  // Unify older catalog spelling, including catalogs already stored in R2.
+  const products = cache.products.map((product) =>
+    /^(matte|matt)$/i.test(product.finish.trim())
+      ? { ...product, finish: 'Matt' }
+      : product,
+  );
+  if (products.some((product, index) => product.finish !== cache!.products[index]!.finish)) {
+    await persist({ ...cache, products });
+  }
   return cache;
 }
 
