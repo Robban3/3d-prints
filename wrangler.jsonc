@@ -5,7 +5,7 @@
   "compatibility_date": "2026-10-12",
   "observability": { "enabled": true },
   "vars": {
-    "PUBLIC_URL": "https://formlabb-shop.blue-darkness-3c69.workers.dev",
+    "PUBLIC_URL": "https://formlabb.se",
     "ADMIN_EMAIL": "admin@formlabb.se",
     "STATE_BUCKET": "formlabb-private",
     "S3_BUCKET": "formlabb-private",

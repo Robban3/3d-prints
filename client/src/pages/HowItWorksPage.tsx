@@ -13,7 +13,7 @@ const steps: Array<{ icon: IconName; title: string; text: string }> = [
   {
     icon: 'card',
     title: 'Du får pris på sekunden',
-    text: 'Priset räknas fram utifrån material, lagerhöjd, volym, fyllnadsgrad och antal. Du ser hela uppdelningen – materialkostnad, maskintid, startavgift och eventuell volymrabatt – innan du beställer.',
+    text: 'Priset är 50 kr per printtimme plus 95 kr i startavgift per order. Material ingår. Volym, fyllnadsgrad, kvalitet och antal ger en uppskattad printtid som vi kontrollerar från filen innan produktion.',
   },
   {
     icon: 'search',

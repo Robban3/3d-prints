@@ -59,6 +59,20 @@ it('avvisar fel lösenord/epost med samma fel och loggar in med rätt uppgifter'
   const correct = await request('/auth/login', { email: 'ADMIN@FORMLABB.SE', password });
   assert.equal(correct.status, 200); cookie = correct.headers.get('set-cookie')!.split(';')[0]!;
 });
+it('tillåter den publika domänen bakom containerproxyn och avvisar andra ursprung', async () => {
+  const previous = process.env.PUBLIC_URL;
+  process.env.PUBLIC_URL = 'https://formlabb.se';
+  try {
+    const headers = { Origin: 'https://formlabb.se', Host: 'container' };
+    assert.equal((await request('/auth/login', { email: 'admin@formlabb.se', password }, headers)).status, 200);
+    assert.equal((await request('/auth/logout', {}, headers)).status, 200);
+    assert.equal((await request('/auth/login', {}, { ...headers, Origin: 'https://attacker.example' })).status, 403);
+  } finally {
+    if (previous === undefined) delete process.env.PUBLIC_URL;
+    else process.env.PUBLIC_URL = previous;
+  }
+});
+
 it('avvisar främmande ursprung och begränsar inloggningsförsök', async () => {
   assert.equal((await request('/auth/login', { email: 'admin@formlabb.se', password }, { Origin: 'https://attacker.example' })).status, 403);
   for (let i = 0; i < 10; i++) assert.equal((await request('/auth/login', { email: 'x', password: 'x' })).status, 401);

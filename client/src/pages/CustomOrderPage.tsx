@@ -49,7 +49,7 @@ export function CustomOrderPage() {
   const [request, setRequest] = useState<QuoteRequest>({
     material: 'pla',
     quality: 'standard',
-    volumeCm3: 120,
+    volumeCm3: 0,
     infill: 20,
     quantity: 1,
     rush: false,
@@ -72,6 +72,9 @@ export function CustomOrderPage() {
   // Prisförslaget hämtas från servern så att butiken och kassan alltid räknar lika.
   useEffect(() => {
     let active = true;
+    setQuote(null);
+    setQuoteError(null);
+    if (request.volumeCm3 <= 0) return;
     const timer = window.setTimeout(() => {
       fetchQuote(request)
         .then((result) => {
@@ -192,11 +195,7 @@ export function CustomOrderPage() {
                           onClick={() => patch({ material: material.id as MaterialId })}
                         >
                           <strong>{material.name}</strong>
-                          <span>
-                            {material.priceFactor === 1
-                              ? 'Grundpris'
-                              : `×${material.priceFactor.toString().replace('.', ',')} materialpris`}
-                          </span>
+                          <span>Ingår i timpriset</span>
                         </button>
                       ))}
                     </div>
@@ -240,7 +239,7 @@ export function CustomOrderPage() {
                     <input
                       id="volume"
                       type="range"
-                      min={limits?.volumeCm3.min ?? 1}
+                      min={0}
                       max={1500}
                       step={1}
                       value={request.volumeCm3}
@@ -293,7 +292,7 @@ export function CustomOrderPage() {
                       max={limits?.quantity.max ?? 500}
                       value={request.quantity}
                       error={errors.quantity}
-                      hint="Volymrabatt från 5 st."
+                      hint="50 kr per printtimme. Startavgift 95 kr per order."
                       onChange={(event) =>
                         patch({
                           quantity: Math.max(1, Number(event.target.value) || 1),
@@ -302,29 +301,6 @@ export function CustomOrderPage() {
                     />
                   </div>
 
-                  <label className="checkbox">
-                    <input
-                      type="checkbox"
-                      checked={request.postProcessing}
-                      onChange={(event) => patch({ postProcessing: event.target.checked })}
-                    />
-                    <span>
-                      <strong>Efterbearbetning (+85 kr/st)</strong>
-                      <span>Stödmaterial bort, slipning och polering av synliga ytor.</span>
-                    </span>
-                  </label>
-
-                  <label className="checkbox">
-                    <input
-                      type="checkbox"
-                      checked={request.rush}
-                      onChange={(event) => patch({ rush: event.target.checked })}
-                    />
-                    <span>
-                      <strong>Express (+40 %)</strong>
-                      <span>Ditt jobb går först i kön och skickas så snart det är klart.</span>
-                    </span>
-                  </label>
                 </div>
               </div>
 
@@ -343,6 +319,13 @@ export function CustomOrderPage() {
             <aside className="panel sticky-panel">
               <h2>Ditt pris</h2>
               {quoteError && <p className="notice notice-error">{quoteError}</p>}
+              {!quote && (
+                <>
+                  <div className="price" style={{ fontSize: '2.4rem', margin: '8px 0 4px' }}>0 kr</div>
+                  <p className="dim">50 kr per printtimme + 95 kr i startavgift per order. Material ingår.</p>
+                  <p className="notice">Ange modellens ungefärliga volym för att få ett prisförslag. Vi kontrollerar printtiden från filen innan produktion.</p>
+                </>
+              )}
               {quote && (
                 <>
                   <div className="price" style={{ fontSize: '2.4rem', margin: '8px 0 4px' }}>
@@ -354,11 +337,7 @@ export function CustomOrderPage() {
 
                   <div style={{ margin: '18px 0' }}>
                     <div className="summary-row">
-                      <span>Material ({selectedMaterial?.name})</span>
-                      <span>{formatPrice(quote.materialCost)}/st</span>
-                    </div>
-                    <div className="summary-row">
-                      <span>Maskintid</span>
+                      <span>Printtid · 50 kr/timme</span>
                       <span>{formatPrice(quote.machineCost)}/st</span>
                     </div>
                     {quote.postProcessingCost > 0 && (
@@ -407,7 +386,7 @@ export function CustomOrderPage() {
                 type="submit"
                 className="btn btn-block btn-lg"
                 style={{ marginTop: 18 }}
-                disabled={submitting || uploading}
+                disabled={submitting || uploading || !quote}
               >
                 {submitting ? 'Skickar…' : uploading ? 'Väntar på filen…' : 'Skicka beställning'}
               </button>
