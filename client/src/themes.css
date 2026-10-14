@@ -508,6 +508,57 @@ h1, h2, .season-intro h2, .section-head h2, .custom-pitch h2 {
 }
 @media (prefers-reduced-motion: reduce) { .nav-trigger > svg, .site-header .nav-menu a { transition: none; } }
 
+.route-loading { min-height: 45vh; padding-block: 48px; }
+/* Mobile layout keeps controls usable without horizontal scrolling or input zoom. */
+@media (max-width: 700px) {
+  .container { padding-inline: 16px; }
+  input, select, textarea, .input, .select { font-size: 16px; max-width: 100%; }
+  .btn, .btn-ghost, .btn-quiet, .icon-btn, .nav-trigger, .qty button, .add-btn { min-height: 44px; }
+  .icon-btn, .qty button, .add-btn { min-width: 44px; }
+  .site-header .container { padding-inline: 16px; gap: 12px; }
+  .site-header .nav { gap: 8px; justify-content: space-between; }
+  .site-header .nav > a, .site-header .nav-trigger { display: inline-flex; align-items: center; min-height: 44px; }
+  .site-header .nav-menu { width: min(340px, calc(100vw - 32px)); }
+  .header-search form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  .grid-2, .custom-grid, .checkout-layout { grid-template-columns: minmax(0, 1fr); }
+  .toolbar, .toolbar-right { display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; gap: 10px; }
+  .toolbar .input, .toolbar .select { width: 100% !important; }
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .product-card .body { padding: 12px 10px; }
+  .product-card h3 { font-size: .95rem; line-height: 1.35; overflow-wrap: anywhere; }
+  .product-card .sub { font-size: .75rem; }
+  .product-card .price-row { gap: 6px; flex-wrap: wrap; }
+  .product-card .price { font-size: 1rem; }
+  .product-layout { gap: 22px; }
+  .product-media { display: contents; }
+  .product-media > .product-hero-art, .product-media > p { order: 1; }
+  .product-details { order: 2; }
+  .product-specs { order: 3; }
+  .product-details .btn-lg { width: 100%; }
+  .product-hero-art { padding: 12px; }
+  .cart-item { grid-template-columns: 62px minmax(0, 1fr); gap: 12px; }
+  .cart-item > strong { grid-column: 2; }
+  .cart-item .qty { flex-shrink: 0; }
+  .panel { padding: 18px; }
+  .field, .cart-item > div, .summary-row > span { min-width: 0; overflow-wrap: anywhere; }
+  .season-hero-copy { padding: 26px 0; }
+  .season-hero h1, :root[data-theme='gallery'] .season-hero h1 { font-size: clamp(2.2rem, 10vw, 3.1rem); }
+  .season-hero-copy > p { line-height: 1.6; }
+  .season-hero-image { margin-inline: -16px; min-height: 0; height: clamp(250px, 70vw, 400px); }
+  :root[data-theme='nordic'] .season-hero-grid { padding-inline: 16px; }
+  :root[data-theme='nordic'] .season-hero-image { margin-inline: -16px; }
+  .photo-card { min-height: 240px; }
+  .photo-card-copy { max-width: calc(100% - 44px); }
+  .footer-grid { gap: 26px; }
+  .section { padding-block: 36px; }
+  .steps { gap: 10px; flex-wrap: wrap; }
+}
+@media (max-width: 360px) {
+  .product-grid { gap: 8px; }
+  .product-card .price-row { align-items: center; }
+  .site-header .brand-logo { width: 124px; }
+}
+
 /* Consistent workshop layouts for every admin view. */
 .admin-content h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); margin-bottom: 18px; }
 .admin-content .panel { padding: 22px; border-radius: 14px; }

@@ -40,7 +40,7 @@ export function Header() {
   // Menyn ska stängas när man klickar utanför den eller trycker Escape.
   useEffect(() => {
     if (!shopOpen) return;
-    function onPointerDown(event: MouseEvent) {
+    function onPointerDown(event: PointerEvent) {
       if (!shopRef.current?.contains(event.target as Node)) setShopOpen(false);
     }
     function onKeyDown(event: KeyboardEvent) {
@@ -49,10 +49,10 @@ export function Header() {
         shopTrigger.current?.focus();
       }
     }
-    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
     return () => {
-      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [shopOpen]);

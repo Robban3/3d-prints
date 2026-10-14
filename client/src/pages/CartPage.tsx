@@ -63,7 +63,7 @@ export function CartPage() {
                     aria-hidden="true"
                     tabIndex={-1}
                   >
-                    <ProductImage product={{ name: item.name, art: item.art, image: item.image }} />
+                    <ProductImage product={{ name: item.name, art: item.art, image: item.image }} sizes="90px" />
                   </Link>
                   <div>
                     <h3 style={{ margin: 0, fontSize: '1rem' }}>
