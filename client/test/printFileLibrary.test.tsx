@@ -4,7 +4,7 @@ import { it, expect, vi } from 'vitest';
 import { PrintFileLibrary } from '../src/components/admin/PrintFileLibrary';
 import { downloadPrintFile, fetchPrintFiles, uploadPrintFile, movePrintFile, saveFileFolder } from '../src/lib/api';
 
-vi.mock('../src/lib/api', () => ({ fetchPrintFiles: vi.fn(), downloadPrintFile: vi.fn(), uploadPrintFile: vi.fn(), movePrintFile: vi.fn(), saveFileFolder: vi.fn() }));
+vi.mock('../src/lib/api', async importOriginal => ({ ...await importOriginal<typeof import('../src/lib/api')>(), fetchPrintFiles: vi.fn(), downloadPrintFile: vi.fn(), uploadPrintFile: vi.fn(), movePrintFile: vi.fn(), saveFileFolder: vi.fn() }));
 
 it('finds customer files by order number and downloads the chosen file using admin authentication', async () => {
   const own = { id: 'own', fileName: 'egen.stl', source: 'own' as const, size: 100, createdAt: '2026-10-12T10:00:00Z', orderId: null };

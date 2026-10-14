@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { DragEvent } from 'react';
-import { downloadPrintFile, fetchPrintFiles, uploadPrintFile, saveFileFolder, movePrintFile } from '../../lib/api';
+import { ApiError, downloadPrintFile, fetchPrintFiles, uploadPrintFile, saveFileFolder, movePrintFile } from '../../lib/api';
 import type { AdminPrintFile, FileFolder } from '../../lib/api';
 import { Icon } from '../Icon';
 
@@ -65,7 +65,7 @@ export function PrintFileLibrary({ token }: { token: string }) {
       const result = await saveFileFolder(token, folderName, editing ?? undefined);
       await load(); setCurrent(result.folder.id); setFolderName(''); setEditing(null);
       setMessage(editing ? 'Mappnamnet är uppdaterat.' : 'Mappen är skapad.');
-    } catch (error) { setError(error instanceof Error ? error.message : 'Mappen kunde inte sparas.'); }
+    } catch (error) { setError(error instanceof ApiError ? Object.values(error.fields).join(' ') || error.message : error instanceof Error ? error.message : 'Mappen kunde inte sparas.'); }
     finally { setBusy(false); }
   }
   async function download(file: AdminPrintFile) {
