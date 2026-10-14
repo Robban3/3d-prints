@@ -41,6 +41,7 @@ import { storage } from './storage.ts';
 import { minimizeCustomerData } from './privacyRetention.ts';
 import { parseProduction } from './production.ts';
 import { ValidationError } from './validation.ts';
+import { readFileFolders, saveFileFolder, movePrintFile } from './fileFolders.ts';
 
 export const admin = Router();
 admin.use((_req, res, next) => { res.set('Cache-Control', 'private, no-store'); next(); });
@@ -199,13 +200,24 @@ admin.patch('/admin/orders/:id/production', requireAdmin, async (req, res) => {
 });
 
 admin.get('/admin/files', requireAdmin, async (_req, res) => {
-  const [files, orders] = await Promise.all([listModelFiles(), listOrders()]);
-  res.json({ files: files.map(file => {
+  const [files, orders, organization] = await Promise.all([listModelFiles(), listOrders(), readFileFolders()]);
+  res.json({ folders: organization.folders, files: files.map(file => {
     const order = orders.find(order => order.id === file.claimedBy);
     return { id: file.id, fileName: file.originalName, size: file.size, createdAt: file.createdAt,
-      source: file.kind === 'library' ? 'own' : 'customer', orderId: file.claimedBy,
+      source: file.kind === 'library' ? 'own' : 'customer', orderId: file.claimedBy, folderId: organization.assignments[file.id] ?? null,
       projectName: order?.type === 'custom' ? order.projectName : undefined };
   }) });
+});
+
+admin.post('/admin/file-folders', requireAdmin, async (req, res) => {
+  res.status(201).json({ folder: await saveFileFolder(req.body?.name) });
+});
+admin.patch('/admin/file-folders/:id', requireAdmin, async (req, res) => {
+  res.json({ folder: await saveFileFolder(req.body?.name, pathParam(req.params.id)) });
+});
+admin.patch('/admin/files/:id/folder', requireAdmin, async (req, res) => {
+  await movePrintFile(pathParam(req.params.id), req.body?.folderId);
+  res.json({ ok: true });
 });
 
 admin.get('/admin/files/:id/download', requireAdmin, async (req, res, next) => {

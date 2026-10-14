@@ -28,14 +28,27 @@ const BASE = '/api';
 export interface AdminPrintFile {
   id: string; fileName: string; size: number; createdAt: string;
   source: 'own' | 'customer'; orderId: string | null; projectName?: string;
+  folderId?: string | null;
 }
-export function fetchPrintFiles(token: string): Promise<{ files: AdminPrintFile[] }> {
+export interface FileFolder { id: string; name: string }
+export function fetchPrintFiles(token: string): Promise<{ files: AdminPrintFile[]; folders?: FileFolder[] }> {
   return request('/admin/files', adminInit(token));
 }
-export async function uploadPrintFile(token: string, file: File): Promise<void> {
+export function saveFileFolder(token: string, name: string, id?: string): Promise<{ folder: FileFolder }> {
+  return request(id ? `/admin/file-folders/${encodeURIComponent(id)}` : '/admin/file-folders', adminInit(token, { method: id ? 'PATCH' : 'POST', body: JSON.stringify({ name }) }));
+}
+export function movePrintFile(token: string, id: string, folderId: string | null): Promise<{ ok: true }> {
+  return request(`/admin/files/${encodeURIComponent(id)}/folder`, adminInit(token, { method: 'PATCH', body: JSON.stringify({ folderId }) }));
+}
+export async function uploadPrintFile(token: string, file: File, folderId?: string | null): Promise<void> {
   const body = new FormData(); body.append('file', file);
   const response = await fetch(`${BASE}/admin/files`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body });
   if (!response.ok) { const result = await response.json(); throw new ApiError(result.error ?? 'Uppladdningen misslyckades.', response.status, {}); }
+  if (folderId) {
+    const result = await response.json() as { id: string };
+    try { await movePrintFile(token, result.id, folderId); }
+    catch { throw new Error(`${file.name} laddades upp men kunde inte flyttas. Den finns bland osorterade filer.`); }
+  }
 }
 export async function downloadPrintFile(token: string, file: AdminPrintFile): Promise<void> {
   const response = await fetch(`${BASE}/admin/files/${encodeURIComponent(file.id)}/download`, { headers: { Authorization: `Bearer ${token}` } });
