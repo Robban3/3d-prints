@@ -11,9 +11,9 @@ export const themes = [
 ] as const;
 
 export function themeImage(id: ThemeId) {
-  if (id === 'halloween') return '/images/halloween/ribbad-pumpa.webp';
-  if (id === 'forest') return '/images/products/spiral-vas.webp';
-  if (id === 'coastal') return '/images/products/vas-nexo.webp';
+  if (id === 'halloween') return '/images/themes/halloween-hero-v1.webp';
+  if (id === 'forest') return '/images/themes/forest-hero-v1.webp';
+  if (id === 'coastal') return '/images/themes/coastal-hero-v1.webp';
   return `/images/themes/${id}.webp`;
 }
 
