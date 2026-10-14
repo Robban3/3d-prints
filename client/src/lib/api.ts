@@ -20,6 +20,7 @@ import type {
   ProductDraft,
   ShopOrder,
   UploadedFile,
+  ProductionPlan,
 } from '../types';
 
 const BASE = '/api';
@@ -225,6 +226,16 @@ export function setOrderStatus(
 
 function adminInit(token: string, init: RequestInit = {}): RequestInit {
   return { ...init, headers: { ...init.headers, Authorization: `Bearer ${token}` } };
+}
+
+export function fetchOperations(token: string): Promise<{ emailConfigured: boolean; paymentConfigured: boolean; paymentEnvironment: string; storage: string }> {
+  return request('/admin/operations', adminInit(token));
+}
+export function testShopEmail(token: string): Promise<{ accepted: boolean }> {
+  return request('/admin/email/test', adminInit(token, { method: 'POST', body: '{}' }));
+}
+export function saveProduction(token: string, id: string, production: Omit<ProductionPlan, 'revision'>, expectedRevision: number): Promise<{ order: AnyOrder; next: OrderStatus[] }> {
+  return request(`/admin/orders/${encodeURIComponent(id)}/production`, adminInit(token, { method: 'PATCH', body: JSON.stringify({ production, expectedRevision }) }));
 }
 
 export function adminLogin(email: string, password: string) { return request('/admin/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }); }

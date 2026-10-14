@@ -16,11 +16,14 @@ it('isolates order access, personal data exports, image writes and 90-day file r
   process.env.MAIL_OUTBOX = join(directory, 'outbox');
   process.env.CATALOG_STORE = join(directory, 'catalog.json');
   process.env.STOCK_STORE = join(directory, 'stock.json');
+  process.env.AUDIT_STORE = join(directory, 'audit.json');
   process.env.SMTP_HOST = '';
   process.env.KLARNA_USERNAME = '';
   process.env.KLARNA_PASSWORD = '';
   await mkdir(process.env.UPLOAD_DIR);
   const { api } = await import('../src/routes.ts');
+  const { ValidationError } = await import('../src/validation.ts');
+  const { CatalogError } = await import('../src/catalog.ts');
   const { admin } = await import('../src/adminRoutes.ts');
   const { uploads } = await import('../src/uploadRoutes.ts');
   const { orderAccessToken, orderTrackingUrl } = await import('../src/orderAccess.ts');
@@ -50,9 +53,17 @@ it('isolates order access, personal data exports, image writes and 90-day file r
   let server: Server | undefined;
   try {
     const app = express(); app.use(express.json()); app.use('/api', uploads); app.use('/api', admin); app.use('/api', api);
+    app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+      if (error instanceof ValidationError) { res.status(400).json({ error: error.message, fields: error.fields }); return; }
+      if (error instanceof CatalogError) { res.status(error.status).json({ error: error.message, fields: error.fields }); return; }
+      res.status(500).json({ error: 'Test storage failure' });
+    });
     await new Promise<void>(resolve => { server = app.listen(0, '127.0.0.1', () => resolve()); });
     const address = server!.address(); assert.ok(address && typeof address === 'object');
     const base = `http://127.0.0.1:${address.port}/api`;
+    assert.equal((await fetch(`${base}/admin/operations`)).status, 401);
+    assert.equal((await fetch(`${base}/admin/email/test`, { method: 'POST' })).status, 401);
+    assert.equal((await fetch(`${base}/admin/email/test`, { method: 'POST', headers: { Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } })).status, 503);
     const product = (await allProducts())[0]!;
     const lines = [{ productId: product.id, name: product.name, quantity: 2, unitPrice: product.price, color: product.colors[0]! }];
     await setStock(product.id, 10); await reserve(lines);
@@ -82,6 +93,15 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     const authorized = await get(order.id, orderAccessToken(order));
     assert.equal(authorized.status, 200); assert.match(authorized.headers.get('cache-control')!, /no-store/);
     assert.equal((await authorized.json()).order.customer.email, order.customer.email);
+    const productionBody = { production: { machine: 'Bambu 1', notes: 'Private workshop note', plannedDate: '2026-10-14', dueDate: '2026-10-16', estimatedHours: 3.6, modelIds: [own.id] }, expectedRevision: 0 };
+    const productionInit = { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productionBody) };
+    assert.equal((await fetch(`${base}/admin/orders/${order.id}/production`, productionInit)).status, 401);
+    const savedPlan = await fetch(`${base}/admin/orders/${order.id}/production`, { ...productionInit, headers: { ...productionInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } });
+    assert.equal(savedPlan.status, 200); assert.equal((await savedPlan.json()).order.production.revision, 1);
+    assert.equal((await (await get(order.id, orderAccessToken(order))).json()).order.production, undefined);
+    assert.equal((await fetch(`${base}/admin/orders/${order.id}/production`, { ...productionInit, headers: { ...productionInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } })).status, 409);
+    const wrongFile = await fetch(`${base}/admin/orders/${order.id}/production`, { ...productionInit, headers: { ...productionInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` }, body: JSON.stringify({ ...productionBody, production: { ...productionBody.production, modelIds: [meta.id] }, expectedRevision: 1 }) });
+    assert.equal(wrongFile.status, 400);
     const tracking = new URL(orderTrackingUrl(order)); assert.equal(tracking.searchParams.has('access'), false); assert.match(tracking.hash, /^#access=[a-f0-9]{64}$/);
     assert.equal((await fetch(`${base}/uploads/images`, { method: 'POST' })).status, 401);
     assert.equal((await fetch(`${base}/admin/uploads/images`, { method: 'POST' })).status, 401);
@@ -116,6 +136,6 @@ it('isolates order access, personal data exports, image writes and 90-day file r
   } finally {
     if (server) await new Promise<void>(resolve => server!.close(() => resolve()));
     await rm(directory, { recursive: true, force: true });
-    for (const key of ['ORDER_STORE','UPLOAD_DIR','ADMIN_ACCOUNT_STORE','ADMIN_TOKEN','MAIL_OUTBOX','CATALOG_STORE','STOCK_STORE','SMTP_HOST','KLARNA_USERNAME','KLARNA_PASSWORD']) delete process.env[key];
+    for (const key of ['ORDER_STORE','UPLOAD_DIR','ADMIN_ACCOUNT_STORE','ADMIN_TOKEN','MAIL_OUTBOX','CATALOG_STORE','STOCK_STORE','AUDIT_STORE','SMTP_HOST','KLARNA_USERNAME','KLARNA_PASSWORD']) delete process.env[key];
   }
 });

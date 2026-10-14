@@ -169,6 +169,7 @@ export interface StatusEvent {
 }
 
 export interface ShopOrder {
+  production?: ProductionPlan;
   id: string;
   type: 'shop';
   createdAt: string;
@@ -183,6 +184,7 @@ export interface ShopOrder {
 }
 
 export interface CustomOrder {
+  production?: ProductionPlan;
   id: string;
   type: 'custom';
   createdAt: string;
@@ -202,6 +204,16 @@ export interface CustomOrder {
 }
 
 export type AnyOrder = ShopOrder | CustomOrder;
+
+export interface ProductionPlan {
+  machine: string;
+  plannedDate: string;
+  dueDate: string;
+  estimatedHours: number | null;
+  notes: string;
+  modelIds: string[];
+  revision: number;
+}
 
 export interface AdminCategory extends Category {
   productCount: number;

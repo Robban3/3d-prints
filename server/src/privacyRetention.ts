@@ -15,10 +15,11 @@ export async function minimizeCustomerData(email: string): Promise<{ minimized: 
     }
     await updateOrder(order.id, current => {
       const customer = { ...current.customer, phone: '', note: '' };
+      const production = current.production ? { ...current.production, notes: '', revision: current.production.revision + 1 } : undefined;
       const history = current.history.map(({ note, ...event }) => event);
-      if (current.type === 'shop') return { ...current, customer, history };
+      if (current.type === 'shop') return { ...current, customer, history, production };
       const { fileId, fileName, fileUrl, fileSize, ...retained } = current;
-      return { ...retained, customer, history, description: '', projectName: 'Eget printjobb' };
+      return { ...retained, customer, history, production, description: '', projectName: 'Eget printjobb' };
     });
     minimized++;
   }

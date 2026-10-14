@@ -1999,3 +1999,14 @@ h1, h2 { letter-spacing: -.055em; font-weight: 650; }
   .christmas-mobile-copy .btn { border-radius: 999px; background: #f5e8ce; color: #183020; }
   .christmas-mobile-copy .btn:hover { background: #e7d7b6; }
 }
+/* Verkstadens planering */
+.workshop-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.workshop-metric { text-align: left; cursor: pointer; display: grid; gap: 12px; font: inherit; }
+.workshop-metric strong { font-size: 2rem; }
+.workshop-metric[aria-pressed="true"] { outline: 2px solid var(--accent); }
+.workshop-toolbar { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
+.workshop-toolbar .field { flex: 1; min-width: 180px; }
+.production-card { border-top: 1px solid var(--border); padding-top: 16px; }
+.production-card summary { cursor: pointer; font-weight: 700; }
+.production-files { border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+@media (max-width: 760px) { .workshop-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

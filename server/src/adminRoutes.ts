@@ -39,6 +39,8 @@ import type { AnyOrder, StatusEvent } from './types.ts';
 import { filePathFor, listModelFiles, readMeta, storedFileName } from './uploads.ts';
 import { storage } from './storage.ts';
 import { minimizeCustomerData } from './privacyRetention.ts';
+import { parseProduction } from './production.ts';
+import { ValidationError } from './validation.ts';
 
 export const admin = Router();
 admin.use((_req, res, next) => { res.set('Cache-Control', 'private, no-store'); next(); });
@@ -168,6 +170,32 @@ admin.get('/admin/orders', requireAdmin, async (_req, res) => {
     orders: orders.map((order) => ({ ...order, next: nextStatuses(order.status) })),
     total: orders.length,
   });
+});
+
+admin.get('/admin/operations', requireAdmin, async (_req, res) => {
+  res.json({ emailConfigured: mailIsConfigured(), paymentConfigured: Boolean(process.env.KLARNA_USERNAME && process.env.KLARNA_PASSWORD), paymentEnvironment: process.env.KLARNA_ENV === 'production' ? 'production' : 'test', storage: process.env.STATE_BUCKET ? 'r2' : 'local' });
+});
+
+admin.post('/admin/email/test', requireAdmin, async (_req, res) => {
+  if (!mailIsConfigured()) { res.status(503).json({ error: 'E-post är inte aktiverad.' }); return; }
+  const result = await sendMail({ to: 'support@formlabb.se', subject: 'Formlabb – test av butikens e-post', text: 'Detta är ett test av butikens e-postanslutning. Ingen beställning eller betalning har skapats.' });
+  res.json({ accepted: result.delivered });
+});
+
+admin.patch('/admin/orders/:id/production', requireAdmin, async (req, res) => {
+  const plan = parseProduction(req.body?.production);
+  const revision = req.body?.expectedRevision;
+  if (!Number.isInteger(revision) || revision < 0) throw new ValidationError({ production: 'Ladda om ordern innan du sparar.' });
+  for (const id of plan.modelIds) {
+    if ((await readMeta(id))?.kind !== 'library') throw new ValidationError({ 'production.modelIds': 'En vald fil finns inte i ert eget bibliotek.' });
+  }
+  const order = await updateOrder(pathParam(req.params.id), current => {
+    if ((current.production?.revision ?? 0) !== revision) throw new CatalogError({ production: 'Produktionskortet har ändrats. Ladda om för att se senaste versionen.' }, 409);
+    return { ...current, production: { ...plan, revision: revision + 1 } };
+  });
+  if (!order) { res.status(404).json({ error: 'Ordern hittades inte.' }); return; }
+  await record({ action: 'ändrad', entity: 'order', entityId: order.id, summary: 'Produktionskort uppdaterat', changed: ['production'] });
+  res.json({ order, next: nextStatuses(order.status) });
 });
 
 admin.get('/admin/files', requireAdmin, async (_req, res) => {

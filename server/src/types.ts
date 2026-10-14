@@ -122,6 +122,7 @@ export interface PaymentDetails {
 }
 
 export interface Order {
+  production?: ProductionPlan;
   id: string;
   type: 'shop';
   createdAt: string;
@@ -172,6 +173,7 @@ export interface QuoteBreakdown {
 }
 
 export interface CustomOrder {
+  production?: ProductionPlan;
   id: string;
   type: 'custom';
   createdAt: string;
@@ -192,3 +194,13 @@ export interface CustomOrder {
 }
 
 export type AnyOrder = Order | CustomOrder;
+
+export interface ProductionPlan {
+  machine: string;
+  plannedDate: string;
+  dueDate: string;
+  estimatedHours: number | null;
+  notes: string;
+  modelIds: string[];
+  revision: number;
+}
