@@ -11,6 +11,7 @@ import { admin } from './adminRoutes.ts';
 import { ORPHAN_MAX_AGE_MS, sweepOrphans } from './uploads.ts';
 import { sweepCustomerFiles } from './privacyRetention.ts';
 import { ValidationError } from './validation.ts';
+import { sweepLibraryUploads } from './libraryUploads.ts';
 import { KlarnaError } from './klarna.ts';
 import { OutOfStockError } from './stock.ts';
 import { CatalogError } from './catalog.ts';
@@ -128,7 +129,7 @@ app.listen(port, () => {
 // Uppladdningar som aldrig blev en beställning städas bort en gång i timmen.
 const sweepInterval = setInterval(
   () => {
-    Promise.all([sweepOrphans(ORPHAN_MAX_AGE_MS), sweepCustomerFiles()])
+    Promise.all([sweepOrphans(ORPHAN_MAX_AGE_MS), sweepCustomerFiles(), sweepLibraryUploads().then(() => 0)])
       .then((removed) => {
         if (removed.some(count => count > 0)) console.log('Gallrade uppladdningar enligt lagringsreglerna');
       })
@@ -138,3 +139,4 @@ const sweepInterval = setInterval(
 );
 sweepInterval.unref();
 void sweepCustomerFiles().catch(() => console.error('Gallring av kundfiler misslyckades'));
+void sweepLibraryUploads().catch(() => console.error('Cleanup of incomplete library uploads failed'));

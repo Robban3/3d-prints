@@ -29,6 +29,8 @@ import {
   writeMeta,
 } from './uploads.ts';
 
+import { startLibraryUpload, saveLibraryPart, finishLibraryUpload, abortLibraryUpload, LIBRARY_CHUNK_BYTES } from './libraryUploads.ts';
+
 export const uploads = Router();
 
 class UploadRejected extends Error {}
@@ -145,6 +147,27 @@ uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
       });
     })
     .catch(next);
+});
+
+const chunkUpload = multer({ storage, limits: { fileSize: LIBRARY_CHUNK_BYTES, files: 1, fields: 0 } });
+uploads.post('/admin/files/uploads', requireAdmin, async (req, res) => {
+  res.status(201).json(await startLibraryUpload(req.body?.fileName, req.body?.size));
+});
+uploads.put('/admin/files/uploads/:id/parts/:part', requireAdmin, (req, res, next) => {
+  chunkUpload.single('file')(req, res, async (error: unknown) => {
+    try {
+      if (error) { res.status(400).json({ error: 'Fildelen kunde inte tas emot. Försök igen.' }); return; }
+      if (!req.file) { res.status(400).json({ error: 'Ingen fildel togs emot.' }); return; }
+      res.json(await saveLibraryPart(pathParam(req.params.id), Number(pathParam(req.params.part)), req.file.path, req.file.size));
+    } catch (error) { next(error); }
+    finally { if (req.file?.path) await rm(req.file.path, { force: true }).catch(() => undefined); }
+  });
+});
+uploads.post('/admin/files/uploads/:id/complete', requireAdmin, async (req, res) => {
+  res.status(201).json(await finishLibraryUpload(pathParam(req.params.id), req.body?.folderId));
+});
+uploads.delete('/admin/files/uploads/:id', requireAdmin, async (req, res) => {
+  await abortLibraryUpload(pathParam(req.params.id)); res.json({ ok: true });
 });
 
 uploads.post('/admin/files', requireAdmin, handleUpload, async (req, res, next) => {

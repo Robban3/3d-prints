@@ -7,6 +7,7 @@ import { storage } from './storage.ts';
 /** Format vi kan slica direkt eller konvertera i verkstaden. */
 export const ALLOWED_EXTENSIONS = ['.stl', '.obj', '.3mf', '.step', '.stp', '.f3d'] as const;
 export const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
+export const MAX_LIBRARY_UPLOAD_BYTES = 150 * 1024 * 1024;
 
 /** Produktbilder laddas upp separat och har egna gränser. */
 export const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif'] as const;
