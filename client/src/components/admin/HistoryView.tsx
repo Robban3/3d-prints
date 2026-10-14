@@ -36,8 +36,7 @@ export function HistoryView({ token }: { token: string }) {
     <>
       <h2>Historik</h2>
       <p className="muted" style={{ fontSize: '0.9rem' }}>
-        De senaste ändringarna i katalogen och i ordrarnas status. Panelen har en gemensam nyckel
-        och ingen inloggning per person, så vem som gjorde ändringen loggas inte.
+        De senaste ändringarna i katalogen och i ordrarnas status, med de nyaste händelserna först.
       </p>
 
       {error && <p className="notice notice-error">{error}</p>}

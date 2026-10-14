@@ -67,8 +67,8 @@ describe('butikens teman', () => {
     assert.deepEqual(await readAppearance(), { theme: 'nordic' });
   });
 
-  it('sparar alla fyra teman på disk och visar dem för en ny besökare', async () => {
-    for (const theme of ['studio', 'gallery', 'workshop', 'nordic']) {
+  it('sparar alla sju teman på disk och visar dem för en ny besökare', async () => {
+    for (const theme of ['studio', 'gallery', 'workshop', 'halloween', 'forest', 'coastal', 'nordic']) {
       const saved = await fetch(`${base}/admin/appearance`, {
         method: 'PUT', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ theme }),
@@ -80,7 +80,7 @@ describe('butikens teman', () => {
       assert.deepEqual(await visitor.json(), { appearance: { theme } });
     }
     const audit = JSON.parse(await readFile(join(directory, 'audit.json'), 'utf8'));
-    assert.equal(audit.length, 4);
+    assert.equal(audit.length, 7);
     assert.equal(audit[0].entity, 'tema');
   });
 

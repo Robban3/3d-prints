@@ -70,6 +70,38 @@
   --theme-footer: #555c44; --theme-footer-ink: #fff7ea;
   --theme-art: #ebe0d0; --theme-art-two: #e1e5d5; --theme-radius: 12px;
 }
+:root[data-theme='halloween'] {
+  color-scheme: dark;
+  --bg: #201827; --bg-alt: #291e32; --surface: #302539; --surface-2: #403048;
+  --card: #302539; --border: #594561; --border-strong: #bfa4e3;
+  --text: #fff3e9; --text-muted: #dfcddd; --text-dim: #d0bcd0;
+  --accent: #ffae66; --accent-strong: #ffd0a2; --accent-soft: #ffae6615;
+  --accent-btn: #ffae66; --accent-btn-hover: #ffc28d; --accent-ink: #28172b;
+  --theme-top: #43294d; --theme-top-ink: #fff3e9;
+  --theme-footer: #17101d; --theme-footer-ink: #fff3e9;
+  --theme-art: #39283f; --theme-art-two: #46304b; --theme-radius: 14px;
+  --danger: #ffb5aa; --success: #a2dab4;
+}
+:root[data-theme='forest'] {
+  --bg: #f1f2e9; --bg-alt: #e4e9da; --surface: #fbfcf6; --surface-2: #dce5d5;
+  --card: #fbfcf6; --border: #cbd5c2; --border-strong: #82977a;
+  --text: #294636; --text-muted: #536550; --text-dim: #5f6e58;
+  --accent: #36573d; --accent-strong: #26432b; --accent-soft: #36573d12;
+  --accent-btn: #294636; --accent-btn-hover: #3d614a; --accent-ink: #fff;
+  --theme-top: #405c43; --theme-top-ink: #fff;
+  --theme-footer: #294636; --theme-footer-ink: #f1f2e9;
+  --theme-art: #dce5d5; --theme-art-two: #e7e4d7; --theme-radius: 18px;
+}
+:root[data-theme='coastal'] {
+  --bg: #f5f9fa; --bg-alt: #e8f0f3; --surface: #fff; --surface-2: #dceaf0;
+  --card: #fff; --border: #ccdce3; --border-strong: #7c9cac;
+  --text: #164c65; --text-muted: #466575; --text-dim: #526b78;
+  --accent: #164c65; --accent-strong: #10384b; --accent-soft: #164c6510;
+  --accent-btn: #164c65; --accent-btn-hover: #236881; --accent-ink: #fff;
+  --theme-top: #164c65; --theme-top-ink: #fff;
+  --theme-footer: #123b50; --theme-footer-ink: #f5f9fa;
+  --theme-art: #dceaf0; --theme-art-two: #e7dccb; --theme-radius: 8px;
+}
 body { background: var(--bg); color: var(--text); }
 h1, h2, .season-intro h2, .section-head h2, .custom-pitch h2 {
   font-family: var(--theme-heading); font-weight: var(--theme-heading-weight); letter-spacing: -.035em;
@@ -468,3 +500,45 @@ h1, h2, .season-intro h2, .section-head h2, .custom-pitch h2 {
   .nav-menu-list { max-height: calc(100dvh - 205px); }
 }
 @media (prefers-reduced-motion: reduce) { .nav-trigger > svg, .site-header .nav-menu a { transition: none; } }
+
+/* Consistent workshop layouts for every admin view. */
+.admin-content h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); margin-bottom: 18px; }
+.admin-content .panel { padding: 22px; border-radius: 14px; }
+.admin-content .panel + .panel { margin-top: 18px; }
+.admin-content .panel-tight { padding: 14px; }
+.admin-content .grid-2, .admin-content .grid-3 { min-width: 0; }
+.admin-content .field, .admin-content .spread > div { min-width: 0; }
+.admin-content .input { width: 100%; min-width: 0; }
+.admin-content .btn, .admin-content .btn-quiet { min-height: 42px; }
+.admin-content .notice, .admin-content .history-row, .admin-content .import-row { overflow-wrap: anywhere; }
+.admin-content .admin-row { padding: 18px; border-radius: 14px; gap: 18px; }
+.admin-content .admin-row-main > .dim { display: block; line-height: 1.55; margin-top: 5px; }
+.admin-content .admin-row-actions { flex-wrap: wrap; }
+.admin-content .admin-row-text { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'main actions' 'meta actions'; gap: 10px 24px; }
+.admin-row-text .admin-row-main { grid-area: main; }
+.admin-row-text .admin-row-meta { grid-area: meta; }
+.admin-row-text .admin-row-actions { grid-area: actions; }
+.admin-content .admin-file-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; }
+.admin-file-card > .stack { gap: 7px; min-width: 0; overflow-wrap: anywhere; }
+.admin-content .history-row { padding: 16px 18px; gap: 10px 16px; border-radius: 12px; }
+.admin-content .history-row strong { flex: 1 1 220px; }
+.admin-content .import-row { padding: 14px 16px; }
+.admin-content .production-card summary { padding: 8px 0; }
+.admin-content .workshop-toolbar { padding: 18px; border: 1px solid var(--border); background: var(--card); border-radius: 14px; }
+.admin-content .theme-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-content .theme-option-body { padding: 18px; }
+:root:is([data-theme='halloween'], [data-theme='forest'], [data-theme='coastal']) .season-hero-image img { object-fit: contain; padding: 24px; }
+@media (max-width: 1100px) {
+  .admin-content .admin-row:not(.admin-row-text) { grid-template-columns: 56px minmax(0, 1fr); }
+  .admin-content .admin-row:not(.admin-row-text) .admin-row-meta,
+  .admin-content .admin-row:not(.admin-row-text) .admin-row-actions { grid-column: 1 / -1; }
+}
+@media (max-width: 700px) {
+  .admin-content .panel { padding: 18px; }
+  .admin-content .admin-row-text { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'main' 'meta' 'actions'; gap: 14px; }
+  .admin-row-text .admin-row-actions { border-top: 1px solid var(--border); padding-top: 14px; }
+  .admin-content .admin-file-card, .admin-content .grid-2, .admin-content .theme-options { grid-template-columns: minmax(0, 1fr); }
+  .admin-content .size-row { grid-template-columns: minmax(0, 1fr) 90px; }
+  .admin-content .workshop-toolbar .field { min-width: 0; flex-basis: 100%; }
+  .admin-content .admin-row-actions > button { flex: 1; }
+}

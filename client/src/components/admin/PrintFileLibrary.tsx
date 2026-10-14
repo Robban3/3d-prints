@@ -44,12 +44,14 @@ export function PrintFileLibrary({ token }: { token: string }) {
     {loading ? <p role="status">Hämtar printfiler…</p> : <>
       <p className="dim">{matching.length} filer</p>
       {matching.length === 0 && <p className="notice">Inga printfiler matchar. Ladda upp egna filer här; kundernas filer visas automatiskt.</p>}
-      {matching.map(file => <div className="panel stack" key={file.id}>
+      {matching.map(file => <div className="panel admin-file-card" key={file.id}>
+        <div className="stack">
         <strong>{file.fileName}</strong>
         <span className="dim">{file.source === 'own' ? 'Egen fil' : 'Kundfil'} · {(file.size / 1024 / 1024).toLocaleString('sv', { maximumFractionDigits: 2 })} MB · {new Date(file.createdAt).toLocaleDateString('sv')}</span>
         {file.orderId && <span>Order {file.orderId}{file.projectName ? ` · ${file.projectName}` : ''}</span>}
         {file.source === 'customer' && !file.orderId && <span className="dim">Ingen beställning ännu</span>}
-        <button className="btn" disabled={busy} onClick={() => void download(file)}>Hämta fil</button>
+        </div>
+        <button className="btn btn-ghost" disabled={busy} onClick={() => void download(file)}>Hämta fil</button>
       </div>)}
     </>}
   </div>;

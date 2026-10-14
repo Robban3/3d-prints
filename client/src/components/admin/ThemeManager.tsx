@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { ApiError, fetchAdminAppearance, saveAppearance } from '../../lib/api';
 import { useAppearance } from '../../lib/appearance';
-import { themeFor, themes } from '../../lib/themes';
+import { themeFor, themeImage, themes } from '../../lib/themes';
 import type { ThemeId } from '../../types';
 
 export function ThemeManager({ token, onUnauthorized }: { token: string; onUnauthorized: () => void }) {
@@ -50,7 +50,7 @@ export function ThemeManager({ token, onUnauthorized }: { token: string; onUnaut
   return (
     <div className="theme-manager">
       <div className="spread section-head">
-        <div><span className="eyebrow">Butikens uttryck</span><h2>Fyra teman. Ett Formlabb.</h2><p className="muted">Välj ett tema och förhandsvisa det innan du aktiverar det för alla besökare.</p></div>
+        <div><span className="eyebrow">Butikens uttryck</span><h2>Välj butikens tema</h2><p className="muted">{themes.length} teman, inklusive Halloween. Förhandsvisa innan du aktiverar för alla besökare.</p></div>
         <span className="theme-active-label">Aktivt: {themeFor(active).name}</span>
       </div>
       {loading && <p role="status">Hämtar aktuellt tema…</p>}
@@ -61,7 +61,7 @@ export function ThemeManager({ token, onUnauthorized }: { token: string; onUnaut
         {themes.map((design) => (
           <label className={`theme-option${selected === design.id ? ' is-selected' : ''}`} key={design.id}>
             <input type="radio" name="shop-theme" value={design.id} checked={selected === design.id} onChange={() => { setSelected(design.id); setMessage(''); }} />
-            <img src={`/images/themes/${design.id}.webp`} alt="" width="1536" height="1024" loading="lazy" />
+            <img src={themeImage(design.id)} alt="" width="1536" height="1024" loading="lazy" />
             <div className="theme-option-body"><div className="spread"><strong>{design.name}</strong>{active === design.id && <span className="theme-active-label">Aktivt</span>}</div><p>{design.description}</p><span className="theme-swatches" aria-hidden="true">{design.colors.map((color) => <i key={color} style={{ background: color }} />)}</span></div>
           </label>
         ))}
