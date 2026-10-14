@@ -447,9 +447,16 @@ h1, h2, .season-intro h2, .section-head h2, .custom-pitch h2 {
  .collection-banner-desktop-title { display: none; }
  .christmas-products > .container { width: calc(100% - 24px); }
 }
-.brand-logo { display: block; width: 188px; height: auto; }
-.site-footer .brand-logo { width: 200px; filter: brightness(0) invert(1); }
-:root[data-theme='gallery'] .brand-logo { filter: brightness(0) invert(1); }
+.brand-logo {
+  display: block;
+  width: 188px;
+  aspect-ratio: 2127 / 651;
+  background-color: var(--text);
+  -webkit-mask: url('/images/brand/formlabb-logo.png') center / contain no-repeat;
+  mask: url('/images/brand/formlabb-logo.png') center / contain no-repeat;
+}
+:root:is([data-theme='gallery'], [data-theme='halloween']) .site-header .brand-logo { background-color: var(--accent); }
+.site-footer .brand-logo { width: 200px; background-color: var(--theme-footer-ink); }
 @media (max-width: 640px) { .site-header .brand-logo { width: 136px; } }
 .flag, .badge {
   opacity: 1;
