@@ -43,8 +43,8 @@ it('moves an existing file by drag and drop and uploads several files into the s
   const a = new File(['solid a'], 'overdel.stl', { type: 'application/octet-stream' });
   const b = new File(['solid b'], 'lucka.stl', { type: 'application/octet-stream' });
   fireEvent.drop(screen.getByText('Dra och släpp en eller flera printfiler här').closest('.file-upload-zone')!, { dataTransfer: { files: [a, b], getData: () => '' } });
-  await waitFor(() => expect(uploadPrintFile).toHaveBeenCalledWith('session', b, folder.id));
-  expect(uploadPrintFile).toHaveBeenCalledWith('session', a, folder.id);
+  await waitFor(() => expect(uploadPrintFile).toHaveBeenCalledWith('session', b, folder.id, expect.any(Object)));
+  expect(uploadPrintFile).toHaveBeenCalledWith('session', a, folder.id, expect.any(Object));
 });
 
 it('creates a named folder and opens it', async () => {

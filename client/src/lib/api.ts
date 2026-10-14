@@ -32,7 +32,9 @@ export interface AdminPrintFile {
 }
 export interface FileFolder { id: string; name: string }
 export function fetchPrintFiles(token: string): Promise<{ files: AdminPrintFile[]; folders?: FileFolder[] }> {
-  return request('/admin/files', adminInit(token));
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), 30000);
+  return request<{ files: AdminPrintFile[]; folders?: FileFolder[] }>('/admin/files', adminInit(token, { signal: controller.signal })).finally(() => clearTimeout(timer));
 }
 export function saveFileFolder(token: string, name: string, id?: string): Promise<{ folder: FileFolder }> {
   return request(id ? `/admin/file-folders/${encodeURIComponent(id)}` : '/admin/file-folders', adminInit(token, { method: id ? 'PATCH' : 'POST', body: JSON.stringify({ name }) }));
@@ -40,14 +42,66 @@ export function saveFileFolder(token: string, name: string, id?: string): Promis
 export function movePrintFile(token: string, id: string, folderId: string | null): Promise<{ ok: true }> {
   return request(`/admin/files/${encodeURIComponent(id)}/folder`, adminInit(token, { method: 'PATCH', body: JSON.stringify({ folderId }) }));
 }
-export async function uploadPrintFile(token: string, file: File, folderId?: string | null): Promise<void> {
-  const body = new FormData(); body.append('file', file);
-  const response = await fetch(`${BASE}/admin/files`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body });
-  if (!response.ok) { const result = await response.json(); throw new ApiError(result.error ?? 'Uppladdningen misslyckades.', response.status, {}); }
-  if (folderId) {
-    const result = await response.json() as { id: string };
-    try { await movePrintFile(token, result.id, folderId); }
-    catch { throw new Error(`${file.name} laddades upp men kunde inte flyttas. Den finns bland osorterade filer.`); }
+export interface FileUploadProgress { loaded: number; total: number; percent: number; phase: 'uploading' | 'saving' | 'retrying' }
+interface UploadOptions { signal?: AbortSignal; onProgress?: (progress: FileUploadProgress) => void }
+async function uploadRequest<T>(token: string, path: string, body: unknown, signal?: AbortSignal): Promise<T> {
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  signal?.addEventListener('abort', abort, { once: true });
+  if (signal?.aborted) controller.abort();
+  const timer = window.setTimeout(abort, 120000);
+  try { return await request(path, adminInit(token, { method: 'POST', body: JSON.stringify(body), signal: controller.signal })); }
+  finally { clearTimeout(timer); signal?.removeEventListener('abort', abort); }
+}
+function uploadChunk(token: string, id: string, number: number, blob: Blob, loaded: number, total: number, options: UploadOptions): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const abort = () => xhr.abort();
+    const cleanup = () => options.signal?.removeEventListener('abort', abort);
+    const report = (bytes: number, phase: FileUploadProgress['phase']) => options.onProgress?.({ loaded: bytes, total, percent: Math.min(100, Math.round(bytes / total * 100)), phase });
+    xhr.open('PUT', `${BASE}/admin/files/uploads/${id}/parts/${number}`);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`); xhr.timeout = 180000;
+    xhr.upload.onprogress = event => { if (event.lengthComputable) report(loaded + Math.round(blob.size * event.loaded / event.total), 'uploading'); };
+    xhr.upload.onload = () => report(loaded + blob.size, 'saving');
+    xhr.onload = () => {
+      cleanup();
+      if (xhr.status >= 200 && xhr.status < 300) { resolve(); return; }
+      let message = xhr.status === 401 ? 'Du behöver logga in igen.' : `Fildelen kunde inte sparas (${xhr.status}).`;
+      try { const body = JSON.parse(xhr.responseText); message = Object.values(body.fields ?? {}).join(' ') || body.error || message; } catch { /* proxy errors may be HTML */ }
+      reject(new ApiError(message, xhr.status));
+    };
+    xhr.onerror = () => { cleanup(); reject(new ApiError('Anslutningen bröts under uppladdningen.', 0)); };
+    xhr.ontimeout = () => { cleanup(); reject(new ApiError('Uppladdningen svarade inte i tid. Kontrollera anslutningen och försök igen.', 0)); };
+    xhr.onabort = () => { cleanup(); reject(new DOMException('Uppladdningen avbröts.', 'AbortError')); };
+    options.signal?.addEventListener('abort', abort, { once: true });
+    if (options.signal?.aborted) { cleanup(); reject(new DOMException('Uppladdningen avbröts.', 'AbortError')); return; }
+    const data = new FormData(); data.append('file', blob, 'chunk.bin'); xhr.send(data);
+  });
+}
+export async function uploadPrintFile(token: string, file: File, folderId?: string | null, options: UploadOptions = {}): Promise<void | { warning?: string }> {
+  if (file.size <= 0 || file.size > 150 * 1024 * 1024) throw new Error('Filen får vara högst 150 MB och får inte vara tom.');
+  const session = await uploadRequest<{ id: string; chunkBytes: number }>(token, '/admin/files/uploads', { fileName: file.name, size: file.size }, options.signal);
+  if (!session || !/^[a-f0-9]{32}$/.test(session.id) || !Number.isSafeInteger(session.chunkBytes) || session.chunkBytes < 1 || session.chunkBytes > 16 * 1024 * 1024) throw new Error('Servern kunde inte starta uppladdningen. Ladda om sidan och försök igen.');
+  try {
+    for (let offset = 0, part = 1; offset < file.size; offset += session.chunkBytes, part++) {
+      const chunk = file.slice(offset, Math.min(offset + session.chunkBytes, file.size));
+      try { await uploadChunk(token, session.id, part, chunk, offset, file.size, options); }
+      catch (error) {
+        if (options.signal?.aborted || !(error instanceof ApiError) || (error.status !== 0 && error.status < 500)) throw error;
+        options.onProgress?.({ loaded: offset, total: file.size, percent: Math.round(offset / file.size * 100), phase: 'retrying' });
+        await uploadChunk(token, session.id, part, chunk, offset, file.size, options);
+      }
+    }
+    options.onProgress?.({ loaded: file.size, total: file.size, percent: 100, phase: 'saving' });
+    try { return await uploadRequest(token, `/admin/files/uploads/${session.id}/complete`, { folderId: folderId ?? null }, options.signal); }
+    catch (error) {
+      if (options.signal?.aborted || !(error instanceof ApiError) || (error.status !== 0 && error.status < 500)) throw error;
+      return await uploadRequest(token, `/admin/files/uploads/${session.id}/complete`, { folderId: folderId ?? null }, options.signal);
+    }
+  } catch (error) {
+    // Aborting a staged upload never deletes a file that already completed.
+    void fetch(`${BASE}/admin/files/uploads/${session.id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }).catch(() => undefined);
+    throw error;
   }
 }
 export async function downloadPrintFile(token: string, file: AdminPrintFile): Promise<void> {

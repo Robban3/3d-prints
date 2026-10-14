@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { DragEvent } from 'react';
 import { ApiError, downloadPrintFile, fetchPrintFiles, uploadPrintFile, saveFileFolder, movePrintFile } from '../../lib/api';
-import type { AdminPrintFile, FileFolder } from '../../lib/api';
+import type { AdminPrintFile, FileFolder, FileUploadProgress } from '../../lib/api';
 import { Icon } from '../Icon';
 
 const FILE_DRAG = 'application/x-formlabb-printfile';
@@ -19,6 +19,9 @@ export function PrintFileLibrary({ token }: { token: string }) {
   const [editing, setEditing] = useState<string | null>(null);
   const [dragTarget, setDragTarget] = useState<string | null>(null);
   const [progress, setProgress] = useState('');
+  const [transfer, setTransfer] = useState<FileUploadProgress | null>(null);
+  const [results, setResults] = useState<Array<{ name: string; ok: boolean; text: string }>>([]);
+  const uploadController = useRef<AbortController | null>(null);
   const picker = useRef<HTMLInputElement>(null);
   async function load() {
     setLoading(true);
@@ -26,23 +29,37 @@ export function PrintFileLibrary({ token }: { token: string }) {
     catch (error) { setError(error instanceof Error ? error.message : 'Kunde inte hämta printfiler.'); }
     finally { setLoading(false); }
   }
-  useEffect(() => { void load(); }, [token]);
+  useEffect(() => { void load(); return () => uploadController.current?.abort(); }, [token]);
   const destination = current === 'all' || current === 'root' ? null : current;
   async function upload(selected: File[], target: string | null = destination) {
     if (busy || !selected.length) return;
-    setBusy(true); setError(''); setMessage('');
-    const failures: string[] = []; let uploaded = 0;
+    setBusy(true); setError(''); setMessage(''); setResults([]);
+    const controller = new AbortController(); uploadController.current = controller;
+    const failures: string[] = []; let uploaded = 0; let processed = 0;
     try {
       for (const [index, file] of selected.entries()) {
+        if (controller.signal.aborted) break;
+        processed = index + 1;
         setProgress(`Laddar upp ${index + 1} av ${selected.length}: ${file.name}`);
-        if (file.size > 100 * 1024 * 1024) { failures.push(`${file.name}: högst 100 MB per fil.`); continue; }
-        try { await uploadPrintFile(token, file, target); uploaded++; }
-        catch (error) { failures.push(error instanceof Error ? error.message : `${file.name}: uppladdningen misslyckades.`); }
+        setTransfer({ loaded: 0, total: file.size, percent: 0, phase: 'uploading' });
+        if (file.size <= 0 || file.size > 150 * 1024 * 1024) {
+          const text = 'Filen får vara högst 150 MB och får inte vara tom.';
+          failures.push(`${file.name}: ${text}`); setResults(current => [...current, { name: file.name, ok: false, text }]); continue;
+        }
+        try {
+          const result = await uploadPrintFile(token, file, target, { signal: controller.signal, onProgress: setTransfer }); uploaded++;
+          setResults(current => [...current, { name: file.name, ok: true, text: result?.warning ?? 'Uppladdad och sparad.' }]);
+          if (result?.warning) failures.push(`${file.name}: ${result.warning}`);
+        } catch (error) {
+          const text = controller.signal.aborted ? 'Avbruten. Kontrollera listan om filen redan hunnit sparas.' : error instanceof Error ? error.message : 'Uppladdningen misslyckades.';
+          failures.push(`${file.name}: ${text}`); setResults(current => [...current, { name: file.name, ok: false, text }]);
+        }
       }
+      if (controller.signal.aborted) setResults(current => [...current, ...selected.slice(processed).map(file => ({ name: file.name, ok: false, text: 'Ej skickad – uppladdningen avbröts.' }))]);
       await load();
       if (uploaded) setMessage(`${uploaded} ${uploaded === 1 ? 'fil uppladdad' : 'filer uppladdade'}.`);
       if (failures.length) setError(failures.join(' '));
-    } finally { setBusy(false); setProgress(''); }
+    } finally { setBusy(false); setProgress(''); setTransfer(null); uploadController.current = null; }
   }
   async function move(id: string, folderId: string | null) {
     if (busy) return;
@@ -103,9 +120,15 @@ export function PrintFileLibrary({ token }: { token: string }) {
         <p className="dim">Nya filer sparas i {selectedFolder ? `mappen ${selectedFolder.name}` : 'Osorterade filer'}.</p>
         <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => picker.current?.click()}>Välj filer</button>
         <input ref={picker} className="sr-only" aria-label="Ladda upp egna printfiler" type="file" multiple accept=".stl,.obj,.3mf,.step,.stp,.f3d" disabled={busy} onChange={event => { void upload(Array.from(event.target.files ?? [])); event.target.value = ''; }} />
-        <span className="dim">STL, OBJ, 3MF, STEP, STP och F3D · högst 100 MB per fil</span>
+        <span className="dim">STL, OBJ, 3MF, STEP, STP och F3D · högst 150 MB per fil</span>
       </div>
       {busy && <p role="status">{progress || 'Arbetar…'}</p>}
+      {transfer && <div className="file-upload-progress">
+        <div className="spread"><strong>{transfer.percent} %</strong><span>{(transfer.loaded / 1024 / 1024).toLocaleString('sv', { maximumFractionDigits: 1 })} / {(transfer.total / 1024 / 1024).toLocaleString('sv', { maximumFractionDigits: 1 })} MB</span></div>
+        <progress aria-label="Filens uppladdning" max={100} value={transfer.percent} />
+        <p role="status">{transfer.phase === 'retrying' ? 'Anslutningen bröts. Försöker skicka fildelen igen…' : transfer.phase === 'saving' ? 'Sparar i lagringen – vänta på bekräftelsen.' : 'Överför filen…'}</p>
+        <button type="button" className="btn btn-ghost" disabled={uploadController.current?.signal.aborted} onClick={() => uploadController.current?.abort()}>Avbryt uppladdningen</button>
+      </div>}
       <div className="workshop-toolbar">
         <label className="field">Sök fil, projekt eller ordernummer<input className="input" type="search" value={search} onChange={event => setSearch(event.target.value)} /></label>
         <label className="field">Visa<select className="input" value={source} onChange={event => setSource(event.target.value)}><option value="all">Alla printfiler</option><option value="own">Egna filer</option><option value="customer">Kundfiler</option></select></label>
@@ -114,6 +137,7 @@ export function PrintFileLibrary({ token }: { token: string }) {
     </div>
     {message && <p className="notice notice-success" role="status">{message}</p>}
     {error && <p className="notice notice-error" role="alert">{error}</p>}
+    {results.length > 0 && <ul className="file-upload-results" aria-label="Resultat per fil">{results.map((result, index) => <li className={`notice ${result.ok ? 'notice-success' : 'notice-error'}`} key={index}><strong>{result.name}</strong><span>{result.text}</span></li>)}</ul>}
     {loading ? <p role="status">Hämtar printfiler…</p> : <>
       <p className="dim">{matching.length} filer</p>
       {matching.length === 0 && <p className="notice">Inga filer matchar i den här vyn. Välj Alla filer för att söka i hela biblioteket.</p>}
