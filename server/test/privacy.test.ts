@@ -11,6 +11,7 @@ it('isolates order access, personal data exports, image writes and 90-day file r
   const directory = await mkdtemp(join(tmpdir(), 'formlabb-privacy-'));
   process.env.ORDER_STORE = join(directory, 'orders.json');
   process.env.UPLOAD_DIR = join(directory, 'uploads');
+  process.env.FILE_FOLDERS_STORE = join(directory, 'file-folders.json');
   process.env.ADMIN_ACCOUNT_STORE = join(directory, 'admin.json');
   process.env.ADMIN_TOKEN = 'privacy-test-only-key-0123456789';
   process.env.MAIL_OUTBOX = join(directory, 'outbox');
@@ -136,6 +137,6 @@ it('isolates order access, personal data exports, image writes and 90-day file r
   } finally {
     if (server) await new Promise<void>(resolve => server!.close(() => resolve()));
     await rm(directory, { recursive: true, force: true });
-    for (const key of ['ORDER_STORE','UPLOAD_DIR','ADMIN_ACCOUNT_STORE','ADMIN_TOKEN','MAIL_OUTBOX','CATALOG_STORE','STOCK_STORE','AUDIT_STORE','SMTP_HOST','KLARNA_USERNAME','KLARNA_PASSWORD']) delete process.env[key];
+    for (const key of ['ORDER_STORE','UPLOAD_DIR','FILE_FOLDERS_STORE','ADMIN_ACCOUNT_STORE','ADMIN_TOKEN','MAIL_OUTBOX','CATALOG_STORE','STOCK_STORE','AUDIT_STORE','SMTP_HOST','KLARNA_USERNAME','KLARNA_PASSWORD']) delete process.env[key];
   }
 });
