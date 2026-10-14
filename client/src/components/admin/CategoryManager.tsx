@@ -94,12 +94,11 @@ export function CategoryManager({ token, onChanged }: Props) {
 
       <div className="stack" style={{ gap: 10, marginBottom: 22 }}>
         {categories?.map((category) => (
-          <div className="admin-row" key={category.id}>
-            <div className="admin-row-main">
+          <div className="admin-category-card" key={category.id}>
+            <div className="admin-category-main">
               <strong>{category.name}</strong>
-              <span className="dim">{category.description}</span>
-            </div>
-            <div className="admin-row-meta">
+              {category.description && <p>{category.description}</p>}
+            <div className="admin-category-meta">
               <span className="badge">
                 {category.productCount} {category.productCount === 1 ? 'produkt' : 'produkter'}
               </span>
@@ -107,7 +106,8 @@ export function CategoryManager({ token, onChanged }: Props) {
                 {category.id}
               </span>
             </div>
-            <div className="admin-row-actions">
+            </div>
+            <div className="admin-category-actions">
               <button
                 type="button"
                 className="btn btn-ghost"
@@ -124,7 +124,7 @@ export function CategoryManager({ token, onChanged }: Props) {
               </button>
               <button
                 type="button"
-                className="btn-quiet"
+                className="btn btn-ghost admin-category-delete"
                 disabled={saving || category.productCount > 0}
                 title={
                   category.productCount > 0
