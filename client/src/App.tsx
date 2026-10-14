@@ -1,22 +1,23 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
-import { HomePage } from './pages/HomePage';
-import { ShopPage } from './pages/ShopPage';
-import { ProductPage } from './pages/ProductPage';
-import { CustomOrderPage } from './pages/CustomOrderPage';
-import { CartPage } from './pages/CartPage';
-import { CheckoutPage } from './pages/CheckoutPage';
-import { ConfirmationPage } from './pages/ConfirmationPage';
-import { TrackOrderPage } from './pages/TrackOrderPage';
-import { AboutPage } from './pages/AboutPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { MaterialPage } from './pages/MaterialPage';
-import { HowItWorksPage } from './pages/HowItWorksPage';
-import { ContactPage } from './pages/ContactPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { AdminPage } from './pages/AdminPage';
+const HomePage = lazy(() => import('./pages/HomePage').then(module => ({ default: module.HomePage })));
+const ShopPage = lazy(() => import('./pages/ShopPage').then(module => ({ default: module.ShopPage })));
+const ProductPage = lazy(() => import('./pages/ProductPage').then(module => ({ default: module.ProductPage })));
+const CustomOrderPage = lazy(() => import('./pages/CustomOrderPage').then(module => ({ default: module.CustomOrderPage })));
+const CartPage = lazy(() => import('./pages/CartPage').then(module => ({ default: module.CartPage })));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then(module => ({ default: module.CheckoutPage })));
+const ConfirmationPage = lazy(() => import('./pages/ConfirmationPage').then(module => ({ default: module.ConfirmationPage })));
+const TrackOrderPage = lazy(() => import('./pages/TrackOrderPage').then(module => ({ default: module.TrackOrderPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(module => ({ default: module.AboutPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(module => ({ default: module.NotFoundPage })));
+const MaterialPage = lazy(() => import('./pages/MaterialPage').then(module => ({ default: module.MaterialPage })));
+const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage').then(module => ({ default: module.HowItWorksPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(module => ({ default: module.ContactPage })));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(module => ({ default: module.PrivacyPage })));
+const AdminPage = lazy(() => import('./pages/AdminPage').then(module => ({ default: module.AdminPage })));
 import { TopBar } from './components/TopBar';
 import { ThemePreviewBar } from './components/ThemePreviewBar';
 
@@ -28,7 +29,7 @@ export function App() {
       <TopBar />
       <Header />
       <main id="innehall">
-        <Routes>
+        <Suspense fallback={<div className="container route-loading" role="status">Laddar sidan…</div>}><Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/produkter" element={<ShopPage />} />
           <Route path="/produkter/spiral-vas" element={<Navigate to="/produkter/vas-nexo" replace />} />
@@ -45,7 +46,7 @@ export function App() {
           <Route path="/integritet" element={<PrivacyPage />} />
           <Route path="/verkstad" element={<AdminPage />} />
           <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        </Routes></Suspense>
       </main>
       <Footer />
     </>

@@ -86,12 +86,12 @@ export function ProductPage() {
         </nav>
 
         <div className="product-layout">
-          <div className="stack">
+          <div className="stack product-media">
             <div className="product-hero-art">
-              <ProductImage product={{ ...product, image }} />
+              <ProductImage product={{ ...product, image }} priority sizes="(max-width: 900px) 100vw, 50vw" />
             </div>
             {image?.fileName.endsWith('-visualisering.webp') && <p className="dim" style={{ fontSize: '.8rem', margin: 0 }}>Illustrativ produktbild. Dekoration och tillbehör ingår bara när det anges i beskrivningen.</p>}
-            <div className="panel panel-tight">
+            <div className="panel panel-tight product-specs">
               <h3>Specifikation</h3>
               <table className="spec-table">
                 <tbody>
@@ -126,7 +126,7 @@ export function ProductPage() {
             </div>
           </div>
 
-          <div className="stack" style={{ gap: 22 }}>
+          <div className="stack product-details" style={{ gap: 22 }}>
             <div>
               <div className="row">
                 <span className="badge badge-accent">

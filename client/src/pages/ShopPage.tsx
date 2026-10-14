@@ -1,3 +1,4 @@
+import { ResponsiveImage } from '../components/ResponsiveImage';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { ProductCard } from '../components/ProductCard';
@@ -72,7 +73,7 @@ export function ShopPage() {
   return (
     <>
       {christmas ? <section className="collection-banner" aria-label="Julkollektionen">
-        <a href="#collection-products" aria-label="Upptäck julkollektionen – visa produkterna"><img src="/images/campaign/julkollektionen-banner.webp" alt="En jul med personlig prägel – gröna och vinröda julkulor, benvita granar, stjärna och ett personligt namnornament" width="1357" height="762" /></a>
+        <a href="#collection-products" aria-label="Upptäck julkollektionen – visa produkterna"><ResponsiveImage src="/images/campaign/julkollektionen-banner.webp" alt="En jul med personlig prägel – gröna och vinröda julkulor, benvita granar, stjärna och ett personligt namnornament" width="1357" height="762" /></a>
         <div className="collection-banner-mobile"><h1>En jul med personlig prägel</h1><p>3D-printat julpynt och personliga presenter.</p><a className="btn" href="#collection-products">Upptäck julkollektionen</a></div>
         <h1 className="sr-only collection-banner-desktop-title">Julkollektionen</h1>
       </section> : halloween ? <section className="container halloween-collection-banner" aria-label="Halloweenkollektionen">
@@ -82,7 +83,7 @@ export function ShopPage() {
           <p>3D-printade detaljer för höstens mysigaste och kusligaste stunder.</p>
           <a className="btn" href="#collection-products">Upptäck Halloween <span aria-hidden="true">→</span></a>
         </div>
-        <img src="/images/campaign/halloween-collection.webp" alt="Orange pumpa, benvitt spöke och mörka fladdermöss i ett varmt Halloween-stilleben" width="1536" height="1024" />
+        <ResponsiveImage src="/images/campaign/halloween-collection.webp" alt="Orange pumpa, benvitt spöke och mörka fladdermöss i ett varmt Halloween-stilleben" width="1536" height="1024" />
       </section> : <PageHeader
         eyebrow="Butik"
         title={active ? active.name : 'Alla produkter'}

@@ -1,3 +1,4 @@
+import { ResponsiveImage } from '../ResponsiveImage';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { ApiError, fetchAdminAppearance, saveAppearance } from '../../lib/api';
@@ -61,7 +62,7 @@ export function ThemeManager({ token, onUnauthorized }: { token: string; onUnaut
         {themes.map((design) => (
           <label className={`theme-option${selected === design.id ? ' is-selected' : ''}`} key={design.id}>
             <input type="radio" name="shop-theme" value={design.id} checked={selected === design.id} onChange={() => { setSelected(design.id); setMessage(''); }} />
-            <img src={themeImage(design.id)} alt="" width="1536" height="1024" loading="lazy" />
+            <ResponsiveImage sizes="(max-width: 700px) 100vw, 400px" src={themeImage(design.id)} alt="" width="1536" height="1024" loading="lazy" />
             <div className="theme-option-body"><div className="spread"><strong>{design.name}</strong>{active === design.id && <span className="theme-active-label">Aktivt</span>}</div><p>{design.description}</p><span className="theme-swatches" aria-hidden="true">{design.colors.map((color) => <i key={color} style={{ background: color }} />)}</span></div>
           </label>
         ))}

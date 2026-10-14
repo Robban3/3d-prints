@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 import { Icon } from './Icon';
 import { useAppearance } from '../lib/appearance';
 import { themeFor, themeImage } from '../lib/themes';
+import { ResponsiveImage } from './ResponsiveImage';
 
 export function SeasonHero() {
   const { theme } = useAppearance();
@@ -20,7 +21,7 @@ export function SeasonHero() {
           {theme !== 'nordic' && <div className="season-hero-note"><span>Design med personlighet</span><span>Printat i Göteborg</span></div>}
         </div>
         <div className="season-hero-image">
-          <img src={theme === 'nordic' ? '/images/themes/nordic-reference.png' : themeImage(theme)} alt={design.imageAlt} width="1536" height="1024" loading="eager" />
+          <ResponsiveImage src={theme === 'nordic' ? '/images/themes/nordic-reference.png' : themeImage(theme)} alt={design.imageAlt} sizes="(max-width: 900px) 100vw, 60vw" width="1536" height="1024" loading="eager" fetchPriority="high" />
           {theme !== 'nordic' && <span className="season-image-caption">{design.name} · Formlabb</span>}
         </div>
       </div>
