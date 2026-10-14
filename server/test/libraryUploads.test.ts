@@ -35,6 +35,12 @@ it('accepts 150 MB, persists ordered parts, rejects incomplete files and support
     const chunk = join(directory, 'chunk.bin');
     const first = Buffer.alloc(LIBRARY_CHUNK_BYTES, 65);
     await writeFile(chunk, first);
+    const wire = await startLibraryUpload('wire.stl', LIBRARY_CHUNK_BYTES);
+    const form = new FormData(); form.append('file', new Blob([first]), 'chunk.bin');
+    const wireResponse = await fetch(`${base}/${wire.id}/parts/1`, { method: 'PUT', headers: { Authorization: `Bearer ${process.env.ADMIN_TOKEN}` }, body: form });
+    assert.equal(wireResponse.status, 200, await wireResponse.text());
+    await finishLibraryUpload(wire.id, null);
+    assert.equal((await readMeta(wire.id))?.size, LIBRARY_CHUNK_BYTES);
     await assert.rejects(saveLibraryPart(s.id, 2, chunk, first.length), ValidationError);
     await saveLibraryPart(s.id, 1, chunk, first.length);
     await saveLibraryPart(s.id, 1, chunk, first.length); // repeated acknowledgment never appends twice
