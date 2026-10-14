@@ -1,5 +1,5 @@
 export type MaterialId = string;
-export type ThemeId = 'nordic' | 'studio' | 'gallery' | 'workshop';
+export type ThemeId = 'nordic' | 'studio' | 'gallery' | 'workshop' | 'halloween' | 'forest' | 'coastal';
 export interface Appearance { theme: ThemeId }
 export type PrintQuality = string;
 export type CategoryId = string;

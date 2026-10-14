@@ -155,7 +155,7 @@ export function MaterialManager({ token, onChanged }: Props) {
 
       <div className="stack" style={{ gap: 10, marginBottom: 22 }}>
         {materials?.map((entry) => (
-          <div className="admin-row" key={entry.id}>
+          <div className="admin-row admin-row-text" key={entry.id}>
             <div className="admin-row-main">
               <strong>{entry.name}</strong>
               <span className="dim">{entry.description}</span>
@@ -284,7 +284,7 @@ export function MaterialManager({ token, onChanged }: Props) {
 
       <div className="stack" style={{ gap: 10, marginBottom: 22 }}>
         {qualities.map((entry) => (
-          <div className="admin-row" key={entry.id}>
+          <div className="admin-row admin-row-text" key={entry.id}>
             <div className="admin-row-main">
               <strong>{entry.name}</strong>
               <span className="dim">{entry.description}</span>

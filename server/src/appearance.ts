@@ -3,7 +3,7 @@ import { readFile, rename, writeFile } from './stateFiles.ts';
 import { dirname, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 
-export const themeIds = ['nordic', 'studio', 'gallery', 'workshop'] as const;
+export const themeIds = ['nordic', 'studio', 'gallery', 'workshop', 'halloween', 'forest', 'coastal'] as const;
 export type ThemeId = (typeof themeIds)[number];
 export interface Appearance { theme: ThemeId }
 const settingsFile = () => resolve(process.env.APPEARANCE_STORE ?? 'data/appearance.json');
