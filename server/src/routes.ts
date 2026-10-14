@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { orderAccessToken, validOrderAccess } from './orderAccess.ts';
+import { publicOrder } from './production.ts';
 import { readAppearance } from './appearance.ts';
 import {
   allCategories,
@@ -396,5 +397,5 @@ api.get('/orders/:id', rateLimit({ name: 'order-access', windowMs: 60000, max: 3
     res.status(404).json({ error: 'Ordern hittades inte' });
     return;
   }
-  res.json({ order });
+  res.json({ order: publicOrder(order) });
 });

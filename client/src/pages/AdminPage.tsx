@@ -17,9 +17,10 @@ import type { Category, Material } from '../types';
 
 const STORAGE_KEY = 'formlabb.admin.token';
 
-type Tab = 'ordrar' | 'produkter' | 'filer' | 'kategorier' | 'material' | 'import' | 'historik' | 'teman' | 'gdpr';
+type Tab = 'oversikt' | 'ordrar' | 'produkter' | 'filer' | 'kategorier' | 'material' | 'import' | 'historik' | 'teman' | 'gdpr';
 
 const tabs: Array<{ id: Tab; label: string }> = [
+  { id: 'oversikt', label: 'Översikt' },
   { id: 'ordrar', label: 'Ordrar' },
   { id: 'produkter', label: 'Produkter' },
   { id: 'filer', label: 'Printfiler' },
@@ -47,7 +48,7 @@ export function AdminPage() {
   });
   const [signInError, setSignInError] = useState<string | null>(null);
   const [params, setParams] = useSearchParams();
-  const tab: Tab = tabs.find((entry) => entry.id === params.get('vy'))?.id ?? 'ordrar';
+  const tab: Tab = tabs.find((entry) => entry.id === params.get('vy'))?.id ?? 'oversikt';
   function setTab(next: Tab) {
     const updated = new URLSearchParams(params);
     updated.set('vy', next);
@@ -168,6 +169,7 @@ export function AdminPage() {
           <div className="admin-content">
 
           {tab === 'ordrar' && <OrderManager token={token} onUnauthorized={signOut} />}
+          {tab === 'oversikt' && <OrderManager token={token} onUnauthorized={signOut} overview />}
           {tab === 'filer' && <PrintFileLibrary token={token} />}
           {tab === 'gdpr' && <PrivacyManager token={token} />}
           {tab === 'produkter' && (
