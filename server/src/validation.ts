@@ -97,6 +97,22 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
       continue;
     }
 
+    let personalization: string | undefined;
+    if (product.slug === 'namnornament') {
+      personalization = text(raw.personalization).normalize('NFC').replace(/\s+/g, ' ');
+      if (!personalization || personalization.length > 24 || !/^\p{L}[\p{L}\p{M}]*(?:[ '\u2019-]\p{L}[\p{L}\p{M}]*)*$/u.test(personalization)) {
+        errors[`lines.${index}.personalization`] = 'Ange namn på ornamentet: 1–24 tecken, med bokstäver, mellanslag, bindestreck eller apostrof.';
+        continue;
+      }
+    }
+    if (product.slug === 'var-forsta-jul') {
+      personalization = (raw.personalization === undefined ? 'Vår första / jul' : text(raw.personalization)).normalize('NFC').replace(/\s+/g, ' ');
+      const messageLines = personalization.split(' / ');
+      if (messageLines.length !== 2 || messageLines.some(line => !line.trim() || line.trim().length > 24 || !/^[\p{L}\p{M}\p{N} &'’.,!?-]+$/u.test(line))) {
+        errors[`lines.${index}.personalization`] = 'Ange två textrader med högst 24 tecken per rad, avskilda med /.';
+        continue;
+      }
+    }
     // Priset hämtas alltid från katalogen, aldrig från klienten.
     lines.push({
       productId: product.id,
@@ -105,6 +121,7 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
       unitPrice: product.price + priceDelta,
       color,
       size,
+      ...(personalization ? { personalization } : {}),
     });
   }
 

@@ -126,7 +126,7 @@ export function taxOf(totalMinor: number, taxRate = VAT_RATE_BASIS_POINTS): numb
 function physicalLine(line: OrderLine): KlarnaOrderLine {
   const unitPrice = toMinorUnits(line.unitPrice);
   const total = unitPrice * line.quantity;
-  const variant = [line.color, line.size].filter(Boolean).join(' · ');
+  const variant = [line.color, line.size, line.personalization ? `${line.personalization.includes(' / ') ? 'Text' : 'Namn'}: ${line.personalization}` : undefined].filter(Boolean).join(' · ');
   return {
     type: 'physical',
     reference: line.productId,

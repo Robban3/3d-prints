@@ -57,6 +57,7 @@ export function CheckoutPage() {
         quantity: item.quantity,
         color: item.color,
         size: item.size,
+        personalization: item.personalization,
       })),
     })
       .then((result) => {
@@ -136,6 +137,7 @@ export function CheckoutPage() {
           quantity: item.quantity,
           color: item.color,
           size: item.size,
+          personalization: item.personalization,
         })),
         authorizationToken,
       });
@@ -199,6 +201,7 @@ export function CheckoutPage() {
                     <span className="dim" style={{ fontSize: '0.82rem' }}>
                       {item.color}
                       {item.size ? ` · ${item.size}` : ''}
+                      {item.personalization && <><br />{item.personalization.includes(' / ') ? 'Text' : 'Namn'}: <strong>{item.personalization}</strong></>}
                     </span>
                   </span>
                   <span>{formatPrice(item.unitPrice * item.quantity)}</span>

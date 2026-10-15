@@ -175,7 +175,7 @@ export function createPaymentSession(
   payload:
     | {
         type: 'shop';
-        lines: Array<{ productId: string; quantity: number; color: string; size?: string }>;
+        lines: Array<{ productId: string; quantity: number; color: string; size?: string; personalization?: string }>;
       }
     | { type: 'custom'; request: QuoteRequest; projectName: string },
 ): Promise<{ session: PaymentSession; amount: number; summary?: Pick<ShopOrder, 'lines' | 'subtotal' | 'shipping' | 'total'> }> {
@@ -190,6 +190,7 @@ export function placeOrder(payload: {
     quantity: number;
     color: string;
     size?: string;
+    personalization?: string;
   }>;
   authorizationToken?: string;
 }): Promise<{ order: ShopOrder; accessToken: string }> {

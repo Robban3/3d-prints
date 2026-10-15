@@ -90,6 +90,7 @@ export interface OrderLine {
   unitPrice: number;
   color: string;
   size?: string;
+  personalization?: string;
 }
 
 export interface CustomerDetails {

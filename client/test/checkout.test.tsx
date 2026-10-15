@@ -18,12 +18,13 @@ function ChangeCart() {
 
 describe('kassans aktuella pris och betalsession', () => {
   it('visar serverpriset och spärrar beställning medan en ändrad varukorg laddar', async () => {
-    localStorage.setItem('formlabb.cart.v1', JSON.stringify([{ key: 'p|Vit|-', productId: 'p', slug: 'produkt', name: 'Produkt', color: 'Vit', quantity: 1, unitPrice: 1, art: { shape: 'planter', tone: 'benvit' } }]));
+    localStorage.setItem('formlabb.cart.v1', JSON.stringify([{ key: 'p|Vit|-|Åsa', productId: 'p', slug: 'namnornament', name: 'Produkt', color: 'Vit', personalization: 'Åsa', quantity: 1, unitPrice: 1, art: { shape: 'planter', tone: 'benvit' } }]));
     let complete!: (value: Awaited<ReturnType<typeof createPaymentSession>>) => void;
     vi.mocked(createPaymentSession).mockImplementation(() => new Promise(resolve => { complete = resolve; }));
     vi.mocked(placeOrder).mockResolvedValue({ order: { id: 'TEST' } as any, accessToken: 'token' });
     render(<MemoryRouter><CartProvider><CheckoutPage /><ChangeCart /></CartProvider></MemoryRouter>);
     const button = screen.getByRole('button', { name: 'Slutför beställning' });
+    expect(createPaymentSession).toHaveBeenLastCalledWith(expect.objectContaining({ lines: [expect.objectContaining({ personalization: 'Åsa' })] }));
     expect(button).toBeDisabled();
     const session = { clientToken: 'mock', paymentMethodCategories: [], test: true };
     await act(async () => complete({ session, amount: 45800, summary: { lines: [{ productId: 'p', name: 'Produkt', color: 'Vit', quantity: 1, unitPrice: 399 }], subtotal: 399, shipping: 59, total: 458 } }));
@@ -34,6 +35,6 @@ describe('kassans aktuella pris och betalsession', () => {
     fireEvent.click(button); expect(placeOrder).not.toHaveBeenCalled();
     await act(async () => complete({ session, amount: 79800, summary: { lines: [{ productId: 'p', name: 'Produkt', color: 'Vit', quantity: 2, unitPrice: 399 }], subtotal: 798, shipping: 0, total: 798 } }));
     fireEvent.click(button);
-    await waitFor(() => expect(placeOrder).toHaveBeenCalledWith(expect.objectContaining({ expectedTotal: 798, lines: [expect.objectContaining({ quantity: 2 })] })));
+    await waitFor(() => expect(placeOrder).toHaveBeenCalledWith(expect.objectContaining({ expectedTotal: 798, lines: [expect.objectContaining({ quantity: 2, personalization: 'Åsa' })] })));
   });
 });

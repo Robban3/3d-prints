@@ -80,7 +80,7 @@ function orderRows(order: AnyOrder): string {
   if (order.type === 'shop') {
     return order.lines
       .map((line) => {
-        const variant = [line.color, line.size].filter(Boolean).join(', ');
+        const variant = [line.color, line.size, line.personalization ? `${line.personalization.includes(' / ') ? 'Text' : 'Namn'}: ${line.personalization}` : undefined].filter(Boolean).join(', ');
         return `  ${line.quantity} × ${line.name}${variant ? ` (${variant})` : ''}   ${formatPrice(
           line.unitPrice * line.quantity,
         )}`;

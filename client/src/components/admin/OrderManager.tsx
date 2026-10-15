@@ -119,8 +119,9 @@ export function OrderManager({ token, onUnauthorized, overview = false }: Props)
                 <ul className="tick-list" style={{ marginTop: 8 }}>
                   {order.type === 'shop' ? (
                     order.lines.map((line) => (
-                      <li key={`${line.productId}-${line.color}-${line.size ?? ''}`}>
+                      <li key={`${line.productId}-${line.color}-${line.size ?? ''}-${line.personalization ?? ''}`}>
                         {line.quantity} × {line.name} · {line.color}{line.size ? ` · ${line.size}` : ''}
+                        {line.personalization && <><br />{line.personalization.includes(' / ') ? 'Text' : 'Namn'}: <strong>{line.personalization}</strong></>}
                       </li>
                     ))
                   ) : (

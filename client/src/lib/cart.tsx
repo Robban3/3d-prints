@@ -12,6 +12,7 @@ export interface CartItem {
   color: string;
   size?: string;
   sizeName?: string;
+  personalization?: string;
   art: Product['art'];
   image?: Product['image'];
 }
@@ -39,7 +40,8 @@ function readStorage(): CartItem[] {
       Number.isInteger(item.quantity) && item.quantity >= 1 && item.quantity <= 99 &&
       Number.isFinite(item.unitPrice) && item.unitPrice >= 0 &&
       item.art && typeof item.art.shape === 'string' && typeof item.art.tone === 'string' &&
-      (item.size === undefined || typeof item.size === 'string')
+      (item.size === undefined || typeof item.size === 'string') &&
+      (item.personalization === undefined || (typeof item.personalization === 'string' && item.personalization.length <= 51))
     ) : [];
   } catch {
     return [];
@@ -59,7 +61,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback((item: Omit<CartItem, 'key'>) => {
     // Samma produkt i samma färg och storlek slås ihop till en rad.
-    const key = [item.productId, item.color, item.size ?? '-'].join('|');
+    const key = [item.productId, item.color, item.size ?? '-', ...(item.personalization ? [item.personalization] : [])].join('|');
     setItems((current) => {
       const existing = current.find((entry) => entry.key === key);
       if (existing) {

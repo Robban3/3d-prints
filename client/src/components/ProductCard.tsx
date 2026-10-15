@@ -49,7 +49,11 @@ export function ProductCard({ product }: { product: Product }) {
         </p>
         <div className="price-row">
           <span className="price">{formatPrice(product.price)}</span>
-          <button
+          {['namnornament', 'var-forsta-jul'].includes(product.slug) ? (
+            <Link className="add-btn" to={`/produkter/${product.slug}`} aria-label={`Välj personlig text till ${product.name}`}>
+              <Icon name="bag" size={17} />
+            </Link>
+          ) : <button
             type="button"
             className={added ? 'add-btn done' : 'add-btn'}
             onClick={quickAdd}
@@ -57,7 +61,7 @@ export function ProductCard({ product }: { product: Product }) {
             aria-label={`Lägg ${product.name} i varukorgen`}
           >
             <Icon name="bag" size={17} />
-          </button>
+          </button>}
         </div>
       </div>
     </article>

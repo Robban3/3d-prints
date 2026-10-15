@@ -109,6 +109,14 @@ describe('varukorgen', () => {
 });
 
 describe('varukorgen och webbläsarlagringen', () => {
+  it('behåller personliga textrader efter omladdning', () => {
+    const personalization = 'Å'.repeat(24) + ' / ' + 'Ö'.repeat(24);
+    const first = setup();
+    act(() => first.result.current.add({ ...base, slug: 'var-forsta-jul', personalization }));
+    first.unmount();
+    const second = setup();
+    expect(second.result.current.items[0]?.personalization).toBe(personalization);
+  });
   it('överlever en omladdning', () => {
     const first = setup();
     act(() => first.result.current.add({ ...base, quantity: 2 }));

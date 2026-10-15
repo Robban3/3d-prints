@@ -9,6 +9,8 @@ import { useAsync } from '../lib/useAsync';
 import { useCart } from '../lib/cart';
 import { formatHours, formatPrice } from '../lib/format';
 import { selectedProductImage } from '../lib/productImage';
+import { NameOrnamentPreview } from '../components/NameOrnamentPreview';
+import { normalizeOrnamentName, ornamentNameError, ornamentGreetingError, ORNAMENT_NAME_MAX_LENGTH } from '../lib/ornamentName';
 
 export function ProductPage() {
   const { slug = '' } = useParams();
@@ -21,6 +23,9 @@ export function ProductPage() {
   const [sizeId, setSizeId] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [personalization, setPersonalization] = useState('');
+  const [secondLine, setSecondLine] = useState('jul');
+  const [nameTouched, setNameTouched] = useState(false);
   useEffect(() => {
     if (!added) return;
     const timer = window.setTimeout(() => setAdded(false), 2500);
@@ -33,6 +38,9 @@ export function ProductPage() {
     setSizeId(product.sizes?.[0]?.id ?? '');
     setQuantity(1);
     setAdded(false);
+    setPersonalization(product.slug === 'var-forsta-jul' ? 'Vår första' : '');
+    setSecondLine('jul');
+    setNameTouched(false);
   }, [product]);
 
   if (loading)
@@ -57,9 +65,14 @@ export function ProductPage() {
   const unitPrice = product.price + (size?.priceDelta ?? 0);
   const image = selectedProductImage(product, color, sizeId);
   const dimensions = size?.dimensions ?? product.dimensions;
+  const greeting = product.slug === 'var-forsta-jul';
+  const personalized = product.slug === 'namnornament' || greeting;
+  const personalText = greeting ? `${normalizeOrnamentName(personalization)} / ${normalizeOrnamentName(secondLine)}` : normalizeOrnamentName(personalization);
+  const nameError = personalized ? greeting ? ornamentGreetingError(personalText) : ornamentNameError(personalization) : null;
 
   function addToCart(goToCart: boolean) {
     if (!product) return;
+    if (nameError) { setNameTouched(true); document.getElementById('ornament-name')?.focus(); return; }
     add({
       productId: product.id,
       slug: product.slug,
@@ -71,6 +84,7 @@ export function ProductPage() {
       sizeName: size?.name,
       art: product.art,
       image,
+      ...(personalized ? { personalization: personalText } : {}),
     });
     if (goToCart) navigate('/varukorg');
     else {
@@ -152,6 +166,25 @@ export function ProductPage() {
 
             <div className="panel">
               <div className="stack" style={{ gap: 20 }}>
+                {personalized && (
+                  <div className="ornament-name-field">
+                    <label className="field-label" htmlFor="ornament-name">{greeting ? 'Text på övre raden' : 'Namn på ornamentet'}</label>
+                    <input id="ornament-name" className="input" type="text" value={personalization}
+                      maxLength={ORNAMENT_NAME_MAX_LENGTH} placeholder={greeting ? 'Vår första' : 'Till exempel Emma'}
+                      autoComplete="off" spellCheck={false} required
+                      aria-invalid={nameTouched && Boolean(nameError)}
+                      aria-describedby={nameTouched && nameError ? 'ornament-name-error' : 'ornament-name-hint'}
+                      onBlur={() => setNameTouched(true)}
+                      onChange={event => { setPersonalization(event.target.value); setAdded(false); }} />
+                    {greeting && <div style={{ marginTop: 12 }}><label className="field-label" htmlFor="ornament-second-line">Text på nedre raden</label>
+                      <input id="ornament-second-line" className="input" type="text" value={secondLine} maxLength={ORNAMENT_NAME_MAX_LENGTH}
+                        autoComplete="off" spellCheck={false} required placeholder="jul"
+                        onBlur={() => setNameTouched(true)} onChange={event => { setSecondLine(event.target.value); setAdded(false); }} /></div>}
+                    <p id="ornament-name-hint" className="field-hint">Förhandsvisningen uppdateras när du skriver. Högst {ORNAMENT_NAME_MAX_LENGTH} tecken{greeting ? ' per rad' : ''}.</p>
+                    {nameTouched && nameError && <p id="ornament-name-error" className="field-error" role="alert">{nameError}</p>}
+                    <NameOrnamentPreview name={personalization} secondLine={greeting ? secondLine : undefined} />
+                  </div>
+                )}
                 <div>
                   <span className="field-label">Färg</span>
                   <div className="swatches" style={{ marginTop: 8 }}>
