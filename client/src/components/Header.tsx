@@ -130,6 +130,7 @@ export function Header() {
               {link.label}
             </NavLink>
           ))}
+          <NavLink to="/fyndhornan" className={({ isActive }) => (isActive ? 'active' : '')}>Fyndhörnan</NavLink>
         </nav>
 
         <div className="header-actions">
