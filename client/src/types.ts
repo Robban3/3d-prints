@@ -158,6 +158,7 @@ export interface OrderLine {
   unitPrice: number;
   color: string;
   size?: string;
+  personalization?: string;
 }
 
 export type OrderStatus = 'mottagen' | 'i_produktion' | 'skickad' | 'levererad' | 'avbruten';

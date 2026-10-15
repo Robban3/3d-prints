@@ -74,6 +74,8 @@ export function CartPage() {
                       {item.sizeName ? ` · ${item.sizeName}` : ''} · {formatPrice(item.unitPrice)}
                       /st
                     </p>
+                    {item.personalization && <p className="cart-personalization">{item.personalization.includes(' / ') ? 'Text' : 'Namn'}: <strong>{item.personalization}</strong></p>}
+                    {item.slug === 'namnornament' && !item.personalization && <p className="notice"><Link to={`/produkter/${item.slug}`}>Välj namn på ornamentet</Link> och ersätt den här raden innan du går till kassan.</p>}
                     <div className="row">
                       <div className="qty">
                         <button
