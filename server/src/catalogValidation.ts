@@ -164,6 +164,18 @@ export function parseProductInput(
   if (!(price >= 1 && price <= 100000)) {
     errors.price = 'Priset ska vara mellan 1 och 100 000 kr.';
   }
+  const discountPercent = raw.discountPercent === undefined ? 0 : Number(raw.discountPercent);
+  const saleReferencePrice = raw.saleReferencePrice === undefined || raw.saleReferencePrice === null ? undefined : Number(raw.saleReferencePrice);
+  if (!Number.isInteger(discountPercent) || discountPercent < 0 || discountPercent > 99) errors.discountPercent = 'Ange en hel rabatt mellan 1 och 99 %, eller 0 för ingen rabatt.';
+  if (discountPercent > 0 && (saleReferencePrice === undefined || !Number.isFinite(saleReferencePrice) || saleReferencePrice < 1 || saleReferencePrice > price)) errors.saleReferencePrice = 'Ange verifierat lägsta pris de senaste 30 dagarna, högst produktens ordinarie pris.';
+  if (discountPercent > 0 && saleReferencePrice !== undefined && Array.isArray(raw.sizes)) {
+    for (const entry of raw.sizes) {
+      const reference = saleReferencePrice + num(asRecord(entry).priceDelta ?? 0);
+      const reduced = Math.round(reference * (1 - discountPercent / 100));
+      if (!(reference > 0 && reduced >= 1 && reduced < reference)) errors.discountPercent = 'Rabatten måste ge ett lägre pris på minst 1 kr för varje storlek.';
+    }
+  }
+  if (discountPercent > 0 && saleReferencePrice !== undefined && !(Math.round(saleReferencePrice * (1 - discountPercent / 100)) >= 1 && Math.round(saleReferencePrice * (1 - discountPercent / 100)) < saleReferencePrice)) errors.discountPercent = 'Rabatten måste ge ett lägre pris på minst 1 kr.';
 
   const material = text(raw.material);
   if (!options.materialIds.includes(material)) errors.material = 'Välj ett material som finns.';
@@ -261,6 +273,8 @@ export function parseProductInput(
     description,
     category: category as Product['category'],
     price: Math.round(price),
+    discountPercent,
+    saleReferencePrice: discountPercent > 0 ? saleReferencePrice : undefined,
     material: material as Product['material'],
     finish,
     printTimeHours,

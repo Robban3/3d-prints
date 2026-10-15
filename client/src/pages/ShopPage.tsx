@@ -6,13 +6,14 @@ import { fetchConfig, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import { PageHeader } from '../components/PageHeader';
 import type { Product } from '../types';
+import { productPrice } from '../lib/productPrice';
 
 type SortId = 'popular' | 'price-asc' | 'price-desc' | 'name';
 
 const sorters: Record<SortId, (a: Product, b: Product) => number> = {
   popular: (a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount,
-  'price-asc': (a, b) => a.price - b.price,
-  'price-desc': (a, b) => b.price - a.price,
+  'price-asc': (a, b) => productPrice(a).price - productPrice(b).price,
+  'price-desc': (a, b) => productPrice(b).price - productPrice(a).price,
   name: (a, b) => a.name.localeCompare(b.name, 'sv'),
 };
 
@@ -23,11 +24,11 @@ const sortLabels: Array<{ id: SortId; label: string }> = [
   { id: 'name', label: 'Namn A–Ö' },
 ];
 
-export function ShopPage() {
+export function ShopPage({ bargains = false }: { bargains?: boolean }) {
   const [params, setParams] = useSearchParams();
   const category = params.get('kategori') ?? 'alla';
-  const christmas = category === 'julkollektionen';
-  const halloween = category === 'halloween';
+  const christmas = !bargains && category === 'julkollektionen';
+  const halloween = !bargains && category === 'halloween';
   // Sökningen bor i URL:en, så att headerns sökruta och delade länkar slår
   // igenom även när butiken redan är öppen.
   const search = params.get('sok') ?? '';
@@ -40,6 +41,7 @@ export function ShopPage() {
   const visible = useMemo(() => {
     const term = search.toLowerCase().trim();
     const filtered = (data?.products ?? [])
+      .filter(product => !bargains || productPrice(product).sale)
       .filter((product) => material === 'alla' || product.material === material)
       .filter((product) =>
         term
@@ -50,7 +52,7 @@ export function ShopPage() {
           : true,
       );
     return [...filtered].sort(sorters[sort]);
-  }, [data, search, material, sort]);
+  }, [data, search, material, sort, bargains]);
 
   function selectCategory(id: string) {
     const next = new URLSearchParams(params);
@@ -86,9 +88,9 @@ export function ShopPage() {
         <ResponsiveImage src="/images/campaign/halloween-collection.webp" alt="Orange pumpa, benvitt spöke och mörka fladdermöss i ett varmt Halloween-stilleben" width="1536" height="1024" />
       </section> : <PageHeader
         eyebrow="Butik"
-        title={active ? active.name : 'Alla produkter'}
+        title={bargains ? 'Fyndhörnan' : active ? active.name : 'Alla produkter'}
         text={
-          active
+          bargains ? 'Utvalda produkter till lägre pris. Hitta en favorit bland våra aktuella fynd.' : active
             ? active.description
             : 'Allt vi designar och printar i egen verkstad, redo att skickas.'
         }
@@ -158,10 +160,9 @@ export function ShopPage() {
             </div>
           ) : visible.length === 0 ? (
             <div className="panel center">
-              <h3>Inga träffar</h3>
+              <h3>{bargains && !search && category === 'alla' && material === 'alla' ? 'Nya fynd är på väg' : 'Inga träffar'}</h3>
               <p className="muted">
-                Vi hittade ingenting på ”{search}”. Prova ett annat ord – eller låt oss printa det
-                du letar efter.
+                {bargains && !search && category === 'alla' && material === 'alla' ? 'Just nu har vi inga aktiva erbjudanden. Titta gärna in igen snart.' : `Vi hittade inga produkter som matchar dina val. Prova ett annat ord eller filter.`}
               </p>
             </div>
           ) : (

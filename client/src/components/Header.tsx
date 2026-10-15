@@ -114,6 +114,7 @@ export function Header() {
                       ))}
                     </div>
                   ))}
+                  <Link to="/fyndhornan" onClick={() => setShopOpen(false)}><Icon name="bag" size={24} /><span>Fyndhörnan</span><Icon name="chevronRight" size={16} className="nav-menu-arrow" /></Link>
                 </div>
               </div>
             )}

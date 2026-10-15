@@ -3,6 +3,7 @@ import { ProductArt } from '../ProductArt';
 import { ApiError, uploadProductImage } from '../../lib/api';
 import { TextAreaField, TextField } from '../Field';
 import { formatPrice } from '../../lib/format';
+import { productPrice } from '../../lib/productPrice';
 import type { ArtShape, ArtTone, Category, Material, Product, ProductDraft, SizeOption } from '../../types';
 
 const SHAPES: Array<{ id: ArtShape; name: string }> = [
@@ -287,6 +288,19 @@ export function ProductForm({
             error={errors.colors}
             onChange={(colors) => onChange({ colors, variantImages: draft.variantImages?.filter(variant => colors.includes(variant.color)) })}
           />
+          <fieldset className="sale-admin-settings">
+            <legend>Fyndhörnan</legend>
+            <label className="checkbox"><input type="checkbox" checked={(draft.discountPercent ?? 0) > 0}
+              onChange={event => onChange({ discountPercent: event.target.checked ? 20 : 0, saleReferencePrice: undefined })} />Visa produkten i Fyndhörnan</label>
+            {(draft.discountPercent ?? 0) > 0 && <div className="stack" style={{ gap: 14, marginTop: 16 }}>
+              <TextField label="Rabatt (%)" name="discountPercent" type="number" min={1} max={99} value={draft.discountPercent ?? 20} error={errors.discountPercent}
+                onChange={event => onChange({ discountPercent: Number(event.target.value) })} />
+              <TextField label="Tidigare lägsta pris (kr)" name="saleReferencePrice" type="number" min={1} max={draft.price} value={draft.saleReferencePrice ?? ''} error={errors.saleReferencePrice}
+                hint="Ange det verifierade lägsta priset under de 30 dagarna före prissänkningen. Rabatten beräknas från detta pris. Samma procentsats gäller alla storlekar; kontrollera även deras tidigare priser."
+                onChange={event => onChange({ saleReferencePrice: event.target.value ? Number(event.target.value) : undefined })} />
+              {productPrice(draft).sale && <p className="notice">Fyndpris: <strong>{formatPrice(productPrice(draft).price)}</strong> inkl. moms.</p>}
+            </div>}
+          </fieldset>
           <ListEditor
             label="Höjdpunkter"
             values={draft.highlights}
@@ -487,7 +501,7 @@ export function ProductForm({
                 onChange={(event) => setSize(index, { priceDelta: Number(event.target.value) })}
               />
               <span className="dim" style={{ fontSize: '0.82rem', whiteSpace: 'nowrap' }}>
-                {formatPrice(draft.price + (size.priceDelta || 0))}
+                {formatPrice(productPrice(draft, size.priceDelta || 0).price)}
               </span>
               <button
                 type="button"
