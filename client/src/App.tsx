@@ -7,6 +7,7 @@ const HomePage = lazy(() => import('./pages/HomePage').then(module => ({ default
 const ShopPage = lazy(() => import('./pages/ShopPage').then(module => ({ default: module.ShopPage })));
 const ProductPage = lazy(() => import('./pages/ProductPage').then(module => ({ default: module.ProductPage })));
 const CustomOrderPage = lazy(() => import('./pages/CustomOrderPage').then(module => ({ default: module.CustomOrderPage })));
+const LithophanePage = lazy(() => import('./pages/LithophanePage').then(module => ({ default: module.LithophanePage })));
 const CartPage = lazy(() => import('./pages/CartPage').then(module => ({ default: module.CartPage })));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then(module => ({ default: module.CheckoutPage })));
 const ConfirmationPage = lazy(() => import('./pages/ConfirmationPage').then(module => ({ default: module.ConfirmationPage })));
@@ -35,6 +36,7 @@ export function App() {
           <Route path="/produkter/spiral-vas" element={<Navigate to="/produkter/vas-nexo" replace />} />
           <Route path="/produkter/:slug" element={<ProductPage />} />
           <Route path="/egen-print" element={<CustomOrderPage />} />
+          <Route path="/litofan" element={<LithophanePage />} />
           <Route path="/varukorg" element={<CartPage />} />
           <Route path="/kassa" element={<CheckoutPage />} />
           <Route path="/order/:id" element={<ConfirmationPage />} />

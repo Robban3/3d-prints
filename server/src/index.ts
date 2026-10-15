@@ -33,7 +33,7 @@ app.use(
         scriptSrc: ["'self'", 'https://x.klarnacdn.net', 'https://*.klarna.com'],
         frameSrc: ["'self'", 'https://*.klarna.com', 'https://*.klarnacdn.net'],
         connectSrc: ["'self'", 'https://*.klarna.com', 'https://*.klarnacdn.net'],
-        imgSrc: ["'self'", 'data:', 'https://*.klarnacdn.net'],
+        imgSrc: ["'self'", 'data:', 'blob:', 'https://*.klarnacdn.net'],
         styleSrc: ["'self'", "'unsafe-inline'"],
         fontSrc: ["'self'", 'data:'],
         objectSrc: ["'none'"],

@@ -30,6 +30,7 @@ export function Footer() {
               <li>
                 <Link to="/egen-print">Beställ egen print</Link>
               </li>
+              <li><Link to="/litofan">Skapa litofan från foto</Link></li>
             </ul>
           </div>
           <div>

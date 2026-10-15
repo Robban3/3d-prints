@@ -45,18 +45,19 @@ export function CustomOrderPage() {
   const navigate = useNavigate();
   const config = useAsync(() => fetchConfig(), []);
   const location = useLocation();
+  const generated = (location.state as { lithophane?: { volumeCm3?: number; name?: string; description?: string } } | null)?.lithophane;
 
   const [request, setRequest] = useState<QuoteRequest>({
     material: 'pla',
-    quality: 'standard',
-    volumeCm3: 0,
-    infill: 20,
+    quality: generated ? 'fin' : 'standard',
+    volumeCm3: generated && Number.isFinite(generated.volumeCm3) ? Math.max(1, Math.round(generated.volumeCm3! * 10) / 10) : 0,
+    infill: generated ? 100 : 20,
     quantity: 1,
     rush: false,
     postProcessing: false,
   });
-  const [projectName, setProjectName] = useState('');
-  const [description, setDescription] = useState('');
+  const [projectName, setProjectName] = useState(generated?.name ?? '');
+  const [description, setDescription] = useState(generated?.description ?? '');
   // En fil som laddades upp på startsidan följer med hit via navigeringen.
   const carried = (location.state as { uploaded?: UploadedFile } | null)?.uploaded ?? null;
   const [uploaded, setUploaded] = useState<UploadedFile | null>(carried);
