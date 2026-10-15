@@ -8,7 +8,7 @@ import {
   fetchAdminProducts,
   updateProduct,
 } from '../../lib/api';
-import { formatPrice } from '../../lib/format';
+import { ProductPrice } from '../ProductPrice';
 import type { Category, Material, Product, ProductDraft } from '../../types';
 
 /** Produkten utan id, som formuläret arbetar med. */
@@ -20,6 +20,8 @@ function toDraft(product: Product): ProductDraft {
     description: product.description,
     category: product.category,
     price: product.price,
+    discountPercent: product.discountPercent ?? 0,
+    saleReferencePrice: product.saleReferencePrice,
     material: product.material,
     finish: product.finish,
     printTimeHours: product.printTimeHours,
@@ -58,6 +60,7 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [onlyBargains, setOnlyBargains] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -170,9 +173,10 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
       {message && <p className="notice notice-success">{message}</p>}
       {error && <p className="notice notice-error">{error}</p>}
       {!products && !error && <div className="skeleton" style={{ aspectRatio: 'auto', height: 200 }} />}
+      <label className="checkbox" style={{ marginBottom: 16 }}><input type="checkbox" checked={onlyBargains} onChange={event => setOnlyBargains(event.target.checked)} />Visa endast Fyndhörnan</label>
 
       <div className="stack" style={{ gap: 10 }}>
-        {products?.map((product) => (
+        {products?.filter(product => !onlyBargains || (product.discountPercent ?? 0) > 0).map((product) => (
           <div className="admin-row" key={product.id}>
             <div className="admin-row-art">
               <ProductImage product={product} />
@@ -189,7 +193,8 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
               <span className="badge">{product.stock} i lager</span>
               {product.published === false && <span className="badge badge-warn">Utkast</span>}
               {product.featured && <span className="badge badge-accent">Utvald</span>}
-              <strong>{formatPrice(product.price)}</strong>
+              {(product.discountPercent ?? 0) > 0 && <span className="badge badge-accent">Fyndhörnan · −{product.discountPercent} %</span>}
+              <ProductPrice product={product} />
             </div>
             <div className="admin-row-actions">
               {confirmDelete === product.id ? (
@@ -218,6 +223,10 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
                   <button type="button" className="btn btn-ghost" onClick={() => startEdit(product)}>
                     Redigera
                   </button>
+                  <button type="button" className="btn btn-ghost" onClick={() => {
+                    startEdit(product);
+                    setEditing({ id: product.id, draft: { ...toDraft(product), discountPercent: product.discountPercent || 20 } });
+                  }}>Fyndhörnan</button>
                   <button
                     type="button"
                     className="btn-quiet"

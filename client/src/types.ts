@@ -59,6 +59,8 @@ export interface Product {
   description: string;
   category: CategoryId;
   price: number;
+  discountPercent?: number;
+  saleReferencePrice?: number;
   material: MaterialId;
   finish: string;
   printTimeHours: number;

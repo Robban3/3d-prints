@@ -27,6 +27,8 @@ export interface Product {
   category: CategoryId;
   /** Grundpris i kronor inkl. moms. */
   price: number;
+  discountPercent?: number;
+  saleReferencePrice?: number;
   material: MaterialId;
   /** Ytfinish som visas tillsammans med materialet, t.ex. ”PLA Matt”. */
   finish: string;

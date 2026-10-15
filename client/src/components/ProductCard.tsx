@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { ProductImage } from './ProductImage';
 import { Icon } from './Icon';
-import { formatPrice } from '../lib/format';
 import { selectedProductImage } from '../lib/productImage';
 import { useCart } from '../lib/cart';
 import type { Product } from '../types';
+import { productPrice } from '../lib/productPrice';
+import { ProductPrice } from './ProductPrice';
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
@@ -22,7 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
       productId: product.id,
       slug: product.slug,
       name: product.name,
-      unitPrice: product.price + (product.sizes?.[0]?.priceDelta ?? 0),
+      unitPrice: productPrice(product, product.sizes?.[0]?.priceDelta ?? 0).price,
       quantity: 1,
       color: product.colors[0] ?? '',
       size: product.sizes?.[0]?.id,
@@ -37,6 +38,7 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="product-card">
       <Link to={`/produkter/${product.slug}`} className="art" tabIndex={-1} aria-hidden="true">
         <ProductImage product={{ ...product, image: selectedProductImage(product) }} />
+        {productPrice(product).sale && <span className="flag sale-flag">−{product.discountPercent} %</span>}
         {product.stock > 0 && product.stock <= 20 && <span className="flag flag-warn">Få kvar</span>}
         {product.stock <= 0 && product.specificationsPending && <span className="flag">Kommer snart</span>}
       </Link>
@@ -48,7 +50,7 @@ export function ProductCard({ product }: { product: Product }) {
           {product.material.toUpperCase()} {product.finish}
         </p>
         <div className="price-row">
-          <span className="price">{formatPrice(product.price)}</span>
+          <ProductPrice product={product} delta={product.sizes?.[0]?.priceDelta ?? 0} />
           {['namnornament', 'var-forsta-jul'].includes(product.slug) ? (
             <Link className="add-btn" to={`/produkter/${product.slug}`} aria-label={`Välj personlig text till ${product.name}`}>
               <Icon name="bag" size={17} />

@@ -2,6 +2,7 @@ import { findMaterial, findQuality } from './catalog.ts';
 import { QUOTE_LIMITS } from './pricing.ts';
 import type { CustomQuoteRequest, CustomerDetails, OrderLine } from './types.ts';
 import { findProduct } from './catalog.ts';
+import { productPrice } from './productPrice.ts';
 
 export class ValidationError extends Error {
   readonly fields: Record<string, string>;
@@ -118,7 +119,7 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
       productId: product.id,
       name: product.name,
       quantity,
-      unitPrice: product.price + priceDelta,
+      unitPrice: productPrice(product, priceDelta).price,
       color,
       size,
       ...(personalization ? { personalization } : {}),

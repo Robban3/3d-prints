@@ -33,6 +33,7 @@ export function App() {
         <Suspense fallback={<div className="container route-loading" role="status">Laddar sidan…</div>}><Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/produkter" element={<ShopPage />} />
+          <Route path="/fyndhornan" element={<ShopPage bargains />} />
           <Route path="/produkter/spiral-vas" element={<Navigate to="/produkter/vas-nexo" replace />} />
           <Route path="/produkter/:slug" element={<ProductPage />} />
           <Route path="/egen-print" element={<CustomOrderPage />} />

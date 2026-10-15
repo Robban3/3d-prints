@@ -21,6 +21,7 @@ export function Footer() {
               <li>
                 <Link to="/produkter">Alla produkter</Link>
               </li>
+              <li><Link to="/fyndhornan">Fyndhörnan</Link></li>
               <li>
                 <Link to="/produkter?kategori=inredning">Hem &amp; inredning</Link>
               </li>

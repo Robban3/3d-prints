@@ -11,6 +11,8 @@ import { formatHours, formatPrice } from '../lib/format';
 import { selectedProductImage } from '../lib/productImage';
 import { NameOrnamentPreview } from '../components/NameOrnamentPreview';
 import { normalizeOrnamentName, ornamentNameError, ornamentGreetingError, ORNAMENT_NAME_MAX_LENGTH } from '../lib/ornamentName';
+import { productPrice } from '../lib/productPrice';
+import { ProductPrice } from '../components/ProductPrice';
 
 export function ProductPage() {
   const { slug = '' } = useParams();
@@ -62,7 +64,7 @@ export function ProductPage() {
   }
 
   const size = product.sizes?.find((entry) => entry.id === sizeId) ?? product.sizes?.[0];
-  const unitPrice = product.price + (size?.priceDelta ?? 0);
+  const unitPrice = productPrice(product, size?.priceDelta ?? 0).price;
   const image = selectedProductImage(product, color, sizeId);
   const dimensions = size?.dimensions ?? product.dimensions;
   const greeting = product.slug === 'var-forsta-jul';
@@ -166,6 +168,7 @@ export function ProductPage() {
 
             <div className="panel">
               <div className="stack" style={{ gap: 20 }}>
+                {productPrice(product, size?.priceDelta ?? 0).sale && <div className="sale-detail"><span className="badge">Fyndhörnan · −{product.discountPercent} %</span><ProductPrice product={product} delta={size?.priceDelta ?? 0} /></div>}
                 {personalized && (
                   <div className="ornament-name-field">
                     <label className="field-label" htmlFor="ornament-name">{greeting ? 'Text på övre raden' : 'Namn på ornamentet'}</label>
@@ -216,7 +219,7 @@ export function ProductPage() {
                         >
                           <strong>{entry.name}</strong>
                           <span>
-                            {entry.priceDelta === 0
+                            {productPrice(product).sale ? formatPrice(productPrice(product, entry.priceDelta).price) : entry.priceDelta === 0
                               ? 'Grundpris'
                               : `${entry.priceDelta > 0 ? '+' : ''}${formatPrice(entry.priceDelta)}`}
                           </span>
