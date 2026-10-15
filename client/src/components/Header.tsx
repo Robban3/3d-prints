@@ -119,6 +119,7 @@ export function Header() {
             )}
           </div>
           <NavLink to="/egen-print" className={({ isActive }) => (isActive ? 'active' : '')}>Egen print</NavLink>
+          <NavLink to="/litofan" className={({ isActive }) => (isActive ? 'active' : '')}>Foto till 3D</NavLink>
           {links.filter((link) => link.to === '/om-oss').map((link) => (
             <NavLink
               key={link.to}

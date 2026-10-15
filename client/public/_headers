@@ -4,7 +4,7 @@
   Referrer-Policy: no-referrer
   Cross-Origin-Resource-Policy: same-origin
   Strict-Transport-Security: max-age=31536000; includeSubDomains
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://x.klarnacdn.net https://*.klarna.com; frame-src 'self' https://*.klarna.com https://*.klarnacdn.net; connect-src 'self' https://*.klarna.com https://*.klarnacdn.net; img-src 'self' data: https://*.klarnacdn.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://x.klarnacdn.net https://*.klarna.com; frame-src 'self' https://*.klarna.com https://*.klarnacdn.net; connect-src 'self' https://*.klarna.com https://*.klarnacdn.net; img-src 'self' data: blob: https://*.klarnacdn.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
