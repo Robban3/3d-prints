@@ -218,11 +218,6 @@ export function ProductPage() {
                           onClick={() => setSizeId(entry.id)}
                         >
                           <strong>{entry.name}</strong>
-                          <span>
-                            {productPrice(product).sale ? formatPrice(productPrice(product, entry.priceDelta).price) : entry.priceDelta === 0
-                              ? 'Grundpris'
-                              : `${entry.priceDelta > 0 ? '+' : ''}${formatPrice(entry.priceDelta)}`}
-                          </span>
                         </button>
                       ))}
                     </div>
