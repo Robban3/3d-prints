@@ -67,6 +67,8 @@ export function ProductPage() {
   const unitPrice = productPrice(product, size?.priceDelta ?? 0).price;
   const image = selectedProductImage(product, color, sizeId);
   const dimensions = size?.dimensions ?? product.dimensions;
+  const weightGrams = size?.weightGrams ?? product.weightGrams;
+  const printTimeHours = size?.printTimeHours ?? product.printTimeHours;
   const greeting = product.slug === 'var-forsta-jul';
   const personalized = product.slug === 'namnornament' || greeting;
   const personalText = greeting ? `${normalizeOrnamentName(personalization)} / ${normalizeOrnamentName(secondLine)}` : normalizeOrnamentName(personalization);
@@ -125,11 +127,11 @@ export function ProductPage() {
                   </tr>
                   <tr>
                     <th>Vikt</th>
-                    <td>{product.weightGrams <= 0 ? 'Fastställs inför produktion' : `${product.weightGrams} g`}</td>
+                    <td>{weightGrams <= 0 ? 'Fastställs inför produktion' : `${product.productionEstimated ? 'Ca ' : ''}${weightGrams} g`}</td>
                   </tr>
                   <tr>
                     <th>Printtid</th>
-                    <td>{product.printTimeHours <= 0 ? 'Fastställs inför produktion' : formatHours(product.printTimeHours)}</td>
+                    <td>{printTimeHours <= 0 ? 'Fastställs inför produktion' : `${product.productionEstimated ? 'Ca ' : ''}${formatHours(printTimeHours)}`}</td>
                   </tr>
                   <tr>
                     <th>Lagerstatus</th>
@@ -139,6 +141,7 @@ export function ProductPage() {
               </table>
               {product.dimensionsNote && <p className="field-hint">{product.dimensionsNote}</p>}
               {product.dimensionsEstimated && <p className="field-hint">Preliminära designmått – bekräftas vid provprintning.</p>}
+              {product.productionEstimated && <p className="field-hint">Vikt och printtid är preliminära uppskattningar, inte uppmätta eller beräknade i skrivarprogrammet. {product.productionNote}</p>}
             </div>
           </div>
 

@@ -16,6 +16,8 @@ export interface ProductVariantOption {
   /** Tillägg på grundpriset i kronor. */
   priceDelta: number;
   dimensions?: { width: number; depth: number; height: number };
+  weightGrams?: number;
+  printTimeHours?: number;
 }
 
 export interface Product {
@@ -50,6 +52,8 @@ export interface Product {
   specificationsPending?: boolean;
   dimensionsEstimated?: boolean;
   dimensionsNote?: string;
+  productionEstimated?: boolean;
+  productionNote?: string;
   /** Nyckel till den genererade SVG-illustrationen, som används utan foto. */
   art: { shape: ArtShape; tone: ArtTone };
   /** Uppladdad produktbild. Visas i stället för den ritade illustrationen. */

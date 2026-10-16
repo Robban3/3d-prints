@@ -26,6 +26,19 @@ const categoryIds = ['inredning', 'kontor', 'kok', 'prylar', 'tillbehor'];
 const materialIds = ['pla', 'petg', 'abs', 'tpu', 'resin'];
 const options = { categoryIds, materialIds };
 
+it('behåller märkta produktionsuppskattningar och värden per variant vid katalogimport', () => {
+  const input = validInput({ productionEstimated: true, productionNote: 'Planeringsvärden, ej slicat.', sizes: [{ id: 'set', name: 'Set', priceDelta: 0, weightGrams: 150, printTimeHours: 12.5 }] });
+  const parsed = parseProductInput(input, options);
+  assert.equal(parsed.productionEstimated, true);
+  assert.equal(parsed.productionNote, 'Planeringsvärden, ej slicat.');
+  assert.equal(parsed.sizes?.[0]?.weightGrams, 150);
+  assert.equal(parsed.sizes?.[0]?.printTimeHours, 12.5);
+  assert.equal(parsed.specificationsPending, false);
+  for (const value of [-1, 0, Infinity, 'inte ett tal']) {
+    assert.throws(() => parseProductInput({ ...input, sizes: [{ id: 'set', name: 'Set', priceDelta: 0, weightGrams: value }] }, options), ProductInputError);
+  }
+});
+
 it('behåller preliminära mått och validerar mått för varje storlek', () => {
   const dimensions = { width: 140, depth: 120, height: 240 };
   const input = validInput({ dimensionsEstimated: true, dimensionsNote: 'Yttermått.', optionLabel: 'Utförande', sizes: [{ id: 'stor', name: 'Stor', priceDelta: 100, dimensions }] });
@@ -239,7 +252,7 @@ describe('validering av produktindata', () => {
     const pending = validInput({ specificationsPending: true, dimensions: { width: 0, depth: 0, height: 0 }, printTimeHours: 0, weightGrams: 0 });
     assert.equal(parseProductInput(pending, options).specificationsPending, true);
     assert.throws(() => parseProductInput({ ...pending, specificationsPending: false }, options), ProductInputError);
-    assert.equal(parseProductInput(validInput({ specificationsPending: true }), options).specificationsPending, undefined);
+    assert.equal(parseProductInput(validInput({ specificationsPending: true }), options).specificationsPending, false);
     assert.throws(() => parseProductInput({ ...pending, dimensions: { width: -1, depth: 0, height: 0 } }, options), ProductInputError);
   });
   it('tar emot ett komplett formulär', () => {
