@@ -43,6 +43,7 @@ export function emptyDraft(categoryId: string): ProductDraft {
     material: 'pla',
     finish: 'Matt',
     printTimeHours: 6,
+    productionEstimated: true,
     dimensions: { width: 100, depth: 100, height: 120 },
     weightGrams: 150,
     colors: ['Matt svart'],
@@ -416,6 +417,8 @@ export function ProductForm({
           </div>
 
           <h3 style={{ marginTop: 10 }}>Specifikation</h3>
+          <label className="checkbox"><input type="checkbox" checked={draft.productionEstimated === true} onChange={event => onChange({ productionEstimated: event.target.checked })} /><span>Vikt och printtid är preliminära uppskattningar</span></label>
+          <TextField label="Förklaring till vikt och printtid" name="productionNote" value={draft.productionNote ?? ''} onChange={event => onChange({ productionNote: event.target.value })} />
           <label className="checkbox"><input type="checkbox" checked={draft.dimensionsEstimated === true} onChange={event => onChange({ dimensionsEstimated: event.target.checked })} /><span>Preliminära designmått</span></label>
           <TextField label="Förklaring till måtten" name="dimensionsNote" value={draft.dimensionsNote ?? ''} onChange={event => onChange({ dimensionsNote: event.target.value })} hint="Till exempel: mått per kula; upphängningsband ingår inte i måttet." />
           {draft.specificationsPending && <p className="notice">Produktionsuppgifter saknas ännu. Fyll i mått, vikt och printtid när produkten är provprintad. Nollvärden visas som ”Fastställs inför produktion” i butiken.</p>}
@@ -512,6 +515,10 @@ export function ProductForm({
               </button>
               <div className="grid-3" style={{ gridColumn: '1 / -1' }}>
                 {(['width', 'depth', 'height'] as const).map((axis, dimensionIndex) => <TextField key={axis} label={`${['Bredd', 'Djup', 'Höjd'][dimensionIndex]} för ${size.name || 'storleken'} (mm)`} name={`size-${index}-${axis}`} type="number" min={1} value={size.dimensions?.[axis] ?? ''} placeholder={String(draft.dimensions[axis])} onChange={event => setSize(index, { dimensions: { ...(size.dimensions ?? draft.dimensions), [axis]: Number(event.target.value) } })} />)}
+              </div>
+              <div className="grid-2" style={{ gridColumn: '1 / -1' }}>
+                <TextField label={`Vikt för ${size.name || 'storleken'} (g)`} name={`size-${index}-weight`} type="number" min={1} value={size.weightGrams ?? ''} placeholder={String(draft.weightGrams)} onChange={event => setSize(index, { weightGrams: event.target.value === '' ? undefined : Number(event.target.value) })} />
+                <TextField label={`Printtid för ${size.name || 'storleken'} (h)`} name={`size-${index}-time`} type="number" min={0.5} step="0.5" value={size.printTimeHours ?? ''} placeholder={String(draft.printTimeHours)} onChange={event => setSize(index, { printTimeHours: event.target.value === '' ? undefined : Number(event.target.value) })} />
               </div>
             </div>
           ))}

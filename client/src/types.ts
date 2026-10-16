@@ -49,6 +49,8 @@ export interface SizeOption {
   name: string;
   priceDelta: number;
   dimensions?: { width: number; depth: number; height: number };
+  weightGrams?: number;
+  printTimeHours?: number;
 }
 
 export interface Product {
@@ -79,6 +81,8 @@ export interface Product {
   specificationsPending?: boolean;
   dimensionsEstimated?: boolean;
   dimensionsNote?: string;
+  productionEstimated?: boolean;
+  productionNote?: string;
   art: { shape: ArtShape; tone: ArtTone };
   image?: { id: string; url: string; fileName: string };
   variantImages?: Array<{ color: string; size?: string; image: { id: string; url: string; fileName: string } }>;

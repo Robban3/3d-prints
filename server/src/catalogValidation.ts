@@ -117,7 +117,14 @@ function parseSizes(value: unknown, errors: Record<string, string>): ProductVari
       if (Object.values(dimensions).some(value => !(value > 0 && value <= 2000))) errors[`sizes.${index}.dimensions`] = 'Storlekens mått ska vara mellan 1 och 2000 mm.';
       dimensions = { width: Math.round(dimensions.width), depth: Math.round(dimensions.depth), height: Math.round(dimensions.height) };
     }
-    sizes.push({ id, name, priceDelta: Math.round(priceDelta), ...(dimensions ? { dimensions } : {}) });
+    const production: Pick<ProductVariantOption, 'weightGrams' | 'printTimeHours'> = {};
+    for (const [field, maximum] of [['weightGrams', 50000], ['printTimeHours', 500]] as const) {
+      if (raw[field] === undefined) continue;
+      const value = num(raw[field]);
+      if (!(value > 0 && value <= maximum)) errors[`sizes.${index}.${field}`] = 'Ange ett positivt produktionsvärde inom tillåten gräns.';
+      production[field] = field === 'weightGrams' ? Math.round(value) : value;
+    }
+    sizes.push({ id, name, priceDelta: Math.round(priceDelta), ...(dimensions ? { dimensions } : {}), ...production });
   });
 
   return sizes.length > 0 ? sizes : undefined;
@@ -293,9 +300,11 @@ export function parseProductInput(
     reviewCount,
     featured: raw.featured === true,
     published: raw.published !== false,
-    ...(pending && [printTimeHours, weightGrams, ...Object.values(dimensions)].some(value => value === 0) ? { specificationsPending: true } : {}),
+    specificationsPending: pending && [printTimeHours, weightGrams, ...Object.values(dimensions)].some(value => value === 0),
     dimensionsEstimated: raw.dimensionsEstimated === true,
     dimensionsNote: text(raw.dimensionsNote).slice(0, 500),
+    productionEstimated: raw.productionEstimated === true,
+    productionNote: text(raw.productionNote).slice(0, 700),
     ...(image ? { image } : {}),
     ...(Object.hasOwn(raw, 'variantImages') ? { variantImages } : {}),
     art: { shape: shape as ArtShape, tone: tone as ArtTone },

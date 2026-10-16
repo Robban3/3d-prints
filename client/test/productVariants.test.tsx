@@ -11,6 +11,20 @@ vi.mock('../src/lib/api', () => ({ fetchProduct: vi.fn() }));
 const image = (id: string) => ({ id, url: `/${id}.webp`, fileName: `${id}-visualisering.webp` });
 const product: Product = { id: 'dragon', slug: 'flexi-drake', name: 'Flexi drake', tagline: 'Drake', description: 'En drake.', category: 'prylar', price: 249, material: 'pla', finish: 'Silk', printTimeHours: 2, dimensions: { width: 100, depth: 100, height: 100 }, weightGrams: 100, colors: ['Silk koppar', 'Silk lila'], sizes: [{ id: 'mini', name: 'Mini', priceDelta: 0 }, { id: 'stor', name: 'Stor', priceDelta: 100 }], highlights: [], stock: 20, rating: 0, reviewCount: 0, featured: false, art: { shape: 'dragon', tone: 'benvit' }, image: image('copper'), variantImages: [{ color: 'Silk lila', size: 'mini', image: image('purple-mini') }, { color: 'Silk lila', size: 'stor', image: image('purple-large') }] };
 function CartProof() { return <output data-testid="cart-proof">{JSON.stringify(useCart().items)}</output>; }
+it('byter mått, vikt och printtid tillsammans med valt utförande och märker uppskattningar', async () => {
+  vi.mocked(fetchProduct).mockResolvedValue({ product: { ...product, productionEstimated: true, productionNote: 'Ett valt set.', sizes: [
+    { id: 'mini', name: 'Lös figur', priceDelta: 0, dimensions: { width: 47, depth: 33, height: 100 }, weightGrams: 35, printTimeHours: 3 },
+    { id: 'set', name: 'Hela setet', priceDelta: 100, dimensions: { width: 74, depth: 38, height: 100 }, weightGrams: 210, printTimeHours: 18 },
+  ] }, related: [] });
+  const user = userEvent.setup();
+  render(<MemoryRouter initialEntries={['/produkter/flexi-drake']}><CartProvider><Routes><Route path="/produkter/:slug" element={<ProductPage />} /></Routes></CartProvider></MemoryRouter>);
+  expect(await screen.findByText('Ca 35 g')).toBeInTheDocument();
+  expect(screen.getByText(/inte uppmätta eller beräknade i skrivarprogrammet/)).toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: 'Hela setet' }));
+  expect(screen.getByText('Ca 210 g')).toBeInTheDocument();
+  expect(screen.getByText('74 × 38 × 100 mm')).toBeInTheDocument();
+  expect(screen.getByText('Ca 18 h')).toBeInTheDocument();
+});
 it('byter bild vid färg- och storleksval och sparar vald bild i varukorgen', async () => {
   window.localStorage.clear();
   vi.mocked(fetchProduct).mockResolvedValue({ product: { ...product, dimensionsEstimated: true, specificationsPending: true, weightGrams: 0, printTimeHours: 0, sizes: product.sizes?.map(size => ({ ...size, dimensions: size.id === 'mini' ? { width: 47, depth: 160, height: 60 } : { width: 110, depth: 380, height: 140 } })) }, related: [] });

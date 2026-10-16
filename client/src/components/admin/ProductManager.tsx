@@ -38,6 +38,8 @@ function toDraft(product: Product): ProductDraft {
     specificationsPending: product.specificationsPending,
     dimensionsEstimated: product.dimensionsEstimated,
     dimensionsNote: product.dimensionsNote,
+    productionEstimated: product.productionEstimated,
+    productionNote: product.productionNote,
     optionLabel: product.optionLabel,
     art: { ...product.art },
     ...(product.image ? { image: { ...product.image } } : {}),
