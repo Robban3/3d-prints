@@ -13,7 +13,7 @@ import { orderTrackingUrl } from './orderAccess.ts';
  * och gränssnittets löfte om ett bekräftelsemejl motsvaras av något verkligt.
  */
 const OUTBOX = () => resolve(process.env.MAIL_OUTBOX ?? 'data/utkorg');
-const FROM = () => process.env.MAIL_FROM ?? 'Formlabb <support@formlabb.se>';
+const FROM = () => process.env.MAIL_FROM ?? 'Formlabb.se <no-reply@formlabb.se>';
 
 export interface Mail {
   to: string;

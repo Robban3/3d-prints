@@ -13,6 +13,11 @@
   "vars": {
     "PUBLIC_URL": "https://formlabb.se",
     "ADMIN_EMAIL": "admin@formlabb.se",
+    "MAIL_FROM": "Formlabb.se <no-reply@formlabb.se>",
+    "SMTP_HOST": "smtp.resend.com",
+    "SMTP_PORT": "465",
+    "SMTP_SECURE": "true",
+    "SMTP_USER": "resend",
     "STATE_BUCKET": "formlabb-private",
     "S3_BUCKET": "formlabb-private",
     "S3_ENDPOINT": "https://4015d1857d7474d6344ef85104ad2479.eu.r2.cloudflarestorage.com"
