@@ -6,7 +6,7 @@ import { pathParam } from './http.ts';
 import { rateLimit } from './rateLimit.ts';
 import { findOrder, listOrders, updateOrder } from './store.ts';
 import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from './lifecycle.ts';
-import { sendMail, statusUpdate, mailIsConfigured } from './mailer.ts';
+import { sendMail, statusUpdate, mailIsConfigured, orderConfirmationExample } from './mailer.ts';
 import { activateAccount, adminEmail, createReset, endSession, readAccount, resetPassword, startSession, validPassword, validSession, verifyPassword } from './adminAuth.ts';
 import {
   CatalogError,
@@ -177,9 +177,11 @@ admin.get('/admin/operations', requireAdmin, async (_req, res) => {
   res.json({ emailConfigured: mailIsConfigured(), paymentConfigured: Boolean(process.env.KLARNA_USERNAME && process.env.KLARNA_PASSWORD), paymentEnvironment: process.env.KLARNA_ENV === 'production' ? 'production' : 'test', storage: process.env.STATE_BUCKET ? 'r2' : 'local' });
 });
 
-admin.post('/admin/email/test', requireAdmin, async (_req, res) => {
+admin.post('/admin/email/test', requireAdmin, recoveryLimit, async (req, res) => {
   if (!mailIsConfigured()) { res.status(503).json({ error: 'E-post är inte aktiverad.' }); return; }
-  const result = await sendMail({ to: 'support@formlabb.se', subject: 'Formlabb – test av butikens e-post', text: 'Detta är ett test av butikens e-postanslutning. Ingen beställning eller betalning har skapats.' });
+  const to = typeof req.body?.to === 'string' ? req.body.to.trim() : 'support@formlabb.se';
+  if (to.length > 254 || !/^[^\s@<>\r\n]+@[^\s@<>\r\n]+\.[^\s@<>\r\n]+$/.test(to)) { res.status(400).json({ error: 'Ange en giltig e-postadress.' }); return; }
+  const result = await sendMail(orderConfirmationExample(to));
   res.json({ accepted: result.delivered });
 });
 

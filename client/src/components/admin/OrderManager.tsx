@@ -27,9 +27,10 @@ export function OrderManager({ token, onUnauthorized, overview = false }: Props)
   const [operations, setOperations] = useState<Awaited<ReturnType<typeof fetchOperations>> | null>(null);
   const [serviceError, setServiceError] = useState('');
   const [testingMail, setTestingMail] = useState(false);
+  const [testRecipient, setTestRecipient] = useState('support@formlabb.se');
   async function testEmail() {
     setTestingMail(true);
-    try { const result = await testShopEmail(token); setNotice(result.accepted ? 'E-posttjänsten har accepterat testmejlet till support@formlabb.se. Kontrollera inkorgen för slutlig leverans.' : 'Testmejlet kunde inte skickas.'); }
+    try { const result = await testShopEmail(token, testRecipient); setNotice(result.accepted ? `E-posttjänsten har accepterat designexemplet till ${testRecipient}. Kontrollera inkorgen för slutlig leverans.` : 'Testmejlet kunde inte skickas.'); }
     catch (caught) { setError(caught instanceof Error ? caught.message : 'E-posttestet misslyckades.'); }
     finally { setTestingMail(false); }
   }
@@ -86,7 +87,7 @@ export function OrderManager({ token, onUnauthorized, overview = false }: Props)
         <div className="workshop-metrics">
           {[['mottagen', 'Nya order', orders?.filter(order => order.status === 'mottagen').length], ['i_produktion', 'I produktion', orders?.filter(order => order.status === 'i_produktion').length], ['unpaid', 'Väntar betalning', orders?.filter(unpaid).length], ['overdue', 'Passerat klardatum', orders?.filter(overdue).length]].map(([key, label, count]) => <button type="button" className="panel workshop-metric" aria-pressed={filter === key} key={key} onClick={() => setFilter(String(key))}><span>{label}</span><strong>{count ?? '–'}</strong></button>)}
         </div>
-        <div className="panel" style={{ margin: '18px 0' }}><h3>Driftkonfiguration</h3>{operations ? <div className="chip-row"><span className="badge">E-post: {operations.emailConfigured ? 'konfigurerad' : 'ej aktiverad'}</span><span className="badge">Klarna: {!operations.paymentConfigured ? 'ej aktiverad' : operations.paymentEnvironment === 'production' ? 'produktionsnycklar' : 'testnycklar'}</span><span className="badge">Orderlagring: {operations.storage === 'r2' ? 'privat R2' : 'lokal'}</span></div> : <p>Hämtar konfiguration…</p>}<p className="dim">Konfigurationen visar vilka tjänster som är inställda. Den är ingen garanti för leverans eller genomförd betalning. Auktorisering behöver fortfarande följas av debitering.</p><button type="button" className="btn btn-ghost" disabled={!operations?.emailConfigured || testingMail} onClick={() => void testEmail()}>{testingMail ? 'Skickar test…' : 'Testa e-post till support@formlabb.se'}</button></div>
+        <div className="panel" style={{ margin: '18px 0' }}><h3>Driftkonfiguration</h3>{operations ? <div className="chip-row"><span className="badge">E-post: {operations.emailConfigured ? 'konfigurerad' : 'ej aktiverad'}</span><span className="badge">Klarna: {!operations.paymentConfigured ? 'ej aktiverad' : operations.paymentEnvironment === 'production' ? 'produktionsnycklar' : 'testnycklar'}</span><span className="badge">Orderlagring: {operations.storage === 'r2' ? 'privat R2' : 'lokal'}</span></div> : <p>Hämtar konfiguration…</p>}<p className="dim">Konfigurationen visar vilka tjänster som är inställda. Den är ingen garanti för leverans eller genomförd betalning. Auktorisering behöver fortfarande följas av debitering.</p><label>Skicka exempel på orderbekräftelse till<input type="email" value={testRecipient} onChange={event => setTestRecipient(event.target.value)} /></label><button type="button" className="btn btn-ghost" disabled={!operations?.emailConfigured || testingMail || !testRecipient} onClick={() => void testEmail()}>{testingMail ? 'Skickar test…' : 'Skicka exempel på orderbekräftelse'}</button></div>
       </>}
       <h2>
         Ordrar {orders ? <span className="dim">({orders.length})</span> : null}
