@@ -18,7 +18,8 @@ it('filters the workshop and saves a production card with its revision', async (
   await screen.findByText('C-TEST');
   expect(screen.queryByText('C-CLOSED')).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: /Väntar betalning 1/ })).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: 'Testa e-post till support@formlabb.se' })).toBeDisabled();
+  expect(screen.getByLabelText(/Skicka exempel på orderbekräftelse till/)).toHaveValue('support@formlabb.se');
+  expect(screen.getByRole('button', { name: 'Skicka exempel på orderbekräftelse' })).toBeDisabled();
   const card = within(screen.getByTestId('production-C-TEST'));
   await user.click(card.getByText('Produktionskort · filer och planering'));
   await user.type(card.getByLabelText('Maskin'), 'Bambu 1');
