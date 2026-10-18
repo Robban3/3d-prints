@@ -7,6 +7,13 @@ import express from 'express';
 import type { Server } from 'node:http';
 import type { AnyOrder, CustomOrder } from '../src/types.ts';
 
+/**
+ * Response.json() ger unknown. Testet vet vad det bad servern om, så det får
+ * säga det - i stället för en as-klausul på varje uppslag.
+ */
+const json = async (response: Response): Promise<Record<string, any>> =>
+  (await response.json()) as Record<string, any>;
+
 it('isolates order access, personal data exports, image writes and 90-day file retention', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'formlabb-privacy-'));
   process.env.ORDER_STORE = join(directory, 'orders.json');
@@ -76,7 +83,7 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     assert.equal(await stockFor(product.id), 10);
     const sessionResponse = await fetch(`${base}/payments/session`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shop', lines: [{ ...lines[0], unitPrice: 1 }] }) });
     assert.equal(sessionResponse.status, 200);
-    const session = await sessionResponse.json();
+    const session = await json(sessionResponse);
     assert.equal(session.summary.lines[0].unitPrice, product.price + (product.sizes?.[0]?.priceDelta ?? 0));
     assert.equal(session.amount, Math.round(session.summary.total * 100));
     const stalePrice = await fetch(`${base}/orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customer: order.customer, lines, expectedTotal: -1 }) });
@@ -84,7 +91,7 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     await assert.rejects(() => saveOrder(shop), /Ordernumret finns redan/);
     const createdResponse = await fetch(`${base}/custom-orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customer: { ...order.customer, email: 'new@example.invalid' }, request: order.request, projectName: 'Testprojekt', description: 'Beskrivning för testprojektet' }) });
     assert.equal(createdResponse.status, 201);
-    const created = await createdResponse.json();
+    const created = await json(createdResponse);
     assert.match(created.accessToken, /^[a-f0-9]{64}$/);
     assert.equal(created.accessToken, orderAccessToken(created.order));
     const get = (id: string, token?: string) => fetch(`${base}/orders/${id}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
@@ -93,13 +100,13 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     assert.equal((await get(second.id, orderAccessToken(order))).status, 404);
     const authorized = await get(order.id, orderAccessToken(order));
     assert.equal(authorized.status, 200); assert.match(authorized.headers.get('cache-control')!, /no-store/);
-    assert.equal((await authorized.json()).order.customer.email, order.customer.email);
+    assert.equal((await json(authorized)).order.customer.email, order.customer.email);
     const productionBody = { production: { machine: 'Bambu 1', notes: 'Private workshop note', plannedDate: '2026-10-14', dueDate: '2026-10-16', estimatedHours: 3.6, modelIds: [own.id] }, expectedRevision: 0 };
     const productionInit = { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productionBody) };
     assert.equal((await fetch(`${base}/admin/orders/${order.id}/production`, productionInit)).status, 401);
     const savedPlan = await fetch(`${base}/admin/orders/${order.id}/production`, { ...productionInit, headers: { ...productionInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } });
-    assert.equal(savedPlan.status, 200); assert.equal((await savedPlan.json()).order.production.revision, 1);
-    assert.equal((await (await get(order.id, orderAccessToken(order))).json()).order.production, undefined);
+    assert.equal(savedPlan.status, 200); assert.equal((await json(savedPlan)).order.production.revision, 1);
+    assert.equal((await json(await get(order.id, orderAccessToken(order)))).order.production, undefined);
     assert.equal((await fetch(`${base}/admin/orders/${order.id}/production`, { ...productionInit, headers: { ...productionInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } })).status, 409);
     const wrongFile = await fetch(`${base}/admin/orders/${order.id}/production`, { ...productionInit, headers: { ...productionInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` }, body: JSON.stringify({ ...productionBody, production: { ...productionBody.production, modelIds: [meta.id] }, expectedRevision: 1 }) });
     assert.equal(wrongFile.status, 400);
@@ -113,7 +120,7 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     assert.equal((await fetch(`${base}/admin/privacy/export`, exportInit)).status, 401);
     const exported = await fetch(`${base}/admin/privacy/export`, { ...exportInit, headers: { ...exportInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } });
     assert.equal(exported.status, 200);
-    const data = await exported.json(); assert.equal(data.orders.length, 2); assert.equal(data.files.length, 1); assert.ok(!JSON.stringify(data).includes(orderAccessToken(order)));
+    const data = await json(exported); assert.equal(data.orders.length, 2); assert.equal(data.files.length, 1); assert.ok(!JSON.stringify(data).includes(orderAccessToken(order)));
     const cutoff = Date.parse('2026-01-02T00:00:00Z') + 90 * 86400000;
     assert.equal(await sweepCustomerFiles(cutoff - 1), 0);
     assert.equal(await sweepCustomerFiles(cutoff), 1);
@@ -123,7 +130,7 @@ it('isolates order access, personal data exports, image writes and 90-day file r
     assert.equal((await fetch(`${base}/admin/privacy/minimize`, exportInit)).status, 401);
     assert.equal((await fetch(`${base}/admin/privacy/minimize`, { ...exportInit, headers: { ...exportInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` } })).status, 400);
     const minimized = await fetch(`${base}/admin/privacy/minimize`, { ...exportInit, headers: { ...exportInit.headers, Authorization: `Bearer ${process.env.ADMIN_TOKEN}` }, body: JSON.stringify({ email: second.customer.email, confirmed: true }) });
-    assert.equal(minimized.status, 200); assert.equal((await minimized.json()).minimized, 1);
+    assert.equal(minimized.status, 200); assert.equal((await json(minimized)).minimized, 1);
     const redacted = await findOrder(second.id); assert.ok(redacted?.type === 'custom'); assert.equal(redacted.description, ''); assert.equal(redacted.customer.address, second.customer.address); assert.equal(redacted.total, second.total);
     const pendingFile = await writeMeta({ ...meta, id: 'd'.repeat(32), claimedBy: null });
     const orderPath = process.env.ORDER_STORE!;
