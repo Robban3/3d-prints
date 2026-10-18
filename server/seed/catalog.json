@@ -8,7 +8,7 @@
       "description": "Terras tydliga fasetter ger växterna en lugn, skulptural inramning. Välj mellan tre storlekar och fyra färger för fönsterbrädan, hyllan eller skrivbordet. Fatet fångar upp mindre mängder vatten; använd en innerkruka när du vattnar. Växt ingår inte.",
       "category": "inredning",
       "price": 249,
-      "material": "petg",
+      "material": "pla",
       "finish": "Matt",
       "printTimeHours": 9,
       "dimensions": {
@@ -18,10 +18,10 @@
       },
       "weightGrams": 210,
       "colors": [
-        "Lermatt",
-        "Grafit",
+        "Terrakotta",
+        "Nardo Gray",
         "Salvia",
-        "Benvit"
+        "Elfenbensvit"
       ],
       "sizes": [
         {
@@ -74,7 +74,7 @@
       },
       "variantImages": [
         {
-          "color": "Lermatt",
+          "color": "Terrakotta",
           "size": "liten",
           "image": {
             "id": "d653f06c32916e870f1a8776c42acae6",
@@ -83,7 +83,7 @@
           }
         },
         {
-          "color": "Lermatt",
+          "color": "Terrakotta",
           "size": "mellan",
           "image": {
             "id": "fd348f817b53d4c1bc36fd7e28c15cae",
@@ -92,7 +92,7 @@
           }
         },
         {
-          "color": "Lermatt",
+          "color": "Terrakotta",
           "size": "stor",
           "image": {
             "id": "bc24e0910e24e66f70a05266bb8e3fcb",
@@ -101,7 +101,7 @@
           }
         },
         {
-          "color": "Grafit",
+          "color": "Nardo Gray",
           "size": "liten",
           "image": {
             "id": "c1f3feeac5bf15422e813fa221e3573f",
@@ -110,7 +110,7 @@
           }
         },
         {
-          "color": "Grafit",
+          "color": "Nardo Gray",
           "size": "mellan",
           "image": {
             "id": "76c7800354ac0d73d10563bd6851904f",
@@ -119,7 +119,7 @@
           }
         },
         {
-          "color": "Grafit",
+          "color": "Nardo Gray",
           "size": "stor",
           "image": {
             "id": "33ef71ff67c388f6a58c4a73534d0981",
@@ -155,7 +155,7 @@
           }
         },
         {
-          "color": "Benvit",
+          "color": "Elfenbensvit",
           "size": "liten",
           "image": {
             "id": "ab5b0090263c28b67754d658b358c0bd",
@@ -164,7 +164,7 @@
           }
         },
         {
-          "color": "Benvit",
+          "color": "Elfenbensvit",
           "size": "mellan",
           "image": {
             "id": "2c342ae5b5d9f46b09fcd933004b0f07",
@@ -173,7 +173,7 @@
           }
         },
         {
-          "color": "Benvit",
+          "color": "Elfenbensvit",
           "size": "stor",
           "image": {
             "id": "9c25bff69efb49ec1a2f3ded84c4cc00",
@@ -204,9 +204,9 @@
       },
       "weightGrams": 180,
       "colors": [
-        "Matt svart",
-        "Off-white",
-        "Djupblå"
+        "Svart",
+        "Jade White",
+        "Blå"
       ],
       "highlights": [
         "En självklar plats för dina hörlurar."
@@ -227,7 +227,7 @@
       },
       "variantImages": [
         {
-          "color": "Matt svart",
+          "color": "Svart",
           "image": {
             "id": "67fd2b88e26d6b4f7711e0cc60a01367",
             "url": "/images/catalog-seed/67fd2b88e26d6b4f7711e0cc60a01367.webp",
@@ -235,7 +235,7 @@
           }
         },
         {
-          "color": "Off-white",
+          "color": "Jade White",
           "image": {
             "id": "23c0ea30c106c3e522ca692b5583a649",
             "url": "/images/catalog-seed/23c0ea30c106c3e522ca692b5583a649.webp",
@@ -243,7 +243,7 @@
           }
         },
         {
-          "color": "Djupblå",
+          "color": "Blå",
           "image": {
             "id": "2100b17c24196ffa0929ed4431e4b378",
             "url": "/images/catalog-seed/2100b17c24196ffa0929ed4431e4b378.webp",
@@ -272,9 +272,9 @@
       },
       "weightGrams": 260,
       "colors": [
-        "Grafit",
-        "Sand",
-        "Mossgrön"
+        "Nardo Gray",
+        "Desert Tan",
+        "Mörkgrön"
       ],
       "sizes": [
         {
@@ -327,7 +327,7 @@
       },
       "variantImages": [
         {
-          "color": "Grafit",
+          "color": "Nardo Gray",
           "size": "3-moduler",
           "image": {
             "id": "b3ef39de31cc3400cad565c2d1c7e408",
@@ -336,7 +336,7 @@
           }
         },
         {
-          "color": "Grafit",
+          "color": "Nardo Gray",
           "size": "5-moduler",
           "image": {
             "id": "f0c1219c151df4b8aa680e01ccd7da27",
@@ -345,7 +345,7 @@
           }
         },
         {
-          "color": "Grafit",
+          "color": "Nardo Gray",
           "size": "8-moduler",
           "image": {
             "id": "7f52b8ab8dc7e8eb204d90f643d7704c",
@@ -354,7 +354,7 @@
           }
         },
         {
-          "color": "Sand",
+          "color": "Desert Tan",
           "size": "3-moduler",
           "image": {
             "id": "498bd3635b62bf6f1827266033075d96",
@@ -363,7 +363,7 @@
           }
         },
         {
-          "color": "Sand",
+          "color": "Desert Tan",
           "size": "5-moduler",
           "image": {
             "id": "7809fbf44822d0aa994ebee28a696d9f",
@@ -372,7 +372,7 @@
           }
         },
         {
-          "color": "Sand",
+          "color": "Desert Tan",
           "size": "8-moduler",
           "image": {
             "id": "17b280964436a894bfbded2672449035",
@@ -381,7 +381,7 @@
           }
         },
         {
-          "color": "Mossgrön",
+          "color": "Mörkgrön",
           "size": "3-moduler",
           "image": {
             "id": "336618d298fe2dbf0981e84604124d89",
@@ -390,7 +390,7 @@
           }
         },
         {
-          "color": "Mossgrön",
+          "color": "Mörkgrön",
           "size": "5-moduler",
           "image": {
             "id": "5732f7581ab47e2acc854203e7340a19",
@@ -399,7 +399,7 @@
           }
         },
         {
-          "color": "Mossgrön",
+          "color": "Mörkgrön",
           "size": "8-moduler",
           "image": {
             "id": "b1e060c4dfe4f846e10abe676c4f62ac",
@@ -429,10 +429,10 @@
       },
       "weightGrams": 95,
       "colors": [
-        "Silk koppar",
-        "Silk lila",
-        "Regnbågsövergång",
-        "Glow in the dark"
+        "Koppar",
+        "Silk Purple",
+        "Regnbåge",
+        "Glow Green"
       ],
       "sizes": [
         {
@@ -485,7 +485,7 @@
       },
       "variantImages": [
         {
-          "color": "Silk koppar",
+          "color": "Koppar",
           "size": "mini",
           "image": {
             "id": "9c08cea77851c81cb30b9bf3d249966e",
@@ -494,7 +494,7 @@
           }
         },
         {
-          "color": "Silk koppar",
+          "color": "Koppar",
           "size": "standard",
           "image": {
             "id": "e6d1c31012c44cae619fc70cc4c27eeb",
@@ -503,7 +503,7 @@
           }
         },
         {
-          "color": "Silk koppar",
+          "color": "Koppar",
           "size": "jatte",
           "image": {
             "id": "af4500fe9fdd5fbe25582220076d2e3c",
@@ -512,7 +512,7 @@
           }
         },
         {
-          "color": "Silk lila",
+          "color": "Silk Purple",
           "size": "mini",
           "image": {
             "id": "708cdce845a3cde91820c5158b75780f",
@@ -521,7 +521,7 @@
           }
         },
         {
-          "color": "Silk lila",
+          "color": "Silk Purple",
           "size": "standard",
           "image": {
             "id": "fad0e0912c13beb84a2f80cbc3c7abe1",
@@ -530,7 +530,7 @@
           }
         },
         {
-          "color": "Silk lila",
+          "color": "Silk Purple",
           "size": "jatte",
           "image": {
             "id": "d8804b169f16fa9197f64407892e4e0b",
@@ -539,7 +539,7 @@
           }
         },
         {
-          "color": "Regnbågsövergång",
+          "color": "Regnbåge",
           "size": "mini",
           "image": {
             "id": "e76c1417930bac894c42f1af705156da",
@@ -548,7 +548,7 @@
           }
         },
         {
-          "color": "Regnbågsövergång",
+          "color": "Regnbåge",
           "size": "standard",
           "image": {
             "id": "637210c4112db892ddd903bf4bb1e526",
@@ -557,7 +557,7 @@
           }
         },
         {
-          "color": "Regnbågsövergång",
+          "color": "Regnbåge",
           "size": "jatte",
           "image": {
             "id": "7297568043d74c52fc1d8db17eada7c2",
@@ -566,7 +566,7 @@
           }
         },
         {
-          "color": "Glow in the dark",
+          "color": "Glow Green",
           "size": "mini",
           "image": {
             "id": "d9321dba4a35b6a0148554608acc67c8",
@@ -575,7 +575,7 @@
           }
         },
         {
-          "color": "Glow in the dark",
+          "color": "Glow Green",
           "size": "standard",
           "image": {
             "id": "e393c2fefb54f7ea7f7751cc1ef0e4a3",
@@ -584,7 +584,7 @@
           }
         },
         {
-          "color": "Glow in the dark",
+          "color": "Glow Green",
           "size": "jatte",
           "image": {
             "id": "3ff22907101dcd1b708c4178a59b342e",
@@ -615,7 +615,7 @@
       },
       "weightGrams": 320,
       "colors": [
-        "Naturvit"
+        "Jade White"
       ],
       "sizes": [
         {
@@ -668,7 +668,7 @@
       },
       "variantImages": [
         {
-          "color": "Naturvit",
+          "color": "Jade White",
           "size": "12cm",
           "image": {
             "id": "cdb81685493a181e867da49e3e3b81a1",
@@ -677,7 +677,7 @@
           }
         },
         {
-          "color": "Naturvit",
+          "color": "Jade White",
           "size": "15cm",
           "image": {
             "id": "517c6d5f5eb503194637d335f837ed20",
@@ -686,7 +686,7 @@
           }
         },
         {
-          "color": "Naturvit",
+          "color": "Jade White",
           "size": "20cm",
           "image": {
             "id": "684c90c198f48bf6fee2e1050b6ffc68",
@@ -716,10 +716,10 @@
       },
       "weightGrams": 120,
       "colors": [
-        "Matt svart",
-        "Sand",
-        "Tegel",
-        "Djupblå"
+        "Charcoal",
+        "Desert Tan",
+        "Terrakotta",
+        "Mörkblå"
       ],
       "highlights": [
         "Ge pennorna en egen plats."
@@ -740,7 +740,7 @@
       },
       "variantImages": [
         {
-          "color": "Matt svart",
+          "color": "Charcoal",
           "image": {
             "id": "55973bd8fd90f42683a1ad74cf831732",
             "url": "/images/catalog-seed/55973bd8fd90f42683a1ad74cf831732.webp",
@@ -748,7 +748,7 @@
           }
         },
         {
-          "color": "Sand",
+          "color": "Desert Tan",
           "image": {
             "id": "3603838d4ad19b34ad5073e3ba7b4247",
             "url": "/images/catalog-seed/3603838d4ad19b34ad5073e3ba7b4247.webp",
@@ -756,7 +756,7 @@
           }
         },
         {
-          "color": "Tegel",
+          "color": "Terrakotta",
           "image": {
             "id": "0e41081be181fb3528186c94bbb678ea",
             "url": "/images/catalog-seed/0e41081be181fb3528186c94bbb678ea.webp",
@@ -764,7 +764,7 @@
           }
         },
         {
-          "color": "Djupblå",
+          "color": "Mörkblå",
           "image": {
             "id": "0ba50317d2c36ca323ad2cf83dc1d2af",
             "url": "/images/catalog-seed/0ba50317d2c36ca323ad2cf83dc1d2af.webp",
@@ -784,7 +784,7 @@
       "category": "tillbehor",
       "price": 149,
       "material": "petg",
-      "finish": "Matt",
+      "finish": "Blank",
       "printTimeHours": 4,
       "dimensions": {
         "width": 45,
@@ -793,9 +793,9 @@
       },
       "weightGrams": 105,
       "colors": [
-        "Matt svart",
-        "Off-white",
-        "Mässing-look"
+        "Svart",
+        "Vit",
+        "Guld"
       ],
       "sizes": [
         {
@@ -839,7 +839,7 @@
       },
       "variantImages": [
         {
-          "color": "Matt svart",
+          "color": "Svart",
           "size": "3-pack",
           "image": {
             "id": "b18bf1820f9f284da97c69656e8195fc",
@@ -848,7 +848,7 @@
           }
         },
         {
-          "color": "Matt svart",
+          "color": "Svart",
           "size": "6-pack",
           "image": {
             "id": "40501a1b4b6311539b33f3f866747d77",
@@ -857,7 +857,7 @@
           }
         },
         {
-          "color": "Off-white",
+          "color": "Vit",
           "size": "3-pack",
           "image": {
             "id": "1a9eebbd6b6fe554c83991d7c01aacea",
@@ -866,7 +866,7 @@
           }
         },
         {
-          "color": "Off-white",
+          "color": "Vit",
           "size": "6-pack",
           "image": {
             "id": "2a0d1b75065186183114b5fc2ac2640a",
@@ -875,7 +875,7 @@
           }
         },
         {
-          "color": "Mässing-look",
+          "color": "Guld",
           "size": "3-pack",
           "image": {
             "id": "818291457db299a42979d58741eeae42",
@@ -884,7 +884,7 @@
           }
         },
         {
-          "color": "Mässing-look",
+          "color": "Guld",
           "size": "6-pack",
           "image": {
             "id": "598d48ba797cc2bb6ee838e4816942bf",
@@ -905,7 +905,7 @@
       "category": "kok",
       "price": 299,
       "material": "petg",
-      "finish": "Matt",
+      "finish": "Blank",
       "printTimeHours": 8,
       "dimensions": {
         "width": 130,
@@ -914,9 +914,9 @@
       },
       "weightGrams": 195,
       "colors": [
-        "Matt svart",
-        "Benvit",
-        "Rostbrun"
+        "Svart",
+        "Vit",
+        "Mörkbrun"
       ],
       "highlights": [
         "En finare plats för kaffestunden."
@@ -937,7 +937,7 @@
       },
       "variantImages": [
         {
-          "color": "Matt svart",
+          "color": "Svart",
           "image": {
             "id": "6c6d457027e665981f3aa0031b615f82",
             "url": "/images/catalog-seed/6c6d457027e665981f3aa0031b615f82.webp",
@@ -945,7 +945,7 @@
           }
         },
         {
-          "color": "Benvit",
+          "color": "Vit",
           "image": {
             "id": "271d03aa5f8946ae8f1ff77bcd4c541e",
             "url": "/images/catalog-seed/271d03aa5f8946ae8f1ff77bcd4c541e.webp",
@@ -953,7 +953,7 @@
           }
         },
         {
-          "color": "Rostbrun",
+          "color": "Mörkbrun",
           "image": {
             "id": "163e32cc8a2d9d483c0d8cee50ab7e82",
             "url": "/images/catalog-seed/163e32cc8a2d9d483c0d8cee50ab7e82.webp",
@@ -982,9 +982,9 @@
       },
       "weightGrams": 240,
       "colors": [
-        "Grafit",
+        "Nardo Gray",
         "Mörkgrön",
-        "Vinröd"
+        "Dark Red"
       ],
       "highlights": [
         "Samla tärningarna och låt spelet fortsätta."
@@ -1005,7 +1005,7 @@
       },
       "variantImages": [
         {
-          "color": "Grafit",
+          "color": "Nardo Gray",
           "image": {
             "id": "386f67718811a6db6ac38563f8bd879a",
             "url": "/images/catalog-seed/386f67718811a6db6ac38563f8bd879a.webp",
@@ -1021,7 +1021,7 @@
           }
         },
         {
-          "color": "Vinröd",
+          "color": "Dark Red",
           "image": {
             "id": "e4e3b2843996db8a38572d8356d5f848",
             "url": "/images/catalog-seed/e4e3b2843996db8a38572d8356d5f848.webp",
@@ -1040,8 +1040,8 @@
       "description": "Fold håller telefonen i en bekväm vinkel för videosamtal, recept och pauser vid skrivbordet. Den vikbara formen gör det lätt att ta med mellan hem och arbete. Välj svart, transparent rök eller korall. Telefon ingår inte.",
       "category": "tillbehor",
       "price": 129,
-      "material": "tpu",
-      "finish": "Matt",
+      "material": "petg",
+      "finish": "Blank",
       "printTimeHours": 3,
       "dimensions": {
         "width": 78,
@@ -1050,8 +1050,8 @@
       },
       "weightGrams": 35,
       "colors": [
-        "Matt svart",
-        "Transparent rök",
+        "Svart",
+        "Translucent Gray",
         "Korall"
       ],
       "highlights": [
@@ -1073,7 +1073,7 @@
       },
       "variantImages": [
         {
-          "color": "Matt svart",
+          "color": "Svart",
           "image": {
             "id": "054e46270193af0686597498ed4631b4",
             "url": "/images/catalog-seed/054e46270193af0686597498ed4631b4.webp",
@@ -1081,7 +1081,7 @@
           }
         },
         {
-          "color": "Transparent rök",
+          "color": "Translucent Gray",
           "image": {
             "id": "63bfd6be09945810d77a6c0afbd7aa82",
             "url": "/images/catalog-seed/63bfd6be09945810d77a6c0afbd7aa82.webp",
@@ -1109,7 +1109,7 @@
       "category": "kontor",
       "price": 129,
       "material": "petg",
-      "finish": "Matt",
+      "finish": "Blank",
       "printTimeHours": 3,
       "dimensions": {
         "width": 25,
@@ -1118,7 +1118,7 @@
       },
       "weightGrams": 45,
       "colors": [
-        "Matt svart",
+        "Svart",
         "Vit",
         "Grå"
       ],
@@ -1142,7 +1142,7 @@
       },
       "variantImages": [
         {
-          "color": "Matt svart",
+          "color": "Svart",
           "image": {
             "id": "94920ab0545cc0f7a7b62bd286bc4be6",
             "url": "/images/catalog-seed/94920ab0545cc0f7a7b62bd286bc4be6.webp",
@@ -1242,9 +1242,9 @@
       },
       "weightGrams": 55,
       "colors": [
-        "Svart/lime",
-        "Grå/orange",
-        "Blå/vit"
+        "Svart/Mint Lime",
+        "Grå/Pumpa orange",
+        "Blå/Jade White"
       ],
       "highlights": [
         "En liten mekanik för händerna."
@@ -1265,7 +1265,7 @@
       },
       "variantImages": [
         {
-          "color": "Svart/lime",
+          "color": "Svart/Mint Lime",
           "image": {
             "id": "3c8d402ba45e42565dc5336a23bba1c4",
             "url": "/images/catalog-seed/3c8d402ba45e42565dc5336a23bba1c4.webp",
@@ -1273,7 +1273,7 @@
           }
         },
         {
-          "color": "Grå/orange",
+          "color": "Grå/Pumpa orange",
           "image": {
             "id": "e9ca8db55ef38f6d8fe93cd4f62b8bbc",
             "url": "/images/catalog-seed/e9ca8db55ef38f6d8fe93cd4f62b8bbc.webp",
@@ -1281,7 +1281,7 @@
           }
         },
         {
-          "color": "Blå/vit",
+          "color": "Blå/Jade White",
           "image": {
             "id": "1fb4cce3d2fc01e71f7917da83d20081",
             "url": "/images/catalog-seed/1fb4cce3d2fc01e71f7917da83d20081.webp",
@@ -1301,7 +1301,7 @@
       "category": "kok",
       "price": 299,
       "material": "petg",
-      "finish": "Matt",
+      "finish": "Blank",
       "printTimeHours": 10,
       "dimensions": {
         "width": 360,
@@ -1310,9 +1310,9 @@
       },
       "weightGrams": 285,
       "colors": [
-        "Benvit",
-        "Matt svart",
-        "Ljusgrå"
+        "Vit",
+        "Svart",
+        "Grå"
       ],
       "highlights": [
         "Se kryddorna, också längst bak."
@@ -1333,7 +1333,7 @@
       },
       "variantImages": [
         {
-          "color": "Benvit",
+          "color": "Vit",
           "image": {
             "id": "16be0753f6b5c8fcf26e51022d5c797e",
             "url": "/images/catalog-seed/16be0753f6b5c8fcf26e51022d5c797e.webp",
@@ -1341,7 +1341,7 @@
           }
         },
         {
-          "color": "Matt svart",
+          "color": "Svart",
           "image": {
             "id": "3ba1dede5d25e1b2397a22ef5ae787b9",
             "url": "/images/catalog-seed/3ba1dede5d25e1b2397a22ef5ae787b9.webp",
@@ -1349,7 +1349,7 @@
           }
         },
         {
-          "color": "Ljusgrå",
+          "color": "Grå",
           "image": {
             "id": "991f1f34c2ff3d98dcc3aa1ef0fb3f2c",
             "url": "/images/catalog-seed/991f1f34c2ff3d98dcc3aa1ef0fb3f2c.webp",
@@ -1377,7 +1377,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Mjuka veck med en skulptural känsla."
@@ -1419,7 +1419,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Skogsgrön"
+        "Mörkgrön"
       ],
       "highlights": [
         "Två gröna granar för julens små stilleben.",
@@ -1462,7 +1462,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Vinröd"
+        "Dark Red"
       ],
       "highlights": [
         "En vinröd stjärna som fångar ljuset."
@@ -1504,7 +1504,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "En fasetterad kruka med varm karaktär."
@@ -1546,7 +1546,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Skogsgrön"
+        "Mörkgrön"
       ],
       "highlights": [
         "Luftiga spiraler i skogsgrönt."
@@ -1588,7 +1588,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Vinröd"
+        "Dark Red"
       ],
       "highlights": [
         "Vinröda veck för julgranen."
@@ -1630,7 +1630,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Två benvita granar med fina veck.",
@@ -1673,7 +1673,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Åtta spetsar. Ett stilla blickfång."
@@ -1715,7 +1715,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Ett namn, en personlig juldetalj."
@@ -1757,7 +1757,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Grön, röd, vit och svart"
+        "Jade White"
       ],
       "highlights": [
         "4 kulor: grön, röd, vit och svart",
@@ -1807,7 +1807,7 @@
       ],
       "variantImages": [
         {
-          "color": "Grön, röd, vit och svart",
+          "color": "Jade White",
           "size": "utan-farg-penslar",
           "image": {
             "id": "e45895f1b6057d8b3ce47930d3486a24",
@@ -1816,7 +1816,7 @@
           }
         },
         {
-          "color": "Grön, röd, vit och svart",
+          "color": "Jade White",
           "size": "med-farg-penslar",
           "image": {
             "id": "2fd3eb3d01ed3c9b5b7379244ae06e17",
@@ -1843,7 +1843,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Personlig julkula med ett namn",
@@ -1913,7 +1913,7 @@
       "optionLabel": "Årtal och målarpaket",
       "variantImages": [
         {
-          "color": "Benvit",
+          "color": "Elfenbensvit",
           "size": "utan-artal",
           "image": {
             "id": "53af20f0d403099a02f37de9f8fec473",
@@ -1922,7 +1922,7 @@
           }
         },
         {
-          "color": "Benvit",
+          "color": "Elfenbensvit",
           "size": "med-artal",
           "image": {
             "id": "6735356aff427f5439c29bdd66f144be",
@@ -1931,7 +1931,7 @@
           }
         },
         {
-          "color": "Benvit",
+          "color": "Elfenbensvit",
           "size": "utan-artal-med-malarpaket",
           "image": {
             "id": "1b0808e7da49a788decc448be630192c",
@@ -1940,7 +1940,7 @@
           }
         },
         {
-          "color": "Benvit",
+          "color": "Elfenbensvit",
           "size": "med-artal-med-malarpaket",
           "image": {
             "id": "666a9079bbede4bde1f9c038826af0f7",
@@ -1967,7 +1967,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Ett litet minne av er första jul."
@@ -2009,7 +2009,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Tre snöflingor för en stilla vinterkänsla.",
@@ -2052,7 +2052,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Två mjuka former för julens stillhet.",
@@ -2095,7 +2095,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "En ren med skulptural silhuett."
@@ -2137,7 +2137,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Tre små hus för ett varmt vinterstilleben.",
@@ -2180,7 +2180,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Skogsgrön"
+        "Mörkgrön"
       ],
       "highlights": [
         "Fyra ringar som samlar juldukningen.",
@@ -2223,7 +2223,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Låt varje plats få ett eget namn."
@@ -2265,7 +2265,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "highlights": [
         "Sex små detaljer som gör paketen personliga.",
@@ -2308,7 +2308,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Skogsgrön"
+        "Mörkgrön"
       ],
       "highlights": [
         "En liten ask som gör gåvan större."
@@ -2350,7 +2350,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Vit"
+        "Jade White"
       ],
       "highlights": [
         "6 dekorationer: 2 granar, 2 hjärtan och 2 stjärnor",
@@ -2400,7 +2400,7 @@
       ],
       "variantImages": [
         {
-          "color": "Vit",
+          "color": "Jade White",
           "size": "utan-farg-penslar",
           "image": {
             "id": "582601faf35bc10b72de8e8fa86f7ba7",
@@ -2409,7 +2409,7 @@
           }
         },
         {
-          "color": "Vit",
+          "color": "Jade White",
           "size": "med-farg-penslar",
           "image": {
             "id": "1671c1ce0dc2513187ac2838e42a5c9e",
@@ -2437,7 +2437,7 @@
       "weightGrams": 0,
       "colors": [
         "Silk pärlemor",
-        "Matt svart",
+        "Charcoal",
         "Salvia",
         "Terrakotta"
       ],
@@ -2502,7 +2502,7 @@
           }
         },
         {
-          "color": "Matt svart",
+          "color": "Charcoal",
           "size": "l24",
           "image": {
             "id": "ed058fc146f066c993af055f08174706",
@@ -2511,7 +2511,7 @@
           }
         },
         {
-          "color": "Matt svart",
+          "color": "Charcoal",
           "size": "l32",
           "image": {
             "id": "12286774330b95aa5dbee3596c116320",
@@ -2577,7 +2577,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Pumpaorange"
+        "Mandarin Orange"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -2620,7 +2620,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -2663,7 +2663,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Matt svart"
+        "Charcoal"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -2706,7 +2706,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Plommon och svart"
+        "Plommon och Charcoal"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -2749,7 +2749,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Svart och plommon"
+        "Charcoal och Plommon"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -2792,7 +2792,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Mörkgrå"
+        "Nardo Gray"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -2835,7 +2835,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Matt svart"
+        "Charcoal"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -2878,7 +2878,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Orange, benvit och plommon"
+        "Mandarin Orange, Elfenbensvit och Plommon"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -2921,7 +2921,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Mörkgrå och benvit"
+        "Nardo Gray och Elfenbensvit"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -3007,7 +3007,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -3050,7 +3050,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Matt svart"
+        "Charcoal"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -3093,7 +3093,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Pumpaorange"
+        "Mandarin Orange"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -3136,7 +3136,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -3179,7 +3179,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Matt svart"
+        "Charcoal"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -3222,7 +3222,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Benvit"
+        "Elfenbensvit"
       ],
       "optionLabel": "Storlek",
       "highlights": [
@@ -3265,7 +3265,7 @@
       },
       "weightGrams": 0,
       "colors": [
-        "Matt svart"
+        "Charcoal"
       ],
       "optionLabel": "Storlek",
       "highlights": [
