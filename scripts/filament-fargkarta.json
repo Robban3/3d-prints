@@ -1,0 +1,447 @@
+{
+  "källa": "formlabb-filament.xlsx, bladet Varianter",
+  "beskrivning": "Färgnamn byts till 3DPrimas, material till det rekommenderade. PETG får finish Blank eftersom vanlig PETG är blank.",
+  "lämnasOrörda": [
+    "Salvia",
+    "Korall",
+    "Silk pärlemor"
+  ],
+  "produkter": [
+    {
+      "name": "Arc hörlursställ",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Svart",
+        "Off-white": "Jade White",
+        "Djupblå": "Blå"
+      }
+    },
+    {
+      "name": "Brew kaffedripp",
+      "material": "petg",
+      "colors": {
+        "Matt svart": "Svart",
+        "Benvit": "Vit",
+        "Rostbrun": "Mörkbrun"
+      },
+      "finish": "Blank"
+    },
+    {
+      "name": "Coil kabelhållare (5-pack)",
+      "material": "petg",
+      "colors": {
+        "Matt svart": "Svart",
+        "Vit": "Vit",
+        "Grå": "Grå"
+      },
+      "finish": "Blank"
+    },
+    {
+      "name": "Dödskallekruka",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Fladdermus – 3-pack",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Charcoal"
+      }
+    },
+    {
+      "name": "Flexi drake",
+      "material": "pla",
+      "colors": {
+        "Silk koppar": "Koppar",
+        "Silk lila": "Silk Purple",
+        "Regnbågsövergång": "Regnbåge",
+        "Glow in the dark": "Glow Green"
+      }
+    },
+    {
+      "name": "Fold telefonställ",
+      "material": "petg",
+      "colors": {
+        "Matt svart": "Svart",
+        "Transparent rök": "Translucent Gray"
+      },
+      "finish": "Blank"
+    },
+    {
+      "name": "Gran Frost – 2-pack",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Gravbiblioteket – bokstöd",
+      "material": "pla",
+      "colors": {
+        "Mörkgrå": "Nardo Gray"
+      }
+    },
+    {
+      "name": "Grid skrivbordsorganiserare",
+      "material": "pla",
+      "colors": {
+        "Grafit": "Nardo Gray",
+        "Sand": "Desert Tan",
+        "Mossgrön": "Mörkgrön"
+      }
+    },
+    {
+      "name": "Hex pennställ",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Charcoal",
+        "Sand": "Desert Tan",
+        "Tegel": "Terrakotta",
+        "Djupblå": "Mörkblå"
+      }
+    },
+    {
+      "name": "Häxans gömma",
+      "material": "pla",
+      "colors": {
+        "Svart": "Charcoal",
+        "Plommon": "Plommon"
+      }
+    },
+    {
+      "name": "Julby – 3 små hus",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Julgran – 2-pack",
+      "material": "pla",
+      "colors": {
+        "Skogsgrön": "Mörkgrön"
+      }
+    },
+    {
+      "name": "Julkula Diamant",
+      "material": "pla",
+      "colors": {
+        "Vinröd": "Dark Red"
+      }
+    },
+    {
+      "name": "Julkula Virvel",
+      "material": "pla",
+      "colors": {
+        "Skogsgrön": "Mörkgrön"
+      }
+    },
+    {
+      "name": "Julkula med namn",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Julpyssel – måla själv",
+      "material": "pla",
+      "colors": {
+        "Vit": "Jade White"
+      }
+    },
+    {
+      "name": "Keep tärningstorn",
+      "material": "pla",
+      "colors": {
+        "Grafit": "Nardo Gray",
+        "Mörkgrön": "Mörkgrön",
+        "Vinröd": "Dark Red"
+      }
+    },
+    {
+      "name": "Korpens vas",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Charcoal"
+      }
+    },
+    {
+      "name": "Kruka Elise",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Luciatåget – set och enskilda figurer",
+      "material": "pla",
+      "colors": {
+        "Vit": "Elfenbensvit",
+        "Röd": "Scarlet Red",
+        "Guld": "Guld",
+        "Pepparkaksbrun": "Caramel"
+      }
+    },
+    {
+      "name": "Luna månlampa",
+      "material": "pla",
+      "colors": {
+        "Naturvit": "Jade White"
+      }
+    },
+    {
+      "name": "Midnattsgömman",
+      "material": "pla",
+      "colors": {
+        "Plommon": "Plommon"
+      }
+    },
+    {
+      "name": "Måla din jul – 4-pack",
+      "material": "pla",
+      "colors": {
+        "Grön, röd, vit och svart": "Jade White"
+      }
+    },
+    {
+      "name": "Månskugga",
+      "material": "pla",
+      "colors": {
+        "Plommon": "Plommon",
+        "Svart": "Charcoal"
+      }
+    },
+    {
+      "name": "Namnskylt till julbordet",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Orbit fidget",
+      "material": "pla",
+      "colors": {
+        "Svart/lime": "Svart/Mint Lime",
+        "Grå/orange": "Grå/Pumpa orange",
+        "Blå/vit": "Blå/Jade White"
+      }
+    },
+    {
+      "name": "Paketetiketter – 6-pack",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Pepparkakshuset Sockerglädje",
+      "material": "pla",
+      "colors": {
+        "Pepparkaksfärg": "Caramel"
+      }
+    },
+    {
+      "name": "Personligt namnornament",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Portalpumpan",
+      "material": "pla",
+      "colors": {
+        "Pumpaorange": "Mandarin Orange"
+      }
+    },
+    {
+      "name": "Presentask med gömma",
+      "material": "pla",
+      "colors": {
+        "Skogsgrön": "Mörkgrön"
+      }
+    },
+    {
+      "name": "Pumpatornet",
+      "material": "pla",
+      "colors": {
+        "Orange": "Mandarin Orange",
+        "Benvit": "Elfenbensvit",
+        "Plommon": "Plommon"
+      }
+    },
+    {
+      "name": "Ren Vilgot",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Ribbad pumpa",
+      "material": "pla",
+      "colors": {
+        "Pumpaorange": "Mandarin Orange"
+      }
+    },
+    {
+      "name": "Ritualbrickan",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Charcoal"
+      }
+    },
+    {
+      "name": "Runolyktan",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Servettring Noel – 4-pack",
+      "material": "pla",
+      "colors": {
+        "Skogsgrön": "Mörkgrön"
+      }
+    },
+    {
+      "name": "Shelf kryddställ",
+      "material": "petg",
+      "colors": {
+        "Benvit": "Vit",
+        "Matt svart": "Svart",
+        "Ljusgrå": "Grå"
+      },
+      "finish": "Blank"
+    },
+    {
+      "name": "Skuggkatten",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Charcoal"
+      }
+    },
+    {
+      "name": "Snöflinga – 3-pack",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Spindelnät – 4-pack",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Charcoal"
+      }
+    },
+    {
+      "name": "Spökduon – 2-pack",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Spöket Boo",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Spökporten",
+      "material": "pla",
+      "colors": {
+        "Mörkgrå": "Nardo Gray",
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Stjärna",
+      "material": "pla",
+      "colors": {
+        "Vinröd": "Dark Red"
+      }
+    },
+    {
+      "name": "Stjärna Polaris",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Terra växtkruka",
+      "material": "pla",
+      "colors": {
+        "Lermatt": "Terrakotta",
+        "Grafit": "Nardo Gray",
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Tomtarnas julbestyr – 3-pack",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Charcoal",
+        "Röd": "Scarlet Red"
+      }
+    },
+    {
+      "name": "Tomten och Rudolf – släde med fem renar",
+      "material": "pla",
+      "colors": {
+        "Röd": "Scarlet Red",
+        "Vit": "Elfenbensvit",
+        "Brun": "Caramel",
+        "Svart": "Charcoal",
+        "Guld": "Guld"
+      }
+    },
+    {
+      "name": "Vas Nexo",
+      "material": "pla",
+      "colors": {
+        "Matt svart": "Charcoal",
+        "Terrakotta": "Terrakotta"
+      }
+    },
+    {
+      "name": "Vas Signe",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Vår första jul",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    },
+    {
+      "name": "Wave väggkrokar (3-pack)",
+      "material": "petg",
+      "colors": {
+        "Matt svart": "Svart",
+        "Off-white": "Vit",
+        "Mässing-look": "Guld"
+      },
+      "finish": "Blank"
+    },
+    {
+      "name": "Ängel Alma – 2-pack",
+      "material": "pla",
+      "colors": {
+        "Benvit": "Elfenbensvit"
+      }
+    }
+  ]
+}
