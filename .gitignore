@@ -12,3 +12,10 @@ tmp/production-audit.json
 # All körtidsdata: ordrar, lagersaldo, katalog och utkorgen för brev.
 server/data/
 server/uploads/
+# Lokal arbetsdata och automatiska CAD-/Python-säkerhetskopior.
+tmp/
+**/__pycache__/
+*.py[cod]
+*.blend[0-9]*
+*.pid
+models/**/analysis-agent*/

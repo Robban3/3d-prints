@@ -2,6 +2,8 @@
 
 För hela webbshoppen hos Cloudflare: se [driftsguiden](CLOUDFLARE.md).
 
+Aktuell genomgång och prioriterade nästa steg: [repostatus 19 oktober 2026](docs/repo-status-2026-10-19.md).
+
 En komplett webbutik för 3D-printade produkter med två köpflöden: färdiga produkter
 ur sortimentet och kundunika printjobb där kunden laddar upp sin egen modellfil och
 får pris direkt.
@@ -55,19 +57,19 @@ Lokal adminnyckel kan anges i `server/.env` som `ADMIN_TOKEN` (minst 16 tecken).
 
 **Butiken**
 
-- 14 unika produkter i fem kategorier med egna färger, storlekar och specifikationer
+- Redigerbart sortiment med kategorier, färger, storlekar och preliminära produktionsuppgifter
 - Filtrering per kategori, fritextsökning och sortering på pris, namn eller popularitet
 - Produktsida med färg- och storleksval, antal och löpande totalpris
 - Varukorg som sparas i `localStorage` och överlever omladdning
 - Lagersaldo som dras av vid köp och hindrar överförsäljning
 - Kassa med validering, fri frakt över 699 kr, Klarna-betalning och orderbekräftelse
-- Orderspårning på ordernummer med tidslinje över var ordern befinner sig
+- Orderspårning via privat, signerad orderlänk med tidslinje över var ordern befinner sig
 - Bekräftelse- och statusmejl till kunden
 
 **Egna printjobb**
 
 - Uppladdning av STL, OBJ, 3MF, STEP eller F3D (drag-and-drop)
-- Val av material (PLA, PETG, ABS, TPU, resin) och lagerhöjd
+- Val av material (PLA, PETG, ABS, TPU) och lagerhöjd
 - Reglage för volym och fyllnadsgrad, antal, efterbearbetning och express
 - Prisförslag som räknas om löpande mot servern, med full specifikation av
   materialkostnad, maskintid, startavgift, volymrabatt och leveranstid
@@ -75,20 +77,7 @@ Lokal adminnyckel kan anges i `server/.env` som `ADMIN_TOKEN` (minst 16 tecken).
 
 ## Prismodellen
 
-Priset för ett kundunikt jobb räknas ut i `server/src/pricing.ts`:
-
-```
-effektiv volym = volym × (0,35 + 0,65 × fyllnadsgrad)
-styckpris      = (material + maskintid + efterbearbetning) × (1 − volymrabatt)
-totalt         = styckpris × antal + startavgift + eventuellt expresstillägg
-```
-
-Materialet har en prisfaktor (PLA 1,0 → resin 2,1) och kvaliteten en tidsfaktor
-(utkast 0,65 → ultrafin 2,4). Volymrabatten trappas från 4 % vid fem exemplar upp
-till 25 % vid hundra. Minsta ordervärde är 149 kr.
-
-Priser räknas alltid ut på servern – klienten skickar aldrig med ett pris som
-accepteras rakt av, varken för butiksorder eller egna jobb.
+Pris räknas på servern: 50 kr per uppskattad printtimme + 95 kr startavgift per order, inklusive material. Ingen volymrabatt eller äldre pristillval tillämpas. Printtid uppskattas från volym, fyllnadsgrad och kvalitet; slicerberäkning och produktionskontroll återstår.
 
 ## API
 

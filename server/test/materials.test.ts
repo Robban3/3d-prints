@@ -51,10 +51,10 @@ afterEach(async () => {
 });
 
 describe('material i katalogen', () => {
-  it('sås från de ursprungliga fem', async () => {
+  it('sås med verkstadens fyra FDM-material', async () => {
     assert.deepEqual(
       (await allMaterials()).map((material) => material.id),
-      ['pla', 'petg', 'abs', 'tpu', 'resin'],
+      ['pla', 'petg', 'abs', 'tpu'],
     );
   });
 
@@ -105,18 +105,18 @@ describe('material i katalogen', () => {
       }),
     );
     await deleteMaterial('testmaterial');
-    assert.equal((await allMaterials()).length, 5);
+    assert.equal((await allMaterials()).length, 4);
   });
 
   it('lämnar alltid minst ett material kvar', async () => {
     // Töm katalogen på produkter först, annars stoppas borttagningen redan av
     // regeln om material som används.
     for (const product of await allProducts()) await deleteProduct(product.id);
-    for (const id of ['pla', 'petg', 'abs', 'tpu']) await deleteMaterial(id);
+    for (const id of ['pla', 'petg', 'abs']) await deleteMaterial(id);
     assert.equal((await allMaterials()).length, 1);
 
     try {
-      await deleteMaterial('resin');
+      await deleteMaterial('tpu');
       assert.fail('förväntade CatalogError');
     } catch (error) {
       assert.ok(error instanceof CatalogError);

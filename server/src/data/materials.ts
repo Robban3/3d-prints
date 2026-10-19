@@ -33,14 +33,6 @@ export const materials: Material[] = [
       'Gummiliknande material med shore 95A. Används för packningar, greppytor och stötdämpande detaljer.',
     traits: ['Flexibel', 'Nötningstålig', 'Halkfri yta'],
   },
-  {
-    id: 'resin',
-    name: 'Resin (SLA)',
-    priceFactor: 2.1,
-    description:
-      'Fotopolymer för miniatyrer och prototyper där varje detalj syns. Lagerhöjd ned till 0,025 mm.',
-    traits: ['Extrem detaljnivå', 'Slät yta', 'Efterhärdas i UV'],
-  },
 ];
 
 export const materialById = new Map(materials.map((m) => [m.id, m]));

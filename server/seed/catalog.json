@@ -3373,17 +3373,6 @@
         "Nötningstålig",
         "Halkfri yta"
       ]
-    },
-    {
-      "id": "resin",
-      "name": "Resin (SLA)",
-      "priceFactor": 2.1,
-      "description": "Fotopolymer för miniatyrer och prototyper där varje detalj syns. Lagerhöjd ned till 0,025 mm.",
-      "traits": [
-        "Extrem detaljnivå",
-        "Slät yta",
-        "Efterhärdas i UV"
-      ]
     }
   ],
   "qualities": [
