@@ -64,6 +64,7 @@ export function ProductPage() {
   }
 
   const size = product.sizes?.find((entry) => entry.id === sizeId) ?? product.sizes?.[0];
+  const articleNumber = product.articles?.find(entry => entry.color === color && (entry.size ?? '') === (size?.id ?? ''))?.articleNumber ?? product.articleNumber;
   const unitPrice = productPrice(product, size?.priceDelta ?? 0).price;
   const image = selectedProductImage(product, color, sizeId);
   const dimensions = size?.dimensions ?? product.dimensions;
@@ -156,6 +157,7 @@ export function ProductPage() {
               <h1 className="product-title" style={{ marginTop: 14 }}>
                 {product.name}
               </h1>
+              {articleNumber && <p className="dim">Artikelnummer: <strong>{articleNumber}</strong></p>}
               <p className="muted" style={{ fontSize: '1.05rem' }}>
                 {product.tagline}
               </p>

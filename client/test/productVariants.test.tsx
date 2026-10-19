@@ -11,6 +11,21 @@ vi.mock('../src/lib/api', () => ({ fetchProduct: vi.fn() }));
 const image = (id: string) => ({ id, url: `/${id}.webp`, fileName: `${id}-visualisering.webp` });
 const product: Product = { id: 'dragon', slug: 'flexi-drake', name: 'Flexi drake', tagline: 'Drake', description: 'En drake.', category: 'prylar', price: 249, material: 'pla', finish: 'Silk', printTimeHours: 2, dimensions: { width: 100, depth: 100, height: 100 }, weightGrams: 100, colors: ['Silk koppar', 'Silk lila'], sizes: [{ id: 'mini', name: 'Mini', priceDelta: 0 }, { id: 'stor', name: 'Stor', priceDelta: 100 }], highlights: [], stock: 20, rating: 0, reviewCount: 0, featured: false, art: { shape: 'dragon', tone: 'benvit' }, image: image('copper'), variantImages: [{ color: 'Silk lila', size: 'mini', image: image('purple-mini') }, { color: 'Silk lila', size: 'stor', image: image('purple-large') }] };
 function CartProof() { return <output data-testid="cart-proof">{JSON.stringify(useCart().items)}</output>; }
+it('visar rätt beständigt artikelnummer när färg och storlek ändras', async () => {
+  vi.mocked(fetchProduct).mockResolvedValue({ product: { ...product, articleNumber:'FL-P-0042', articles:[
+    {articleNumber:'FL-P-0042-001',color:'Silk koppar',size:'mini'},
+    {articleNumber:'FL-P-0042-002',color:'Silk koppar',size:'stor'},
+    {articleNumber:'FL-P-0042-003',color:'Silk lila',size:'mini'},
+    {articleNumber:'FL-P-0042-004',color:'Silk lila',size:'stor'},
+  ] }, related: [] });
+  const user = userEvent.setup();
+  render(<MemoryRouter initialEntries={['/produkter/flexi-drake']}><CartProvider><Routes><Route path="/produkter/:slug" element={<ProductPage />} /></Routes></CartProvider></MemoryRouter>);
+  expect(await screen.findByText('FL-P-0042-001')).toBeInTheDocument();
+  await user.click(screen.getByRole('button',{name:'Silk lila'}));
+  expect(screen.getByText('FL-P-0042-003')).toBeInTheDocument();
+  await user.click(screen.getByRole('button',{name:'Stor'}));
+  expect(screen.getByText('FL-P-0042-004')).toBeInTheDocument();
+});
 it('byter mått, vikt och printtid tillsammans med valt utförande och märker uppskattningar', async () => {
   vi.mocked(fetchProduct).mockResolvedValue({ product: { ...product, productionEstimated: true, productionNote: 'Ett valt set.', sizes: [
     { id: 'mini', name: 'Lös figur', priceDelta: 0, dimensions: { width: 47, depth: 33, height: 100 }, weightGrams: 35, printTimeHours: 3 },

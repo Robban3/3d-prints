@@ -38,6 +38,8 @@ export const ORPHAN_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 const ID_PATTERN = /^[0-9a-f]{32}$/;
 
 export interface UploadMeta {
+  /** Fingerprint of customer model bytes; not returned by the public upload endpoint. */
+  sha256?: string;
   id: string;
   /** Produktbilder visas öppet; modellfiler är knutna till en order. */
   kind?: 'model' | 'image' | 'library';

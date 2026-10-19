@@ -142,6 +142,7 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
         <div className="spread" style={{ marginBottom: 16 }}>
           <h2 style={{ margin: 0 }}>{editing.id ? 'Redigera produkt' : 'Ny produkt'}</h2>
         </div>
+        {editing.id && <p className="dim">Grundnummer: {products?.find(product => product.id === editing.id)?.articleNumber ?? 'Tilldelas automatiskt'}. Artikelnumren skapas av systemet och behålls när produkten redigeras.</p>}
         {error && <p className="notice notice-error">{error}</p>}
         <ProductForm
           draft={editing.draft}
@@ -185,6 +186,8 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
             </div>
             <div className="admin-row-main">
               <strong>{product.name}</strong>
+              {product.articleNumber && <span className="dim">Grundnummer: {product.articleNumber}</span>}
+              {!!product.articles?.length && <details><summary>Artikelnummer för {product.articles.length} utföranden</summary><ul>{product.articles.map(article => <li key={article.articleNumber}><strong>{article.articleNumber}</strong> · {article.color}{article.size ? ` · ${product.sizes?.find(size => size.id === article.size)?.name ?? article.size}` : ''}</li>)}</ul></details>}
               <span className="dim">
                 {product.material.toUpperCase()} {product.finish} ·{' '}
                 {categories.find((category) => category.id === product.category)?.name ??

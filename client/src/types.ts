@@ -54,6 +54,8 @@ export interface SizeOption {
 }
 
 export interface Product {
+  articleNumber?: string;
+  articles?: Array<{ articleNumber: string; color: string; size?: string }>;
   id: string;
   slug: string;
   name: string;
@@ -158,6 +160,8 @@ export interface CustomerDetails {
 }
 
 export interface OrderLine {
+  articleNumber?: string;
+  productionSpecs?: { material: string; dimensions: { width: number; depth: number; height: number }; weightGrams: number; printTimeHours: number; estimated: boolean };
   productId: string;
   name: string;
   quantity: number;
@@ -191,6 +195,7 @@ export interface ShopOrder {
 }
 
 export interface CustomOrder {
+  articleNumber?: string;
   production?: ProductionPlan;
   id: string;
   type: 'custom';

@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { it } from 'node:test';
-import { parseProduction, publicOrder } from '../src/production.ts';
+import { parseProduction, publicOrder, productionChecks } from '../src/production.ts';
 import { ValidationError } from '../src/validation.ts';
 import type { AnyOrder } from '../src/types.ts';
 
@@ -11,4 +11,15 @@ it('rejects impossible planning dates, excessive notes and invalid hours', () =>
 it('omits all production details from customer-visible orders', () => {
   const order = { id: 'TEST', production: { notes: 'Internal-only', machine: 'Printer', revision: 1 } } as AnyOrder;
   assert.deepEqual(publicOrder(order), { id: 'TEST' });
+});
+
+it('distinguishes missing files/planning from the checks that require a slicer or actual payment', () => {
+  const order = { id:'TEST',type:'custom',articleNumber:'FL-K-0001',request:{material:'pla',quality:'standard',quantity:1},payment:{test:true},production:{machine:'Bambu',estimatedHours:2,modelIds:['abc'],revision:1} } as AnyOrder;
+  const missing = productionChecks(order, []);
+  assert.equal(missing.find(check => check.id === 'files')!.status, 'missing');
+  const checks = productionChecks(order, [{id:'abc',present:true}]);
+  assert.equal(checks.find(check => check.id === 'files')!.status, 'ok');
+  assert.equal(checks.find(check => check.id === 'articles')!.status, 'ok');
+  assert.equal(checks.find(check => check.id === 'payment')!.status, 'review');
+  assert.equal(checks.find(check => check.id === 'physical')!.status, 'review');
 });

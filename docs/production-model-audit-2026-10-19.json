@@ -1,0 +1,2081 @@
+{
+  "checked_at": "2026-10-19",
+  "scope": "Read-only production candidates, not automatic print approval. No source models modified.",
+  "products": [
+    {
+      "slug": "terra-vaxtkruka",
+      "name": "Terra växtkruka",
+      "catalog_dimensions_mm": {
+        "width": 110,
+        "depth": 110,
+        "height": 120
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "arc-horlursstall",
+      "name": "Arc hörlursställ",
+      "catalog_dimensions_mm": {
+        "width": 120,
+        "depth": 110,
+        "height": 265
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "grid-skrivbordsorganiserare",
+      "name": "Grid skrivbordsorganiserare",
+      "catalog_dimensions_mm": {
+        "width": 180,
+        "depth": 90,
+        "height": 110
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "flexi-drake",
+      "name": "Flexi drake",
+      "catalog_dimensions_mm": {
+        "width": 47,
+        "depth": 160,
+        "height": 60
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "luna-manlampa",
+      "name": "Luna månlampa",
+      "catalog_dimensions_mm": {
+        "width": 120,
+        "depth": 120,
+        "height": 155
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "hex-pennstall",
+      "name": "Hex pennställ",
+      "catalog_dimensions_mm": {
+        "width": 105,
+        "depth": 92,
+        "height": 110
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "wave-vaggkrokar",
+      "name": "Wave väggkrokar (3-pack)",
+      "catalog_dimensions_mm": {
+        "width": 45,
+        "depth": 35,
+        "height": 80
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "brew-kaffedripp",
+      "name": "Brew kaffedripp",
+      "catalog_dimensions_mm": {
+        "width": 130,
+        "depth": 130,
+        "height": 175
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "models/brew-fusion-v1/01_Stallning_print.stl",
+        "models/brew-fusion-v1/02_Galler_print.stl",
+        "models/brew-fusion-v1/03_Tratt_print.stl"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "keep-tarningstorn",
+      "name": "Keep tärningstorn",
+      "catalog_dimensions_mm": {
+        "width": 110,
+        "depth": 170,
+        "height": 245
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "fold-telefonstall",
+      "name": "Fold telefonställ",
+      "catalog_dimensions_mm": {
+        "width": 78,
+        "depth": 120,
+        "height": 105
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "models/fold-fusion-v1/01_Bas_print.stl",
+        "models/fold-fusion-v1/02_Bakstod_print.stl",
+        "models/fold-fusion-v1/03_Mobilplatta_print.stl"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "coil-kabelhallare",
+      "name": "Coil kabelhållare (5-pack)",
+      "catalog_dimensions_mm": {
+        "width": 25,
+        "depth": 25,
+        "height": 22
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "orbit-fidget",
+      "name": "Orbit fidget",
+      "catalog_dimensions_mm": {
+        "width": 78,
+        "depth": 78,
+        "height": 14
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "shelf-kryddstall",
+      "name": "Shelf kryddställ",
+      "catalog_dimensions_mm": {
+        "width": 360,
+        "depth": 180,
+        "height": 120
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "vas-signe",
+      "name": "Vas Signe",
+      "catalog_dimensions_mm": {
+        "width": 130,
+        "depth": 130,
+        "height": 220
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "julgran-2-pack",
+      "name": "Julgran – 2-pack",
+      "catalog_dimensions_mm": {
+        "width": 80,
+        "depth": 80,
+        "height": 160
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "stjarna",
+      "name": "Stjärna",
+      "catalog_dimensions_mm": {
+        "width": 140,
+        "depth": 35,
+        "height": 140
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "kruka-elise",
+      "name": "Kruka Elise",
+      "catalog_dimensions_mm": {
+        "width": 140,
+        "depth": 140,
+        "height": 140
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "kula-virvel",
+      "name": "Julkula Virvel",
+      "catalog_dimensions_mm": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "kula-diamant",
+      "name": "Julkula Diamant",
+      "catalog_dimensions_mm": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "gran-frost",
+      "name": "Gran Frost – 2-pack",
+      "catalog_dimensions_mm": {
+        "width": 90,
+        "depth": 90,
+        "height": 220
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "stjarna-polaris",
+      "name": "Stjärna Polaris",
+      "catalog_dimensions_mm": {
+        "width": 160,
+        "depth": 40,
+        "height": 160
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "namnornament",
+      "name": "Personligt namnornament",
+      "catalog_dimensions_mm": {
+        "width": 100,
+        "depth": 5,
+        "height": 115
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "mala-din-jul",
+      "name": "Måla din jul – 4-pack",
+      "catalog_dimensions_mm": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "models/jul-blender-v2/Julkula-prickar-1.stl",
+        "models/jul-blender-v2/Julkula-prickar-2.stl",
+        "models/jul-blender-v2/Julkula-snoflinga-1.stl",
+        "models/jul-blender-v2/Julkula-snoflinga-2.stl",
+        "models/jul-blender-v2/Julkula-spiral-1.stl",
+        "models/jul-blender-v2/Julkula-spiral-2.stl",
+        "models/jul-blender-v2/Julkula-stjarnor-1.stl",
+        "models/jul-blender-v2/Julkula-stjarnor-2.stl"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "julkula-med-namn",
+      "name": "Julkula med namn",
+      "catalog_dimensions_mm": {
+        "width": 80,
+        "depth": 80,
+        "height": 95
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "var-forsta-jul",
+      "name": "Vår första jul",
+      "catalog_dimensions_mm": {
+        "width": 100,
+        "depth": 5,
+        "height": 110
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "snoflinga-3-pack",
+      "name": "Snöflinga – 3-pack",
+      "catalog_dimensions_mm": {
+        "width": 90,
+        "depth": 4,
+        "height": 90
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "angel-alma",
+      "name": "Ängel Alma – 2-pack",
+      "catalog_dimensions_mm": {
+        "width": 75,
+        "depth": 55,
+        "height": 140
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "ren-vilgot",
+      "name": "Ren Vilgot",
+      "catalog_dimensions_mm": {
+        "width": 130,
+        "depth": 45,
+        "height": 170
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "julby",
+      "name": "Julby – 3 små hus",
+      "catalog_dimensions_mm": {
+        "width": 80,
+        "depth": 70,
+        "height": 160
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "servettring-noel",
+      "name": "Servettring Noel – 4-pack",
+      "catalog_dimensions_mm": {
+        "width": 55,
+        "depth": 35,
+        "height": 55
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "models/jul-blender-v3/Noel-servettring-1.stl",
+        "models/jul-blender-v3/Noel-servettring-2.stl"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "namnskyltar",
+      "name": "Namnskylt till julbordet",
+      "catalog_dimensions_mm": {
+        "width": 120,
+        "depth": 15,
+        "height": 35
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "paketetiketter",
+      "name": "Paketetiketter – 6-pack",
+      "catalog_dimensions_mm": {
+        "width": 60,
+        "depth": 4,
+        "height": 35
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "presentask-gomma",
+      "name": "Presentask med gömma",
+      "catalog_dimensions_mm": {
+        "width": 83,
+        "depth": 83,
+        "height": 78
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "models/presentask-original-v3/01_Underdel_print.stl",
+        "models/presentask-original-v3/02_Lock_print.stl",
+        "models/presentask-original-v3/03_Rosett_print.stl"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "julpyssel",
+      "name": "Julpyssel – måla själv",
+      "catalog_dimensions_mm": {
+        "width": 70,
+        "depth": 4,
+        "height": 80
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "vas-nexo",
+      "name": "Vas Nexo",
+      "catalog_dimensions_mm": {
+        "width": 140,
+        "depth": 120,
+        "height": 240
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "portalpumpan",
+      "name": "Portalpumpan",
+      "catalog_dimensions_mm": {
+        "width": 170,
+        "depth": 150,
+        "height": 180
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "spokduon",
+      "name": "Spökduon – 2-pack",
+      "catalog_dimensions_mm": {
+        "width": 90,
+        "depth": 75,
+        "height": 220
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "korpens-vas",
+      "name": "Korpens vas",
+      "catalog_dimensions_mm": {
+        "width": 140,
+        "depth": 140,
+        "height": 250
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "manskugga",
+      "name": "Månskugga",
+      "catalog_dimensions_mm": {
+        "width": 180,
+        "depth": 35,
+        "height": 330
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "haxans-gomma",
+      "name": "Häxans gömma",
+      "catalog_dimensions_mm": {
+        "width": 200,
+        "depth": 180,
+        "height": 210
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "models/haxans-gomma-blender-v6/01_Svart-hatt-och-skal.stl",
+        "models/haxans-gomma-blender-v6/02_Lila-insats.stl"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "gravbiblioteket",
+      "name": "Gravbiblioteket – bokstöd",
+      "catalog_dimensions_mm": {
+        "width": 90,
+        "depth": 120,
+        "height": 200
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "models/gravbiblioteket-blender-v2/Gravbiblioteket-hoger.stl",
+        "models/gravbiblioteket-blender-v2/Gravbiblioteket-vanster.stl"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "skuggkatten",
+      "name": "Skuggkatten",
+      "catalog_dimensions_mm": {
+        "width": 150,
+        "depth": 60,
+        "height": 220
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "pumpatornet",
+      "name": "Pumpatornet",
+      "catalog_dimensions_mm": {
+        "width": 110,
+        "depth": 110,
+        "height": 250
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "spokporten",
+      "name": "Spökporten",
+      "catalog_dimensions_mm": {
+        "width": 110,
+        "depth": 100,
+        "height": 230
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "midnattsgomman",
+      "name": "Midnattsgömman",
+      "catalog_dimensions_mm": {
+        "width": 110,
+        "depth": 190,
+        "height": 65
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "runolyktan",
+      "name": "Runolyktan",
+      "catalog_dimensions_mm": {
+        "width": 105,
+        "depth": 105,
+        "height": 260
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "ritualbrickan",
+      "name": "Ritualbrickan",
+      "catalog_dimensions_mm": {
+        "width": 180,
+        "depth": 140,
+        "height": 25
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "ribbad-pumpa",
+      "name": "Ribbad pumpa",
+      "catalog_dimensions_mm": {
+        "width": 120,
+        "depth": 120,
+        "height": 125
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "spoket-boo",
+      "name": "Spöket Boo",
+      "catalog_dimensions_mm": {
+        "width": 70,
+        "depth": 65,
+        "height": 100
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "fladdermus-3-pack",
+      "name": "Fladdermus – 3-pack",
+      "catalog_dimensions_mm": {
+        "width": 160,
+        "depth": 12,
+        "height": 65
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "dodskallekruka",
+      "name": "Dödskallekruka",
+      "catalog_dimensions_mm": {
+        "width": 120,
+        "depth": 130,
+        "height": 115
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "spindelnat-4-pack",
+      "name": "Spindelnät – 4-pack",
+      "catalog_dimensions_mm": {
+        "width": 100,
+        "depth": 100,
+        "height": 5
+      },
+      "production_estimated": true,
+      "model_candidates": [],
+      "status": "no_identified_production_mesh",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "luciataget",
+      "name": "Luciatåget – set och enskilda figurer",
+      "catalog_dimensions_mm": {
+        "width": 73,
+        "depth": 37,
+        "height": 100
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "exports/julmodeller-granskade-v4/Lucia-fargkorrigerad.3mf",
+        "exports/julmodeller-granskade-v4/Pepparkaksgubbe-fargkorrigerad.3mf",
+        "exports/julmodeller-granskade-v4/Stjarngosse-fargkorrigerad.3mf"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "tomten-och-rudolf",
+      "name": "Tomten och Rudolf – släde med fem renar",
+      "catalog_dimensions_mm": {
+        "width": 239,
+        "depth": 43,
+        "height": 75
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "exports/julmodeller-granskade-v4/Slade-fargad-fargkorrigerad.3mf"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "tomtar-3-pack",
+      "name": "Tomtarnas julbestyr – 3-pack",
+      "catalog_dimensions_mm": {
+        "width": 105,
+        "depth": 86,
+        "height": 120
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "exports/julmodeller-granskade-v4/Tomte-fargkorrigerad.3mf",
+        "exports/julmodeller-granskade-v4/Tomte-i-skorsten-fargkorrigerad.3mf",
+        "exports/julmodeller-granskade-v4/Tomte-med-sack-fargkorrigerad.3mf"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    },
+    {
+      "slug": "pepparkakshus",
+      "name": "Pepparkakshuset Sockerglädje",
+      "catalog_dimensions_mm": {
+        "width": 280,
+        "depth": 240,
+        "height": 279
+      },
+      "production_estimated": true,
+      "model_candidates": [
+        "exports/julmodeller-granskade-v4/Pepparkakshus-fargkorrigerad.3mf"
+      ],
+      "status": "candidates_checked",
+      "requires": [
+        "Match exact variant and revision",
+        "Slicer on actual printer/filament",
+        "Verify fit, supports and test print"
+      ]
+    }
+  ],
+  "files": {
+    "models/brew-fusion-v1/01_Stallning_print.stl": {
+      "sha256": "c7a0a1e903021b60c5d91c813377b0ddc642716f4a24b85f647020c7157963bf",
+      "bytes": 98284,
+      "meshes": [
+        {
+          "triangles": 1964,
+          "bounds_mm": [
+            [
+              -65.0,
+              -65.0,
+              0.0
+            ],
+            [
+              65.0,
+              65.0,
+              175.0
+            ]
+          ],
+          "dimensions_mm": [
+            130.0,
+            130.0,
+            175.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 163561.364,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/brew-fusion-v1/02_Galler_print.stl": {
+      "sha256": "4c3f912dcfe91054eac5dcdb1c2565b41a2476ad178931dc21f82aafff2c619f",
+      "bytes": 115284,
+      "meshes": [
+        {
+          "triangles": 2304,
+          "bounds_mm": [
+            [
+              -61.2,
+              -61.2,
+              0.0
+            ],
+            [
+              61.2,
+              61.2,
+              4.0
+            ]
+          ],
+          "dimensions_mm": [
+            122.4,
+            122.4,
+            4.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 37192.598,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/brew-fusion-v1/03_Tratt_print.stl": {
+      "sha256": "a5e2aa53337e5112ab15dc6e48ca10db4583b1178c5b125d745c6c5a804618d3",
+      "bytes": 5650484,
+      "meshes": [
+        {
+          "triangles": 113008,
+          "bounds_mm": [
+            [
+              -56.0736,
+              -56.0736,
+              0.0
+            ],
+            [
+              56.0736,
+              56.0736,
+              97.0
+            ]
+          ],
+          "dimensions_mm": [
+            112.1471,
+            112.1471,
+            97.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 64075.706,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/fold-fusion-v1/01_Bas_print.stl": {
+      "sha256": "4aebe2daff2315cb1aa5c7d527f122355aa6386f85eff711ae6df4fb5db09d40",
+      "bytes": 60284,
+      "meshes": [
+        {
+          "triangles": 1204,
+          "bounds_mm": [
+            [
+              -39.0,
+              -55.0,
+              0.0
+            ],
+            [
+              39.0,
+              65.0,
+              15.0796
+            ]
+          ],
+          "dimensions_mm": [
+            78.0,
+            120.0,
+            15.0796
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 39292.58,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/fold-fusion-v1/02_Bakstod_print.stl": {
+      "sha256": "cbdecfe7d421b7aec4d712fa1476cfd1324fb9b183f44a82d0ebbb2eae739e85",
+      "bytes": 94484,
+      "meshes": [
+        {
+          "triangles": 1888,
+          "bounds_mm": [
+            [
+              -35.0,
+              -5.495,
+              0.0
+            ],
+            [
+              35.0,
+              100.4883,
+              25.9854
+            ]
+          ],
+          "dimensions_mm": [
+            70.0,
+            105.9833,
+            25.9854
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 24158.642,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/fold-fusion-v1/03_Mobilplatta_print.stl": {
+      "sha256": "1354d0cdd5ca715d93d7847c6ab5873db91ecfd40db0256796315e3f90f3110e",
+      "bytes": 87484,
+      "meshes": [
+        {
+          "triangles": 1748,
+          "bounds_mm": [
+            [
+              -39.0,
+              -0.0,
+              0.0
+            ],
+            [
+              39.0,
+              105.0,
+              25.5
+            ]
+          ],
+          "dimensions_mm": [
+            78.0,
+            105.0,
+            25.5
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 34458.042,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v2/Julkula-prickar-1.stl": {
+      "sha256": "1a2afa77d8b5d6a490732b7fd701b837ea17cdcebab0afe556bc2ff160c88fdb",
+      "bytes": 45454484,
+      "meshes": [
+        {
+          "triangles": 909088,
+          "bounds_mm": [
+            [
+              -40.0,
+              -40.0,
+              0.0
+            ],
+            [
+              40.0,
+              40.0,
+              95.0
+            ]
+          ],
+          "dimensions_mm": [
+            80.0,
+            80.0,
+            95.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 260592.404,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v2/Julkula-prickar-2.stl": {
+      "sha256": "c9ba607186b327ddf8fd8fc7f8a9e7f9de879e266da7ecf67cf19ece1de157f8",
+      "bytes": 3407984,
+      "meshes": [
+        {
+          "triangles": 68158,
+          "bounds_mm": [
+            [
+              -9.3511,
+              -9.3768,
+              76.367
+            ],
+            [
+              9.3511,
+              9.3768,
+              85.0
+            ]
+          ],
+          "dimensions_mm": [
+            18.7023,
+            18.7536,
+            8.633
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 985.666,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v2/Julkula-snoflinga-1.stl": {
+      "sha256": "dea0d1ad456b558a655346e36a50332d2fe33c02bb23275568df0ec6eb00d6ec",
+      "bytes": 48198484,
+      "meshes": [
+        {
+          "triangles": 963968,
+          "bounds_mm": [
+            [
+              -39.9988,
+              -40.1388,
+              0.0
+            ],
+            [
+              40.0012,
+              39.8612,
+              95.0
+            ]
+          ],
+          "dimensions_mm": [
+            80.0,
+            80.0,
+            95.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 247441.853,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v2/Julkula-snoflinga-2.stl": {
+      "sha256": "0fb45f8b2e64c84d19f34535e9779060d4a61459658bee250ced06988fce5a0f",
+      "bytes": 3460484,
+      "meshes": [
+        {
+          "triangles": 69208,
+          "bounds_mm": [
+            [
+              -9.3511,
+              -9.3808,
+              76.2675
+            ],
+            [
+              9.3511,
+              9.3808,
+              85.0
+            ]
+          ],
+          "dimensions_mm": [
+            18.7023,
+            18.7615,
+            8.7325
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 998.321,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v2/Julkula-spiral-1.stl": {
+      "sha256": "11ebec1b0c4fbfa45922b6f7b5948b58850bb4735d31bb0e155bbedd3d95dc84",
+      "bytes": 48540484,
+      "meshes": [
+        {
+          "triangles": 970808,
+          "bounds_mm": [
+            [
+              -40.0,
+              -40.0,
+              0.0
+            ],
+            [
+              40.0,
+              40.0,
+              95.0
+            ]
+          ],
+          "dimensions_mm": [
+            80.0,
+            80.0,
+            95.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 247998.267,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v2/Julkula-spiral-2.stl": {
+      "sha256": "ed3b236f6c587fcfae39f8dc599fc572a22b5a6842396bbb7c813714ed86a816",
+      "bytes": 3299584,
+      "meshes": [
+        {
+          "triangles": 65990,
+          "bounds_mm": [
+            [
+              -9.3511,
+              -9.3559,
+              76.4583
+            ],
+            [
+              9.3511,
+              9.3559,
+              85.0
+            ]
+          ],
+          "dimensions_mm": [
+            18.7023,
+            18.7118,
+            8.5417
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 915.384,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v2/Julkula-stjarnor-1.stl": {
+      "sha256": "4ec5ba4e5be0193890ce4991d488a2b37447c79acebd8d2fa232dfa271973db8",
+      "bytes": 48334284,
+      "meshes": [
+        {
+          "triangles": 966684,
+          "bounds_mm": [
+            [
+              -39.8247,
+              -40.0,
+              0.0
+            ],
+            [
+              40.1753,
+              40.0,
+              95.0
+            ]
+          ],
+          "dimensions_mm": [
+            80.0,
+            80.0,
+            95.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 244951.253,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v2/Julkula-stjarnor-2.stl": {
+      "sha256": "99d5e57473f38e542b2d0e1dbfb488b2e83d01ee2b77ed16905ffff3ee83c0db",
+      "bytes": 3325784,
+      "meshes": [
+        {
+          "triangles": 66514,
+          "bounds_mm": [
+            [
+              -9.3511,
+              -9.3732,
+              76.4413
+            ],
+            [
+              9.3511,
+              9.3732,
+              85.0
+            ]
+          ],
+          "dimensions_mm": [
+            18.7023,
+            18.7464,
+            8.5587
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 2,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": false,
+          "signed_volume_mm3": 926.707,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v3/Noel-servettring-1.stl": {
+      "sha256": "31d0553749ed7be9d33e5c57db72d7e7421683f87b2ea4dc04e719673d762f60",
+      "bytes": 38797684,
+      "meshes": [
+        {
+          "triangles": 775952,
+          "bounds_mm": [
+            [
+              -27.5,
+              -27.5,
+              0.0
+            ],
+            [
+              27.5,
+              27.5,
+              51.8
+            ]
+          ],
+          "dimensions_mm": [
+            55.0,
+            55.0,
+            51.8
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 9012.86,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/jul-blender-v3/Noel-servettring-2.stl": {
+      "sha256": "27b1eaca1140497746e02b9a3c41d313f4ffaf2ccb0bd5f372ff9ca95871fbb3",
+      "bytes": 11484,
+      "meshes": [
+        {
+          "triangles": 228,
+          "bounds_mm": [
+            [
+              -26.8393,
+              -28.9411,
+              13.7537
+            ],
+            [
+              26.1463,
+              27.9483,
+              39.3021
+            ]
+          ],
+          "dimensions_mm": [
+            52.9856,
+            56.8894,
+            25.5484
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 496.144,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/presentask-original-v3/01_Underdel_print.stl": {
+      "sha256": "07914688754b6e7f6d9766b6b7e31c83e3c75f5ba8ca781a3e0e4f4f49d3d447",
+      "bytes": 5417084,
+      "meshes": [
+        {
+          "triangles": 108340,
+          "bounds_mm": [
+            [
+              -40.0631,
+              -40.0631,
+              0.0
+            ],
+            [
+              40.0631,
+              40.0631,
+              34.0
+            ]
+          ],
+          "dimensions_mm": [
+            80.1263,
+            80.1263,
+            34.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 46472.592,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/presentask-original-v3/02_Lock_print.stl": {
+      "sha256": "41dcaec15db629488cc53633b3eee6ff1a072ec7f14c598300f648b0eed43648",
+      "bytes": 3850184,
+      "meshes": [
+        {
+          "triangles": 77002,
+          "bounds_mm": [
+            [
+              -39.9142,
+              -39.9142,
+              0.0
+            ],
+            [
+              39.9142,
+              39.9142,
+              28.2
+            ]
+          ],
+          "dimensions_mm": [
+            79.8285,
+            79.8285,
+            28.2
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 24080.394,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/presentask-original-v3/03_Rosett_print.stl": {
+      "sha256": "8456d847458164888b4395370bdd61ca72cd0f9c23f1ad600563552da7d942da",
+      "bytes": 493484,
+      "meshes": [
+        {
+          "triangles": 9868,
+          "bounds_mm": [
+            [
+              -41.4278,
+              -41.4278,
+              0.0
+            ],
+            [
+              41.4278,
+              41.4278,
+              44.0424
+            ]
+          ],
+          "dimensions_mm": [
+            82.8556,
+            82.8556,
+            44.0424
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 5934.988,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/haxans-gomma-blender-v6/01_Svart-hatt-och-skal.stl": {
+      "sha256": "513bb5d35e36605030a612757a81c691f54434b4091f10721b8c187248043545",
+      "bytes": 439784,
+      "meshes": [
+        {
+          "triangles": 8794,
+          "bounds_mm": [
+            [
+              -100.0,
+              -90.0,
+              0.0
+            ],
+            [
+              100.0,
+              90.0,
+              210.0
+            ]
+          ],
+          "dimensions_mm": [
+            200.0,
+            180.0,
+            210.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 22,
+          "degenerate_triangles": 13,
+          "closed_edge_topology": false,
+          "signed_volume_mm3": 700849.706,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/haxans-gomma-blender-v6/02_Lila-insats.stl": {
+      "sha256": "268af22daab76fb40606a6436f17f051bfd534ed495668378c41fd5ba7fd109d",
+      "bytes": 110984,
+      "meshes": [
+        {
+          "triangles": 2218,
+          "bounds_mm": [
+            [
+              -92.1145,
+              -84.8098,
+              6.0
+            ],
+            [
+              95.1534,
+              29.2121,
+              45.6375
+            ]
+          ],
+          "dimensions_mm": [
+            187.2679,
+            114.0218,
+            39.6375
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 4,
+          "degenerate_triangles": 1,
+          "closed_edge_topology": false,
+          "signed_volume_mm3": 44900.663,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/gravbiblioteket-blender-v2/Gravbiblioteket-hoger.stl": {
+      "sha256": "4ccfc1764f7721e14e942414da058ced31019eb56f1677db5bf25c9703db6bad",
+      "bytes": 56234184,
+      "meshes": [
+        {
+          "triangles": 1124682,
+          "bounds_mm": [
+            [
+              -45.0,
+              -60.0,
+              -0.0003
+            ],
+            [
+              45.0,
+              60.0,
+              200.0001
+            ]
+          ],
+          "dimensions_mm": [
+            90.0,
+            120.0,
+            200.0004
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 327969.453,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "models/gravbiblioteket-blender-v2/Gravbiblioteket-vanster.stl": {
+      "sha256": "a1016644b54267bf31df3c8d43e1636a0effe56b01ef89bb680f2768c105ad58",
+      "bytes": 56234184,
+      "meshes": [
+        {
+          "triangles": 1124682,
+          "bounds_mm": [
+            [
+              -45.0,
+              -60.0,
+              -0.0003
+            ],
+            [
+              45.0,
+              60.0,
+              200.0001
+            ]
+          ],
+          "dimensions_mm": [
+            90.0,
+            120.0,
+            200.0004
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 327969.123,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "dimensions_context": "Single STL in its stored orientation; separate parts are not assembled."
+    },
+    "exports/julmodeller-granskade-v4/Lucia-fargkorrigerad.3mf": {
+      "sha256": "7bfc71acde7bb22ff4e6990de813440bb12e0c49f13cc04e27fdd381d2e9d67b",
+      "bytes": 15294385,
+      "meshes": [
+        {
+          "triangles": 1101296,
+          "bounds_mm": [
+            [
+              113.4991,
+              113.6125,
+              0.0
+            ],
+            [
+              136.5718,
+              136.3648,
+              50.0
+            ]
+          ],
+          "dimensions_mm": [
+            23.0727,
+            22.7522,
+            50.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 7,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 8135.005,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "build_bounds_dimensions_mm": [
+        23.0727,
+        22.7523,
+        50.0
+      ],
+      "dimensions_context": "3MF build placement; may contain multiple parts, not an assembled product envelope.",
+      "resource_count": 3,
+      "printer_profile_present": true
+    },
+    "exports/julmodeller-granskade-v4/Pepparkaksgubbe-fargkorrigerad.3mf": {
+      "sha256": "d305f681f7f1762e6278ab52d523cc9cb49dd2626affe4766cb4ca32b2c40245",
+      "bytes": 4245575,
+      "meshes": [
+        {
+          "triangles": 289282,
+          "bounds_mm": [
+            [
+              104.261,
+              114.0219,
+              0.0
+            ],
+            [
+              145.7125,
+              135.9013,
+              50.0
+            ]
+          ],
+          "dimensions_mm": [
+            41.4515,
+            21.8794,
+            50.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 14598.622,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "build_bounds_dimensions_mm": [
+        41.4515,
+        21.8794,
+        50.0
+      ],
+      "dimensions_context": "3MF build placement; may contain multiple parts, not an assembled product envelope.",
+      "resource_count": 3,
+      "printer_profile_present": true
+    },
+    "exports/julmodeller-granskade-v4/Stjarngosse-fargkorrigerad.3mf": {
+      "sha256": "a7530ce6a6111d948b409f23ea67d72b02358d0499cef2641daabbf8d0e0ba9d",
+      "bytes": 7597451,
+      "meshes": [
+        {
+          "triangles": 555460,
+          "bounds_mm": [
+            [
+              115.609,
+              116.0813,
+              0.0
+            ],
+            [
+              134.5036,
+              133.8711,
+              50.0
+            ]
+          ],
+          "dimensions_mm": [
+            18.8946,
+            17.7898,
+            50.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 4375.334,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "build_bounds_dimensions_mm": [
+        18.8946,
+        17.7898,
+        50.0
+      ],
+      "dimensions_context": "3MF build placement; may contain multiple parts, not an assembled product envelope.",
+      "resource_count": 3,
+      "printer_profile_present": true
+    },
+    "exports/julmodeller-granskade-v4/Slade-fargad-fargkorrigerad.3mf": {
+      "sha256": "02591e16ee6d9eef7fda839a676cb234f080e0f90c729fb44f462738835f315c",
+      "bytes": 48470256,
+      "meshes": [
+        {
+          "triangles": 2763202,
+          "bounds_mm": [
+            [
+              5.5759,
+              103.5761,
+              0.0021
+            ],
+            [
+              244.2477,
+              146.4042,
+              74.9953
+            ]
+          ],
+          "dimensions_mm": [
+            238.6718,
+            42.8281,
+            74.9931
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 129268.972,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "build_bounds_dimensions_mm": [
+        238.6718,
+        42.8281,
+        74.9932
+      ],
+      "dimensions_context": "3MF build placement; may contain multiple parts, not an assembled product envelope.",
+      "resource_count": 3,
+      "printer_profile_present": true
+    },
+    "exports/julmodeller-granskade-v4/Tomte-fargkorrigerad.3mf": {
+      "sha256": "9f00645a719b16061a19e87626ecd7c3359ab47b79241c084abd2f5785e6230d",
+      "bytes": 8367047,
+      "meshes": [
+        {
+          "triangles": 586840,
+          "bounds_mm": [
+            [
+              107.9567,
+              109.937,
+              0.0
+            ],
+            [
+              141.8699,
+              140.075,
+              50.0
+            ]
+          ],
+          "dimensions_mm": [
+            33.9132,
+            30.1379,
+            50.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 0,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 17088.281,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "build_bounds_dimensions_mm": [
+        33.9132,
+        30.138,
+        50.0
+      ],
+      "dimensions_context": "3MF build placement; may contain multiple parts, not an assembled product envelope.",
+      "resource_count": 3,
+      "printer_profile_present": true
+    },
+    "exports/julmodeller-granskade-v4/Tomte-i-skorsten-fargkorrigerad.3mf": {
+      "sha256": "b03c4ae1a8fff1298a8f13f5e4e4a1abf2b445257b9f22d5bdfe65300545fd01",
+      "bytes": 12008994,
+      "meshes": [
+        {
+          "triangles": 835544,
+          "bounds_mm": [
+            [
+              103.564,
+              109.5104,
+              0.0
+            ],
+            [
+              146.3492,
+              140.5212,
+              50.0
+            ]
+          ],
+          "dimensions_mm": [
+            42.7852,
+            31.0108,
+            50.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 1,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 22997.695,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "build_bounds_dimensions_mm": [
+        42.7852,
+        31.0108,
+        50.0
+      ],
+      "dimensions_context": "3MF build placement; may contain multiple parts, not an assembled product envelope.",
+      "resource_count": 3,
+      "printer_profile_present": true
+    },
+    "exports/julmodeller-granskade-v4/Tomte-med-sack-fargkorrigerad.3mf": {
+      "sha256": "f640193cacf28312840bb5c6cc21c4fa8d3f6209257e13c5f36574e203e82515",
+      "bytes": 10261000,
+      "meshes": [
+        {
+          "triangles": 718128,
+          "bounds_mm": [
+            [
+              103.1512,
+              107.041,
+              0.0
+            ],
+            [
+              146.8246,
+              142.8281,
+              50.0
+            ]
+          ],
+          "dimensions_mm": [
+            43.6733,
+            35.7871,
+            50.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 1,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 21440.368,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "build_bounds_dimensions_mm": [
+        43.6734,
+        35.7871,
+        50.0
+      ],
+      "dimensions_context": "3MF build placement; may contain multiple parts, not an assembled product envelope.",
+      "resource_count": 3,
+      "printer_profile_present": true
+    },
+    "exports/julmodeller-granskade-v4/Pepparkakshus-fargkorrigerad.3mf": {
+      "sha256": "a4c6908d6eabe76523f80df47a22e35720033302f1eafbb76496392200d03913",
+      "bytes": 18861158,
+      "meshes": [
+        {
+          "triangles": 1312450,
+          "bounds_mm": [
+            [
+              97.5115,
+              100.0571,
+              0.0
+            ],
+            [
+              152.4549,
+              150.0034,
+              50.0
+            ]
+          ],
+          "dimensions_mm": [
+            54.9433,
+            49.9463,
+            50.0
+          ],
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "degenerate_triangles": 1,
+          "closed_edge_topology": true,
+          "signed_volume_mm3": 64651.704,
+          "limitations": "Edge topology is not a self-intersection, wall-thickness, fit, support or slicing check."
+        }
+      ],
+      "build_bounds_dimensions_mm": [
+        54.9434,
+        49.9463,
+        50.0
+      ],
+      "dimensions_context": "3MF build placement; may contain multiple parts, not an assembled product envelope.",
+      "resource_count": 3,
+      "printer_profile_present": true
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { categories as seedCategories, products as seedProducts } from './data/products.ts';
 import { materials as seedMaterials, qualities as seedQualities } from './data/materials.ts';
 import type { Category, Material, Product, QualityLevel } from './types.ts';
+import { identifyProducts } from './articles.ts';
 
 /**
  * Katalogen var tidigare en konstant som kompilerades in i servern. För att
@@ -22,6 +23,7 @@ interface CatalogFile {
 }
 
 let cache: CatalogFile | null = null;
+let loading: Promise<CatalogFile> | null = null;
 let queue: Promise<unknown> = Promise.resolve();
 
 function serialize<T>(task: () => Promise<T>): Promise<T> {
@@ -41,7 +43,13 @@ function seed(): CatalogFile {
 }
 
 async function load(): Promise<CatalogFile> {
+  if (loading) return loading;
   if (cache) return cache;
+  loading = loadCatalog().catch(error => { cache = null; throw error; }).finally(() => { loading = null; });
+  return loading;
+}
+
+async function loadCatalog(): Promise<CatalogFile> {
   try {
     const raw = await readFile(CATALOG_FILE(), 'utf8');
     const parsed = JSON.parse(raw) as Partial<CatalogFile>;
@@ -60,13 +68,21 @@ async function load(): Promise<CatalogFile> {
       : seed();
   }
   // Unify older catalog spelling, including catalogs already stored in R2.
-  const products = cache.products.map((product) =>
+  const products = await identifyProducts(cache!.products.map((product) =>
     /^(matte|matt)$/i.test(product.finish.trim())
       ? { ...product, finish: 'Matt' }
       : product,
-  );
-  if (products.some((product, index) => product.finish !== cache!.products[index]!.finish)) {
-    await persist({ ...cache, products });
+  ));
+  if (JSON.stringify(products) !== JSON.stringify(cache!.products)) {
+    // Keep the complete pre-migration catalog privately; existing R2 data is not replaced by a seed.
+    const backup = `${CATALOG_FILE()}.before-articles.json`;
+    try { await readFile(backup, 'utf8'); }
+    catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      await mkdir(dirname(backup), { recursive: true });
+      await writeFile(backup, JSON.stringify(cache, null, 2), 'utf8');
+    }
+    await persist({ ...cache!, products });
   }
   return cache;
 }
@@ -150,7 +166,8 @@ export async function createProduct(product: Omit<Product, 'id'>): Promise<Produ
     if (data.products.some((existing) => existing.slug === product.slug)) {
       throw new CatalogError({ slug: 'Det finns redan en produkt med den webbadressen.' }, 409);
     }
-    const created: Product = { ...product, id: nextProductId(data.products) };
+    const [created] = await identifyProducts([{ ...product, articleKey: randomUUID(), articleNumber: undefined, articles: undefined, id: nextProductId(data.products) }]);
+    if (!created) throw new Error('Artikelnumret kunde inte skapas.');
     await persist({ ...data, products: [...data.products, created] });
     return created;
   });
@@ -167,7 +184,9 @@ export async function updateProduct(id: string, patch: Partial<Product>): Promis
     }
 
     // Id:t är nyckeln i ordrar och lagersaldo och får aldrig bytas.
-    const updated: Product = { ...data.products[index]!, ...patch, id };
+    const original = data.products[index]!;
+    const [updated] = await identifyProducts([{ ...original, ...patch, id, articleKey: original.articleKey, articleNumber: original.articleNumber, articles: original.articles }]);
+    if (!updated) throw new Error('Artikelnumret kunde inte uppdateras.');
     const products = [...data.products];
     products[index] = updated;
     await persist({ ...data, products });
@@ -300,4 +319,5 @@ export async function deleteQuality(id: string): Promise<QualityLevel> {
 /** Bara för tester – tvingar fram en omläsning från disk. */
 export function resetCatalogCache(): void {
   cache = null;
+  loading = null;
 }

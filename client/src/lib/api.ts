@@ -306,6 +306,10 @@ export function saveProduction(token: string, id: string, production: Omit<Produ
   return request(`/admin/orders/${encodeURIComponent(id)}/production`, adminInit(token, { method: 'PATCH', body: JSON.stringify({ production, expectedRevision }) }));
 }
 
+export function checkProduction(token: string, id: string): Promise<{ checks: Array<{ id: string; label: string; status: 'ok' | 'missing' | 'review'; detail: string }>; checkedAt: string; revision: number }> {
+  return request(`/admin/orders/${encodeURIComponent(id)}/production-check`, adminInit(token));
+}
+
 export function adminLogin(email: string, password: string) { return request('/admin/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }); }
 export function adminSetup(key: string, password: string) { return request('/admin/auth/setup', { method: 'POST', headers: { Authorization: `Bearer ${key}` }, body: JSON.stringify({ password }) }); }
 export function adminLogout() { return request('/admin/auth/logout', { method: 'POST', body: '{}' }); }
