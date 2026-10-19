@@ -26,6 +26,7 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
                 <br />
                 <span className="dim" style={{ fontSize: '0.82rem' }}>
                   {line.color}
+                  {line.articleNumber && <><br />Artikelnummer: <strong>{line.articleNumber}</strong></>}
                   {line.size ? ` · ${line.size}` : ''}
                   {line.personalization && <><br />{line.personalization.includes(' / ') ? 'Text' : 'Namn'}: <strong>{line.personalization}</strong></>}
                 </span>
@@ -45,6 +46,7 @@ export function OrderSummary({ order }: { order: AnyOrder }) {
       ) : (
         <div style={{ marginTop: 18 }}>
           <h3>{order.projectName}</h3>
+          {order.articleNumber && <p className="dim">Artikelnummer: <strong>{order.articleNumber}</strong></p>}
           <p className="muted" style={{ fontSize: '0.93rem' }}>
             {order.description}
           </p>

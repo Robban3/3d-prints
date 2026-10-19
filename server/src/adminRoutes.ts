@@ -4,7 +4,7 @@ import type { RequestHandler } from 'express';
 import { timingSafeEqual } from 'node:crypto';
 import { pathParam } from './http.ts';
 import { rateLimit } from './rateLimit.ts';
-import { findOrder, listOrders, updateOrder } from './store.ts';
+import { findOrder, listOrders, updateOrder, migrateOrderArticles } from './store.ts';
 import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from './lifecycle.ts';
 import { sendMail, statusUpdate, mailIsConfigured, orderConfirmationExample } from './mailer.ts';
 import { activateAccount, adminEmail, createReset, endSession, readAccount, resetPassword, startSession, validPassword, validSession, verifyPassword } from './adminAuth.ts';
@@ -39,7 +39,7 @@ import type { AnyOrder, StatusEvent } from './types.ts';
 import { filePathFor, listModelFiles, readMeta, storedFileName } from './uploads.ts';
 import { storage } from './storage.ts';
 import { minimizeCustomerData } from './privacyRetention.ts';
-import { parseProduction } from './production.ts';
+import { parseProduction, productionChecks } from './production.ts';
 import { ValidationError } from './validation.ts';
 import { readFileFolders, saveFileFolder, movePrintFile } from './fileFolders.ts';
 
@@ -166,6 +166,7 @@ admin.put('/admin/appearance', requireAdmin, async (req, res) => {
 });
 
 admin.get('/admin/orders', requireAdmin, async (_req, res) => {
+  await migrateOrderArticles(await allProducts());
   const orders = await listOrders();
   res.json({
     orders: orders.map((order) => ({ ...order, next: nextStatuses(order.status) })),
@@ -183,6 +184,21 @@ admin.post('/admin/email/test', requireAdmin, recoveryLimit, async (req, res) =>
   if (to.length > 254 || !/^[^\s@<>\r\n]+@[^\s@<>\r\n]+\.[^\s@<>\r\n]+$/.test(to)) { res.status(400).json({ error: 'Ange en giltig e-postadress.' }); return; }
   const result = await sendMail(orderConfirmationExample(to));
   res.json({ accepted: result.delivered });
+});
+
+admin.get('/admin/orders/:id/production-check', requireAdmin, async (req, res) => {
+  const order = await findOrder(pathParam(req.params.id));
+  if (!order) { res.status(404).json({ error: 'Ordern hittades inte.' }); return; }
+  const ids = [...(order.production?.modelIds ?? []), ...(order.type === 'custom' && order.fileId ? [order.fileId] : [])];
+  const files = await Promise.all(ids.map(async id => {
+    const meta = await readMeta(id);
+    const authorized = meta && (meta.kind === 'library' || (meta.kind !== 'image' && meta.claimedBy === order.id));
+    const object = authorized ? await storage().get(storedFileName(id, meta.extension), filePathFor(meta)) : undefined;
+    const present = Boolean(object && meta && object.size > 0 && object.size === meta.size);
+    object?.body.destroy();
+    return { id, present };
+  }));
+  res.json({ checks: productionChecks(order, files), checkedAt: new Date().toISOString(), revision: order.production?.revision ?? 0 });
 });
 
 admin.patch('/admin/orders/:id/production', requireAdmin, async (req, res) => {

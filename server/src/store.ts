@@ -2,7 +2,8 @@ import { mkdir } from 'node:fs/promises';
 import { readFile, writeFile } from './stateFiles.ts';
 import { dirname, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { AnyOrder } from './types.ts';
+import type { AnyOrder, Product } from './types.ts';
+import { customArticle, productArticle } from './articles.ts';
 
 const DATA_FILE = resolve(process.env.ORDER_STORE ?? 'data/orders.json');
 
@@ -79,4 +80,26 @@ export async function findOrder(id: string): Promise<AnyOrder | undefined> {
 export async function listOrders(): Promise<AnyOrder[]> {
   const orders = await readAll();
   return [...orders].reverse();
+}
+
+/** Backfill identifiers only; never overwrite historical prices, names or production specs. */
+export async function migrateOrderArticles(products: Product[]): Promise<void> {
+  return serialize(async () => {
+    const orders = await readAll();
+    const numbered = await Promise.all(orders.map(async order => {
+      if (order.type === 'custom') return order.articleNumber ? order : { ...order, articleNumber: await customArticle(`order:${order.id}`) };
+      return { ...order, lines: order.lines.map(line => {
+        if (line.articleNumber) return line;
+        const product = products.find(product => product.id === line.productId && product.name === line.name && product.articleKey?.startsWith('legacy:'));
+        const number = product && productArticle(product, line.color, line.size);
+        return number ? { ...line, articleNumber: number } : line;
+      }) };
+    }));
+    if (JSON.stringify(numbered) === JSON.stringify(orders)) return;
+    await mkdir(dirname(DATA_FILE), { recursive: true });
+    const backup = `${DATA_FILE}.before-articles.json`;
+    try { await readFile(backup, 'utf8'); }
+    catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; await writeFile(backup, JSON.stringify(orders, null, 2), 'utf8'); }
+    await writeFile(DATA_FILE, JSON.stringify(numbered, null, 2), 'utf8');
+  });
 }

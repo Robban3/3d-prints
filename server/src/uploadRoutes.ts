@@ -2,6 +2,7 @@ import { Router } from 'express';
 import type { Request, RequestHandler, Response } from 'express';
 import multer from 'multer';
 import { createReadStream } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { rm } from 'node:fs/promises';
 import { pathParam } from './http.ts';
 import { storage as fileStore } from './storage.ts';
@@ -123,18 +124,25 @@ uploads.post('/uploads', handleUpload, (req: Request, res: Response, next) => {
   }
 
   const extension = extensionOf(file.originalname);
-  fileStore()
-    .put(storedFileName(id, extension), file.path, 'application/octet-stream')
-    .then(() =>
+  const digest = async () => {
+    const hash = createHash('sha256');
+    for await (const chunk of createReadStream(file.path)) hash.update(chunk);
+    return hash.digest('hex');
+  };
+  digest()
+    .then(async sha256 => {
+      await fileStore().put(storedFileName(id, extension), file.path, 'application/octet-stream');
+      return (
       writeMeta({
         id,
+        sha256,
         originalName: file.originalname.slice(0, 200),
         extension,
         size: file.size,
         createdAt: new Date().toISOString(),
         claimedBy: null,
-      }),
-    )
+      }));
+    })
     .then((meta) => {
       recordUpload(clientKey(req), meta.size);
       res.status(201).json({

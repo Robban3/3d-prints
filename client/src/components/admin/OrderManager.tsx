@@ -99,7 +99,7 @@ export function OrderManager({ token, onUnauthorized, overview = false }: Props)
       {!orders && !error && <div className="skeleton" style={{ aspectRatio: 'auto', height: 200 }} />}
 
       <div className="stack" style={{ gap: 16 }}>
-        {orders?.filter(order => (filter === 'all' || (filter === 'active' ? active(order) : filter === 'unpaid' ? unpaid(order) : filter === 'overdue' ? overdue(order) : order.status === filter)) && [order.id, order.customer.name, order.customer.email, order.type === 'custom' ? order.projectName : order.lines.map(line => line.name).join(' ')].join(' ').toLowerCase().includes(query.trim().toLowerCase())).map((order) => (
+        {orders?.filter(order => (filter === 'all' || (filter === 'active' ? active(order) : filter === 'unpaid' ? unpaid(order) : filter === 'overdue' ? overdue(order) : order.status === filter)) && [order.id, order.customer.name, order.customer.email, order.type === 'custom' ? `${order.projectName} ${order.articleNumber ?? ''}` : order.lines.map(line => `${line.name} ${line.articleNumber ?? ''}`).join(' ')].join(' ').toLowerCase().includes(query.trim().toLowerCase())).map((order) => (
           <div className="panel" key={order.id}>
             <div className="spread">
               <div>
@@ -121,7 +121,7 @@ export function OrderManager({ token, onUnauthorized, overview = false }: Props)
                   {order.type === 'shop' ? (
                     order.lines.map((line) => (
                       <li key={`${line.productId}-${line.color}-${line.size ?? ''}-${line.personalization ?? ''}`}>
-                        {line.quantity} × {line.name} · {line.color}{line.size ? ` · ${line.size}` : ''}
+                        {line.quantity} × {line.name} · {line.color}{line.size ? ` · ${line.size}` : ''}{line.articleNumber && <><br />Artikelnummer: <strong>{line.articleNumber}</strong></>}
                         {line.personalization && <><br />{line.personalization.includes(' / ') ? 'Text' : 'Namn'}: <strong>{line.personalization}</strong></>}
                       </li>
                     ))
@@ -129,6 +129,7 @@ export function OrderManager({ token, onUnauthorized, overview = false }: Props)
                     <li>
                       {order.projectName} · {order.request.quantity} st{' '}
                       {order.request.material.toUpperCase()}
+                      {order.articleNumber && <><br />Artikelnummer: <strong>{order.articleNumber}</strong></>}
                     </li>
                   )}
                 </ul>

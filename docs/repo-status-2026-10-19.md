@@ -24,6 +24,8 @@ certifiering. Ingen ny betalningsleverantör eller något avtal har valts här.
 
 ## Prioriterade nästa steg
 
+Uppföljning: artikelserierna FL-P och FL-K är nu implementerade och orderflödet har integrationstestats. Se [artikel- och produktionskontrollen](articles-production-verification-2026-10-19.md), som ersätter artikelstatusen och kompletterar produktionsstatusen nedan.
+
 1. **Betalningsleverantör.** Koden använder direkt Klarna Payments; Mollie och
    Stripe saknas. Klarna har enligt supportsvaret inget registrerat handlaravtal
    och hänvisar till PSP. Efter godkännande: implementera sessioner, verifierad

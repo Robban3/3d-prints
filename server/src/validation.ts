@@ -3,6 +3,7 @@ import { QUOTE_LIMITS } from './pricing.ts';
 import type { CustomQuoteRequest, CustomerDetails, OrderLine } from './types.ts';
 import { findProduct } from './catalog.ts';
 import { productPrice } from './productPrice.ts';
+import { productArticle } from './articles.ts';
 
 export class ValidationError extends Error {
   readonly fields: Record<string, string>;
@@ -116,6 +117,14 @@ export async function parseOrderLines(input: unknown): Promise<OrderLine[]> {
     }
     // Priset hämtas alltid från katalogen, aldrig från klienten.
     lines.push({
+      articleNumber: productArticle(product, color, size),
+      productionSpecs: {
+        material: [product.material.toUpperCase(), product.finish].filter(Boolean).join(' '),
+        dimensions: product.sizes?.find(value => value.id === size)?.dimensions ?? product.dimensions,
+        weightGrams: product.sizes?.find(value => value.id === size)?.weightGrams ?? product.weightGrams,
+        printTimeHours: product.sizes?.find(value => value.id === size)?.printTimeHours ?? product.printTimeHours,
+        estimated: product.productionEstimated !== false || product.dimensionsEstimated === true || product.specificationsPending === true,
+      },
       productId: product.id,
       name: product.name,
       quantity,

@@ -21,6 +21,10 @@ export interface ProductVariantOption {
 }
 
 export interface Product {
+  /** Server-assigned, immutable family identity and article numbers. */
+  articleKey?: string;
+  articleNumber?: string;
+  articles?: ProductArticle[];
   id: string;
   slug: string;
   name: string;
@@ -90,6 +94,8 @@ export interface Category {
 }
 
 export interface OrderLine {
+  articleNumber?: string;
+  productionSpecs?: { material: string; dimensions: { width: number; depth: number; height: number }; weightGrams: number; printTimeHours: number; estimated: boolean };
   productId: string;
   name: string;
   quantity: number;
@@ -180,6 +186,7 @@ export interface QuoteBreakdown {
 }
 
 export interface CustomOrder {
+  articleNumber?: string;
   production?: ProductionPlan;
   id: string;
   type: 'custom';
@@ -201,6 +208,12 @@ export interface CustomOrder {
 }
 
 export type AnyOrder = Order | CustomOrder;
+
+export interface ProductArticle {
+  articleNumber: string;
+  color: string;
+  size?: string;
+}
 
 export interface ProductionPlan {
   machine: string;

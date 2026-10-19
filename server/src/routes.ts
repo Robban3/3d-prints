@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { orderAccessToken, validOrderAccess } from './orderAccess.ts';
 import { publicOrder } from './production.ts';
+import { customArticle, customModelIdentity } from './articles.ts';
 import { readAppearance } from './appearance.ts';
 import {
   allCategories,
@@ -299,6 +300,7 @@ api.post('/custom-orders', orderLimit, async (req, res) => {
 
   const quote = await quoteFor(request);
   const orderId = generateOrderNumber('C');
+  const articleNumber = await customArticle(upload?.sha256 ? customModelIdentity(customer.email, upload.sha256, request) : `order:${orderId}`);
 
   if (upload) {
     const claimed = await claimUpload(upload.id, orderId);
@@ -321,6 +323,7 @@ api.post('/custom-orders', orderLimit, async (req, res) => {
   }
 
   const order: CustomOrder = {
+    articleNumber,
     id: orderId,
     type: 'custom',
     createdAt: new Date().toISOString(),
