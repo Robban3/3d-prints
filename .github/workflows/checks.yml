@@ -1,0 +1,26 @@
+name: Repository checks
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['models/**', 'exports/**', 'screenshots/**']
+  pull_request:
+    paths-ignore: ['models/**', 'exports/**', 'screenshots/**']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npx tsc -p cloudflare/tsconfig.json
+      - run: npm audit --omit=dev --audit-level=high

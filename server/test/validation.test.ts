@@ -1,5 +1,8 @@
 import { strict as assert } from 'node:assert';
-import { describe, it } from 'node:test';
+import { after, before, describe, it } from 'node:test';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import {
   ValidationError,
   parseCustomer,
@@ -7,7 +10,21 @@ import {
   parseQuoteRequest,
 } from '../src/validation.ts';
 import { products } from '../src/data/products.ts';
-import { findProduct } from '../src/catalog.ts';
+import { findProduct, resetCatalogCache } from '../src/catalog.ts';
+
+let testDirectory: string;
+const previousCatalog = process.env.CATALOG_STORE;
+before(async () => {
+  testDirectory = await mkdtemp(join(tmpdir(), 'formlabb-validation-'));
+  process.env.CATALOG_STORE = join(testDirectory, 'catalog.json');
+  resetCatalogCache();
+});
+after(async () => {
+  if (previousCatalog === undefined) delete process.env.CATALOG_STORE;
+  else process.env.CATALOG_STORE = previousCatalog;
+  resetCatalogCache();
+  await rm(testDirectory, { recursive: true, force: true });
+});
 
 const validCustomer = {
   name: 'Anna Andersson',

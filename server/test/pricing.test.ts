@@ -26,7 +26,7 @@ describe('calculateQuote', () => {
     assert.equal(priceOf({ ...base, volumeCm3: 1, infill: 5 }).total, 96);
   });
   it('använder samma timpris för alla material och ignorerar gamla pristillval', () => {
-    const quote = priceOf({ ...base, material: 'resin', rush: true, postProcessing: true });
+    const quote = priceOf({ ...base, material: 'petg', rush: true, postProcessing: true });
     assert.equal(quote.total, priceOf(base).total);
     assert.equal(quote.postProcessingCost, 0);
     assert.equal(quote.rushSurcharge, 0);

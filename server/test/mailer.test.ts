@@ -12,6 +12,7 @@ test('order mail escapes customer data and includes totals, reply address and pr
   assert.match(mail.html!, /237/);
   assert.match(mail.html!, /spara-order\?id=TEST-123#access=/);
   assert.match(mail.text, /Frakt:/);
+  assert.ok(!mail.text.includes('du får en separat betalningslänk'));
 });
 test('example is marked as an example and never links to a nonexistent order', () => {
   const mail = orderConfirmationExample('rvdv1122@gmail.com');

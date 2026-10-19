@@ -102,7 +102,7 @@ export function orderConfirmation(order: AnyOrder): Mail {
     ? order.payment.test
       ? 'Betalning: ingen betalning har genomförts (butiken kör i testläge).'
       : `Betalning: Klarna${order.payment.reference ? `, referens ${order.payment.reference}` : ''}.`
-    : 'Betalning: du får en separat betalningslänk.';
+    : 'Betalning: betalningsuppgifter saknas. Kontakta support@formlabb.se innan du betalar.';
 
   return {
     to: order.customer.email,
