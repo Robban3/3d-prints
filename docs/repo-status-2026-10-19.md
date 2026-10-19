@@ -18,6 +18,9 @@ certifiering. Ingen ny betalningsleverantör eller något avtal har valts här.
   allvarliga sårbarheter i produktionsberoenden.
 - Modell-/exportarkiv med Git LFS. Tillfälliga arbetsfiler, Python-cache och
   automatiska Blender-backuper utesluts. Lokala backuper raderas inte.
+- `.lfsconfig` hoppar över automatisk nedladdning av modell-/exportarkivet vid
+  nya utcheckningar. Webbbyggen behöver inte dessa filer. Hämta dem vid behov
+  med `git lfs pull --include="models/**,exports/**" --exclude=""`.
 
 ## Prioriterade nästa steg
 
