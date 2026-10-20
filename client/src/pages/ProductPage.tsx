@@ -193,7 +193,7 @@ export function ProductPage() {
                     <NameOrnamentPreview name={personalization} secondLine={greeting ? secondLine : undefined} />
                   </div>
                 )}
-                <div>
+                {product.colors.length > 1 && <div>
                   <span className="field-label">Färg</span>
                   <div className="swatches" style={{ marginTop: 8 }}>
                     {product.colors.map((entry) => (
@@ -208,7 +208,7 @@ export function ProductPage() {
                       </button>
                     ))}
                   </div>
-                </div>
+                </div>}
 
                 {product.sizes && product.sizes.length > 0 && (
                   <div>

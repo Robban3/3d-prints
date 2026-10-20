@@ -21,6 +21,7 @@ it('visar rätt beständigt artikelnummer när färg och storlek ändras', async
   const user = userEvent.setup();
   render(<MemoryRouter initialEntries={['/produkter/flexi-drake']}><CartProvider><Routes><Route path="/produkter/:slug" element={<ProductPage />} /></Routes></CartProvider></MemoryRouter>);
   expect(await screen.findByText('FL-P-0042-001')).toBeInTheDocument();
+  expect(screen.getByText('Färg', { exact: true })).toBeInTheDocument();
   await user.click(screen.getByRole('button',{name:'Silk lila'}));
   expect(screen.getByText('FL-P-0042-003')).toBeInTheDocument();
   await user.click(screen.getByRole('button',{name:'Stor'}));
@@ -67,8 +68,11 @@ it('väljer ornament med och utan årtal och sparar utförandet i varukorgen', a
   const photo = await screen.findByRole('img', { name: 'Julkula med namn' });
   await waitFor(() => expect(photo).toHaveAttribute('src', '/without-year.webp'));
   expect(screen.getByText('Årtal')).toBeInTheDocument();
+  expect(screen.queryByText('Färg', { exact: true })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /^Benvit$/ })).not.toBeInTheDocument();
   await user.click(screen.getByRole('button', { name: /Med årtal/ }));
   expect(photo).toHaveAttribute('src', '/with-year.webp');
   await user.click(screen.getByRole('button', { name: 'Lägg i varukorg' }));
   await waitFor(() => expect(screen.getByTestId('cart-proof')).toHaveTextContent('Med årtal (2026)'));
+  expect(screen.getByTestId('cart-proof')).toHaveTextContent('Benvit');
 });
