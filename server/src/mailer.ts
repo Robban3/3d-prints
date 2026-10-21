@@ -138,6 +138,27 @@ export function orderConfirmation(order: AnyOrder): Mail {
   };
 }
 
+/** Separate internal messages; customer confirmation never exposes staff recipients. */
+export function newOrderNotifications(order: AnyOrder): Mail[] {
+  return ['nygren.cn@gmail.com', 'rvdv1122@gmail.com'].map(to => ({
+    to,
+    subject: `${order.payment?.test ? '[TEST] ' : ''}Ny order ${order.id} – Formlabb.se`,
+    text: [
+      'En ny beställning har registrerats i Formlabb.',
+      `Ordernummer: ${order.id}`,
+      `Beställd: ${formatDate(order.createdAt)}`,
+      `Typ: ${order.type === 'shop' ? 'Butiksorder' : 'Kundens egen modell'}`,
+      '',
+      orderRows(order),
+      '',
+      `Totalt: ${formatPrice(order.total)} inklusive moms.`,
+      order.payment?.test ? 'TESTORDER – ingen betalning har genomförts.' : 'Kontrollera betalstatus i admin innan tillverkning. Aviseringen är inte ett betalningskvitto.',
+      '',
+      'Öppna ordern i admin: https://formlabb.se/verkstad?vy=ordrar',
+    ].join('\n'),
+  }));
+}
+
 /** Exempel utan lagrad order, betalning eller privat orderlänk. */
 export function orderConfirmationExample(to: string): Mail {
   const mail = orderConfirmation({ id: 'EXEMPEL-1001', type: 'shop', createdAt: new Date().toISOString(), status: 'mottagen', customer: { name: 'Exempelkund', email: to, address: 'Exempelgatan 1', postalCode: '123 45', city: 'Exempelstad' }, lines: [{ productId: 'example', name: 'Luciatåget – komplett set', quantity: 1, unitPrice: 499, color: 'Originalfärger' }], subtotal: 499, shipping: 59, total: 558, payment: { provider: 'klarna', status: 'obetald', test: true }, history: [] });

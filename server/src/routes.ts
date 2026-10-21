@@ -17,7 +17,7 @@ import { findOrder, generateOrderNumber, listOrders, saveOrder, updateOrder } fr
 import { ALLOWED_EXTENSIONS, MAX_UPLOAD_BYTES, claimUpload, releaseUpload, readMeta } from './uploads.ts';
 import { pathParam } from './http.ts';
 import { release, reserve, stockLevels } from './stock.ts';
-import { orderConfirmation, sendMail } from './mailer.ts';
+import { orderConfirmation, newOrderNotifications, sendMail } from './mailer.ts';
 import { rateLimit } from './rateLimit.ts';
 import {
   KlarnaError,
@@ -208,11 +208,10 @@ async function settle(
 
 /** Bekräftelsemejlet får aldrig fälla en order som redan är betald och sparad. */
 async function notify(order: Order | CustomOrder): Promise<void> {
-  try {
-    await sendMail(orderConfirmation(order));
-  } catch (error) {
-    console.error('Kunde inte skicka orderbekräftelse');
-  }
+  await Promise.all([orderConfirmation(order), ...newOrderNotifications(order)].map(async mail => {
+    try { await sendMail(mail); }
+    catch { console.error('Kunde inte skicka ordermejl', order.id, mail.to === order.customer.email ? 'kund' : 'intern avisering'); }
+  }));
 }
 
 async function persistOrder(order: Order | CustomOrder): Promise<void> {
