@@ -3,6 +3,7 @@ import { OrderTimeline } from '../OrderTimeline';
 import { ApiError, fetchAdminOrders, fetchOperations, fetchPrintFiles, setOrderStatus, testShopEmail } from '../../lib/api';
 import type { AdminPrintFile } from '../../lib/api';
 import { ProductionCard } from './ProductionCard';
+import { CustomerMail } from './CustomerMail';
 import { formatDate, formatPrice } from '../../lib/format';
 import { statusLabels } from '../../lib/status';
 import type { AnyOrder, OrderStatus } from '../../types';
@@ -60,7 +61,8 @@ export function OrderManager({ token, onUnauthorized, overview = false }: Props)
   }, [load]);
 
   async function advance(order: AdminOrder, next: OrderStatus) {
-    if (next === 'avbruten' && !window.confirm(`Avbryt ${order.id}? Eventuellt reserverat lager återförs. En extern betalning återbetalas inte automatiskt.`)) return;
+    if (next === 'levererad' && !window.confirm('Har leveransen bekräftats? Kunden får ett mejl som säger att ordern är levererad.')) return;
+    if (next === 'avbruten' && !window.confirm(`Avbryt ${order.id}? Kunden får ett avbokningsmejl och eventuellt reserverat lager återförs. En extern betalning återbetalas inte automatiskt.`)) return;
     setBusy(order.id);
     setNotice(null);
     try {
@@ -138,6 +140,7 @@ export function OrderManager({ token, onUnauthorized, overview = false }: Props)
             </div>
             <div className="chip-row" style={{ margin: '16px 0' }}><span className="badge">{order.payment?.test ? 'Obetald · testorder' : order.payment?.status === 'auktoriserad' ? 'Klarna auktoriserad' : 'Betalning avvaktar'}</span>{order.production?.machine && <span className="badge">{order.production.machine}</span>}{order.production?.dueDate && <span className="badge">Klardatum {order.production.dueDate}{overdue(order) ? ' · passerat' : ''}</span>}</div>
             <ProductionCard order={order} token={token} files={files} onSaved={(updated, next) => setOrders(current => current?.map(entry => entry.id === updated.id ? { ...updated, next } : entry) ?? null)} />
+            <CustomerMail order={order} token={token}/>
 
             {order.next.length > 0 && (
               <div className="row" style={{ marginTop: 14 }}>

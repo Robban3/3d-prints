@@ -6,6 +6,7 @@ import type { Transporter } from 'nodemailer';
 import { formatDate, formatPrice } from './format.ts';
 import type { AnyOrder } from './types.ts';
 import { orderTrackingUrl } from './orderAccess.ts';
+import { mailLayout, mailParagraphs } from './mailLayout.ts';
 
 /**
  * Utan SMTP-uppgifter skrivs breven till en katalog i stället för att skickas.
@@ -58,7 +59,7 @@ export function resetMailer(): void {
 export async function sendMail(mail: Mail): Promise<{ delivered: boolean; path?: string }> {
   const smtp = smtpTransport();
   if (smtp) {
-    await smtp.sendMail({ from: FROM(), ...mail });
+    await smtp.sendMail({ from: FROM(), replyTo: 'Formlabb.se <support@formlabb.se>', ...mail });
     return { delivered: true };
   }
 
@@ -156,7 +157,7 @@ export function newOrderNotifications(order: AnyOrder): Mail[] {
       '',
       'Öppna ordern i admin: https://formlabb.se/verkstad?vy=ordrar',
     ].join('\n'),
-  }));
+  })).map(mail => ({ ...mail, html: mailLayout('NY BESTÄLLNING', order.payment?.test ? 'Ny testorder' : 'En ny order har kommit', mailParagraphs(mail.text.split('\n\nÖppna ordern')[0]!), {label:'Öppna orderlistan',url:'https://formlabb.se/verkstad?vy=ordrar'}) }));
 }
 
 /** Exempel utan lagrad order, betalning eller privat orderlänk. */
@@ -186,18 +187,22 @@ const statusMessages: Record<string, { subject: string; body: string }> = {
   },
   skickad: {
     subject: 'Din order är på väg',
-    body: 'Din order har lämnat verkstaden och är på väg med PostNord. Den brukar komma fram inom två arbetsdagar.',
+    body: 'Din order har skickats från vår verkstad. Kontakta oss om du behöver uppgifter om transportör eller spårning.',
   },
   levererad: {
     subject: 'Din order är levererad',
     body: 'Din order är levererad. Hoppas den blev som du tänkte dig – hör av dig om något inte stämmer.',
+  },
+  avbruten: {
+    subject: 'Din order är avbokad',
+    body: 'Din beställning har avbokats. Detta mejl bekräftar inte någon återbetalning. Om en betalning har genomförts kontrollerar vi den separat och återkommer om eventuell återbetalning.',
   },
 };
 
 export function statusUpdate(order: AnyOrder): Mail | undefined {
   const message = statusMessages[order.status];
   if (!message) return undefined;
-  return {
+  const mail: Mail = {
     to: order.customer.email,
     subject: `${message.subject} (${order.id})`,
     text: [
@@ -212,4 +217,25 @@ export function statusUpdate(order: AnyOrder): Mail | undefined {
       'Formlabb',
     ].join('\n'),
   };
+  mail.html = mailLayout('ORDERSTATUS', message.subject, mailParagraphs(`Hej ${order.customer.name.split(' ')[0]}!\n\n${message.body}\n\nOrdernummer: ${order.id}`), {label:'Visa din beställning',url:orderTrackingUrl(order)});
+  return mail;
+}
+
+export function passwordResetMail(to: string, url: string): Mail {
+  const text = `Välj ett nytt lösenord: ${url}\n\nLänken gäller i 30 minuter och kan användas en gång. Om du inte begärde detta kan du ignorera meddelandet.`;
+  return {to,subject:'Återställ ditt adminlösenord – Formlabb',text,html:mailLayout('ADMINISTRATÖR', 'Välj ett nytt lösenord',mailParagraphs('Vi har tagit emot en begäran om att återställa ditt adminlösenord.\n\nLänken gäller i 30 minuter och kan användas en gång. Om du inte begärde detta kan du ignorera meddelandet.'),{label:'Återställ lösenord',url})};
+}
+
+export type CustomerMessageKind = 'komplettering' | 'offert' | 'forsening' | 'aterbetalning';
+export interface CustomerMessageInput { kind: CustomerMessageKind; message: string; amount?: number; reference?: string; confirmed?: boolean }
+export function customerMessage(order: AnyOrder, input: CustomerMessageInput): Mail {
+  const titles = {komplettering:'Vi behöver komplettera din beställning',offert:'Ditt prisförslag från Formlabb',forsening:'Uppdatering om din leveranstid',aterbetalning:'Bekräftelse på återbetalning'};
+  if (!Object.hasOwn(titles,input.kind) || typeof input.message !== 'string' || !input.message.trim() || input.message.length > 3000) throw new Error('Välj mejltyp och skriv ett meddelande på högst 3000 tecken.');
+  if (input.kind === 'offert' && order.type !== 'custom') throw new Error('Prisförslag gäller kundunika beställningar.');
+  if (['komplettering','offert','forsening'].includes(input.kind) && ['avbruten','levererad'].includes(order.status)) throw new Error('Ordern är avslutad.');
+  if (['offert','aterbetalning'].includes(input.kind) && (!Number.isFinite(input.amount) || input.amount! <= 0)) throw new Error('Ange ett positivt belopp i kronor.');
+  if (input.kind === 'aterbetalning' && (input.confirmed !== true || order.payment?.test || !input.reference?.trim() || input.reference.length > 200 || input.amount! > order.total)) throw new Error('Bekräfta genomförd återbetalning, ange betalningsreferens och ett belopp högst motsvarande orderbeloppet. Testorder kan inte återbetalas.');
+  const extra = input.kind === 'offert' ? `Prisförslag: ${formatPrice(input.amount!)} inklusive moms.\nSvara på mejlet om du vill gå vidare. Detta prisförslag ändrar inte din order eller genomför någon betalning.` : input.kind === 'aterbetalning' ? `Bekräftat återbetalat belopp: ${formatPrice(input.amount!)}\nÅterbetalningsreferens: ${input.reference!.trim()}\nNär beloppet syns på ditt konto beror på betalningssätt och bank.` : '';
+  const text = `Hej ${order.customer.name.split(' ')[0]}!\n\nOrdernummer: ${order.id}\n\n${input.message.trim()}${extra ? '\n\n'+extra : ''}\n\nFrågor? Svara på detta mejl eller kontakta support@formlabb.se.\n\nDin privata orderlänk: ${orderTrackingUrl(order)}`;
+  return {to:order.customer.email,replyTo:'Formlabb.se <support@formlabb.se>',subject:`${titles[input.kind]} (${order.id})`,text,html:mailLayout('DIN BESTÄLLNING',titles[input.kind],mailParagraphs(text.split('\n\nDin privata orderlänk:')[0]!),{label:'Visa din beställning',url:orderTrackingUrl(order)})};
 }

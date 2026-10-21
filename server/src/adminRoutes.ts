@@ -6,7 +6,8 @@ import { pathParam } from './http.ts';
 import { rateLimit } from './rateLimit.ts';
 import { findOrder, listOrders, updateOrder, migrateOrderArticles } from './store.ts';
 import { canTransition, isOrderStatus, nextStatuses, shouldRestoreStock } from './lifecycle.ts';
-import { sendMail, statusUpdate, mailIsConfigured, orderConfirmationExample } from './mailer.ts';
+import { sendMail, statusUpdate, mailIsConfigured, orderConfirmationExample, passwordResetMail, customerMessage } from './mailer.ts';
+import type { CustomerMessageInput } from './mailer.ts';
 import { activateAccount, adminEmail, createReset, endSession, readAccount, resetPassword, startSession, validPassword, validSession, verifyPassword } from './adminAuth.ts';
 import {
   CatalogError,
@@ -140,7 +141,7 @@ admin.post('/admin/auth/forgot', recoveryLimit, async (req, res) => {
   const reset = await createReset(req.body?.email);
   if (reset) {
     const base = process.env.PUBLIC_URL ?? 'http://localhost:5173';
-    await sendMail({ to: reset.email, subject: 'Återställ ditt adminlösenord – Formlabb', text: `Välj ett nytt lösenord: ${base}/verkstad#aterstall=${reset.token}\n\nLänken gäller i 30 minuter och kan användas en gång. Om du inte begärde detta kan du ignorera meddelandet.` });
+    await sendMail(passwordResetMail(reset.email, `${base}/verkstad#aterstall=${reset.token}`));
   }
   res.json({ success: true });
 });
@@ -251,6 +252,22 @@ admin.get('/admin/files/:id/download', requireAdmin, async (req, res, next) => {
     res.setHeader('Content-Length', String(object.size));
     object.body.on('error', next).pipe(res);
   } catch (error) { next(error); }
+});
+
+admin.post('/admin/orders/:id/message', requireAdmin, async (req, res) => {
+  const order = await findOrder(pathParam(req.params.id));
+  if (!order) { res.status(404).json({error:'Ordern hittades inte.'}); return; }
+  let mail;
+  try { mail = customerMessage(order, (req.body ?? {}) as CustomerMessageInput); }
+  catch (error) { res.status(400).json({error:error instanceof Error ? error.message : 'Ogiltigt meddelande.'}); return; }
+  if (req.body.preview === true) { res.json({mail}); return; }
+  if (req.body.send !== true) { res.status(400).json({error:'Förhandsgranska och bekräfta utskicket.'}); return; }
+  try {
+    const result = await sendMail(mail);
+    try { await record({action:'ändrad',entity:'order',entityId:order.id,summary:`Kundmejl: ${req.body.kind} · ${result.delivered ? 'accepterat av e-posttjänsten' : 'lokal utkorg'}`}); }
+    catch { console.error('Kundmejl hanterat men händelseloggen kunde inte sparas',order.id); }
+    res.json({mail:result});
+  } catch { res.status(502).json({error:'Mejlet kunde inte skickas. Kontrollera e-posttjänsten innan du försöker igen.'}); }
 });
 
 let statusQueue: Promise<unknown> = Promise.resolve();
