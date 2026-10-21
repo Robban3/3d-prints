@@ -90,6 +90,10 @@ it('runs shop and custom orders through article assignment, private tracking, pl
     assert.ok(contents.some(mail=>mail.includes(order.lines[0].articleNumber)));
     assert.ok(contents.some(mail=>mail.includes(first.order.articleNumber)));
     assert.ok(contents.some(mail=>mail.includes('Reply-To: Formlabb.se <support@formlabb.se>')));
+    for (const recipient of ['nygren.cn@gmail.com','rvdv1122@gmail.com']) {
+      assert.ok(contents.some(mail=>mail.includes(`To: ${recipient}`) && mail.includes(order.id) && mail.includes('Ny order')));
+      assert.ok(contents.some(mail=>mail.includes(`To: ${recipient}`) && mail.includes(first.order.id) && mail.includes('Ny order')));
+    }
   } finally {
     await new Promise<void>(resolve=>server.close(()=>resolve()));
     if (!directory.startsWith(join(tmpdir(),'formlabb-article-flow-'))) throw new Error('Unexpected test cleanup path');
