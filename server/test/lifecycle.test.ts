@@ -118,7 +118,7 @@ describe('brev', () => {
     assert.match(statusUpdate({ ...order, status: 'i_produktion' })!.subject, /produktion/);
     // Mottagen täcks av bekräftelsen, och avbrott hanteras manuellt.
     assert.equal(statusUpdate({ ...order, status: 'mottagen' }), undefined);
-    assert.equal(statusUpdate({ ...order, status: 'avbruten' }), undefined);
+    assert.match(statusUpdate({ ...order, status: 'avbruten' })!.subject, /avbokad/);
   });
 
   it('lägger brevet i utkorgen när SMTP saknas', async () => {

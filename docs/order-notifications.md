@@ -1,5 +1,7 @@
 # Avisering om nya order
 
+Uppdaterat mejlflöde och gemensam HTML-design beskrivs i [email-workflow.md](email-workflow.md). Nya kundmejl för komplettering, offert, försening och bekräftad återbetalning skickas manuellt från orderkortet; avbokningsbesked följer statusbytet.
+
 Nya butiksorder och kundunika printorder skickar tre separata mejl: kundens orderbekräftelse samt intern avisering till nygren.cn@gmail.com och rvdv1122@gmail.com. Mottagarna ser inte varandras adresser och de interna adresserna visas inte för kunden.
 
 Aviseringen innehåller ordernummer, beställningens innehåll, artikelnummer när det finns, totalsumma och länk till adminpanelen som kräver inloggning. Den innehåller inte kundens privata orderlänk eller leveransadress. Testorder märks TEST; en avisering är inte ett kvitto på genomförd betalning.

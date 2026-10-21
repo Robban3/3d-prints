@@ -45,6 +45,16 @@ it('runs shop and custom orders through article assignment, private tracking, pl
     assert.equal((await call('GET',`/orders/${order.id}`)).status,404);
     const track = () => fetch(`${base}/orders/${order.id}`,{headers:{Authorization:`Bearer ${accessToken}`}});
     assert.equal((await track()).status,200);
+    const messageInput={kind:'forsening',message:'Vi återkommer på fredag.'};
+    assert.equal((await call('POST',`/admin/orders/${order.id}/message`,messageInput)).status,401);
+    const beforePreview=await readdir(process.env.MAIL_OUTBOX!);
+    const preview=await json(await call('POST',`/admin/orders/${order.id}/message`,{...messageInput,preview:true},true));
+    assert.equal(preview.mail.to,customer.email);
+    assert.match(preview.mail.html,/FORMLABB/);
+    assert.deepEqual(await readdir(process.env.MAIL_OUTBOX!),beforePreview);
+    assert.equal((await call('POST',`/admin/orders/${order.id}/message`,messageInput,true)).status,400);
+    assert.equal((await call('POST',`/admin/orders/${order.id}/message`,{...messageInput,send:true},true)).status,200);
+    assert.equal((await json(await track())).order.status,'mottagen');
     await updateProduct(product.id,{price:999,dimensions:{width:1,depth:1,height:1}});
     assert.deepEqual((await json(await track())).order.lines,order.lines);
     assert.equal((await call('GET',`/admin/orders/${order.id}/production-check`)).status,401);

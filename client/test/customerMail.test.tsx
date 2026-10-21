@@ -1,0 +1,20 @@
+import { render,screen,fireEvent,waitFor,cleanup } from '@testing-library/react';
+import { afterEach,expect,it,vi } from 'vitest';
+import { CustomerMail } from '../src/components/admin/CustomerMail';
+import { previewCustomerMessage,sendCustomerMessage } from '../src/lib/api';
+import type { AnyOrder } from '../src/types';
+vi.mock('../src/lib/api',()=>({previewCustomerMessage:vi.fn(),sendCustomerMessage:vi.fn()}));
+afterEach(()=>{cleanup();vi.clearAllMocks();});
+it('requires preview before send and invalidates preview when content changes',async()=>{
+  vi.mocked(previewCustomerMessage).mockResolvedValue({mail:{to:'customer@example.invalid',subject:'Komplettering',text:'Test',html:'<p>Exempel</p>'}});
+  const order={id:'TEST',type:'shop',status:'mottagen',customer:{email:'customer@example.invalid'}} as AnyOrder;
+  render(<CustomerMail order={order} token="test-token"/>);
+  fireEvent.click(screen.getByText('Skicka kundmejl'));
+  expect(screen.queryByRole('button',{name:'Skicka till customer@example.invalid'})).toBeNull();
+  fireEvent.change(screen.getByLabelText('Meddelande till kunden'),{target:{value:'Skicka ny fil.'}});
+  fireEvent.click(screen.getByRole('button',{name:'Förhandsgranska kundmejl'}));
+  await waitFor(()=>expect(screen.getByRole('button',{name:'Skicka till customer@example.invalid'})).toBeTruthy());
+  expect(sendCustomerMessage).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByLabelText('Meddelande till kunden'),{target:{value:'Ändrat meddelande'}});
+  expect(screen.queryByRole('button',{name:'Skicka till customer@example.invalid'})).toBeNull();
+});

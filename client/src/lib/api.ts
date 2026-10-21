@@ -25,6 +25,14 @@ import type {
 
 const BASE = '/api';
 
+export interface CustomerMessageInput { kind: 'komplettering' | 'offert' | 'forsening' | 'aterbetalning'; message: string; amount?: number; reference?: string; confirmed?: boolean }
+export function previewCustomerMessage(token: string, id: string, input: CustomerMessageInput): Promise<{mail:{to:string;subject:string;html:string;text:string}}> {
+  return request(`/admin/orders/${encodeURIComponent(id)}/message`,adminInit(token,{method:'POST',body:JSON.stringify({...input,preview:true})}));
+}
+export function sendCustomerMessage(token: string, id: string, input: CustomerMessageInput): Promise<{mail:{delivered:boolean}}> {
+  return request(`/admin/orders/${encodeURIComponent(id)}/message`,adminInit(token,{method:'POST',body:JSON.stringify({...input,send:true})}));
+}
+
 export interface AdminPrintFile {
   id: string; fileName: string; size: number; createdAt: string;
   source: 'own' | 'customer'; orderId: string | null; projectName?: string;
