@@ -24,7 +24,10 @@ test('internal notifications go separately to both owners without exposing custo
     assert.match(mail.subject, /Ny order TEST-123/);
     assert.match(mail.text, /verkstad\?vy=ordrar/);
     assert.ok(!mail.text.includes('#access='));
-    assert.ok(!mail.text.includes(order.customer.email));
+    assert.ok(mail.text.includes(`Kund: ${order.customer.name}`));
+    assert.ok(mail.text.includes(`E-post: ${order.customer.email}`));
+    assert.ok(mail.html!.includes('&lt;Kund&gt;'));
+    assert.ok(!mail.html!.includes('<Kund>'));
   }
   assert.equal(orderConfirmation(order).to, order.customer.email);
   assert.match(newOrderNotifications({ ...order, payment:{provider:'klarna',status:'obetald',test:true} })[0]!.subject, /\[TEST\]/);
