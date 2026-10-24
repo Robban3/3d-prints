@@ -9,6 +9,7 @@ import struct
 import zipfile
 import xml.etree.ElementTree as ET
 import numpy as np
+from model_library import model_source,model_reference
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = {
@@ -109,7 +110,7 @@ def main():
     for product in products:
         candidates=[]
         for folder in SOURCES.get(product['slug'],[]):
-            files=sorted((ROOT/folder).rglob('*.stl'))+sorted((ROOT/folder).glob('*.3mf'))
+            files=sorted(model_source(folder).rglob('*.stl'))+sorted(model_source(folder).glob('*.3mf'))
             if product['slug']=='mala-din-jul': files=[file for file in files if file.name.startswith('Julkula-')]
             if folder.endswith('baby-jul-blender-v1'): files=[file for file in files if file.name.startswith('Tarna')]
             if any('_print.stl' in file.name for file in files): files=[file for file in files if '_print.stl' in file.name]
@@ -119,7 +120,7 @@ def main():
                 elif product['slug']=='tomtar-3-pack': files=[file for file in files if file.name.startswith('Tomte')]
                 elif product['slug']=='pepparkakshus': files=[file for file in files if file.name.startswith('Pepparkakshus')]
             for file in files:
-                relative=file.relative_to(ROOT).as_posix();candidates.append(relative)
+                relative=model_reference(file);candidates.append(relative)
                 if relative in checked:continue
                 print('Checking '+relative,flush=True)
                 try:

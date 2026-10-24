@@ -1,0 +1,297 @@
+# Rensningslista – äldre modellversioner
+
+Totalt 291 filer, cirka 2,83 GB. Dessa filer är bevarade i Tidigare-versioner-for-granskning efter flytten. Ingen permanent radering har gjorts.
+
+Aktuella versioner inklusive Nexo abstrakt-v8 och dina senaste ändringar är inte med i listan. Äldre Blender-backuper är bara med när motsvarande nyare Blenderfil finns.
+
+- models\alv-blender-v1\Alv-ansikte-v2.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\alv-blender-v1\Alv-original-texturerad.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\baby-jul-blender-v1\Alla-julmodeller.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\flexi-drake-22-leder-centrerad\Flexidrake-24cm-22-leder.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\flexi-drake-22-leder-v3\Flexidrake-24cm-22-leder.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\flexi-drake-leder-v1\flexi-drake-arbetsmodell.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\gravbiblioteket-blender-v2\Gravbiblioteket-bada-bokstoden.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\gravbiblioteket-blender-v2\Gravbiblioteket-hoger.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\gravbiblioteket-blender-v2\Gravbiblioteket-vanster.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\gravbiblioteket-fusion-v1\Fusion-Gravbiblioteket-hoger.png — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\Fusion-Gravbiblioteket-vanster.png — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\Gravbiblioteket-hoger.f3d — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\Gravbiblioteket-hoger.stl — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\Gravbiblioteket-vanster.f3d — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\Gravbiblioteket-vanster.stl — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\LAS-MIG.md — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\progress.txt — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\result.json — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\validate.py — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\validation.json — ersatt av gravbiblioteket-blender-v2
+- models\haxans-gomma-blender-v1\01_Svart-hatt-och-skal.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\02_Lila-insats.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\build_blender.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\build_geometry.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\design.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\Haxans-gomma-filer.zip — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\Haxans-gomma.blend — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\Haxans-gomma.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\haxans-gomma-blender-v1\Haxans-gomma.glb — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\Haxans-gomma.png — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\LAS-MIG.txt — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v1\validation.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\01_Svart-hatt-och-skal.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\02_Lila-insats.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\build_blender.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\design.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\Haxans-gomma-v2-filer.zip — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\Haxans-gomma.blend — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\Haxans-gomma.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\haxans-gomma-blender-v2\Haxans-gomma.glb — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\Haxans-gomma.png — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\LAS-MIG.txt — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\rebuild_bowl.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v2\validation.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\01_Svart-hatt-och-skal.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\02_Lila-insats.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\build_blender.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\design.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\Haxans-gomma-v3-filer.zip — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\Haxans-gomma.blend — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\Haxans-gomma.glb — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\Haxans-gomma.png — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\LAS-MIG.txt — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\rebuild_bowl.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v3\validation.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\01_Svart-hatt-och-skal.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\02_Lila-insats.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\build_blender.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\design.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\Haxans-gomma-v4.zip — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\Haxans-gomma.blend — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\Haxans-gomma.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\haxans-gomma-blender-v4\Haxans-gomma.glb — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\Haxans-gomma.png — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\rebuild_bowl.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v4\validation.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v5\01_Svart-hatt-och-skal.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v5\02_Lila-insats.stl — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v5\build_blender.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v5\Haxans-gomma.blend — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v5\Haxans-gomma.glb — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v5\Haxans-gomma.png — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v5\rebuild_bowl.py — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v5\validation.json — ersatt av haxans-gomma-blender-v6
+- models\haxans-gomma-blender-v6\Haxans-gomma.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\infinity-vas-passform\analysis.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\analyze.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\check_abstract.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\check_abstract_deliver.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\check_abstract_final.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\check_abstract_section.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\check_thickness.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\fit_abstract.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\fit_abstract_deliver.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\fit_abstract_final.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\fit_abstract_section.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\fit_abstract_wall.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\fit_blender.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\fit_thicker.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\fit_tighter.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\Infinity-anpassad.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\Infinity-anpassad.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\Infinity-med-vas-montering.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\Infinity-med-vas.blend — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\Infinity-med-vas.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\infinity-vas-passform\inspect.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\inspection.blend — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\inspect_blender.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\inspect_vase_parts.py — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\LAS-MIG.md — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\monterad.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\passform-kontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\separata-delar.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\Vas-250mm.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\Vas-250mm.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\jul-blender-v1\Alla-fem-modeller.png — ersatt av jul-blender-v3
+- models\jul-blender-v1\build.py — ersatt av jul-blender-v3
+- models\jul-blender-v1\finalize.py — ersatt av jul-blender-v3
+- models\jul-blender-v1\fix_snow_size.py — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkollektion-fem-modeller.blend — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkollektion-fem-modeller.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\jul-blender-v1\Julkula-prickar-1.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-prickar-2.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-prickar.glb — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-prickar.png — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-snoflinga-1.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-snoflinga-2.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-snoflinga.glb — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-snoflinga.png — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-spiral-1.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-spiral-2.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-spiral.glb — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-spiral.png — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-stjarnor-1.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-stjarnor-2.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-stjarnor.glb — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julkula-stjarnor.png — ersatt av jul-blender-v3
+- models\jul-blender-v1\Julmodeller-STL.zip — ersatt av jul-blender-v3
+- models\jul-blender-v1\LAS-MIG.md — ersatt av jul-blender-v3
+- models\jul-blender-v1\Noel-servettring-1.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Noel-servettring-2.stl — ersatt av jul-blender-v3
+- models\jul-blender-v1\Noel-servettring.glb — ersatt av jul-blender-v3
+- models\jul-blender-v1\Noel-servettring.png — ersatt av jul-blender-v3
+- models\jul-blender-v1\progress.json — ersatt av jul-blender-v3
+- models\jul-blender-v1\render-final-ring.py — ersatt av jul-blender-v3
+- models\jul-blender-v1\result.json — ersatt av jul-blender-v3
+- models\jul-blender-v1\revise.py — ersatt av jul-blender-v3
+- models\jul-blender-v1\sync_final.py — ersatt av jul-blender-v3
+- models\jul-blender-v1\validate.py — ersatt av jul-blender-v3
+- models\jul-blender-v1\validation.json — ersatt av jul-blender-v3
+- models\jul-blender-v2\Julkollektion-fem-modeller-v2.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\jul-blender-v3\Julkollektion-fem-modeller-v3.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\julgranskula\julgranskula-originaldekor.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\julornament-textmall-v1\Julornament-tva-modeller.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\julornament-textmall-v1\Mall-redigerbar-text.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\julornament-textmall-v1\originaldelar.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\midnattsgomman-blender-v1\Midnattsgomman-oppnad.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\midnattsgomman-blender-v1\Midnattsgomman.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\paketetiketter-blender-v1\Paketetiketter-6-modeller.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\pepparkakshus-blender-v2\build-v2-backup.py — ersatt av pepparkakshus-blender-v3
+- models\pepparkakshus-blender-v2\build.py — ersatt av pepparkakshus-blender-v3
+- models\pepparkakshus-blender-v2\check.py — ersatt av pepparkakshus-blender-v3
+- models\pepparkakshus-blender-v2\kontroll.json — ersatt av pepparkakshus-blender-v3
+- models\pepparkakshus-blender-v2\modellinformation.json — ersatt av pepparkakshus-blender-v3
+- models\pepparkakshus-blender-v2\Pepparkakshus-v2.blend — ersatt av pepparkakshus-blender-v3
+- models\pepparkakshus-blender-v2\Pepparkakshus-v2.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\pepparkakshus-blender-v2\Pepparkakshus-v2.glb — ersatt av pepparkakshus-blender-v3
+- models\pepparkakshus-blender-v2\Pepparkakshus-v2.png — ersatt av pepparkakshus-blender-v3
+- models\pepparkakshus-blender-v3\Pepparkakshus-v3.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\portalpumpan-blender-v1\Portalpumpan.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\presentask-original-v1\01_Underdel.stl — ersatt av presentask-original-v3
+- models\presentask-original-v1\01_Underdel_print.stl — ersatt av presentask-original-v3
+- models\presentask-original-v1\02_Lock.stl — ersatt av presentask-original-v3
+- models\presentask-original-v1\02_Lock_print.stl — ersatt av presentask-original-v3
+- models\presentask-original-v1\03_Rosett.stl — ersatt av presentask-original-v3
+- models\presentask-original-v1\03_Rosett_native.stl — ersatt av presentask-original-v3
+- models\presentask-original-v1\03_Rosett_print.stl — ersatt av presentask-original-v3
+- models\presentask-original-v1\dimension-choice.json — ersatt av presentask-original-v3
+- models\presentask-original-v1\Fusion-original-lock-rosett.png — ersatt av presentask-original-v3
+- models\presentask-original-v1\Fusion-original-underdel.png — ersatt av presentask-original-v3
+- models\presentask-original-v1\Fusion-presentask-original-v1.png — ersatt av presentask-original-v3
+- models\presentask-original-v1\LAS-MIG.md — ersatt av presentask-original-v3
+- models\presentask-original-v1\Presentask-original-v1.f3d — ersatt av presentask-original-v3
+- models\presentask-original-v1\progress.txt — ersatt av presentask-original-v3
+- models\presentask-original-v1\result.json — ersatt av presentask-original-v3
+- models\presentask-original-v1\validation.json — ersatt av presentask-original-v3
+- models\presentask-original-v2\01_Underdel.stl — ersatt av presentask-original-v3
+- models\presentask-original-v2\01_Underdel_print.stl — ersatt av presentask-original-v3
+- models\presentask-original-v2\02_Lock.stl — ersatt av presentask-original-v3
+- models\presentask-original-v2\02_Lock_print.stl — ersatt av presentask-original-v3
+- models\presentask-original-v2\03_Rosett.stl — ersatt av presentask-original-v3
+- models\presentask-original-v2\03_Rosett_native.stl — ersatt av presentask-original-v3
+- models\presentask-original-v2\03_Rosett_print.stl — ersatt av presentask-original-v3
+- models\presentask-original-v2\03_Rosett_repaired.stl — ersatt av presentask-original-v3
+- models\presentask-original-v2\dimension-choice.json — ersatt av presentask-original-v3
+- models\presentask-original-v2\Fusion-original-lock-rosett.png — ersatt av presentask-original-v3
+- models\presentask-original-v2\Fusion-original-underdel.png — ersatt av presentask-original-v3
+- models\presentask-original-v2\Fusion-presentask-original-v2.png — ersatt av presentask-original-v3
+- models\presentask-original-v2\LAS-MIG.md — ersatt av presentask-original-v3
+- models\presentask-original-v2\Presentask-original-v2.f3d — ersatt av presentask-original-v3
+- models\presentask-original-v2\progress.txt — ersatt av presentask-original-v3
+- models\presentask-original-v2\result.json — ersatt av presentask-original-v3
+- models\presentask-original-v2\validation.json — ersatt av presentask-original-v3
+- models\presentask-v1\01_Ask_print.stl — ersatt av presentask-variant-rak-v1
+- models\presentask-v1\02_Lock_print.stl — ersatt av presentask-variant-rak-v1
+- models\presentask-v1\03_Rosett_print.stl — ersatt av presentask-variant-rak-v1
+- models\presentask-v1\04_Lock_med_rosett_print.stl — ersatt av presentask-variant-rak-v1
+- models\presentask-v1\05_Monterad_referens.stl — ersatt av presentask-variant-rak-v1
+- models\presentask-v1\build_model.py — ersatt av presentask-variant-rak-v1
+- models\presentask-v1\forhandsvisning.png — ersatt av presentask-variant-rak-v1
+- models\presentask-v1\LAS-MIG.txt — ersatt av presentask-variant-rak-v1
+- models\presentask-v1\validation.json — ersatt av presentask-variant-rak-v1
+- models\spokporten-blender-v1\Spokporten.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\starbowling-salt-peppar\StarBowling-salt-peppar-100mm.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\starbowling-skylt\StarBowling-slutskylt.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\var-forsta-jul-meshy-v1\Var-forsta-jul-korrigerad.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\alv-blender-v1\fargoverforing\Alv-forbattrad-8-farger-v3.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\alv-blender-v1\fargoverforing\Alv-forbattrad-8-farger-v4.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\alv-blender-v1\fargoverforing\Alv-forbattrad-8-farger.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\gravbiblioteket-fusion-v1\GravFusion\GravFusion.manifest — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\GravFusion\GravFusion.py — ersatt av gravbiblioteket-blender-v2
+- models\gravbiblioteket-fusion-v1\GravFusion\.vscode\launch.json — ersatt av gravbiblioteket-blender-v2
+- models\infinity-vas-passform\abstrakt-v4\Infinity-anpassad.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\Infinity-anpassad.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\Infinity-med-vas-montering.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\Infinity-med-vas.blend — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\monterad.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\passform-kontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\separata-delar.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\tjocklekskontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\Vas-250mm.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v4\Vas-250mm.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\Infinity-anpassad.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\Infinity-anpassad.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\Infinity-med-vas-montering.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\Infinity-med-vas.blend — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\Infinity-med-vas.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\infinity-vas-passform\abstrakt-v5\monterad.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\passform-kontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\separata-delar.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\Vas-250mm.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v5\Vas-250mm.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\Infinity-anpassad.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\Infinity-anpassad.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\Infinity-med-vas-montering.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\Infinity-med-vas.blend — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\monterad.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\passform-kontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\separata-delar.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\tjocklekskontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\Vas-250mm.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v6\Vas-250mm.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\Infinity-anpassad.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\Infinity-anpassad.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\Infinity-med-vas-montering.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\Infinity-med-vas.blend — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\monterad.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\passform-kontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\separata-delar.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\tjocklekskontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\Vas-250mm.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v7\Vas-250mm.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\abstrakt-v8\Infinity-med-vas.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\infinity-vas-passform\tightare-v2\Infinity-anpassad.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\Infinity-anpassad.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\Infinity-med-vas-montering.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\Infinity-med-vas.blend — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\Infinity-med-vas.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\infinity-vas-passform\tightare-v2\LAS-MIG.md — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\monterad.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\passform-kontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\separata-delar.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\Vas-250mm.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tightare-v2\Vas-250mm.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\Infinity-anpassad.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\Infinity-anpassad.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\Infinity-med-vas-montering.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\Infinity-med-vas.blend — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\Infinity-med-vas.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\infinity-vas-passform\tjockare-v3\LAS-MIG.md — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\monterad.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\passform-kontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\separata-delar.png — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\tjocklekskontroll.json — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\Vas-250mm.3mf — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\infinity-vas-passform\tjockare-v3\Vas-250mm.stl — fÃ¶rkastad Nexo-version/arbetsfil; vald slutversion Ã¤r abstrakt-v8
+- models\julgranskula\stor-oppning\Julgranskula-slutmodell.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\julgranskula\stor-oppning\Lucka-utan-skara.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\julgranskula\work\repair-test.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- models\presentask-original-v1\PresentaskOriginal\PresentaskOriginal.manifest — ersatt av presentask-original-v3
+- models\presentask-original-v1\PresentaskOriginal\PresentaskOriginal.py — ersatt av presentask-original-v3
+- models\presentask-original-v1\referenser\ask.png — ersatt av presentask-original-v3
+- models\presentask-original-v1\referenser\lock.png — ersatt av presentask-original-v3
+- models\presentask-original-v1\PresentaskOriginal\.vscode\launch.json — ersatt av presentask-original-v3
+- models\presentask-original-v2\PresentaskOriginalV2\PresentaskOriginalV2.manifest — ersatt av presentask-original-v3
+- models\presentask-original-v2\PresentaskOriginalV2\PresentaskOriginalV2.py — ersatt av presentask-original-v3
+- models\presentask-original-v2\PresentaskOriginalV2\.vscode\launch.json — ersatt av presentask-original-v3
+- exports\presentask-v1-testmodell.zip — ersatt prototyp
+- exports\pumpa-konsekventa-vyer\pumpa.blend1 — Ã¤ldre automatisk Blender-sÃ¤kerhetskopia
+- exports\starbowling-fodral\StarBowling_fodral_prototyp.json — ersatt prototyp
+- exports\starbowling-fodral\StarBowling_fodral_prototyp.stl — ersatt prototyp

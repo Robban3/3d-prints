@@ -19,3 +19,6 @@ tmp/
 *.blend[0-9]*
 *.pid
 models/**/analysis-agent*/
+
+# 3D-modellbiblioteket ligger i Dokument/Formlabb/3D-modeller, utanför webbprojektet.
+/models/
