@@ -13,5 +13,8 @@ Lägg inte tillbaka stora modellfiler i Git/Git LFS. Webbplatsens nödvändiga
 produktbilder och kod hör fortfarande till webbprojektet. Modellverktyg kan läsa
 sökvägen via `FORMLABB_MODEL_LIBRARY` eller `scripts/model_library.py`.
 
-Äldre filer i `Tidigare-versioner-for-granskning` är avskilda rensningskandidater,
-inte valda slutprodukter. De är bevarade tills den konkreta rensningen godkänts.
+Behåll aktuella modeller och uttryckligen valda separata designvarianter. Undvik
+att fylla biblioteket med en ny versionsmapp för varje liten justering. Ett lägre
+versionsnummer kan dock innehålla unika utskriftsdelar; radera inte en hel mapp
+enbart på dess namn. Den konkret godkända listan över 291 äldre filer rensades
+den 24 oktober 2026; kvitto finns i modellbiblioteket.

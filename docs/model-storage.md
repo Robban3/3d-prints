@@ -6,13 +6,17 @@ Från 24 oktober 2026 sparas modeller i **Dokument\Formlabb\3D-modeller**:
 
 - `Modeller`: Blender/CAD, utskriftsdelar och tillhörande underlag.
 - `Leveranser`: modellpaket och samlade STL-/3MF-leveranser.
-- `Tidigare-versioner-for-granskning`: tydligt ersatta versioner och äldre
-  Blender-backuper, avskilda från aktuella modeller men ännu inte permanent raderade.
+- De 291 tydligt ersatta versionerna och äldre Blender-backuperna avskildes först
+  i `Tidigare-versioner-for-granskning`. Användaren godkände sedan den konkreta
+  listan för permanent radering den 24 oktober 2026. Rensningskvittot finns i
+  biblioteket som `rensningskvitto.json`.
 
 Flytten verifierar varje destinationsfil mot originalet med SHA-256 innan originalet
 tas bort från repots arbetskatalog. `flyttmanifest.json` och `flyttresultat.json`
-i biblioteket dokumenterar flytten. Även lokalt ändrade och tidigare ospårade filer
-ingår. Bilder och dokument som hör till själva hemsidan ligger kvar i projektet.
+i biblioteket dokumenterar flytten. Ytterligare 5337 verktygsfiler (cirka 210 MB)
+flyttades med separata rapporter `verktygsflyttmanifest.json` och
+`verktygsflyttresultat.json`. Även lokalt ändrade och tidigare ospårade filer ingår.
+Bilder och dokument som hör till själva hemsidan ligger kvar i projektet.
 
 Versionsnummer ensamt är inte skäl att radera en mapp: exempelvis innehåller
 `jul-blender-v2` kulornas STL-filer, medan `jul-blender-v3` innehåller senare

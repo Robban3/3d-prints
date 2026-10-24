@@ -1,6 +1,6 @@
-# Rensningslista – äldre modellversioner
+# Godkänd rensningslista – äldre modellversioner
 
-Totalt 291 filer, cirka 2,83 GB. Dessa filer är bevarade i Tidigare-versioner-for-granskning efter flytten. Ingen permanent radering har gjorts.
+Totalt 291 filer, cirka 2,83 GB. Användaren godkände den 24 oktober 2026 permanent radering av exakt denna lista. Filerna verifierades mot flyttmanifestet före radering. Kvitto finns i modellbiblioteket som rensningskvitto.json.
 
 Aktuella versioner inklusive Nexo abstrakt-v8 och dina senaste ändringar är inte med i listan. Äldre Blender-backuper är bara med när motsvarande nyare Blenderfil finns.
 
