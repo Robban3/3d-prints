@@ -65,7 +65,21 @@ export class Shop extends DurableObject<Env> {
 }
 
 export default {
-  fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const url = new URL(request.url);
+    const cacheable = request.method === 'GET' && !url.search &&
+      (/^\/api\/uploads\/[a-f0-9]{32}\/image\/(320|640|960|1536)$/.test(url.pathname)
+        || /^\/images\/responsive\/[a-f0-9]+-\d+\.webp$/.test(url.pathname));
+    if (cacheable) {
+      const key = new Request(url.toString());
+      const cached = await caches.default.match(key);
+      if (cached) return cached;
+      const response = await env.SHOP.getByName('formlabb-shop').fetch(request);
+      if (response.ok && response.headers.get('Content-Type')?.startsWith('image/') && !response.headers.has('Set-Cookie')) {
+        ctx.waitUntil(caches.default.put(key, response.clone()));
+      }
+      return response;
+    }
     // A single named instance preserves the server's order and stock queues.
     // Do not load-balance file-based state across multiple containers.
     return env.SHOP.getByName('formlabb-shop').fetch(request);

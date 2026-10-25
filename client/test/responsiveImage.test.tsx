@@ -5,6 +5,13 @@ import { ResponsiveImage } from '../src/components/ResponsiveImage';
 afterEach(cleanup);
 
 describe('responsive public images', () => {
+  it('uses mobile variants for uploaded product photos without changing private downloads', () => {
+    render(<ResponsiveImage src="/api/uploads/0123456789abcdef0123456789abcdef" alt="Produkt" sizes="45vw" loading="lazy" />);
+    const image = screen.getByRole('img');
+    expect(image).toHaveAttribute('src', '/api/uploads/0123456789abcdef0123456789abcdef/image/960');
+    expect(image.getAttribute('srcset')).toContain('/image/320 320w');
+    expect(image).toHaveAttribute('sizes', '45vw');
+  });
   it('offers smaller public hero sizes and preserves eager loading priority', () => {
     render(<ResponsiveImage src="/images/themes/nordic-reference.png" alt="Kampanj" sizes="100vw" loading="eager" fetchPriority="high" />);
     const image = screen.getByRole('img');
