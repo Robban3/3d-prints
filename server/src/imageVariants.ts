@@ -5,7 +5,7 @@ import type { UploadMeta } from './uploads.ts';
 import { uploadDir, filePathFor, storedFileName } from './uploads.ts';
 import { storage } from './storage.ts';
 
-export const IMAGE_WIDTHS = [320, 640, 960, 1536] as const;
+export const IMAGE_WIDTHS = [128, 320, 640, 960, 1536] as const;
 const pending = new Map<string, Promise<Buffer>>();
 let running = 0;
 const waiting: Array<() => void> = [];

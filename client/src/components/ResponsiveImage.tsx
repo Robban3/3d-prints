@@ -8,7 +8,7 @@ export function ResponsiveImage({ src, sizes = '100vw', fetchPriority, onError, 
   const uploaded = src?.match(/^\/api\/uploads\/([a-f0-9]{32})$/);
   const image = src ? images[src] ?? (uploaded ? {
     src: `${src}/image/960`,
-    srcSet: [320, 640, 960, 1536].map(width => `${src}/image/${width} ${width}w`).join(', '),
+    srcSet: [128, 320, 640, 960, 1536].map(width => `${src}/image/${width} ${width}w`).join(', '),
     width: undefined, height: undefined,
   } : undefined) : undefined;
   return <img decoding="async" {...props} {...(fetchPriority ? { fetchpriority: fetchPriority } : {})} src={image?.src ?? src} srcSet={image?.srcSet} sizes={image ? sizes : undefined}
