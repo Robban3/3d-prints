@@ -20,9 +20,6 @@ const steps: Array<{ title: string; text: string }> = [
   { title: 'Leverans till dig', text: 'Spårbar leverans inom 2–7 arbetsdagar' },
 ];
 
-const campaignSlugs = ['vas-signe', 'julgran-2-pack', 'stjarna', 'kruka-elise'];
-
-
 export function HomePage() {
   const { theme } = useAppearance();
   const design = themeFor(theme);
@@ -33,10 +30,8 @@ export function HomePage() {
 
   const products = data?.products ?? [];
   const popular = [...products]
-    .sort((a, b) => {
-      const ai = campaignSlugs.indexOf(a.slug), bi = campaignSlugs.indexOf(b.slug);
-      return (ai < 0 ? 100 : ai) - (bi < 0 ? 100 : bi) || Number(b.featured) - Number(a.featured) || b.rating * b.reviewCount - a.rating * a.reviewCount;
-    })
+    .filter(product => product.featured && product.published !== false)
+    .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount)
     .slice(0, 4);
   return (
     <>

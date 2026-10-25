@@ -5,10 +5,12 @@ import { MemoryRouter } from 'react-router';
 import { ProductCard } from '../src/components/ProductCard';
 import { ProductManager } from '../src/components/admin/ProductManager';
 import { ShopPage } from '../src/pages/ShopPage';
+import { HomePage } from '../src/pages/HomePage';
+import { AppearanceProvider } from '../src/lib/appearance';
 import { CartProvider, useCart } from '../src/lib/cart';
 import { fetchProducts, fetchAdminProducts, updateProduct } from '../src/lib/api';
 import type { Product } from '../src/types';
-vi.mock('../src/lib/api', async original => ({ ...await original<typeof import('../src/lib/api')>(), fetchProducts: vi.fn(), fetchAdminProducts: vi.fn(), updateProduct: vi.fn(), fetchConfig: vi.fn().mockResolvedValue({ materials: [], categories: [] }) }));
+vi.mock('../src/lib/api', async original => ({ ...await original<typeof import('../src/lib/api')>(), fetchAppearance: vi.fn().mockResolvedValue({ appearance: { theme: 'nordic' } }), fetchProducts: vi.fn(), fetchAdminProducts: vi.fn(), updateProduct: vi.fn(), fetchConfig: vi.fn().mockResolvedValue({ materials: [], categories: [], upload: { extensions: ['.stl'], maxBytes: 104857600 } }) }));
 const product: Product = { id: 'p', slug: 'test', name: 'Fyndprodukt', tagline: 'En produkt', description: 'En beskrivning av produkten.', category: 'inredning', price: 349, material: 'pla', finish: 'Matt', colors: ['Benvit'], dimensions: { width: 100, depth: 100, height: 100 }, weightGrams: 100, printTimeHours: 1, stock: 20, rating: 0, reviewCount: 0, featured: false, highlights: [], art: { shape: 'planter', tone: 'benvit' }, discountPercent: 20, saleReferencePrice: 299 };
 it('begränsar adminlistans bilder och hittar produkter även på andra sidor', async () => {
   const products = Array.from({ length: 25 }, (_, i) => ({ ...product, id: `p${i}`, slug: `produkt-${i + 1}`, name: `Produkt ${i + 1}` }));
@@ -25,6 +27,15 @@ it('begränsar adminlistans bilder och hittar produkter även på andra sidor', 
   expect(screen.getAllByRole('button', { name: 'Redigera' })).toHaveLength(1);
 });
 function CartProof() { return <output data-testid="cart">{JSON.stringify(useCart().items)}</output>; }
+it('visar bara adminvalda utvalda produkter på startsidan', async () => {
+  vi.mocked(fetchProducts).mockResolvedValue({ products: [
+    { ...product, id: 'elise', slug: 'kruka-elise', name: 'Kruka Elise', featured: false, rating: 5, reviewCount: 999 },
+    { ...product, id: 'selected', name: 'Utvald nyhet', featured: true, rating: 0, reviewCount: 0 },
+  ], total: 2 });
+  render(<MemoryRouter><CartProvider><AppearanceProvider><HomePage /></AppearanceProvider></CartProvider></MemoryRouter>);
+  expect(await screen.findByRole('link', { name: 'Utvald nyhet' })).toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: 'Kruka Elise' })).not.toBeInTheDocument();
+});
 it('visar rabatten och tidigare lägsta pris och sparar rätt pris i varukorgen', async () => {
   render(<MemoryRouter><CartProvider><ProductCard product={product} /><CartProof /></CartProvider></MemoryRouter>);
   expect(screen.getByText('239 kr')).toBeInTheDocument(); expect(screen.getByText('299 kr').tagName).toBe('DEL');
