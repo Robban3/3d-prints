@@ -5,8 +5,8 @@ import { ResponsiveImage } from '../src/components/ResponsiveImage';
 afterEach(cleanup);
 
 describe('responsive public images', () => {
-  it('resolves exported seed upload IDs directly to public optimized photos', () => {
-    render(<ResponsiveImage src="/api/uploads/d653f06c32916e870f1a8776c42acae6" alt="Äldre produkt" sizes="64px" />);
+  it.each(['d653f06c32916e870f1a8776c42acae6', '399ff821e1c39e58582e2021da57de4d'])('resolves exported upload %s directly to public optimized photos', id => {
+    render(<ResponsiveImage src={`/api/uploads/${id}`} alt="Produkt" sizes="64px" />);
     expect(screen.getByRole('img').getAttribute('src')).toMatch(/^\/images\/responsive\//);
     expect(screen.getByRole('img').getAttribute('srcset')).not.toContain('/api/');
   });

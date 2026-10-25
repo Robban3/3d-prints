@@ -6,7 +6,7 @@ const images = manifest as Record<string, { src: string; srcSet: string; width: 
 // exported as public seed assets. Resolve those known IDs without a failed API
 // download first; this also keeps admin thumbnails on the same CDN as the shop.
 const seedImages = Object.fromEntries(Object.entries(images).flatMap(([path, image]) => {
-  const id = path.match(/^\/images\/catalog-seed\/([a-f0-9]{32})\.(?:webp|png|jpe?g|avif)$/)?.[1];
+  const id = path.match(/^\/images\/catalog-(?:seed|live)\/([a-f0-9]{32})\.(?:webp|png|jpe?g|avif)$/)?.[1];
   return id ? [[id, image]] : [];
 }));
 
