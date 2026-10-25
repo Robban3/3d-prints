@@ -5,6 +5,11 @@ import { ResponsiveImage } from '../src/components/ResponsiveImage';
 afterEach(cleanup);
 
 describe('responsive public images', () => {
+  it('resolves exported seed upload IDs directly to public optimized photos', () => {
+    render(<ResponsiveImage src="/api/uploads/d653f06c32916e870f1a8776c42acae6" alt="Äldre produkt" sizes="64px" />);
+    expect(screen.getByRole('img').getAttribute('src')).toMatch(/^\/images\/responsive\//);
+    expect(screen.getByRole('img').getAttribute('srcset')).not.toContain('/api/');
+  });
   it('uses mobile variants for uploaded product photos without changing private downloads', () => {
     render(<ResponsiveImage src="/api/uploads/0123456789abcdef0123456789abcdef" alt="Produkt" sizes="45vw" loading="lazy" />);
     const image = screen.getByRole('img');
