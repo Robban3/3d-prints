@@ -22,3 +22,23 @@ models/**/analysis-agent*/
 
 # 3D-modellbiblioteket ligger i Dokument/Formlabb/3D-modeller, utanför webbprojektet.
 /models/
+/exports/
+# Utskriftsmodeller och CAD-underlag ska aldrig versionshanteras i webbprojektet.
+*.[sS][tT][lL]
+*.[3][mM][fF]
+*.[bB][lL][eE][nN][dD]
+*.[fF][3][dD]
+*.[sS][tT][eE][pP]
+*.[sS][tT][pP]
+*.[iI][gG][eE][sS]
+*.[iI][gG][sS]
+*.[oO][bB][jJ]
+*.[gG][lL][bB]
+*.[gG][lL][tT][fF]
+*.[fF][bB][xX]
+*.[pP][lL][yY]
+*.[aA][mM][fF]
+*.[gG][cC][oO][dD][eE]
+*.npz
+*.npy
+*.zip

@@ -2,9 +2,9 @@ name: Repository checks
 on:
   push:
     branches: [main]
-    paths-ignore: ['models/**', 'exports/**', 'screenshots/**']
+    paths-ignore: ['screenshots/**']
   pull_request:
-    paths-ignore: ['models/**', 'exports/**', 'screenshots/**']
+    paths-ignore: ['screenshots/**']
 permissions:
   contents: read
 jobs:
@@ -18,6 +18,7 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - run: node scripts/check-no-model-files.mjs
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
