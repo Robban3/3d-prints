@@ -2,7 +2,7 @@
 
 Skapade med inbyggda image_gen som redigeringar av användarens tre referensbilder. Gemensam varm julmiljö, träbord, granris och mjuka ljuspunkter. PNG-original finns i Dokument/Formlabb/3D-modeller/Leveranser/Produktbilder-julfigurer. Webbversioner i client/public/images/christmas är samma bilder kodade som WebP.
 
-Dessa tre figurer finns inte som separata publicerade produkter i den kontrollerade butikskatalogen. Produkten tomtar-3-pack avser enligt sin beskrivning en klassisk tomte, en med säck och en i en skorsten. De nya bilderna har därför inte kopplats till det paketet eller publicerats i katalogen.
+De tre figurerna publicerades separat via adminpanelen den 26 oktober 2026: Pepparkakstomten (FL-P-0062), Snökompisen (FL-P-0063) och Paketvakten (FL-P-0064). Alla ligger i Julkollektionen, kostar 199 kr/st, är 200 mm höga och har 10 beställningsbara exemplar. Bredd, djup, vikt och printtid är tydligt märkta preliminära uppskattningar. Användarens motsvarande produktbilder från Pictures laddades upp till butiken. Produkten tomtar-3-pack avser andra figurer och har behållits separat.
 
 ## paketvakten
 
