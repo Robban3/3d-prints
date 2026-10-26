@@ -63,6 +63,8 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [onlyBargains, setOnlyBargains] = useState(false);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(0);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -162,6 +164,12 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
     );
   }
 
+  const filtered = products?.filter(product => (!onlyBargains || (product.discountPercent ?? 0) > 0)
+    && `${product.name} ${product.slug} ${product.articleNumber ?? ''}`.toLocaleLowerCase('sv').includes(search.toLocaleLowerCase('sv'))) ?? [];
+  const pageCount = Math.max(1, Math.ceil(filtered.length / 12));
+  const currentPage = Math.min(page, pageCount - 1);
+  const rows = filtered.slice(currentPage * 12, (currentPage + 1) * 12);
+
   return (
     <>
       <div className="spread" style={{ marginBottom: 16 }}>
@@ -176,13 +184,19 @@ export function ProductManager({ token, categories, materials, onChanged }: Prop
       {message && <p className="notice notice-success">{message}</p>}
       {error && <p className="notice notice-error">{error}</p>}
       {!products && !error && <div className="skeleton" style={{ aspectRatio: 'auto', height: 200 }} />}
-      <label className="checkbox" style={{ marginBottom: 16 }}><input type="checkbox" checked={onlyBargains} onChange={event => setOnlyBargains(event.target.checked)} />Visa endast Fyndhörnan</label>
+      <label>Sök produkter<input type="search" value={search} onChange={event => { setSearch(event.target.value); setPage(0); }} placeholder="Namn eller artikelnummer" /></label>
+      <label className="checkbox" style={{ marginBottom: 16 }}><input type="checkbox" checked={onlyBargains} onChange={event => { setOnlyBargains(event.target.checked); setPage(0); }} />Visa endast Fyndhörnan</label>
+      {products && <div className="spread" style={{ marginBottom: 12 }}>
+        <span>{filtered.length} produkter · sida {currentPage + 1} av {pageCount}</span>
+        <div><button type="button" className="btn-quiet" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Föregående</button>{' '}
+          <button type="button" className="btn-quiet" disabled={currentPage + 1 >= pageCount} onClick={() => setPage(currentPage + 1)}>Nästa</button></div>
+      </div>}
 
       <div className="stack" style={{ gap: 10 }}>
-        {products?.filter(product => !onlyBargains || (product.discountPercent ?? 0) > 0).map((product) => (
+        {rows.map((product) => (
           <div className="admin-row" key={product.id}>
             <div className="admin-row-art">
-              <ProductImage product={product} />
+              <ProductImage product={product} sizes="64px" />
             </div>
             <div className="admin-row-main">
               <strong>{product.name}</strong>
