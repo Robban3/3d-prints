@@ -1,6 +1,6 @@
 """Conservative, receipt-backed library cleanup. No version-number-only deletion."""
 from pathlib import Path
-import argparse, hashlib, json, zipfile, shutil, xml.etree.ElementTree as ET
+import argparse, hashlib, json, zipfile, shutil, sys, xml.etree.ElementTree as ET
 from datetime import datetime
 from model_library import LIBRARY
 
@@ -95,6 +95,18 @@ def main():
     for src in list(delivery.glob('*.stl')):
         move(src, root / 'Modeller/starbowling-salt-peppar-kropp-100mm/STL-alternativ' / src.name,
              'Colorless STL alternative; use the two color 3MF deliveries')
+    balls = root / 'Leveranser/Julgranskulor-tvadelade-100mm'
+    ball_package = root / 'Leveranser/Julgranskulor-tvadelade-100mm.zip'
+    if not ball_package.exists(): ball_package = archive / 'Leveranser/Julgranskulor-tvadelade-100mm.zip'
+    with zipfile.ZipFile(ball_package) as z:
+        balls.mkdir(parents=True, exist_ok=True)
+        for stem in ['Julkula-veckad-rod', 'Julkula-vavd-gron']:
+            for suffix in ['-kula.3mf', '-guldtop.3mf']:
+                name = stem + suffix
+                dst = balls / name
+                if not dst.exists():
+                    dst.write_bytes(z.read(name))
+                    record('restore-current', dst, reason='Current one-part color bauble print project')
     # Confirmed superseded products; retain history outside active folders.
     for rel, why in [
         ('Modeller/starbowling-salt-peppar', 'Replaced by 100 mm BODY and corrected text'),
@@ -125,14 +137,14 @@ def main():
     for name in ['StarBowling-kropp-100mm.zip', 'StarBowling-alla-STL.zip', 'Julgranskulor-tvadelade-100mm.zip']:
         archive_file(root / 'Leveranser' / name, 'Expanded current files available; package contains competing alternatives')
     # Global safe cleanup: Blender backups only when the main file is present and newer.
-    for group in ['Modeller', 'Leveranser']:
+    for group in ([] if '--finish-only' in sys.argv else ['Modeller', 'Leveranser']):
         for src in list((root / group).rglob('*')):
             if src.is_file() and src.suffix.lower() in {'.blend1', '.blend2'}:
                 current = src.with_suffix('.blend')
                 if current.exists() and current.stat().st_mtime >= src.stat().st_mtime:
                     archive_file(src, 'Older automatic Blender backup with newer main project retained')
     # Delete only byte-identical, same-named 3D copies within one product folder.
-    for product in list((root / 'Modeller').iterdir()):
+    for product in ([] if '--finish-only' in sys.argv else list((root / 'Modeller').iterdir())):
         if not product.is_dir(): continue
         groups = {}
         for src in product.rglob('*'):
@@ -176,7 +188,11 @@ def main():
         'Arkiv-inte-for-utskrift innehåller bortsorterade äldre versioner och paket; använd dem inte för produktion.\n'
         'Unika designvarianter och delar har bevarats; versionsnummer ensamt har inte använts för radering.\n', encoding='utf-8')
     receipt = root / 'rensningskvitto-2026-10-26.json'
-    receipt.write_text(json.dumps(dict(date=datetime.now().isoformat(), actions=events), ensure_ascii=False, indent=2), encoding='utf-8')
+    journal = root / 'rensningsjournal-2026-10-26.jsonl'
+    all_events = [json.loads(line) for line in journal.read_text(encoding='utf-8').splitlines()]
+    archived = [str(p.relative_to(root)) for p in archive.rglob('*') if p.is_file()]
+    receipt.write_text(json.dumps(dict(date=datetime.now().isoformat(), actions=all_events,
+                                      archived_files=archived), ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps(dict(actions=len(events), deleted_identical=sum(e['action']=='delete-identical-copy' for e in events),
                           receipt=str(receipt), current_salt=str(delivery/names[0]), current_pepper=str(delivery/names[1])), ensure_ascii=False))
 
