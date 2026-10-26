@@ -11,3 +11,9 @@ Verifiering: båda exporterade STL-kroppar mäter 47,5397 × 47,5397 × 100 mm. 
 Arbetsprojekt: `Dokument/Formlabb/3D-modeller/Modeller/starbowling-salt-peppar-kropp-100mm/StarBowling-kropp-100mm.blend`.
 
 Leverans: `Dokument/Formlabb/3D-modeller/Leveranser/StarBowling-kropp-100mm/` samt ZIP med samma namn under Leveranser. Innehåller två 3MF-projekt, fyra STL-delar, kontrollbilder, rapport och läsanvisning. Originalfilerna har inte skrivits över.
+
+## Rättad 3MF-paketering
+
+Den första exportens XML använde kodningsnamnet `utf8` och saknade objektens produktions-UUID, trots att komponenterna refererade till dem. Paketkontrollen i Python var otillräcklig för att verifiera Bambu-inläsningen. Exporten har rättats till UTF-8, rätt UUID-referenser och borttagna referenser till saknade miniatyrbilder och inaktuella monteringsdata.
+
+Båda rättade 3MF-filerna har därefter öppnats i Bambu Studio 02.08.04.57 och visuellt verifierats: saltkaret visas med elfenbensfärgad kropp/lock, röda halsränder och mörkblå text; pepparkaret med marinblå kropp/lock samt elfenbensfärgade ränder och text. Leverans-ZIP har uppdaterats med de rättade filerna. Utskrift har inte startats.

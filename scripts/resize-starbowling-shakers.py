@@ -139,3 +139,5 @@ scene.render.filepath=str(OUT/'monterade-kropp-100mm.png');bpy.ops.render.render
 for b,c in products:c.location.z+=20;c.location.x+=20
 scene.render.filepath=str(OUT/'kropp-och-lock.png');bpy.ops.render.render(write_still=True)
 (OUT/'kontroll.json').write_text(json.dumps(reports,ensure_ascii=False,indent=2),encoding='utf8')
+import runpy
+runpy.run_path(str(Path(__file__).with_name('fix-starbowling-3mf-package.py')))
