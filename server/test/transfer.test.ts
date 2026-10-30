@@ -6,10 +6,11 @@ import { tmpdir } from 'node:os';
 import { buildExport, planImport } from '../src/catalogTransfer.ts';
 import { allProducts, resetCatalogCache } from '../src/catalog.ts';
 import { changedFields, clearHistory, history, record } from '../src/auditLog.ts';
+import { categories } from '../src/data/products.ts';
 
 let dir: string;
 const options = {
-  categoryIds: ['inredning', 'kontor', 'kok', 'prylar', 'tillbehor'],
+  categoryIds: categories.map(category => category.id),
   materialIds: ['pla', 'petg', 'abs', 'tpu', 'resin'],
 };
 
