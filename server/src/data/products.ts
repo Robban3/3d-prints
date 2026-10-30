@@ -1,6 +1,8 @@
 import type { Category, Product } from '../types.ts';
+import { additionalCategories } from '../categoryUpdate.ts';
 
 export const categories: Category[] = [
+  ...additionalCategories,
   {
     id: 'inredning',
     name: 'Hem & inredning',

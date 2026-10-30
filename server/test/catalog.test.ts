@@ -96,7 +96,7 @@ describe('katalogen', () => {
   it('sås från det ursprungliga sortimentet', async () => {
     const products = await allProducts();
     assert.equal(products.length, 14);
-    assert.equal((await allCategories()).length, 5);
+    assert.equal((await allCategories()).length, 10);
   });
 
   it('rör inte konstanten när något ändras', async () => {
@@ -206,6 +206,21 @@ describe('ta bort produkt', () => {
 });
 
 describe('kategorier', () => {
+  it('sparar nya kategorier men återställer inte senare adminradering', async () => {
+    await writeFile(process.env.CATALOG_STORE!, JSON.stringify({
+      products: [], materials: [], qualities: [],
+      categories: [{ id: 'eget', name: 'Egen kategori', description: 'Behåll mig' },
+        { id: 'kok', name: 'Kök & servering', description: 'Befintligt kök' }],
+    }));
+    const categories = await allCategories();
+    assert.equal(categories.find(c => c.id === 'eget')?.description, 'Behåll mig');
+    assert.ok(categories.some(c => c.id === 'bar-restaurang'));
+    assert.ok(categories.some(c => c.id === 'lampor'));
+    await deleteCategory('lampor');
+    resetCatalogCache();
+    assert.ok(!(await allCategories()).some(c => c.id === 'lampor'));
+    assert.ok(JSON.parse(await readFile(process.env.CATALOG_STORE!, 'utf8')).appliedUpdates.includes('shop-categories-2026-10-30'));
+  });
   it('skapar en ny kategori', async () => {
     const created = await createCategory({
       id: 'present',
@@ -213,7 +228,7 @@ describe('kategorier', () => {
       description: 'Saker att ge bort',
     });
     assert.equal(created.id, 'present');
-    assert.equal((await allCategories()).length, 6);
+    assert.equal((await allCategories()).length, 11);
   });
 
   it('avvisar ett id som redan finns', async () => {
@@ -243,7 +258,7 @@ describe('kategorier', () => {
   it('tar bort en tom kategori', async () => {
     await createCategory({ id: 'tom', name: 'Tom', description: 'Inga produkter här' });
     await deleteCategory('tom');
-    assert.equal((await allCategories()).length, 5);
+    assert.equal((await allCategories()).length, 10);
   });
 });
 

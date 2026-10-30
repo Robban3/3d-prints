@@ -6,6 +6,7 @@ import { categories as seedCategories, products as seedProducts } from './data/p
 import { materials as seedMaterials, qualities as seedQualities } from './data/materials.ts';
 import type { Category, Material, Product, QualityLevel } from './types.ts';
 import { identifyProducts } from './articles.ts';
+import { updateShopCategories } from './categoryUpdate.ts';
 
 /**
  * Katalogen var tidigare en konstant som kompilerades in i servern. För att
@@ -20,6 +21,7 @@ interface CatalogFile {
   categories: Category[];
   materials: Material[];
   qualities: QualityLevel[];
+  appliedUpdates?: string[];
 }
 
 let cache: CatalogFile | null = null;
@@ -60,12 +62,24 @@ async function loadCatalog(): Promise<CatalogFile> {
       // Materialen tillkom senare – en äldre fil saknar dem och får standarden.
       materials: Array.isArray(parsed.materials) ? parsed.materials : fallback.materials,
       qualities: Array.isArray(parsed.qualities) ? parsed.qualities : fallback.qualities,
+      appliedUpdates: Array.isArray(parsed.appliedUpdates) ? parsed.appliedUpdates : [],
     };
   } catch (error) {
     if (process.env.STATE_BUCKET && (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     cache = process.env.CATALOG_SEED
       ? JSON.parse(await readDiskFile(process.env.CATALOG_SEED, 'utf8')) as CatalogFile
       : seed();
+  }
+  const categoryUpdate = updateShopCategories(cache!);
+  if (categoryUpdate !== cache) {
+    const backup = `${CATALOG_FILE()}.before-categories-2026-10-30.json`;
+    try { await readFile(backup, 'utf8'); }
+    catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      await mkdir(dirname(backup), { recursive: true });
+      await writeFile(backup, JSON.stringify(cache, null, 2), 'utf8');
+    }
+    await persist(categoryUpdate);
   }
   // Unify older catalog spelling, including catalogs already stored in R2.
   const products = await identifyProducts(cache!.products.map((product) =>
