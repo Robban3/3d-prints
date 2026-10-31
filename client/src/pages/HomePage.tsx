@@ -20,9 +20,6 @@ const steps: Array<{ title: string; text: string }> = [
   { title: 'Leverans till dig', text: 'Spårbar leverans inom 2–7 arbetsdagar' },
 ];
 
-const campaignSlugs = ['vas-signe', 'julgran-2-pack', 'stjarna', 'kruka-elise'];
-
-
 export function HomePage() {
   const { theme } = useAppearance();
   const design = themeFor(theme);
@@ -33,10 +30,8 @@ export function HomePage() {
 
   const products = data?.products ?? [];
   const popular = [...products]
-    .sort((a, b) => {
-      const ai = campaignSlugs.indexOf(a.slug), bi = campaignSlugs.indexOf(b.slug);
-      return (ai < 0 ? 100 : ai) - (bi < 0 ? 100 : bi) || Number(b.featured) - Number(a.featured) || b.rating * b.reviewCount - a.rating * a.reviewCount;
-    })
+    .filter(product => product.featured && product.published !== false)
+    .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount)
     .slice(0, 4);
   return (
     <>
@@ -71,14 +66,14 @@ export function HomePage() {
 
       <section className="season-section container" aria-label="Inspiration inför julen">
         <div className="season-intro"><div className="collection-heading"><h2>Gör plats för julen</h2><span className="collection-rule" aria-hidden="true" /></div><h3>Lite mer personligt. Lite mer du.</h3><p>Upptäck 3D-printade inredningsdetaljer, unika julklappar och personliga skatter – alla formgivna och tillverkade lokalt i Sverige.</p></div>
-        <Link className="season-card photo-card" to="/produkter?kategori=julkollektionen"><ResponsiveImage src="/images/campaign/gifts.webp" alt="Spiralvas, julstjärna och inslagen julklapp" loading="lazy" /><span className="photo-card-copy"><strong>Presenter med personlighet</strong><span>Unika gåvor som håller länge.</span></span><Icon name="arrowRight" size={22} /></Link>
-        <Link className="season-card photo-card" to="/egen-print"><ResponsiveImage src="/images/campaign/wrapping.webp" alt="Händer som knyter ett vinrött band kring en julklapp" loading="lazy" /><span className="photo-card-copy"><strong>Din idé, vår verkstad</strong><span>Vi 3D-printar din design.</span></span><Icon name="arrowRight" size={22} /></Link>
+        <Link className="season-card photo-card" to="/produkter?kategori=julkollektionen"><ResponsiveImage src="/images/campaign/gifts.webp" alt="Spiralvas, julstjärna och inslagen julklapp" loading="lazy" sizes="(max-width: 700px) 100vw, 50vw" /><span className="photo-card-copy"><strong>Presenter med personlighet</strong><span>Unika gåvor som håller länge.</span></span><Icon name="arrowRight" size={22} /></Link>
+        <Link className="season-card photo-card" to="/egen-print"><ResponsiveImage src="/images/campaign/wrapping.webp" alt="Händer som knyter ett vinrött band kring en julklapp" loading="lazy" sizes="(max-width: 700px) 100vw, 50vw" /><span className="photo-card-copy"><strong>Din idé, vår verkstad</strong><span>Vi 3D-printar din design.</span></span><Icon name="arrowRight" size={22} /></Link>
       </section>
 
       <section className="container home-category-navigation"><h2>Hitta din form</h2><span className="collection-rule" aria-hidden="true" /><nav aria-label="Kategorier"><Link to="/produkter?kategori=julkollektionen">Julkollektionen</Link><Link to="/produkter?kategori=halloween">Halloween</Link><Link to="/produkter?kategori=inredning">Hem</Link><Link to="/produkter?kategori=kontor">Skrivbord</Link><Link to="/produkter?kategori=prylar">Hobby</Link><Link to="/produkter?kategori=kok">Kök</Link><Link to="/egen-print">Egen print</Link></nav></section>
 
       <section className="home-workshop">
-        <ResponsiveImage className="workshop-photo" src="/images/campaign/printing.webp" alt="En spiralvas växer fram i 3D-skrivaren" loading="lazy" />
+        <ResponsiveImage className="workshop-photo" src="/images/campaign/printing.webp" alt="En spiralvas växer fram i 3D-skrivaren" loading="lazy" sizes="(max-width: 700px) 100vw, 50vw" />
         <div className="workshop-content">
           <div className="custom-pitch">
             <h2>

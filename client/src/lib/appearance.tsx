@@ -14,7 +14,13 @@ interface AppearanceContext {
 const Context = createContext<AppearanceContext | null>(null);
 
 export function AppearanceProvider({ children }: { children: ReactNode }) {
-  const [active, setActive] = useState<ThemeId>('nordic');
+  const [active, setActive] = useState<ThemeId>(() => {
+    try {
+      const saved = window.localStorage.getItem('formlabb-active-theme');
+      if (isThemeId(saved)) return saved;
+    } catch { /* Storage may be unavailable. */ }
+    return 'nordic';
+  });
   const [preview, setPreview] = useState<ThemeId | null>(null);
   const revision = useRef(0);
 
@@ -31,6 +37,10 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  useEffect(() => {
+    try { window.localStorage.setItem('formlabb-active-theme', active); } catch { /* Optional cache. */ }
+  }, [active]);
 
   function publish(next: ThemeId, keepPreview = false) {
     revision.current += 1;

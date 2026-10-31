@@ -14,6 +14,7 @@ const forwardedVariables = [
 
 export class Shop extends DurableObject<Env> {
   private starting: Promise<void> | undefined;
+  private initialized = false;
 
   private async ready(): Promise<void> {
     const container = this.ctx.container!;
@@ -49,8 +50,13 @@ export class Shop extends DurableObject<Env> {
   }
 
   async fetch(request: Request): Promise<Response> {
-    this.starting ??= this.ready().finally(() => { this.starting = undefined; });
-    await this.starting;
+    // Inspect configuration and probe health on startup, not for every photo/API
+    // request. A stopped container or a new Worker instance must initialize again.
+    if (!this.initialized || !this.ctx.container!.running) {
+      this.starting ??= this.ready().then(() => { this.initialized = true; })
+        .finally(() => { this.starting = undefined; });
+      await this.starting;
+    }
     const url = new URL(request.url);
     const originalHost = url.host;
     url.protocol = 'http:';
@@ -60,12 +66,34 @@ export class Shop extends DurableObject<Env> {
     forwarded.headers.set('x-forwarded-proto', 'https');
     forwarded.headers.set('x-forwarded-host', originalHost);
     forwarded.headers.set('x-forwarded-for', request.headers.get('cf-connecting-ip') ?? 'unknown');
-    return this.ctx.container!.getTcpPort(4000).fetch(forwarded);
+    try {
+      const response = await this.ctx.container!.getTcpPort(4000).fetch(forwarded);
+      if (response.status >= 500) this.initialized = false;
+      return response;
+    } catch (error) {
+      this.initialized = false;
+      // Do not retry mutations: the upstream may have already accepted them.
+      throw error;
+    }
   }
 }
 
 export default {
-  fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const url = new URL(request.url);
+    const cacheable = request.method === 'GET' && !url.search &&
+      (/^\/api\/uploads\/[a-f0-9]{32}\/image\/(128|320|640|960|1536)$/.test(url.pathname)
+        || /^\/images\/responsive\/[a-f0-9]+-\d+\.webp$/.test(url.pathname));
+    if (cacheable) {
+      const key = new Request(url.toString());
+      const cached = await caches.default.match(key);
+      if (cached) return cached;
+      const response = await env.SHOP.getByName('formlabb-shop').fetch(request);
+      if (response.ok && response.headers.get('Content-Type')?.startsWith('image/') && !response.headers.has('Set-Cookie')) {
+        ctx.waitUntil(caches.default.put(key, response.clone()));
+      }
+      return response;
+    }
     // A single named instance preserves the server's order and stock queues.
     // Do not load-balance file-based state across multiple containers.
     return env.SHOP.getByName('formlabb-shop').fetch(request);

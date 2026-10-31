@@ -7,6 +7,7 @@ import { rm } from 'node:fs/promises';
 import { pathParam } from './http.ts';
 import { storage as fileStore } from './storage.ts';
 import { requireAdmin } from './adminRoutes.ts';
+import { imageVariant, IMAGE_WIDTHS } from './imageVariants.ts';
 import {
   ALLOWED_EXTENSIONS,
   IMAGE_EXTENSIONS,
@@ -33,6 +34,19 @@ import {
 import { startLibraryUpload, saveLibraryPart, finishLibraryUpload, abortLibraryUpload, LIBRARY_CHUNK_BYTES } from './libraryUploads.ts';
 
 export const uploads = Router();
+
+// Only administrator-uploaded product images may have public responsive copies.
+uploads.get('/uploads/:id/image/:width', async (req, res, next) => {
+  try {
+    const width = Number(req.params.width);
+    if (!(IMAGE_WIDTHS as readonly number[]).includes(width)) { res.sendStatus(404); return; }
+    const meta = await readMeta(pathParam(req.params.id));
+    if (meta?.kind !== 'image') { res.sendStatus(404); return; }
+    const buffer = await imageVariant(meta, width);
+    res.set({ 'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' });
+    res.send(buffer);
+  } catch (error) { next(error); }
+});
 
 class UploadRejected extends Error {}
 

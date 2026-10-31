@@ -16,20 +16,21 @@ mapping = {}
 seen = set()
 original_bytes = mobile_bytes = 0
 for source in sorted((public / 'images').rglob('*')):
-    if not source.is_file() or output in source.parents or source.suffix.lower() not in ('.png', '.webp', '.jpg', '.jpeg'):
+    if not source.is_file() or output in source.parents or source.suffix.lower() not in ('.png', '.webp', '.jpg', '.jpeg', '.avif'):
         continue
     if 'brand' in source.parts:
         continue
-    digest = sha256(source.read_bytes()).hexdigest()[:20]
+    digest = sha256(b'webp-alpha-v2' + source.read_bytes()).hexdigest()[:20]
     with Image.open(source) as opened:
-        image = ImageOps.exif_transpose(opened).convert('RGB')
+        image = ImageOps.exif_transpose(opened).convert('RGBA' if opened.mode in ('RGBA', 'LA', 'P') else 'RGB')
         sizes = sorted(set(min(width, image.width) for width in (320, 640, 960, 1536)))
         candidates = []
         for width in sizes:
             name = f'{digest}-{width}.webp'
             target = output / name
             if name not in seen:
-                image.resize((width, round(image.height * width / image.width)), Image.Resampling.LANCZOS).save(target, 'WEBP', quality=78, method=6)
+                if not target.exists():
+                    image.resize((width, round(image.height * width / image.width)), Image.Resampling.LANCZOS).save(target, 'WEBP', quality=78, method=6)
                 seen.add(name)
             candidates.append(f'/images/responsive/{name} {width}w')
         mapping['/' + source.relative_to(public).as_posix()] = {

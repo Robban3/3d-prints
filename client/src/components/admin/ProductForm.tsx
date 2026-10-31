@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { ProductArt } from '../ProductArt';
+import { ResponsiveImage } from '../ResponsiveImage';
 import { ApiError, uploadProductImage } from '../../lib/api';
 import { TextAreaField, TextField } from '../Field';
 import { formatPrice } from '../../lib/format';
@@ -319,7 +320,7 @@ export function ProductForm({
             const label = `${color}${size.id ? ` – ${size.name}` : ''}`;
             return <div key={JSON.stringify([color, size.id])} className="panel panel-tight stack">
               <strong>{label}</strong>
-              {variant && <img src={variant.image.url} alt={label} style={{ width: 120, borderRadius: 8 }} />}
+              {variant && <ResponsiveImage src={variant.image.url} alt={label} sizes="120px" loading="lazy" style={{ width: 120, borderRadius: 8 }} />}
               <label className="field">{variant ? 'Byt variantbild' : 'Ladda upp variantbild'}
                 <input type="file" accept=".jpg,.jpeg,.png,.webp,.avif" disabled={uploading || saving} onChange={event => { void pickVariantImage(event.target.files?.[0], color, size.id); event.target.value = ''; }} />
               </label>
@@ -331,7 +332,7 @@ export function ProductForm({
           <h3>Huvudbild</h3>
           {draft.image ? (
             <div className="admin-image-preview">
-              <img src={draft.image.url} alt="" />
+              <ResponsiveImage src={draft.image.url} alt="" sizes="400px" />
               <span style={{ flex: 1, minWidth: 0 }}>
                 <strong style={{ display: 'block', fontSize: '0.9rem' }}>
                   {draft.image.fileName}
