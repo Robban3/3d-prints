@@ -1,3 +1,4 @@
+import { christmasCategory, christmasPath } from '../lib/christmas';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router';
 import { useCart } from '../lib/cart';
@@ -104,7 +105,7 @@ export function Header() {
                       {group.map((category) => (
                         <Link
                           key={category.id}
-                          to={`/produkter?kategori=${category.id}`}
+                          to={category.id === christmasCategory ? christmasPath : `/produkter?kategori=${category.id}`}
                           onClick={() => setShopOpen(false)}
                         >
                           <Icon name={categoryIcons[category.id] ?? 'grid'} size={24} />

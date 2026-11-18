@@ -15,7 +15,7 @@ export function SeasonHero() {
           <h1>{design.headline[0]}<br /><span>{design.headline[1]}</span></h1>
           <p>{design.text}</p>
           <div className="hero-cta">
-            <Link className="btn btn-lg" to={theme === 'halloween' ? '/produkter?kategori=halloween' : theme === 'nordic' || theme === 'workshop' ? '/produkter?kategori=julkollektionen' : '/produkter'}>{design.cta}<Icon name="arrowRight" size={18} /></Link>
+            <Link className="btn btn-lg" to={theme === 'halloween' ? '/produkter?kategori=halloween' : theme === 'nordic' || theme === 'workshop' ? '/julkollektionen' : '/produkter'}>{design.cta}<Icon name="arrowRight" size={18} /></Link>
             {theme !== 'nordic' && <Link className="season-secondary" to="/egen-print">Beställ din egen print <Icon name="arrowRight" size={16} /></Link>}
           </div>
           {theme !== 'nordic' && <div className="season-hero-note"><span>Design med personlighet</span><span>Printat i Göteborg</span></div>}
