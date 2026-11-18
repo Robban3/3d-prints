@@ -1,12 +1,13 @@
 import { ResponsiveImage } from '../components/ResponsiveImage';
 import { useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { ProductCard } from '../components/ProductCard';
 import { fetchConfig, fetchProducts } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
 import { PageHeader } from '../components/PageHeader';
 import type { Product } from '../types';
 import { productPrice } from '../lib/productPrice';
+import { christmasCategory, christmasImage, christmasIntro, christmasPath } from '../lib/christmas';
 
 type SortId = 'popular' | 'price-asc' | 'price-desc' | 'name';
 
@@ -24,10 +25,11 @@ const sortLabels: Array<{ id: SortId; label: string }> = [
   { id: 'name', label: 'Namn A–Ö' },
 ];
 
-export function ShopPage({ bargains = false }: { bargains?: boolean }) {
+export function ShopPage({ bargains = false, christmasLanding = false }: { bargains?: boolean; christmasLanding?: boolean }) {
   const [params, setParams] = useSearchParams();
-  const category = params.get('kategori') ?? 'alla';
-  const christmas = !bargains && category === 'julkollektionen';
+  const navigate = useNavigate();
+  const category = christmasLanding ? christmasCategory : (params.get('kategori') ?? 'alla');
+  const christmas = !bargains && category === christmasCategory;
   const halloween = !bargains && category === 'halloween';
   // Sökningen bor i URL:en, så att headerns sökruta och delade länkar slår
   // igenom även när butiken redan är öppen.
@@ -58,6 +60,11 @@ export function ShopPage({ bargains = false }: { bargains?: boolean }) {
     const next = new URLSearchParams(params);
     if (id === 'alla') next.delete('kategori');
     else next.set('kategori', id);
+    if (christmasLanding || (!bargains && id === christmasCategory)) {
+      if (id === christmasCategory) next.delete('kategori');
+      navigate({ pathname: id === christmasCategory ? christmasPath : '/produkter', search: next.toString() }, { replace: true });
+      return;
+    }
     setParams(next, { replace: true });
   }
 
@@ -75,7 +82,7 @@ export function ShopPage({ bargains = false }: { bargains?: boolean }) {
   return (
     <>
       {christmas ? <section className="collection-banner" aria-label="Julkollektionen">
-        <a href="#collection-products" aria-label="Upptäck julkollektionen – visa produkterna"><ResponsiveImage src="/images/campaign/julkollektionen-banner.webp" alt="En jul med personlig prägel – gröna och vinröda julkulor, benvita granar, stjärna och ett personligt namnornament" width="1357" height="762" /></a>
+        <a href="#collection-products" aria-label="Upptäck julkollektionen – visa produkterna"><ResponsiveImage src={christmasImage} alt="En jul med personlig prägel – gröna och vinröda julkulor, benvita granar, stjärna och ett personligt namnornament" width="1357" height="762" /></a>
         <div className="collection-banner-mobile"><h1>En jul med personlig prägel</h1><p>3D-printat julpynt och personliga presenter.</p><a className="btn" href="#collection-products">Upptäck julkollektionen</a></div>
         <h1 className="sr-only collection-banner-desktop-title">Julkollektionen</h1>
       </section> : halloween ? <section className="container halloween-collection-banner" aria-label="Halloweenkollektionen">
@@ -98,6 +105,7 @@ export function ShopPage({ bargains = false }: { bargains?: boolean }) {
       />}
       <section className={`section${christmas || halloween ? ' christmas-products' : ''}`} id="collection-products">
         <div className="container">
+          {christmas && <p>{christmasIntro}</p>}
           <div className="toolbar">
             <select
               className="select"

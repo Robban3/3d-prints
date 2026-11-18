@@ -1,3 +1,4 @@
+import { christmasPath } from './lib/christmas';
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { Header } from './components/Header';
@@ -32,6 +33,7 @@ export function App() {
       <main id="innehall">
         <Suspense fallback={<div className="container route-loading" role="status">Laddar sidan…</div>}><Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path={christmasPath} element={<ShopPage christmasLanding />} />
           <Route path="/produkter" element={<ShopPage />} />
           <Route path="/fyndhornan" element={<ShopPage bargains />} />
           <Route path="/produkter/spiral-vas" element={<Navigate to="/produkter/vas-nexo" replace />} />

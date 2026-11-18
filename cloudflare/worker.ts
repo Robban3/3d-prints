@@ -1,6 +1,8 @@
 import { DurableObject } from 'cloudflare:workers';
+import { storefrontSeo } from './seo';
 
 interface Env {
+  ASSETS: Fetcher;
   SHOP: DurableObjectNamespace<Shop>;
   [name: string]: unknown;
 }
@@ -81,6 +83,10 @@ export class Shop extends DurableObject<Env> {
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname !== '/api' && !url.pathname.startsWith('/api/')) {
+      return storefrontSeo(request, env.ASSETS, catalogRequest =>
+        env.SHOP.getByName('formlabb-shop').fetch(catalogRequest));
+    }
     const cacheable = request.method === 'GET' && !url.search &&
       (/^\/api\/uploads\/[a-f0-9]{32}\/image\/(128|320|640|960|1536)$/.test(url.pathname)
         || /^\/images\/responsive\/[a-f0-9]+-\d+\.webp$/.test(url.pathname));
