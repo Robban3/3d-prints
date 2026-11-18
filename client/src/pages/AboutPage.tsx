@@ -20,8 +20,12 @@ const faq = [
     a: 'Priset för egen print baseras på printtiden, med en startavgift på 95 kr per order. Material ingår. Vi kontrollerar filen och bekräftar printtiden innan produktion. Ingenting läggs på i efterhand utan att du godkänt det.',
   },
   {
-    q: 'Kan jag returnera en produkt?',
-    a: 'Lagervaror har 30 dagars öppet köp i obruten förpackning. Produkter som printats specifikt efter din fil eller dina mått är undantagna, men går något fel i produktionen printar vi om utan kostnad.',
+    q: 'Hur fungerar öppet köp, returer och byten?',
+    a: 'Lagervaror har 30 dagars öppet köp i obruten förpackning. Vi erbjuder också byten. Mejla support@formlabb.se med ditt ordernummer, så hjälper vi dig och skickar en returetikett. Öppet köp gäller inte produkter som printats specifikt efter din fil eller dina mått.',
+  },
+  {
+    q: 'Vad händer om en produkt är defekt eller går sönder?',
+    a: 'Vi ersätter produkter som är defekta eller trasiga vid leverans. Om en produkt går sönder inom 30 dagar från att du tog emot den ersätter vi den utan kostnad. Mejla support@formlabb.se med ditt ordernummer, så hjälper vi dig. Din reklamationsrätt enligt konsumentköplagen gäller också.',
   },
   {
     q: 'Är materialen säkra för mat?',
