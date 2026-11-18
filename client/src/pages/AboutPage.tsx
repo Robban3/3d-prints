@@ -21,7 +21,7 @@ const faq = [
   },
   {
     q: 'Hur fungerar öppet köp, returer och byten?',
-    a: 'Lagervaror har 30 dagars öppet köp i obruten förpackning. Vi erbjuder också byten. Mejla support@formlabb.se med ditt ordernummer, så hjälper vi dig och skickar en returetikett. Öppet köp gäller inte produkter som printats specifikt efter din fil eller dina mått.',
+    a: 'Lagervaror har 30 dagars öppet köp i obruten förpackning. Vi erbjuder också byten. Mejla support@formlabb.se med ditt ordernummer, så hjälper vi dig och skickar en kostnadsfri returetikett vid både öppet köp och byte. Öppet köp gäller inte produkter som printats specifikt efter din fil eller dina mått.',
   },
   {
     q: 'Vad händer om en produkt är defekt eller går sönder?',
