@@ -22,6 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - run: npm run test:seo
       - run: npm run build
       - run: npx tsc -p cloudflare/tsconfig.json
       - run: npm audit --omit=dev --audit-level=high
